@@ -1,0 +1,28 @@
+
+> @finance-twa/server@0.1.0 dev
+> npm --prefix ../.. run dev
+
+
+> finance-twa@0.1.0 dev
+> node ./scripts/dev.mjs
+
+
+> @finance-twa/client@0.1.0 dev
+> vite
+
+
+> @finance-twa/server@0.1.0 dev:bot
+> tsx watch src/bot.ts
+
+
+> @finance-twa/server@0.1.0 dev:server
+> tsx watch src/server.ts
+
+Port 5173 is in use, trying another one...
+
+  [32m[1mVITE[22m v5.4.21[39m  [2mready in [0m[1m477[22m[2m[0m ms[22m
+
+  [32m➜[39m  [1mLocal[22m:   [36mhttp://localhost:[1m5174[22m/[39m
+  [32m➜[39m  [1mNetwork[22m: [36mhttp://192.168.1.82:[1m5174[22m/[39m
+{"level":30,"time":1776607449094,"pid":8776,"hostname":"DESKTOP-Q6TPEKI","msg":"Server listening at http://0.0.0.0:3000"}
+Telegram bot polling started.

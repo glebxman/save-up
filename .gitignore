@@ -1,0 +1,11 @@
+node_modules
+.pnpm-store
+dist
+build
+.turbo
+.vite
+.DS_Store
+coverage
+.env
+.env.local
+apps/server/src/db/migrations/meta

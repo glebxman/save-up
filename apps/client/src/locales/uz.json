@@ -1,0 +1,110 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Foydalanuvchi",
+    "browser": "Brauzer",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Tayyor",
+    "synced": "Sinxron",
+    "mock": "Mock",
+    "live": "Jonli"
+  },
+  "shell": {
+    "greeting": "Salom, {{name}}",
+    "welcomeBack": "Yana ko'rganimdan xursandman",
+    "notifications": "Bildirishnomalar",
+    "nav": {
+      "dashboard": "Asosiy",
+      "report": "Hisobot",
+      "settings": "Sozlamalar"
+    }
+  },
+  "dashboard": {
+    "loading": "Moliyaviy holatingiz yuklanmoqda...",
+    "errorCaption": "Yuklash xatosi",
+    "errorTitle": "Ma'lumotlarni olishning imkoni bo'lmadi",
+    "errorDescription": "Backend RPC, Telegram initData va server ulanishini tekshiring.",
+    "shortcuts": {
+      "income": "Kirim",
+      "expense": "Chiqim",
+      "report": "Hisobot",
+      "setting": "Sozlama"
+    },
+    "rhythmCaption": "Kun ritmi",
+    "rhythmTitle": "Hammasi nazorat ostida",
+    "rhythmDescription": "Summani kiriting va yuqoridagi tezkor tugmalar orqali kirim yoki chiqimni bir bosishda qo'shing."
+  },
+  "balance": {
+    "caption": "Mening balansim",
+    "healthy": "Zaxira yaxshi",
+    "watch": "Xarajatlarni kuzating",
+    "spendableNow": "Hozir sarflash mumkin",
+    "monthlyBudget": "Oylik byudjet",
+    "tracking": "Kuzatuv",
+    "trackingValue": "Real vaqt"
+  },
+  "dailyLimit": {
+    "caption": "Bir kunga qolgan limit",
+    "days": "{{count}} kun",
+    "description": "Bu temp balansni oy oxirigacha teng taqsimlashga yordam beradi."
+  },
+  "savings": {
+    "caption": "Jamg'arma",
+    "description": "Har bir yangi kirimning bir qismi avtomatik ravishda jamg'armaga o'tadi.",
+    "setup": "Jamg'arma sozlamasi",
+    "question": "Qancha mablag' jamg'armaga o'tsin?"
+  },
+  "amountInput": {
+    "caption": "Operatsiya paneli",
+    "title": "Summani kiriting"
+  },
+  "report": {
+    "loading": "Oylik hisobot tayyorlanmoqda...",
+    "errorCaption": "Hisobot xatosi",
+    "errorTitle": "Xulosani yuklab bo'lmadi",
+    "errorDescription": "Backend RPC va ma'lumotlar bazasi ulanishini tekshiring.",
+    "statistics": "Statistika",
+    "modeIncome": "Kirim",
+    "modeSpending": "Chiqim",
+    "totalIncome": "Jami kirim",
+    "totalSpending": "Jami chiqim",
+    "newMonthCaption": "Yangi oy",
+    "newMonthTitle": "Oyni yopish",
+    "newMonthAction": "Oylik xarajatlarni tozalash",
+    "ops": "{{count}} amal"
+  },
+  "monthReport": {
+    "snapshot": "Qisqa ko'rinish",
+    "overview": "Oylik umumiy holat",
+    "description": "Ushbu oyda kirgan, chiqqan va jamg'armaga o'tgan mablag'larning ixcham ko'rinishi.",
+    "income": "Kirim",
+    "spending": "Chiqim",
+    "saved": "Jamg'arildi",
+    "transactions": "Amallar"
+  },
+  "settings": {
+    "title": "Sozlamalar",
+    "description": "Interfeysni o'zingizga qulay qilib sozlang.",
+    "theme": "Ko'rinish",
+    "language": "Til",
+    "themeAuto": "Avto",
+    "themeDark": "To'q",
+    "themeLight": "Yorug'",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Mavzuni tanlang",
+    "themeModalDescription": "Qurilma mavzusiga ergashing yoki ko'rinishni qo'lda tanlang.",
+    "languageModalTitle": "Tilni tanlang",
+    "languageModalDescription": "Ilova bo'ylab ishlatiladigan tilni tanlang.",
+    "languageEn": "English",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek"
+  },
+  "notFound": {
+    "caption": "Sahifa topilmadi",
+    "title": "Bunday yo'nalish mavjud emas",
+    "description": "Byudjetni davom ettirish uchun asosiy sahifaga qayting.",
+    "action": "Asosiyga qaytish"
+  }
+}

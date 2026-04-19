@@ -1,0 +1,110 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Пользователь",
+    "browser": "Браузер",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Готово",
+    "synced": "Синхронно",
+    "mock": "Мок",
+    "live": "Онлайн"
+  },
+  "shell": {
+    "greeting": "Привет, {{name}}",
+    "welcomeBack": "С возвращением",
+    "notifications": "Уведомления",
+    "nav": {
+      "dashboard": "Главная",
+      "report": "Отчёт",
+      "settings": "Настройки"
+    }
+  },
+  "dashboard": {
+    "loading": "Загружаем ваш финансовый статус...",
+    "errorCaption": "Ошибка загрузки",
+    "errorTitle": "Не удалось получить данные",
+    "errorDescription": "Проверьте backend RPC, Telegram initData и подключение к серверу.",
+    "shortcuts": {
+      "income": "Доход",
+      "expense": "Расход",
+      "report": "Отчёт",
+      "setting": "Настр."
+    },
+    "rhythmCaption": "Ритм дня",
+    "rhythmTitle": "Держите всё под контролем",
+    "rhythmDescription": "Введите сумму и используйте быстрые действия выше, чтобы добавить доход или расход в одно касание."
+  },
+  "balance": {
+    "caption": "Мой баланс",
+    "healthy": "Хороший запас",
+    "watch": "Следите за тратами",
+    "spendableNow": "Можно потратить сейчас",
+    "monthlyBudget": "Бюджет на месяц",
+    "tracking": "Отслеживание",
+    "trackingValue": "В реальном времени"
+  },
+  "dailyLimit": {
+    "caption": "Осталось на день",
+    "days": "{{count}} дн.",
+    "description": "Такой темп помогает равномерно распределить баланс на оставшиеся дни месяца."
+  },
+  "savings": {
+    "caption": "Копилка",
+    "description": "Часть каждого нового дохода автоматически уходит в накопления.",
+    "setup": "Настройка накоплений",
+    "question": "Сколько отправлять в накопления?"
+  },
+  "amountInput": {
+    "caption": "Панель операции",
+    "title": "Введите сумму"
+  },
+  "report": {
+    "loading": "Собираем отчёт за месяц...",
+    "errorCaption": "Ошибка отчёта",
+    "errorTitle": "Не удалось загрузить сводку",
+    "errorDescription": "Проверьте backend RPC и подключение к базе данных.",
+    "statistics": "Статистика",
+    "modeIncome": "Доходы",
+    "modeSpending": "Расходы",
+    "totalIncome": "Общий доход",
+    "totalSpending": "Общие расходы",
+    "newMonthCaption": "Новый месяц",
+    "newMonthTitle": "Закрыть месяц",
+    "newMonthAction": "Сбросить месячные расходы",
+    "ops": "{{count}} оп."
+  },
+  "monthReport": {
+    "snapshot": "Снимок",
+    "overview": "Сводка за месяц",
+    "description": "Короткий обзор денег, которые пришли, ушли и были отложены в этом месяце.",
+    "income": "Доход",
+    "spending": "Расход",
+    "saved": "Сохранено",
+    "transactions": "Операции"
+  },
+  "settings": {
+    "title": "Настройки",
+    "description": "Настройте интерфейс под свои предпочтения.",
+    "theme": "Внешний вид",
+    "language": "Язык",
+    "themeAuto": "Авто",
+    "themeDark": "Тёмная",
+    "themeLight": "Светлая",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Выбор темы",
+    "themeModalDescription": "Можно следовать системной теме или выбрать оформление вручную.",
+    "languageModalTitle": "Выбор языка",
+    "languageModalDescription": "Выберите язык, который будет использоваться в приложении.",
+    "languageEn": "English",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek"
+  },
+  "notFound": {
+    "caption": "Страница не найдена",
+    "title": "Такого маршрута не существует",
+    "description": "Вернитесь на главную, чтобы продолжить вести бюджет.",
+    "action": "Назад на главную"
+  }
+}

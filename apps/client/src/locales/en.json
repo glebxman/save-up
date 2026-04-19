@@ -1,0 +1,110 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Saver",
+    "browser": "Browser",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Ready",
+    "synced": "Synced",
+    "mock": "Mock",
+    "live": "Live"
+  },
+  "shell": {
+    "greeting": "Hello, {{name}}",
+    "welcomeBack": "Welcome back",
+    "notifications": "Notifications",
+    "nav": {
+      "dashboard": "Dashboard",
+      "report": "Report",
+      "settings": "Settings"
+    }
+  },
+  "dashboard": {
+    "loading": "Loading your finance status...",
+    "errorCaption": "Loading error",
+    "errorTitle": "Could not fetch your data",
+    "errorDescription": "Check the backend RPC endpoint, Telegram initData, and server connection.",
+    "shortcuts": {
+      "income": "Income",
+      "expense": "Expense",
+      "report": "Report",
+      "setting": "Setting"
+    },
+    "rhythmCaption": "Daily rhythm",
+    "rhythmTitle": "Stay in control",
+    "rhythmDescription": "Add an amount, then use the shortcut row above to log income or expense in one tap."
+  },
+  "balance": {
+    "caption": "My balance",
+    "healthy": "Healthy runway",
+    "watch": "Watch spending",
+    "spendableNow": "Spendable now",
+    "monthlyBudget": "Monthly budget",
+    "tracking": "Tracking",
+    "trackingValue": "Real-time"
+  },
+  "dailyLimit": {
+    "caption": "Left to spend",
+    "days": "{{count}} days",
+    "description": "This is the pace that keeps your balance spread across the remaining days."
+  },
+  "savings": {
+    "caption": "Savings pocket",
+    "description": "Each new income moves a fixed slice into savings automatically.",
+    "setup": "Savings setup",
+    "question": "How much should go to savings?"
+  },
+  "amountInput": {
+    "caption": "Transaction pad",
+    "title": "Enter an amount"
+  },
+  "report": {
+    "loading": "Building your monthly report...",
+    "errorCaption": "Report error",
+    "errorTitle": "Could not load the summary",
+    "errorDescription": "Check the backend RPC endpoint and database connection.",
+    "statistics": "Statistics",
+    "modeIncome": "Income",
+    "modeSpending": "Spending",
+    "totalIncome": "Total income",
+    "totalSpending": "Total spending",
+    "newMonthCaption": "New month",
+    "newMonthTitle": "Close out the month",
+    "newMonthAction": "Reset monthly spending",
+    "ops": "{{count}} ops"
+  },
+  "monthReport": {
+    "snapshot": "Snapshot",
+    "overview": "Monthly overview",
+    "description": "A compact view of the money coming in, going out, and moving into savings this month.",
+    "income": "Income",
+    "spending": "Spending",
+    "saved": "Saved",
+    "transactions": "Transactions"
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Adjust the interface to match your preferences.",
+    "theme": "Appearance",
+    "language": "Language",
+    "themeAuto": "Auto",
+    "themeDark": "Dark",
+    "themeLight": "Light",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Choose theme",
+    "themeModalDescription": "Use the system appearance or switch the app manually.",
+    "languageModalTitle": "Choose language",
+    "languageModalDescription": "Select the language used across the app.",
+    "languageEn": "English",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek"
+  },
+  "notFound": {
+    "caption": "Page not found",
+    "title": "This route does not exist",
+    "description": "Return to the dashboard to continue tracking your budget.",
+    "action": "Back to dashboard"
+  }
+}
