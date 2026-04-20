@@ -33,22 +33,16 @@ export function useFinance() {
 
   const statusQuery = useQuery({
     queryKey: statusKey,
-    enabled: Number.isFinite(telegramId),
-    queryFn: () => {
-      if (initData) {
-        return api.initUser(initData);
-      }
-
-      return api.getStatus(telegramId);
-    },
+    enabled: !!initData,
+    queryFn: () => api.initUser(initData),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
 
   const reportQuery = useQuery({
     queryKey: reportKey,
-    enabled: Number.isFinite(telegramId),
-    queryFn: () => api.getReport(telegramId),
+    enabled: !!initData,
+    queryFn: () => api.getReport(initData),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
@@ -64,7 +58,7 @@ export function useFinance() {
 
   const addIncomeMutation = useMutation({
     mutationFn: ({ amount, savingsPct }: { amount: number; savingsPct: SavingsPct }) =>
-      api.addIncome(telegramId, amount, savingsPct),
+      api.addIncome(initData, amount, savingsPct),
     onMutate: async ({ amount, savingsPct }) => {
       const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
 
@@ -101,7 +95,7 @@ export function useFinance() {
   });
 
   const addExpenseMutation = useMutation({
-    mutationFn: ({ amount }: { amount: number }) => api.addExpense(telegramId, amount),
+    mutationFn: ({ amount }: { amount: number }) => api.addExpense(initData, amount),
     onMutate: async ({ amount }) => {
       const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
 
@@ -136,7 +130,7 @@ export function useFinance() {
   });
 
   const newMonthMutation = useMutation({
-    mutationFn: () => api.newMonth(telegramId),
+    mutationFn: () => api.newMonth(initData),
     onSuccess: (status) => {
       syncStatus(status);
       queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);

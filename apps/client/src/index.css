@@ -138,7 +138,7 @@ body {
   min-height: 100vh;
   background:
     radial-gradient(circle at top center, rgba(170, 255, 93, 0.18), transparent 24%),
-    linear-gradient(180deg, #1a2317 0%, #0a0d0a 100%);
+    linear-gradient(180deg, var(--app-body-background) 0%, var(--background) 100%);
 }
 
 .finance-shell-frame {
@@ -155,14 +155,13 @@ body {
   right: auto;
   bottom: calc(16px + var(--safe-bottom));
   z-index: 30;
-  width: min(100%, 460px);
-  padding-inline: 16px;
+  width: auto;
+  padding: 0px;
   transform: translateX(-50%);
 }
 
 .finance-bottom-nav {
-  background: rgba(16, 21, 15, 0.88);
-  backdrop-filter: blur(20px);
+  backdrop-filter: blur(10px);
 }
 
 .finance-nav-button {
@@ -189,14 +188,14 @@ body {
   align-items: end;
   justify-content: center;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--surface-secondary);
   padding: 5px;
 }
 
 .finance-chart-bar {
   width: 100%;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.18);
+  background: var(--surface-tertiary);
 }
 
 .finance-chart-bar--accent {

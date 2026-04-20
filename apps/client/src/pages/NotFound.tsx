@@ -7,7 +7,7 @@ export function NotFound() {
   const navigate = useNavigate();
 
   return (
-    <Card className="mx-auto mt-10 max-w-md" variant="secondary">
+    <Card className="mx-auto mt-10 max-w-md" variant="default">
       <CardHeader>
         <div className="flex w-full items-start justify-between gap-3">
           <div>
@@ -15,7 +15,7 @@ export function NotFound() {
             <CardTitle>{t("notFound.title")}</CardTitle>
           </div>
 
-          <Chip color="warning" variant="soft">
+          <Chip color="warning" variant="primary">
             404
           </Chip>
         </div>

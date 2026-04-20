@@ -13,7 +13,7 @@ export function MonthReport({ report }: MonthReportProps) {
 
   return (
     <div className="grid gap-3">
-      <Card variant="secondary">
+      <Card variant="default">
         <CardHeader>
           <div className="flex w-full items-start justify-between gap-3">
             <div>
@@ -21,7 +21,7 @@ export function MonthReport({ report }: MonthReportProps) {
               <CardTitle>{t("monthReport.overview")}</CardTitle>
             </div>
 
-            <Chip color="accent" variant="soft">
+            <Chip color="accent" variant="primary">
               {report.monthKey}
             </Chip>
           </div>
@@ -33,14 +33,14 @@ export function MonthReport({ report }: MonthReportProps) {
       </Card>
 
       <div className="grid gap-3 sm:grid-cols-2">
-        <Card className="overflow-hidden" variant="tertiary">
+        <Card className="overflow-hidden" variant="default">
           <CardHeader>
             <CardDescription>{t("monthReport.income")}</CardDescription>
             <CardTitle>{formatMoney(report.incomeTotal)}</CardTitle>
           </CardHeader>
         </Card>
 
-        <Card className="overflow-hidden" variant="tertiary">
+        <Card className="overflow-hidden" variant="default">
           <CardHeader>
             <CardDescription>{t("monthReport.spending")}</CardDescription>
             <CardTitle>{formatMoney(report.expenseTotal)}</CardTitle>

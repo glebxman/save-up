@@ -36,7 +36,7 @@ export function AmountInput({ value, onChange }: AmountInputProps) {
       <CardFooter>
         <div className="grid w-full grid-cols-3 gap-2">
           {quickAmounts.map((amount) => (
-            <Button key={amount} className="rounded-full" onPress={() => onChange(String(amount))} variant="secondary">
+            <Button key={amount} className="rounded-full" onPress={() => onChange(String(amount))} variant="primary">
               +{amount}
             </Button>
           ))}

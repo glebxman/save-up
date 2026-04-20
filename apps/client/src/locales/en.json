@@ -31,10 +31,7 @@
       "expense": "Expense",
       "report": "Report",
       "setting": "Setting"
-    },
-    "rhythmCaption": "Daily rhythm",
-    "rhythmTitle": "Stay in control",
-    "rhythmDescription": "Add an amount, then use the shortcut row above to log income or expense in one tap."
+    }
   },
   "balance": {
     "caption": "My balance",

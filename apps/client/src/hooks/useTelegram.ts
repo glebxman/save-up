@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 interface TelegramThemeParams {
   bg_color?: string;
@@ -39,12 +39,17 @@ type TelegramWindow = Window & {
 };
 
 export function useTelegram() {
-  const webApp = (window as TelegramWindow).Telegram?.WebApp;
+  const [webApp, setWebApp] = useState<TelegramWebApp | null>(null);
 
   useEffect(() => {
-    webApp?.ready?.();
-    webApp?.expand?.();
-  }, [webApp]);
+    const tg = (window as TelegramWindow).Telegram?.WebApp;
+
+    if (tg) {
+      tg.ready?.();
+      tg.expand?.();
+      setWebApp(tg);
+    }
+  }, []);
 
   return {
     initData: webApp?.initData ?? "",

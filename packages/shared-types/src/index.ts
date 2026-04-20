@@ -48,13 +48,13 @@ export interface RpcMethodMap {
   };
   "user.getStatus": {
     params: {
-      telegramId: number;
+      initData: string;
     };
     result: Status;
   };
   "finance.addIncome": {
     params: {
-      telegramId: number;
+      initData: string;
       amount: number;
       savingsPct?: SavingsPct;
     };
@@ -62,21 +62,21 @@ export interface RpcMethodMap {
   };
   "finance.addExpense": {
     params: {
-      telegramId: number;
+      initData: string;
       amount: number;
     };
     result: Status;
   };
   "finance.getReport": {
     params: {
-      telegramId: number;
+      initData: string;
       monthKey?: string;
     };
     result: MonthReport;
   };
   "finance.newMonth": {
     params: {
-      telegramId: number;
+      initData: string;
     };
     result: Status;
   };

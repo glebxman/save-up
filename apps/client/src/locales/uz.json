@@ -31,10 +31,7 @@
       "expense": "Chiqim",
       "report": "Hisobot",
       "setting": "Sozlama"
-    },
-    "rhythmCaption": "Kun ritmi",
-    "rhythmTitle": "Hammasi nazorat ostida",
-    "rhythmDescription": "Summani kiriting va yuqoridagi tezkor tugmalar orqali kirim yoki chiqimni bir bosishda qo'shing."
+    }
   },
   "balance": {
     "caption": "Mening balansim",

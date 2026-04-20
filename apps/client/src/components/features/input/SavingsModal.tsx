@@ -24,7 +24,7 @@ export function SavingsModal({ isOpen, isPending, onClose, onSelect }: SavingsMo
 
             <Modal.Header>
               <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="soft">
+                <Chip color="accent" variant="primary">
                   {t("savings.setup")}
                 </Chip>
                 <Modal.Heading>{t("savings.question")}</Modal.Heading>

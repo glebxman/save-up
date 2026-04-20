@@ -190,14 +190,16 @@ const mockHandlers: {
     return buildStatus(user);
   },
   "user.getStatus": (params) => {
-    const user = ensureUser(params.telegramId);
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
 
     return buildStatus(user);
   },
   "finance.addIncome": (params) => {
     assertPositiveAmount(params.amount);
 
-    const user = ensureUser(params.telegramId);
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
     const nextSavingsPct = normalizeSavingsPct(params.savingsPct) ?? user.savingsPct;
     const savingsAmt = Number((params.amount * (nextSavingsPct / 100)).toFixed(2));
     const nextUser: User = {
@@ -223,7 +225,8 @@ const mockHandlers: {
   "finance.addExpense": (params) => {
     assertPositiveAmount(params.amount);
 
-    const user = ensureUser(params.telegramId);
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
 
     if (user.balance < params.amount) {
       throw new Error("Insufficient balance for expense");
@@ -248,9 +251,13 @@ const mockHandlers: {
 
     return buildStatus(nextUser);
   },
-  "finance.getReport": (params) => getReportForUser(params.telegramId, params.monthKey),
+  "finance.getReport": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    return getReportForUser(telegramId, params.monthKey);
+  },
   "finance.newMonth": (params) => {
-    const user = ensureUser(params.telegramId);
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
     const nextUser: User = {
       ...user,
       monthlyExp: 0,

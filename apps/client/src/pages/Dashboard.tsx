@@ -8,7 +8,7 @@ import { DailyLimitCard } from "@/components/features/dashboard/DailyLimitCard";
 import { SavingsCard } from "@/components/features/dashboard/SavingsCard";
 import { AmountInput } from "@/components/features/input/AmountInput";
 import { SavingsModal } from "@/components/features/input/SavingsModal";
-import { ArrowDownLeftIcon, ArrowUpRightIcon, PiggyIcon, ReportIcon, SettingsIcon } from "@/components/layout/icons";
+import { ArrowDownLeftIcon, ArrowUpRightIcon, ReportIcon, SettingsIcon } from "@/components/layout/icons";
 import { useFinance } from "@/hooks/useFinance";
 
 interface ShortcutButtonProps {
@@ -20,17 +20,17 @@ interface ShortcutButtonProps {
 
 function ShortcutButton({ icon: Icon, label, onPress, isDisabled }: ShortcutButtonProps) {
   return (
-    <Button
-      className="h-[92px] min-w-0 flex-col gap-2 rounded-[28px] px-3 py-4 text-xs font-medium"
-      isDisabled={isDisabled}
-      onPress={onPress}
-      variant="secondary"
+    <button
+      className="flex h-[88px] w-full flex-col items-center justify-center gap-2 rounded-3xl bg-[var(--surface)] px-2 py-3 text-xs font-medium transition-colors active:bg-[var(--surface-secondary)] disabled:opacity-40"
+      disabled={isDisabled}
+      onClick={onPress}
+      type="button"
     >
-      <span className="flex h-10 w-10 items-center justify-center rounded-full bg-[rgba(190,255,102,0.12)] text-[var(--accent)]">
+      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgba(190,255,102,0.12)] text-[var(--accent)]">
         <Icon className="h-5 w-5" />
       </span>
-      <span>{label}</span>
-    </Button>
+      <span className="text-[var(--foreground)]">{label}</span>
+    </button>
   );
 }
 
@@ -66,7 +66,7 @@ export function Dashboard() {
 
   if (statusQuery.isPending && !status) {
     return (
-      <Card variant="secondary">
+      <Card variant="default">
         <CardContent>
           <div className="flex items-center gap-3 py-3">
             <Spinner />
@@ -79,7 +79,7 @@ export function Dashboard() {
 
   if (statusQuery.isError || !status) {
     return (
-      <Card variant="secondary">
+      <Card variant="default">
         <CardHeader>
           <div>
             <CardDescription>{t("dashboard.errorCaption")}</CardDescription>
@@ -99,7 +99,7 @@ export function Dashboard() {
 
       <AmountInput onChange={setAmount} value={amount} />
 
-      <div className="grid grid-cols-4 gap-3">
+      <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-3">
         <ShortcutButton
           icon={ArrowUpRightIcon}
           isDisabled={!hasValidAmount || isBusy}
@@ -125,23 +125,6 @@ export function Dashboard() {
         />
         <SavingsCard savings={status.user.savings} savingsPct={status.user.savingsPct} />
       </div>
-
-      <Card variant="default">
-        <CardHeader>
-          <div className="flex w-full items-center justify-between gap-3">
-            <div>
-              <CardDescription>{t("dashboard.rhythmCaption")}</CardDescription>
-              <CardTitle>{t("dashboard.rhythmTitle")}</CardTitle>
-            </div>
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[rgba(190,255,102,0.14)] text-[var(--accent)]">
-              <PiggyIcon className="h-5 w-5" />
-            </span>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <p className="m-0 text-sm text-[var(--muted)]">{t("dashboard.rhythmDescription")}</p>
-        </CardContent>
-      </Card>
 
       <SavingsModal
         isOpen={isModalOpen}

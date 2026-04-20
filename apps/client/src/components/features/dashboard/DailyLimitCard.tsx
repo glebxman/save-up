@@ -16,7 +16,7 @@ export function DailyLimitCard({ daysRemaining, dailyLimit }: DailyLimitCardProp
   const { t } = useTranslation();
 
   return (
-    <Card className="h-full overflow-hidden" variant="secondary">
+    <Card className="h-full overflow-hidden" variant="default">
       <CardHeader>
         <div className="flex w-full items-start justify-between gap-3">
           <div>
@@ -24,7 +24,7 @@ export function DailyLimitCard({ daysRemaining, dailyLimit }: DailyLimitCardProp
             <CardTitle>{formatMoney(dailyLimit)}</CardTitle>
           </div>
 
-          <Chip color="accent" variant="soft">
+          <Chip color="accent" variant="primary">
             {t("dailyLimit.days", { count: daysRemaining })}
           </Chip>
         </div>

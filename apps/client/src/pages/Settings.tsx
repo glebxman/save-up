@@ -55,7 +55,7 @@ export function Settings() {
       <Card className="overflow-hidden" variant="default">
         <CardContent className="p-0">
           <button
-            className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
+            className="flex w-full items-center justify-between gap-4 pb-2 text-left"
             onClick={() => setActiveModal("theme")}
             type="button"
           >
@@ -73,14 +73,14 @@ export function Settings() {
 
             <div className="flex min-w-0 items-center gap-2 text-sm text-[var(--muted)]">
               <span className="truncate">{themeSummary}</span>
-              <ChevronRightIcon className="h-4 w-4 shrink-0 opacity-70" />
+              <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
             </div>
           </button>
 
           <div className="mx-4 h-px bg-[var(--separator)]" />
 
           <button
-            className="flex w-full items-center justify-between gap-4 px-4 py-4 text-left"
+            className="flex w-full items-center justify-between gap-4 pt-2 text-left"
             onClick={() => setActiveModal("language")}
             type="button"
           >
@@ -98,7 +98,7 @@ export function Settings() {
 
             <div className="flex min-w-0 items-center gap-2 text-sm text-[var(--muted)]">
               <span className="truncate">{languageLabels[currentLanguage]}</span>
-              <ChevronRightIcon className="h-4 w-4 shrink-0 opacity-70" />
+              <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
             </div>
           </button>
         </CardContent>

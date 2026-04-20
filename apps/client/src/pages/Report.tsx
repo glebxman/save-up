@@ -64,7 +64,7 @@ export function Report() {
 
   return (
     <div className="space-y-4">
-      <Card className="overflow-hidden" variant="tertiary">
+      <Card className="overflow-hidden" variant="default">
         <CardHeader>
           <div className="flex w-full items-center justify-between gap-3">
             <div>
@@ -78,14 +78,23 @@ export function Report() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-2 gap-2">
-            <Button onPress={() => setMode("income")} variant={mode === "income" ? "primary" : "secondary"}>
-              {t("report.modeIncome")}
-            </Button>
-            <Button onPress={() => setMode("spending")} variant={mode === "spending" ? "primary" : "secondary"}>
-              {t("report.modeSpending")}
-            </Button>
-          </div>
+        <div className="grid grid-cols-2 gap-2">
+          <Button 
+            className="w-full"
+            onPress={() => setMode("income")} 
+            variant={mode === "income" ? "primary" : "secondary"}
+          >
+            {t("report.modeIncome")}
+          </Button>
+
+          <Button 
+            className="w-full"
+            onPress={() => setMode("spending")} 
+            variant={mode === "spending" ? "primary" : "secondary"}
+          >
+            {t("report.modeSpending")}
+          </Button>
+        </div>
 
           <div className="mt-5 flex items-end justify-between gap-3">
             <div>
@@ -95,7 +104,7 @@ export function Report() {
               <strong className="text-4xl font-semibold text-[var(--foreground)]">{formatMoney(selectedTotal)}</strong>
             </div>
 
-            <Chip color="accent" variant="soft">
+            <Chip color="accent" variant="primary">
               {t("report.ops", { count: report.transactionCount })}
             </Chip>
           </div>

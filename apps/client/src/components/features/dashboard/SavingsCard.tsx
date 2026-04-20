@@ -20,14 +20,14 @@ export function SavingsCard({ savings, savingsPct }: SavingsCardProps) {
             <CardTitle>{formatMoney(savings)}</CardTitle>
           </div>
 
-          <Chip color="success" variant="soft">
+          <Chip color="accent" variant="primary">
             {savingsPct}%
           </Chip>
         </div>
       </CardHeader>
 
       <CardContent>
-        <div className="rounded-[22px] border border-white/6 bg-black/10 p-3">
+        <div className="rounded-[22px] bg-black/5 p-3">
           <p className="m-0 text-sm text-[var(--muted)]">{t("savings.description")}</p>
         </div>
       </CardContent>
