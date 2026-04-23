@@ -1,18 +1,11 @@
 import type { PropsWithChildren } from "react";
-import { Avatar, Button, Card, CardContent } from "@heroui/react";
+import { Avatar, Button } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useLocation, useNavigate } from "react-router-dom";
 
+import { ToastViewport } from "@/components/feedback/ToastViewport";
 import { useTelegram } from "@/hooks/useTelegram";
-import { BellIcon, DashboardIcon, ReportIcon, SettingsIcon } from "./icons";
-
-function getInitials(name?: string): string {
-  if (!name) {
-    return "SU";
-  }
-
-  return name.slice(0, 2).toUpperCase();
-}
+import { DashboardIcon, ReportIcon, SettingsIcon } from "./icons";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { t } = useTranslation();
@@ -30,18 +23,14 @@ export function AppShell({ children }: PropsWithChildren) {
   return (
     <div className="finance-app-shell">
       <div className="finance-shell-frame mx-auto flex min-h-screen w-full max-w-[460px] flex-col px-4 pt-[calc(20px+var(--safe-top))]">
-        <header className="mb-5 flex items-center justify-between gap-3">
-          <div className="flex items-center gap-3">
-            <div className="relative">
-              <Avatar className="h-14 w-14 ring-1 ring-[rgba(190,255,102,0.28)]">
-                <Avatar.Image src={AVATAR_URL} />
-              </Avatar>
-            </div>
+        <header className="mb-5 flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <Avatar.Image src={AVATAR_URL} />
+          </Avatar>
 
-            <div>
-              <p className="m-0 text-lg font-semibold text-[var(--foreground)]">{t("shell.greeting", { name: firstName })}</p>
-              <p className="m-0 text-sm text-[var(--muted)]">{t("shell.welcomeBack")}</p>
-            </div>
+          <div>
+            <p className="m-0 text-base font-semibold text-[var(--foreground)]">{t("shell.greeting", { name: firstName })}</p>
+            <p className="m-0 text-xs text-[var(--muted)]">{t("shell.welcomeBack")}</p>
           </div>
         </header>
 
@@ -49,32 +38,30 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
 
       <div className="finance-bottom-nav-wrap">
-        <Card className="finance-bottom-nav rounded-full" variant="transparent">
-          <CardContent>
-            <div className="flex items-center gap-2">
-              {navItems.map(({ href, icon: Icon, label }) => {
-                const isActive =
-                  href === "/"
-                    ? location.pathname === href
-                    : location.pathname.startsWith(href);
+        <nav className="finance-bottom-nav flex items-center gap-2 rounded-full px-2 py-2 ">
+          {navItems.map(({ href, icon: Icon, label }) => {
+            const isActive =
+              href === "/"
+                ? location.pathname === href
+                : location.pathname.startsWith(href);
 
-                return (
-                  <Button
-                    key={href}
-                    aria-label={label}
-                    className="finance-nav-button h-14 w-14 min-w-0 rounded-full p-0"
-                    data-active={isActive}
-                    onPress={() => navigate(href)}
-                    variant={isActive ? "primary" : "secondary"}
-                  >
-                    <Icon className="h-5 w-5" />
-                  </Button>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
+            return (
+              <Button
+                key={href}
+                aria-label={label}
+                className="finance-nav-button h-12 w-12 min-w-0 rounded-full p-0"
+                data-active={isActive}
+                onPress={() => navigate(href)}
+                variant={isActive ? "primary" : "secondary"}
+              >
+                <Icon className="h-5 w-5" />
+              </Button>
+            );
+          })}
+        </nav>
       </div>
+
+      <ToastViewport />
     </div>
   );
 }

@@ -1,4 +1,4 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar } from "@heroui/react";
+import { Card, CardContent, ProgressBar } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import { formatMoney } from "@/utils/format";
@@ -17,23 +17,20 @@ export function DailyLimitCard({ daysRemaining, dailyLimit }: DailyLimitCardProp
 
   return (
     <Card className="h-full overflow-hidden" variant="default">
-      <CardHeader>
-        <div className="flex w-full items-start justify-between gap-3">
-          <div>
-            <CardDescription>{t("dailyLimit.caption")}</CardDescription>
-            <CardTitle>{formatMoney(dailyLimit)}</CardTitle>
-          </div>
-
-          <Chip color="accent" variant="primary">
-            {t("dailyLimit.days", { count: daysRemaining })}
-          </Chip>
-        </div>
-      </CardHeader>
-
       <CardContent>
         <div className="space-y-3">
-          <ProgressBar aria-label={t("dailyLimit.caption")} color="accent" value={getRunwayProgress(daysRemaining)} />
-          <p className="m-0 text-sm text-[var(--muted)]">{t("dailyLimit.description")}</p>
+          <div>
+            <p className="m-0 text-sm text-[var(--muted)]">{t("dailyLimit.caption")}</p>
+            <p className="m-0 mt-1 text-2xl font-semibold text-[var(--foreground)]">{formatMoney(dailyLimit)}</p>
+          </div>
+          <ProgressBar aria-label={t("dailyLimit.caption")} color="accent" size="lg" value={getRunwayProgress(daysRemaining)}>
+            <ProgressBar.Track>
+              <ProgressBar.Fill />
+            </ProgressBar.Track>
+          </ProgressBar>
+          <p className="m-0 text-xs text-[var(--muted)]">
+            {t("dailyLimit.days", { count: daysRemaining })} &middot; {t("dailyLimit.description")}
+          </p>
         </div>
       </CardContent>
     </Card>

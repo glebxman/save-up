@@ -1,34 +1,58 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle, Chip } from "@heroui/react";
+import { Button, Card, CardContent, ProgressBar } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import { formatMoney } from "@/utils/format";
 
 interface SavingsCardProps {
   savings: number;
-  savingsPct: number;
+  goal: number;
+  onSetGoal: () => void;
+  onDeposit: () => void;
+  onWithdraw: () => void;
 }
 
-export function SavingsCard({ savings, savingsPct }: SavingsCardProps) {
+export function SavingsCard({ savings, goal, onSetGoal, onDeposit, onWithdraw }: SavingsCardProps) {
   const { t } = useTranslation();
+  const progress = goal > 0 ? Math.min(100, Math.round((savings / goal) * 100)) : 0;
+  const remaining = Math.max(goal - savings, 0);
 
   return (
     <Card className="h-full overflow-hidden" variant="default">
-      <CardHeader>
-        <div className="flex w-full items-start justify-between gap-3">
+      <CardContent>
+        <div className="space-y-3">
           <div>
-            <CardDescription>{t("savings.caption")}</CardDescription>
-            <CardTitle>{formatMoney(savings)}</CardTitle>
+            <p className="m-0 text-sm text-[var(--muted)]">{t("savings.caption")}</p>
+            <p className="m-0 mt-1 text-2xl font-semibold text-[var(--foreground)]">{formatMoney(savings)}</p>
           </div>
 
-          <Chip color="accent" variant="primary">
-            {savingsPct}%
-          </Chip>
-        </div>
-      </CardHeader>
+          {goal > 0 && (
+            <>
+              <ProgressBar aria-label={t("savings.caption")} color="accent" size="lg" value={progress}>
+                <ProgressBar.Track>
+                  <ProgressBar.Fill />
+                </ProgressBar.Track>
+              </ProgressBar>
+              <p className="m-0 text-xs text-[var(--muted)] mb-2">
+                {t("savings.goalText", { goal: formatMoney(goal), remaining: formatMoney(remaining) })}
+              </p>
+            </>
+          )}
 
-      <CardContent>
-        <div className="rounded-[22px] bg-black/5 p-3">
-          <p className="m-0 text-sm text-[var(--muted)]">{t("savings.description")}</p>
+          {goal === 0 && (
+            <p className="m-0 text-xs text-[var(--muted)] mb-2">{t("savings.description")}</p>
+          )}
+
+          <div className="grid grid-cols-3 gap-2">
+            <Button className="w-full" onPress={onDeposit} size="sm" variant="secondary">
+              {t("savings.deposit")}
+            </Button>
+            <Button className="w-full" onPress={onWithdraw} size="sm" variant="secondary">
+              {t("savings.withdraw")}
+            </Button>
+            <Button className="w-full" onPress={onSetGoal} size="sm" variant="secondary">
+              {t("savings.setGoal")}
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>

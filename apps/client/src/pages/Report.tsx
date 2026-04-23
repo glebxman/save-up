@@ -1,41 +1,182 @@
 import { useMemo, useState } from "react";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, Spinner } from "@heroui/react";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
+import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
 import { MonthReport } from "@/components/features/report/MonthReport";
-import { ReportIcon } from "@/components/layout/icons";
+import { TransactionHistoryView } from "@/components/features/report/TransactionHistoryView";
 import { useFinance } from "@/hooks/useFinance";
 import { formatMoney } from "@/utils/format";
 
-type ReportMode = "income" | "spending";
+type ReportMode = "income" | "spending" | "analytics" | "history";
 
-function buildSnapshotBars(incomeTotal: number, expenseTotal: number, savingsTotal: number, mode: ReportMode): number[] {
-  const raw = mode === "income"
-    ? [incomeTotal * 0.22, savingsTotal * 0.8, incomeTotal * 0.48, incomeTotal, incomeTotal * 0.72, savingsTotal * 1.2]
-    : [expenseTotal * 0.2, expenseTotal * 0.42, expenseTotal * 0.56, expenseTotal, expenseTotal * 0.76, expenseTotal * 0.34];
+interface SummaryMetric {
+  label: string;
+  value: string;
+}
 
-  const max = Math.max(...raw, 1);
+interface SummaryRow {
+  key: string;
+  label: string;
+  value: number;
+  percent: number;
+}
 
-  return raw.map((value) => Math.max(18, Math.round((value / max) * 100)));
+interface ReportSummary {
+  focusLabel: string;
+  focusValue: string;
+  description: string;
+  metrics: SummaryMetric[];
+  rows: SummaryRow[];
+}
+
+const modes: ReportMode[] = ["income", "spending", "analytics", "history"];
+
+function getProgressValue(value: number, total: number): number {
+  if (value <= 0 || total <= 0) {
+    return 0;
+  }
+
+  return Math.max(6, Math.min(100, Math.round((value / total) * 100)));
 }
 
 export function Report() {
   const { t } = useTranslation();
-  const { report, reportQuery, newMonthMutation } = useFinance();
+  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation } = useFinance();
   const [mode, setMode] = useState<ReportMode>("income");
+  const activeReport = report ?? {
+    monthKey: "",
+    incomeTotal: 0,
+    expenseTotal: 0,
+    savingsTotal: 0,
+    savingsWithdrawnTotal: 0,
+    netSavingsTotal: 0,
+    transactionCount: 0,
+  };
 
-  const selectedTotal = mode === "income" ? report?.incomeTotal ?? 0 : report?.expenseTotal ?? 0;
-  const snapshotBars = useMemo(() => {
-    if (!report) {
-      return [];
+  const topBreakdownItems = useMemo(
+    () => [...(breakdown?.items ?? [])].sort((a, b) => b.total - a.total).slice(0, 3),
+    [breakdown],
+  );
+
+  const analyticsTransactionCount = useMemo(
+    () => topBreakdownItems.reduce((sum, item) => sum + item.count, 0),
+    [topBreakdownItems],
+  );
+
+  const comparisonBase = activeReport.incomeTotal > 0
+    ? activeReport.incomeTotal
+    : Math.max(activeReport.expenseTotal, activeReport.savingsTotal, activeReport.savingsWithdrawnTotal, 1);
+
+  const cashflowRows = useMemo<SummaryRow[]>(
+    () => [
+      {
+        key: "income",
+        label: t("monthReport.income"),
+        value: activeReport.incomeTotal,
+        percent: getProgressValue(activeReport.incomeTotal, comparisonBase),
+      },
+      {
+        key: "spending",
+        label: t("monthReport.spending"),
+        value: activeReport.expenseTotal,
+        percent: getProgressValue(activeReport.expenseTotal, comparisonBase),
+      },
+      {
+        key: "saved",
+        label: t("monthReport.saved"),
+        value: activeReport.savingsTotal,
+        percent: getProgressValue(activeReport.savingsTotal, comparisonBase),
+      },
+    ],
+    [activeReport.expenseTotal, activeReport.incomeTotal, activeReport.savingsTotal, comparisonBase, t],
+  );
+
+  const summary = useMemo<ReportSummary>(() => {
+    if (mode === "analytics") {
+      const isAnalyticsLoading = breakdownQuery.isPending && !breakdown;
+
+      return {
+        focusLabel: t("analytics.totalExpenses"),
+        focusValue: formatMoney(activeReport.expenseTotal),
+        description: isAnalyticsLoading
+          ? t("report.loading")
+          : topBreakdownItems.length > 0
+            ? t("analytics.description")
+            : t("analytics.noData"),
+        metrics: [
+          {
+            label: topBreakdownItems[0] ? t(`expenseCategory.${topBreakdownItems[0].category}`) : t("analytics.title"),
+            value: topBreakdownItems[0] ? formatMoney(topBreakdownItems[0].total) : "0",
+          },
+          {
+            label: t("monthReport.transactions"),
+            value: String(analyticsTransactionCount || activeReport.transactionCount),
+          },
+        ],
+        rows: topBreakdownItems.map((item) => ({
+          key: item.category,
+          label: t(`expenseCategory.${item.category}`),
+          value: item.total,
+          percent: getProgressValue(item.total, breakdown?.expenseTotal ?? 0),
+        })),
+      };
     }
 
-    return buildSnapshotBars(report.incomeTotal, report.expenseTotal, report.savingsTotal, mode);
-  }, [mode, report]);
+    if (mode === "history") {
+      return {
+        focusLabel: t("monthReport.transactions"),
+        focusValue: String(activeReport.transactionCount),
+        description: t("history.count", { count: activeReport.transactionCount }),
+        metrics: [
+          { label: t("report.totalIncome"), value: formatMoney(activeReport.incomeTotal) },
+          { label: t("report.totalSpending"), value: formatMoney(activeReport.expenseTotal) },
+        ],
+        rows: [],
+      };
+    }
+
+    if (mode === "spending") {
+      return {
+        focusLabel: t("report.totalSpending"),
+        focusValue: formatMoney(activeReport.expenseTotal),
+        description: t("monthReport.description"),
+        metrics: [
+          { label: t("report.totalIncome"), value: formatMoney(activeReport.incomeTotal) },
+          { label: t("monthReport.netSaved"), value: formatMoney(activeReport.netSavingsTotal) },
+        ],
+        rows: cashflowRows,
+      };
+    }
+
+    return {
+      focusLabel: t("report.totalIncome"),
+      focusValue: formatMoney(activeReport.incomeTotal),
+      description: t("monthReport.description"),
+      metrics: [
+        { label: t("monthReport.saved"), value: formatMoney(activeReport.savingsTotal) },
+        { label: t("monthReport.transactions"), value: String(activeReport.transactionCount) },
+      ],
+      rows: cashflowRows,
+    };
+  }, [
+    activeReport.expenseTotal,
+    activeReport.incomeTotal,
+    activeReport.netSavingsTotal,
+    activeReport.savingsTotal,
+    activeReport.transactionCount,
+    analyticsTransactionCount,
+    breakdown?.expenseTotal,
+    breakdownQuery.isPending,
+    cashflowRows,
+    mode,
+    t,
+    topBreakdownItems,
+  ]);
 
   if (reportQuery.isPending && !report) {
     return (
-      <Card variant="secondary">
+      <Card variant="default">
         <CardContent>
           <div className="flex items-center gap-3 py-3">
             <Spinner />
@@ -48,7 +189,7 @@ export function Report() {
 
   if (reportQuery.isError || !report) {
     return (
-      <Card variant="secondary">
+      <Card variant="default">
         <CardHeader>
           <div>
             <CardDescription>{t("report.errorCaption")}</CardDescription>
@@ -66,74 +207,91 @@ export function Report() {
     <div className="space-y-4">
       <Card className="overflow-hidden" variant="default">
         <CardHeader>
-          <div className="flex w-full items-center justify-between gap-3">
-            <div>
-              <CardDescription>{t("report.statistics")}</CardDescription>
-              <CardTitle>{report.monthKey}</CardTitle>
-            </div>
-            <span className="flex h-11 w-11 items-center justify-center rounded-full bg-[rgba(190,255,102,0.14)] text-[var(--accent)]">
-              <ReportIcon className="h-5 w-5" />
-            </span>
+          <div>
+            <CardDescription>{t("report.statistics")}</CardDescription>
+            <CardTitle>{activeReport.monthKey}</CardTitle>
           </div>
         </CardHeader>
 
         <CardContent>
-        <div className="grid grid-cols-2 gap-2">
-          <Button 
-            className="w-full"
-            onPress={() => setMode("income")} 
-            variant={mode === "income" ? "primary" : "secondary"}
-          >
-            {t("report.modeIncome")}
-          </Button>
-
-          <Button 
-            className="w-full"
-            onPress={() => setMode("spending")} 
-            variant={mode === "spending" ? "primary" : "secondary"}
-          >
-            {t("report.modeSpending")}
-          </Button>
-        </div>
-
-          <div className="mt-5 flex items-end justify-between gap-3">
-            <div>
-              <p className="mb-1 mt-0 text-sm text-[var(--muted)]">
-                {mode === "income" ? t("report.totalIncome") : t("report.totalSpending")}
-              </p>
-              <strong className="text-4xl font-semibold text-[var(--foreground)]">{formatMoney(selectedTotal)}</strong>
-            </div>
-
-            <Chip color="accent" variant="primary">
-              {t("report.ops", { count: report.transactionCount })}
-            </Chip>
+          <div className="grid grid-cols-4 gap-1.5">
+            {modes.map((m) => (
+              <Button
+                key={m}
+                className="w-full text-xs"
+                onPress={() => setMode(m)}
+                size="sm"
+                variant={mode === m ? "primary" : "secondary"}
+              >
+                {t(`report.mode${m.charAt(0).toUpperCase() + m.slice(1)}`)}
+              </Button>
+            ))}
           </div>
 
-          <div className="mt-6">
-            <div className="finance-chart-grid">
-              {snapshotBars.map((height, index) => (
-                <div key={`${mode}-${index}`} className="finance-chart-column">
-                  <div
-                    className={`finance-chart-bar ${index === 3 ? "finance-chart-bar--accent" : ""}`}
-                    style={{ height: `${height}%` }}
-                  />
-                </div>
+          <div className="mt-5 space-y-4">
+            <div>
+              <p className="mb-1 mt-0 text-sm text-[var(--muted)]">{summary.focusLabel}</p>
+              <strong className="text-3xl font-semibold text-[var(--foreground)]">{summary.focusValue}</strong>
+              <p className="m-0 mt-2 text-xs text-[var(--muted)]">{summary.description}</p>
+            </div>
+
+            <div className="grid grid-cols-2 gap-2">
+              {summary.metrics.map((metric) => (
+                <Card key={metric.label} variant="secondary">
+                  <CardContent>
+                    <p className="m-0 text-xs text-[var(--muted)]">{metric.label}</p>
+                    <p className="m-0 mt-1 text-lg font-semibold text-[var(--foreground)]">{metric.value}</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
+
+            {mode === "analytics" && breakdownQuery.isPending && !breakdown && (
+              <div className="flex items-center gap-3 py-2 text-sm text-[var(--muted)]">
+                <Spinner />
+                <span>{t("report.loading")}</span>
+              </div>
+            )}
+
+            {summary.rows.length > 0 && (
+              <div className="space-y-3">
+                {summary.rows.map((row) => (
+                  <div key={row.key} className="space-y-1.5">
+                    <div className="flex items-center justify-between gap-2">
+                      <span className="text-sm text-[var(--foreground)]">{row.label}</span>
+                      <span className="text-sm font-semibold text-[var(--foreground)]">{formatMoney(row.value)}</span>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="min-w-0 flex-1">
+                        <ProgressBar aria-label={row.label} color="accent" size="lg" value={row.percent}>
+                          <ProgressBar.Track>
+                            <ProgressBar.Fill />
+                          </ProgressBar.Track>
+                        </ProgressBar>
+                      </div>
+                      <Chip color="accent" size="sm" variant="primary">
+                        {row.percent}%
+                      </Chip>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>
 
-      <MonthReport report={report} />
+      {mode === "history" ? (
+        <TransactionHistoryView />
+      ) : mode === "analytics" && breakdown ? (
+        <CategoryBreakdownView breakdown={breakdown} />
+      ) : mode !== "analytics" ? (
+        <MonthReport report={activeReport} />
+      ) : null}
 
       <Card variant="default">
-        <CardHeader>
-          <div>
-            <CardDescription>{t("report.newMonthCaption")}</CardDescription>
-            <CardTitle>{t("report.newMonthTitle")}</CardTitle>
-          </div>
-        </CardHeader>
         <CardContent>
+          <p className="m-0 mb-2 text-sm text-[var(--muted)]">{t("report.newMonthCaption")}</p>
           <Button
             fullWidth
             isDisabled={newMonthMutation.isPending}

@@ -1,10 +1,18 @@
 import { startTransition } from "react";
 
-import type { SavingsPct, Status } from "@/types/finance";
+import type {
+  ExpenseCategory,
+  RecurringTransactionPayload,
+  SavingsTransferDirection,
+  Status,
+  TransactionUpdatePayload,
+} from "@/types/finance";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useTranslation } from "react-i18next";
 
 import * as api from "../api/methods";
 import { useFinanceStore } from "../stores/finance.store";
+import { useToastStore } from "../stores/ui.store";
 import { useTelegram } from "./useTelegram";
 
 function getDaysRemaining(now = new Date()): number {
@@ -25,11 +33,16 @@ function computeDailyLimit(balance: number): Status["dailyLimit"] {
 export function useFinance() {
   const queryClient = useQueryClient();
   const { initData, user, hapticFeedback } = useTelegram();
+  const { t } = useTranslation();
+  const pushToast = useToastStore((state) => state.pushToast);
   const optimisticStatus = useFinanceStore((state) => state.optimisticStatus);
   const setOptimisticStatus = useFinanceStore((state) => state.setOptimisticStatus);
   const telegramId = user?.id ?? Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
   const statusKey = ["status", telegramId] as const;
   const reportKey = ["report", telegramId] as const;
+  const breakdownKey = ["categoryBreakdown", telegramId] as const;
+  const recentExpensesKey = ["recentExpenses", telegramId] as const;
+  const transactionsBaseKey = ["transactions", telegramId] as const;
 
   const statusQuery = useQuery({
     queryKey: statusKey,
@@ -47,7 +60,34 @@ export function useFinance() {
     refetchOnWindowFocus: false,
   });
 
+  const breakdownQuery = useQuery({
+    queryKey: breakdownKey,
+    enabled: !!initData,
+    queryFn: () => api.getCategoryBreakdown(initData),
+    staleTime: 30_000,
+    refetchOnWindowFocus: false,
+  });
+
+  const recentExpensesQuery = useQuery({
+    queryKey: recentExpensesKey,
+    enabled: !!initData,
+    queryFn: () => api.getRecentExpenses(initData),
+    staleTime: 15_000,
+    refetchOnWindowFocus: false,
+  });
+
   const liveStatus = optimisticStatus ?? statusQuery.data ?? null;
+
+  function notifySuccess(message: string): void {
+    pushToast({ tone: "success", message });
+    hapticFeedback?.notificationOccurred("success");
+  }
+
+  function notifyError(error: unknown): void {
+    const message = error instanceof Error ? error.message : t("feedback.genericError");
+    pushToast({ tone: "error", message });
+    hapticFeedback?.notificationOccurred("error");
+  }
 
   function syncStatus(status: Status): void {
     startTransition(() => {
@@ -56,17 +96,28 @@ export function useFinance() {
     });
   }
 
+  function invalidateRelated(options?: { refreshStatus?: boolean }): void {
+    queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
+    queryClient.invalidateQueries({ queryKey: breakdownKey }).catch(() => undefined);
+    queryClient.invalidateQueries({ queryKey: recentExpensesKey }).catch(() => undefined);
+    queryClient.invalidateQueries({ queryKey: transactionsBaseKey }).catch(() => undefined);
+
+    if (options?.refreshStatus) {
+      setOptimisticStatus(null);
+      queryClient.invalidateQueries({ queryKey: statusKey }).catch(() => undefined);
+    }
+  }
+
   const addIncomeMutation = useMutation({
-    mutationFn: ({ amount, savingsPct }: { amount: number; savingsPct: SavingsPct }) =>
-      api.addIncome(initData, amount, savingsPct),
-    onMutate: async ({ amount, savingsPct }) => {
+    mutationFn: (variables: { amount: number; savingsAmt: number; note?: string | null; occurredAt?: string }) =>
+      api.addIncome(initData, variables.amount, variables.savingsAmt, variables.note, variables.occurredAt),
+    onMutate: async ({ amount, savingsAmt }) => {
       const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
 
       if (!current) {
         return { previous: null };
       }
 
-      const savingsAmt = Number((amount * (savingsPct / 100)).toFixed(2));
       const balance = Number((current.user.balance + amount - savingsAmt).toFixed(2));
       const savings = Number((current.user.savings + savingsAmt).toFixed(2));
 
@@ -76,26 +127,26 @@ export function useFinance() {
           ...current.user,
           balance,
           savings,
-          savingsPct,
         },
         dailyLimit: computeDailyLimit(balance),
       });
 
       return { previous: current };
     },
-    onError: (_error, _variables, context) => {
+    onError: (error, _variables, context) => {
       setOptimisticStatus(context?.previous ?? null);
-      hapticFeedback?.notificationOccurred("error");
+      notifyError(error);
     },
     onSuccess: (status) => {
-      hapticFeedback?.notificationOccurred("success");
       syncStatus(status);
-      queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
+      invalidateRelated();
+      notifySuccess(t("feedback.incomeAdded"));
     },
   });
 
   const addExpenseMutation = useMutation({
-    mutationFn: ({ amount }: { amount: number }) => api.addExpense(initData, amount),
+    mutationFn: (variables: { amount: number; category: ExpenseCategory; note?: string | null; occurredAt?: string }) =>
+      api.addExpense(initData, variables.amount, variables.category, variables.note, variables.occurredAt),
     onMutate: async ({ amount }) => {
       const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
 
@@ -118,14 +169,136 @@ export function useFinance() {
 
       return { previous: current };
     },
-    onError: (_error, _variables, context) => {
+    onError: (error, _variables, context) => {
       setOptimisticStatus(context?.previous ?? null);
-      hapticFeedback?.notificationOccurred("error");
+      notifyError(error);
     },
     onSuccess: (status) => {
-      hapticFeedback?.impactOccurred("medium");
       syncStatus(status);
-      queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
+      invalidateRelated();
+      notifySuccess(t("feedback.expenseAdded"));
+    },
+  });
+
+  const transferSavingsMutation = useMutation({
+    mutationFn: (variables: { amount: number; direction: SavingsTransferDirection; note?: string | null; occurredAt?: string }) =>
+      api.transferSavings(initData, variables.amount, variables.direction, variables.note, variables.occurredAt),
+    onMutate: async ({ amount, direction }) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+
+      if (!current) {
+        return { previous: null };
+      }
+
+      const balanceDelta = direction === "to_savings" ? -amount : amount;
+      const savingsDelta = direction === "to_savings" ? amount : -amount;
+      const balance = Number((current.user.balance + balanceDelta).toFixed(2));
+      const savings = Number((current.user.savings + savingsDelta).toFixed(2));
+
+      setOptimisticStatus({
+        ...current,
+        user: {
+          ...current.user,
+          balance,
+          savings,
+        },
+        dailyLimit: computeDailyLimit(balance),
+      });
+
+      return { previous: current };
+    },
+    onError: (error, _variables, context) => {
+      setOptimisticStatus(context?.previous ?? null);
+      notifyError(error);
+    },
+    onSuccess: (status, variables) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(
+        variables.direction === "to_savings"
+          ? t("feedback.savingsDeposited")
+          : t("feedback.savingsWithdrawn"),
+      );
+    },
+  });
+
+  const updateTransactionMutation = useMutation({
+    mutationFn: (payload: TransactionUpdatePayload) => api.updateTransaction(initData, payload),
+    onSuccess: () => {
+      invalidateRelated({ refreshStatus: true });
+      notifySuccess(t("feedback.transactionUpdated"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const archiveTransactionMutation = useMutation({
+    mutationFn: ({ transactionId }: { transactionId: string }) => api.archiveTransaction(initData, transactionId),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(t("feedback.transactionArchived"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const restoreTransactionMutation = useMutation({
+    mutationFn: ({ transactionId }: { transactionId: string }) => api.restoreTransaction(initData, transactionId),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(t("feedback.transactionRestored"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const updateSavingsGoalMutation = useMutation({
+    mutationFn: ({ goal }: { goal: number }) => api.updateSavingsGoal(initData, goal),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.goalUpdated"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const saveRecurringTransactionMutation = useMutation({
+    mutationFn: (template: RecurringTransactionPayload) => api.saveRecurringTransaction(initData, template),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.recurringSaved"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const deleteRecurringTransactionMutation = useMutation({
+    mutationFn: ({ templateId }: { templateId: string }) => api.deleteRecurringTransaction(initData, templateId),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.recurringDeleted"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const applyRecurringTransactionMutation = useMutation({
+    mutationFn: ({ templateId }: { templateId: string }) => api.applyRecurringTransaction(initData, templateId),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(t("feedback.recurringApplied"));
+    },
+    onError: (error) => {
+      notifyError(error);
     },
   });
 
@@ -133,7 +306,7 @@ export function useFinance() {
     mutationFn: () => api.newMonth(initData),
     onSuccess: (status) => {
       syncStatus(status);
-      queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
+      invalidateRelated();
     },
   });
 
@@ -141,10 +314,22 @@ export function useFinance() {
     telegramId,
     status: liveStatus,
     report: reportQuery.data,
+    breakdown: breakdownQuery.data,
+    recentExpenses: recentExpensesQuery.data ?? [],
     statusQuery,
     reportQuery,
+    breakdownQuery,
+    recentExpensesQuery,
     addIncomeMutation,
     addExpenseMutation,
+    transferSavingsMutation,
+    updateTransactionMutation,
+    archiveTransactionMutation,
+    restoreTransactionMutation,
+    updateSavingsGoalMutation,
+    saveRecurringTransactionMutation,
+    deleteRecurringTransactionMutation,
+    applyRecurringTransactionMutation,
     newMonthMutation,
   };
 }

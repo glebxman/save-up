@@ -1,10 +1,18 @@
 import type {
+  CategoryBreakdown,
+  CategoryBreakdownItem,
+  ExpenseCategory,
+  ExpenseTransaction,
   MonthReport,
+  RecurringTransaction,
+  RecurringTransactionPayload,
   RpcMethod,
   RpcMethodMap,
-  SavingsPct,
+  SavingsTransferDirection,
   Status,
   Transaction,
+  TransactionFilters,
+  TransactionType,
   User,
 } from "@finance-twa/shared-types";
 
@@ -12,6 +20,23 @@ interface MockDatabase {
   users: Record<number, User>;
   transactions: Transaction[];
 }
+
+interface TransactionImpact {
+  balance: number;
+  savings: number;
+  monthlyExp: number;
+}
+
+const expenseCategories = new Set<ExpenseCategory>([
+  "food",
+  "taxi",
+  "entertainment",
+  "shopping",
+  "utilities",
+  "health",
+  "education",
+  "other",
+]);
 
 const STORAGE_KEY = "finance-twa.mock-db";
 
@@ -41,6 +66,65 @@ function calculateDailyLimit(balance: number): Status["dailyLimit"] {
   };
 }
 
+function roundAmount(value: number): number {
+  return Number(value.toFixed(2));
+}
+
+function assertPositiveAmount(amount: number): void {
+  if (!Number.isFinite(amount) || amount <= 0) {
+    throw new Error("Amount must be a positive number");
+  }
+}
+
+function normalizeNote(note?: string | null): string | null {
+  const trimmed = note?.trim();
+  return trimmed ? trimmed.slice(0, 240) : null;
+}
+
+function parseOccurredAt(value?: string): string {
+  if (!value) {
+    return new Date().toISOString();
+  }
+
+  const parsed = new Date(value);
+
+  if (Number.isNaN(parsed.getTime())) {
+    throw new Error("Transaction date is invalid");
+  }
+
+  return parsed.toISOString();
+}
+
+function normalizeSavingsAmount(amount: number, savingsAmt?: number | null): number {
+  if (savingsAmt === undefined || savingsAmt === null) {
+    return 0;
+  }
+
+  if (!Number.isFinite(savingsAmt) || savingsAmt < 0) {
+    throw new Error("Savings amount must be zero or a positive number");
+  }
+
+  if (savingsAmt > amount) {
+    throw new Error("Savings amount cannot exceed income amount");
+  }
+
+  return roundAmount(savingsAmt);
+}
+
+function normalizeGoal(goal: number): number {
+  if (!Number.isFinite(goal) || goal < 0) {
+    throw new Error("Savings goal must be zero or a positive number");
+  }
+
+  return roundAmount(goal);
+}
+
+function normalizeExpenseCategory(category: unknown): ExpenseCategory | null {
+  return typeof category === "string" && expenseCategories.has(category as ExpenseCategory)
+    ? category as ExpenseCategory
+    : null;
+}
+
 function loadDatabase(): MockDatabase {
   const initialState: MockDatabase = {
     users: {},
@@ -67,25 +151,35 @@ function saveDatabase(database: MockDatabase): void {
 function ensureUser(telegramId: number): User {
   const database = loadDatabase();
   const existing = database.users[telegramId];
-
-  if (existing) {
-    return existing;
-  }
-
-  const user: User = {
+  const defaults: User = {
     id: createId(),
     telegramId,
     balance: 24600,
     savings: 3120,
     savingsPct: 20,
+    savingsGoal: 1000000,
+    recurringTransactions: [],
     monthlyExp: 22550,
     createdAt: new Date().toISOString(),
   };
 
-  database.users[telegramId] = user;
+  if (existing) {
+    const nextUser: User = {
+      ...defaults,
+      ...existing,
+      recurringTransactions: existing.recurringTransactions ?? defaults.recurringTransactions,
+    };
+
+    database.users[telegramId] = nextUser;
+    saveDatabase(database);
+
+    return nextUser;
+  }
+
+  database.users[telegramId] = defaults;
   saveDatabase(database);
 
-  return user;
+  return defaults;
 }
 
 function saveUser(user: User): void {
@@ -100,29 +194,31 @@ function appendTransaction(transaction: Transaction): void {
   saveDatabase(database);
 }
 
+function updateTransactionRecord(nextTransaction: Transaction): void {
+  const database = loadDatabase();
+  const index = database.transactions.findIndex((transaction) => transaction.id === nextTransaction.id);
+
+  if (index === -1) {
+    throw new Error("Transaction not found");
+  }
+
+  database.transactions[index] = nextTransaction;
+  saveDatabase(database);
+}
+
 function buildStatus(user: User): Status {
-  return {
-    user,
-    dailyLimit: calculateDailyLimit(user.balance),
+  const monthlyExp = getTransactionsForUser(user.telegramId)
+    .filter((transaction) => !transaction.deletedAt && transaction.type === "expense" && transaction.monthKey === getMonthKey())
+    .reduce((sum, transaction) => roundAmount(sum + transaction.amount), 0);
+  const nextUser: User = {
+    ...user,
+    monthlyExp,
   };
-}
 
-function assertPositiveAmount(amount: number): void {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Amount must be a positive number");
-  }
-}
-
-function normalizeSavingsPct(value?: SavingsPct): SavingsPct | undefined {
-  if (value === undefined) {
-    return undefined;
-  }
-
-  if (value !== 10 && value !== 20 && value !== 30) {
-    throw new Error("Savings percent must be one of 10, 20, or 30");
-  }
-
-  return value;
+  return {
+    user: nextUser,
+    dailyLimit: calculateDailyLimit(nextUser.balance),
+  };
 }
 
 function parseTelegramIdFromInitData(initData: string): number {
@@ -144,26 +240,135 @@ function parseTelegramIdFromInitData(initData: string): number {
   return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
 }
 
-function getReportForUser(telegramId: number, monthKey = getMonthKey()): MonthReport {
+function getTransactionImpact(transaction: Transaction): TransactionImpact {
+  if (transaction.deletedAt) {
+    return {
+      balance: 0,
+      savings: 0,
+      monthlyExp: 0,
+    };
+  }
+
+  if (transaction.type === "income") {
+    const savingsAmt = transaction.savingsAmt ?? 0;
+
+    return {
+      balance: roundAmount(transaction.amount - savingsAmt),
+      savings: roundAmount(savingsAmt),
+      monthlyExp: 0,
+    };
+  }
+
+  if (transaction.type === "expense") {
+    return {
+      balance: roundAmount(-transaction.amount),
+      savings: 0,
+      monthlyExp: transaction.monthKey === getMonthKey() ? roundAmount(transaction.amount) : 0,
+    };
+  }
+
+  if (transaction.type === "transfer_to_savings") {
+    return {
+      balance: roundAmount(-transaction.amount),
+      savings: roundAmount(transaction.amount),
+      monthlyExp: 0,
+    };
+  }
+
+  return {
+    balance: roundAmount(transaction.amount),
+    savings: roundAmount(-transaction.amount),
+    monthlyExp: 0,
+  };
+}
+
+function applyImpact(user: User, impact: TransactionImpact, direction: 1 | -1): User {
+  return {
+    ...user,
+    balance: roundAmount(user.balance + impact.balance * direction),
+    savings: roundAmount(user.savings + impact.savings * direction),
+    monthlyExp: roundAmount(Math.max(user.monthlyExp + impact.monthlyExp * direction, 0)),
+  };
+}
+
+function ensureNonNegative(user: User): void {
+  if (user.balance < 0) {
+    throw new Error("Operation would make balance negative");
+  }
+
+  if (user.savings < 0) {
+    throw new Error("Operation would make savings negative");
+  }
+}
+
+function buildTransaction(
+  userId: string,
+  input: {
+    id?: string;
+    type: TransactionType;
+    amount: number;
+    category?: ExpenseCategory | null;
+    savingsAmt?: number | null;
+    note?: string | null;
+    occurredAt?: string;
+    createdAt?: string;
+    deletedAt?: string | null;
+  },
+): Transaction {
+  const occurredAt = parseOccurredAt(input.occurredAt);
+
+  return {
+    id: input.id ?? createId(),
+    userId,
+    type: input.type,
+    amount: roundAmount(input.amount),
+    savingsAmt: input.savingsAmt && input.savingsAmt > 0 ? roundAmount(input.savingsAmt) : null,
+    category: input.category ?? null,
+    note: normalizeNote(input.note),
+    monthKey: getMonthKey(new Date(occurredAt)),
+    occurredAt,
+    createdAt: input.createdAt ?? new Date().toISOString(),
+    deletedAt: input.deletedAt ?? null,
+  };
+}
+
+function getTransactionsForUser(telegramId: number): Transaction[] {
   const user = ensureUser(telegramId);
   const database = loadDatabase();
-
   return database.transactions
-    .filter((transaction) => transaction.userId === user.id && transaction.monthKey === monthKey)
+    .filter((transaction) => transaction.userId === user.id)
+    .map((transaction) => ({
+      ...transaction,
+      category: normalizeExpenseCategory(transaction.category),
+      note: transaction.note ?? null,
+      occurredAt: transaction.occurredAt ?? transaction.createdAt,
+      deletedAt: transaction.deletedAt ?? null,
+    }));
+}
+
+function getReportForUser(telegramId: number, monthKey = getMonthKey()): MonthReport {
+  return getTransactionsForUser(telegramId)
+    .filter((transaction) => transaction.monthKey === monthKey && !transaction.deletedAt)
     .reduce<MonthReport>(
       (report, transaction) => {
         if (transaction.type === "income") {
-          report.incomeTotal = Number((report.incomeTotal + transaction.amount).toFixed(2));
+          report.incomeTotal = roundAmount(report.incomeTotal + transaction.amount);
+          report.savingsTotal = roundAmount(report.savingsTotal + (transaction.savingsAmt ?? 0));
         }
 
         if (transaction.type === "expense") {
-          report.expenseTotal = Number((report.expenseTotal + transaction.amount).toFixed(2));
+          report.expenseTotal = roundAmount(report.expenseTotal + transaction.amount);
         }
 
-        if (transaction.savingsAmt) {
-          report.savingsTotal = Number((report.savingsTotal + transaction.savingsAmt).toFixed(2));
+        if (transaction.type === "transfer_to_savings") {
+          report.savingsTotal = roundAmount(report.savingsTotal + transaction.amount);
         }
 
+        if (transaction.type === "transfer_from_savings") {
+          report.savingsWithdrawnTotal = roundAmount(report.savingsWithdrawnTotal + transaction.amount);
+        }
+
+        report.netSavingsTotal = roundAmount(report.savingsTotal - report.savingsWithdrawnTotal);
         report.transactionCount += 1;
 
         return report;
@@ -173,9 +378,145 @@ function getReportForUser(telegramId: number, monthKey = getMonthKey()): MonthRe
         incomeTotal: 0,
         expenseTotal: 0,
         savingsTotal: 0,
+        savingsWithdrawnTotal: 0,
+        netSavingsTotal: 0,
         transactionCount: 0,
       },
     );
+}
+
+function getCategoryBreakdownForUser(telegramId: number, monthKey = getMonthKey()): CategoryBreakdown {
+  const expenses = getTransactionsForUser(telegramId).filter(
+    (transaction) => !transaction.deletedAt && transaction.monthKey === monthKey && transaction.type === "expense",
+  );
+  const grouped = new Map<string, { total: number; count: number }>();
+  let expenseTotal = 0;
+
+  for (const transaction of expenses) {
+    const category = transaction.category ?? "other";
+    const current = grouped.get(category) ?? { total: 0, count: 0 };
+    current.total = roundAmount(current.total + transaction.amount);
+    current.count += 1;
+    grouped.set(category, current);
+    expenseTotal = roundAmount(expenseTotal + transaction.amount);
+  }
+
+  const items: CategoryBreakdownItem[] = Array.from(grouped.entries()).map(([category, data]) => ({
+    category: category as ExpenseCategory,
+    ...data,
+  }));
+
+  return { monthKey, items, expenseTotal };
+}
+
+function getRecentExpensesForUser(telegramId: number, limit = 5): ExpenseTransaction[] {
+  const safeLimit = Math.min(Math.max(Math.trunc(limit) || 5, 1), 10);
+
+  return getTransactionsForUser(telegramId)
+    .filter(
+      (transaction): transaction is ExpenseTransaction =>
+        !transaction.deletedAt
+        && transaction.monthKey === getMonthKey()
+        && transaction.type === "expense"
+        && transaction.category !== null,
+    )
+    .sort((left, right) => new Date(right.occurredAt).getTime() - new Date(left.occurredAt).getTime())
+    .slice(0, safeLimit);
+}
+
+function getFilteredTransactions(telegramId: number, filters: TransactionFilters = {}): Transaction[] {
+  let items = getTransactionsForUser(telegramId);
+
+  if (!filters.includeDeleted) {
+    items = items.filter((transaction) => !transaction.deletedAt);
+  }
+
+  if (filters.monthKey) {
+    items = items.filter((transaction) => transaction.monthKey === filters.monthKey);
+  }
+
+  if (filters.type && filters.type !== "all") {
+    items = items.filter((transaction) => transaction.type === filters.type);
+  }
+
+  if (filters.category && filters.category !== "all") {
+    items = items.filter((transaction) => transaction.category === filters.category);
+  }
+
+  if (filters.search?.trim()) {
+    const query = filters.search.trim().toLowerCase();
+    items = items.filter((transaction) =>
+      (transaction.note ?? "").toLowerCase().includes(query)
+      || (transaction.category ?? "").includes(query)
+      || transaction.type.includes(query),
+    );
+  }
+
+  items = items.sort((left, right) => new Date(right.occurredAt).getTime() - new Date(left.occurredAt).getTime());
+
+  if (filters.limit) {
+    items = items.slice(0, Math.min(Math.max(Math.trunc(filters.limit), 1), 200));
+  }
+
+  return items;
+}
+
+function getTransactionById(telegramId: number, transactionId: string): Transaction {
+  const transaction = getTransactionsForUser(telegramId).find((item) => item.id === transactionId);
+
+  if (!transaction) {
+    throw new Error("Transaction not found");
+  }
+
+  return transaction;
+}
+
+function parseRecurringPayload(payload: RecurringTransactionPayload): RecurringTransaction {
+  const title = payload.title.trim().slice(0, 60);
+
+  if (!title) {
+    throw new Error("Recurring transaction needs a title");
+  }
+
+  assertPositiveAmount(payload.amount);
+
+  if (payload.type === "income") {
+    return {
+      id: payload.id ?? createId(),
+      title,
+      type: "income",
+      amount: roundAmount(payload.amount),
+      savingsAmt: normalizeSavingsAmount(payload.amount, payload.savingsAmt),
+      category: null,
+      note: normalizeNote(payload.note),
+    };
+  }
+
+  if (payload.type === "expense") {
+    if (!payload.category) {
+      throw new Error("Expense category is required");
+    }
+
+    return {
+      id: payload.id ?? createId(),
+      title,
+      type: "expense",
+      amount: roundAmount(payload.amount),
+      savingsAmt: null,
+      category: payload.category,
+      note: normalizeNote(payload.note),
+    };
+  }
+
+  return {
+    id: payload.id ?? createId(),
+    title,
+    type: payload.type,
+    amount: roundAmount(payload.amount),
+    savingsAmt: null,
+    category: null,
+    note: normalizeNote(payload.note),
+  };
 }
 
 const mockHandlers: {
@@ -186,68 +527,240 @@ const mockHandlers: {
   "user.init": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-
     return buildStatus(user);
   },
   "user.getStatus": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-
     return buildStatus(user);
   },
   "finance.addIncome": (params) => {
     assertPositiveAmount(params.amount);
-
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-    const nextSavingsPct = normalizeSavingsPct(params.savingsPct) ?? user.savingsPct;
-    const savingsAmt = Number((params.amount * (nextSavingsPct / 100)).toFixed(2));
-    const nextUser: User = {
-      ...user,
-      balance: Number((user.balance + params.amount - savingsAmt).toFixed(2)),
-      savings: Number((user.savings + savingsAmt).toFixed(2)),
-      savingsPct: nextSavingsPct,
-    };
-
-    saveUser(nextUser);
-    appendTransaction({
-      id: createId(),
-      userId: nextUser.id,
+    const savingsAmt = normalizeSavingsAmount(params.amount, params.savingsAmt);
+    const transaction = buildTransaction(user.id, {
       type: "income",
       amount: params.amount,
       savingsAmt,
-      monthKey: getMonthKey(),
-      createdAt: new Date().toISOString(),
+      note: params.note,
+      occurredAt: params.occurredAt,
     });
+    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    appendTransaction(transaction);
 
     return buildStatus(nextUser);
   },
   "finance.addExpense": (params) => {
     assertPositiveAmount(params.amount);
-
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
+    const transaction = buildTransaction(user.id, {
+      type: "expense",
+      amount: params.amount,
+      category: params.category,
+      note: params.note,
+      occurredAt: params.occurredAt,
+    });
+    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
 
-    if (user.balance < params.amount) {
-      throw new Error("Insufficient balance for expense");
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    appendTransaction(transaction);
+
+    return buildStatus(nextUser);
+  },
+  "finance.transferSavings": (params) => {
+    assertPositiveAmount(params.amount);
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const type = params.direction === "to_savings" ? "transfer_to_savings" : "transfer_from_savings";
+    const transaction = buildTransaction(user.id, {
+      type,
+      amount: params.amount,
+      note: params.note,
+      occurredAt: params.occurredAt,
+    });
+    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    appendTransaction(transaction);
+
+    return buildStatus(nextUser);
+  },
+  "finance.getRecentExpenses": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    return getRecentExpensesForUser(telegramId, params.limit);
+  },
+  "finance.getTransactions": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    return getFilteredTransactions(telegramId, params.filters);
+  },
+  "finance.updateTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const current = getTransactionById(telegramId, params.payload.transactionId);
+
+    if (current.deletedAt) {
+      throw new Error("Transaction not found");
+    }
+
+    assertPositiveAmount(params.payload.amount);
+
+    let nextTransaction = current;
+
+    if (current.type === "income") {
+      nextTransaction = buildTransaction(user.id, {
+        id: current.id,
+        type: "income",
+        amount: params.payload.amount,
+        savingsAmt: normalizeSavingsAmount(params.payload.amount, params.payload.savingsAmt ?? current.savingsAmt),
+        note: params.payload.note ?? current.note,
+        occurredAt: params.payload.occurredAt ?? current.occurredAt,
+        createdAt: current.createdAt,
+        deletedAt: current.deletedAt,
+      });
+    }
+
+    if (current.type === "expense") {
+      const category = params.payload.category ?? current.category;
+
+      if (!category) {
+        throw new Error("Expense category is required");
+      }
+
+      nextTransaction = buildTransaction(user.id, {
+        id: current.id,
+        type: "expense",
+        amount: params.payload.amount,
+        category,
+        note: params.payload.note ?? current.note,
+        occurredAt: params.payload.occurredAt ?? current.occurredAt,
+        createdAt: current.createdAt,
+        deletedAt: current.deletedAt,
+      });
+    }
+
+    if (current.type === "transfer_to_savings" || current.type === "transfer_from_savings") {
+      nextTransaction = buildTransaction(user.id, {
+        id: current.id,
+        type: current.type,
+        amount: params.payload.amount,
+        note: params.payload.note ?? current.note,
+        occurredAt: params.payload.occurredAt ?? current.occurredAt,
+        createdAt: current.createdAt,
+        deletedAt: current.deletedAt,
+      });
+    }
+
+    const revertedUser = applyImpact(user, getTransactionImpact(current), -1);
+    const nextUser = applyImpact(revertedUser, getTransactionImpact(nextTransaction), 1);
+
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    updateTransactionRecord(nextTransaction);
+
+    return nextTransaction;
+  },
+  "finance.archiveTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const transaction = getTransactionById(telegramId, params.transactionId);
+
+    if (!transaction.deletedAt) {
+      const archived = { ...transaction, deletedAt: new Date().toISOString() };
+      const nextUser = applyImpact(user, getTransactionImpact(transaction), -1);
+
+      ensureNonNegative(nextUser);
+      saveUser(nextUser);
+      updateTransactionRecord(archived);
+
+      return buildStatus(nextUser);
+    }
+
+    return buildStatus(user);
+  },
+  "finance.restoreTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const transaction = getTransactionById(telegramId, params.transactionId);
+    const restored = { ...transaction, deletedAt: null };
+    const nextUser = applyImpact(user, getTransactionImpact(restored), 1);
+
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    updateTransactionRecord(restored);
+
+    return buildStatus(nextUser);
+  },
+  "finance.updateSavingsGoal": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const nextUser: User = {
+      ...user,
+      savingsGoal: normalizeGoal(params.goal),
+    };
+
+    saveUser(nextUser);
+    return buildStatus(nextUser);
+  },
+  "finance.saveRecurringTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const nextTemplate = parseRecurringPayload(params.template);
+    const templates = [...user.recurringTransactions];
+    const index = templates.findIndex((item) => item.id === nextTemplate.id);
+
+    if (index >= 0) {
+      templates[index] = nextTemplate;
+    } else {
+      templates.unshift(nextTemplate);
     }
 
     const nextUser: User = {
       ...user,
-      balance: Number((user.balance - params.amount).toFixed(2)),
-      monthlyExp: Number((user.monthlyExp + params.amount).toFixed(2)),
+      recurringTransactions: templates,
     };
 
     saveUser(nextUser);
-    appendTransaction({
-      id: createId(),
-      userId: nextUser.id,
-      type: "expense",
-      amount: params.amount,
-      savingsAmt: null,
-      monthKey: getMonthKey(),
-      createdAt: new Date().toISOString(),
+    return buildStatus(nextUser);
+  },
+  "finance.deleteRecurringTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const nextUser: User = {
+      ...user,
+      recurringTransactions: user.recurringTransactions.filter((item) => item.id !== params.templateId),
+    };
+
+    saveUser(nextUser);
+    return buildStatus(nextUser);
+  },
+  "finance.applyRecurringTransaction": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const template = user.recurringTransactions.find((item) => item.id === params.templateId);
+
+    if (!template) {
+      throw new Error("Recurring transaction not found");
+    }
+
+    const transaction = buildTransaction(user.id, {
+      type: template.type,
+      amount: template.amount,
+      category: template.category,
+      savingsAmt: template.savingsAmt,
+      note: template.note ?? template.title,
     });
+    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+
+    ensureNonNegative(nextUser);
+    saveUser(nextUser);
+    appendTransaction(transaction);
 
     return buildStatus(nextUser);
   },
@@ -255,17 +768,14 @@ const mockHandlers: {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     return getReportForUser(telegramId, params.monthKey);
   },
+  "finance.getCategoryBreakdown": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    return getCategoryBreakdownForUser(telegramId, params.monthKey);
+  },
   "finance.newMonth": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-    const nextUser: User = {
-      ...user,
-      monthlyExp: 0,
-    };
-
-    saveUser(nextUser);
-
-    return buildStatus(nextUser);
+    return buildStatus(user);
   },
 };
 

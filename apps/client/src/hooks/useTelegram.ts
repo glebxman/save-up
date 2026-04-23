@@ -14,6 +14,7 @@ interface TelegramUser {
   first_name?: string;
   last_name?: string;
   username?: string;
+  photo_url?: string;
 }
 
 interface TelegramHapticFeedback {
@@ -38,6 +39,11 @@ type TelegramWindow = Window & {
   };
 };
 
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true";
+const DEMO_TELEGRAM_ID = Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
+
+const mockInitData = `user=${encodeURIComponent(JSON.stringify({ id: DEMO_TELEGRAM_ID, first_name: "Demo" }))}`;
+
 export function useTelegram() {
   const [webApp, setWebApp] = useState<TelegramWebApp | null>(null);
 
@@ -50,6 +56,15 @@ export function useTelegram() {
       setWebApp(tg);
     }
   }, []);
+
+  if (USE_MOCK_API && !webApp) {
+    return {
+      initData: mockInitData,
+      user: { id: DEMO_TELEGRAM_ID, first_name: "Demo" } as TelegramUser,
+      themeParams: {},
+      hapticFeedback: undefined,
+    };
+  }
 
   return {
     initData: webApp?.initData ?? "",

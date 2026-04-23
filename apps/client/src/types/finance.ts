@@ -1,8 +1,18 @@
 export type {
+  CategoryBreakdown,
+  CategoryBreakdownItem,
   DailyLimit,
+  ExpenseCategory,
+  ExpenseTransaction,
   MonthReport,
+  RecurringTransaction,
+  RecurringTransactionPayload,
+  SavingsTransferDirection,
   SavingsPct,
   Status,
   Transaction,
+  TransactionFilters,
+  TransactionUpdatePayload,
+  TransactionType,
   User,
 } from "@finance-twa/shared-types";

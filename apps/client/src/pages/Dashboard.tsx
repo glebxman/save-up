@@ -1,67 +1,72 @@
 import { useState } from "react";
+
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
-import { useNavigate } from "react-router-dom";
 
 import { BalanceCard } from "@/components/features/dashboard/BalanceCard";
 import { DailyLimitCard } from "@/components/features/dashboard/DailyLimitCard";
+import { RecurringTemplateModal } from "@/components/features/dashboard/RecurringTemplateModal";
+import { RecurringTemplatesCard } from "@/components/features/dashboard/RecurringTemplatesCard";
 import { SavingsCard } from "@/components/features/dashboard/SavingsCard";
+import { ExpenseCategoryModal } from "@/components/features/input/ExpenseCategoryModal";
 import { AmountInput } from "@/components/features/input/AmountInput";
 import { SavingsModal } from "@/components/features/input/SavingsModal";
-import { ArrowDownLeftIcon, ArrowUpRightIcon, ReportIcon, SettingsIcon } from "@/components/layout/icons";
+import { AmountActionModal } from "@/components/features/shared/AmountActionModal";
+import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { useFinance } from "@/hooks/useFinance";
-
-interface ShortcutButtonProps {
-  icon: typeof ArrowUpRightIcon;
-  label: string;
-  onPress: () => void;
-  isDisabled?: boolean;
-}
-
-function ShortcutButton({ icon: Icon, label, onPress, isDisabled }: ShortcutButtonProps) {
-  return (
-    <button
-      className="flex h-[88px] w-full flex-col items-center justify-center gap-2 rounded-3xl bg-[var(--surface)] px-2 py-3 text-xs font-medium transition-colors active:bg-[var(--surface-secondary)] disabled:opacity-40"
-      disabled={isDisabled}
-      onClick={onPress}
-      type="button"
-    >
-      <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[rgba(190,255,102,0.12)] text-[var(--accent)]">
-        <Icon className="h-5 w-5" />
-      </span>
-      <span className="text-[var(--foreground)]">{label}</span>
-    </button>
-  );
-}
+import type { ExpenseCategory, RecurringTransaction } from "@/types/finance";
+import { formatMoney } from "@/utils/format";
 
 export function Dashboard() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const [amount, setAmount] = useState("");
-  const [isModalOpen, setIsModalOpen] = useState(false);
-  const { status, statusQuery, addExpenseMutation, addIncomeMutation } = useFinance();
+  const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
+  const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
+  const [isGoalModalOpen, setIsGoalModalOpen] = useState(false);
+  const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
+  const [isWithdrawModalOpen, setIsWithdrawModalOpen] = useState(false);
+  const [editingTemplate, setEditingTemplate] = useState<RecurringTransaction | null>(null);
+  const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
+  const [deletingTemplate, setDeletingTemplate] = useState<RecurringTransaction | null>(null);
+  const {
+    status,
+    statusQuery,
+    addExpenseMutation,
+    addIncomeMutation,
+    transferSavingsMutation,
+    updateSavingsGoalMutation,
+    saveRecurringTransactionMutation,
+    deleteRecurringTransactionMutation,
+    applyRecurringTransactionMutation,
+  } = useFinance();
 
   const parsedAmount = Number(amount);
   const hasValidAmount = Number.isFinite(parsedAmount) && parsedAmount > 0;
-  const isBusy = addExpenseMutation.isPending || addIncomeMutation.isPending;
+  const busyTemplateId = applyRecurringTransactionMutation.isPending
+    ? (applyRecurringTransactionMutation.variables?.templateId ?? null)
+    : deleteRecurringTransactionMutation.isPending
+      ? (deleteRecurringTransactionMutation.variables?.templateId ?? null)
+      : null;
+  const isActionBusy = addExpenseMutation.isPending || addIncomeMutation.isPending;
 
-  async function handleExpense(): Promise<void> {
+  async function handleExpense(category: ExpenseCategory): Promise<void> {
     if (!hasValidAmount) {
       return;
     }
 
-    await addExpenseMutation.mutateAsync({ amount: parsedAmount });
+    await addExpenseMutation.mutateAsync({ amount: parsedAmount, category });
     setAmount("");
+    setIsExpenseModalOpen(false);
   }
 
-  async function handleIncome(savingsPct: 10 | 20 | 30): Promise<void> {
+  async function handleIncome(savingsAmt: number): Promise<void> {
     if (!hasValidAmount) {
       return;
     }
 
-    await addIncomeMutation.mutateAsync({ amount: parsedAmount, savingsPct });
+    await addIncomeMutation.mutateAsync({ amount: parsedAmount, savingsAmt });
     setAmount("");
-    setIsModalOpen(false);
+    setIsIncomeModalOpen(false);
   }
 
   if (statusQuery.isPending && !status) {
@@ -97,42 +102,153 @@ export function Dashboard() {
     <div className="space-y-4">
       <BalanceCard balance={status.user.balance} monthlyExp={status.user.monthlyExp} />
 
-      <AmountInput onChange={setAmount} value={amount} />
-
-      <div className="grid grid-cols-[1fr_1fr_1fr_1fr] gap-3">
-        <ShortcutButton
-          icon={ArrowUpRightIcon}
-          isDisabled={!hasValidAmount || isBusy}
-          label={t("dashboard.shortcuts.income")}
-          onPress={() => setIsModalOpen(true)}
-        />
-        <ShortcutButton
-          icon={ArrowDownLeftIcon}
-          isDisabled={!hasValidAmount || isBusy}
-          label={t("dashboard.shortcuts.expense")}
-          onPress={() => {
-            void handleExpense();
-          }}
-        />
-        <ShortcutButton icon={ReportIcon} label={t("dashboard.shortcuts.report")} onPress={() => navigate("/report")} />
-        <ShortcutButton icon={SettingsIcon} label={t("dashboard.shortcuts.setting")} onPress={() => navigate("/settings")} />
-      </div>
+      <AmountInput
+        isExpenseDisabled={!hasValidAmount || isActionBusy}
+        isIncomeDisabled={!hasValidAmount || isActionBusy}
+        onChange={setAmount}
+        onExpense={() => setIsExpenseModalOpen(true)}
+        onIncome={() => setIsIncomeModalOpen(true)}
+        value={amount}
+      />
 
       <div className="grid gap-4 sm:grid-cols-2">
         <DailyLimitCard
           dailyLimit={status.dailyLimit.dailyLimit}
           daysRemaining={status.dailyLimit.daysRemaining}
         />
-        <SavingsCard savings={status.user.savings} savingsPct={status.user.savingsPct} />
+        <SavingsCard
+          goal={status.user.savingsGoal}
+          onDeposit={() => setIsDepositModalOpen(true)}
+          onSetGoal={() => setIsGoalModalOpen(true)}
+          onWithdraw={() => setIsWithdrawModalOpen(true)}
+          savings={status.user.savings}
+        />
       </div>
 
+      <RecurringTemplatesCard
+        busyTemplateId={busyTemplateId}
+        onAdd={() => {
+          setEditingTemplate(null);
+          setIsRecurringModalOpen(true);
+        }}
+        onApply={(template) => {
+          void applyRecurringTransactionMutation.mutateAsync({ templateId: template.id });
+        }}
+        onDelete={(template) => setDeletingTemplate(template)}
+        onEdit={(template) => {
+          setEditingTemplate(template);
+          setIsRecurringModalOpen(true);
+        }}
+        templates={status.user.recurringTransactions}
+      />
+
       <SavingsModal
-        isOpen={isModalOpen}
+        amount={parsedAmount}
+        isOpen={isIncomeModalOpen}
         isPending={addIncomeMutation.isPending}
-        onClose={() => setIsModalOpen(false)}
+        onClose={() => setIsIncomeModalOpen(false)}
         onSelect={(value) => {
           void handleIncome(value);
         }}
+      />
+
+      <ExpenseCategoryModal
+        isOpen={isExpenseModalOpen}
+        isPending={addExpenseMutation.isPending}
+        onClose={() => setIsExpenseModalOpen(false)}
+        onSelect={(category) => {
+          void handleExpense(category);
+        }}
+      />
+
+      <AmountActionModal
+        confirmLabel={t("savings.saveGoal")}
+        helperText={t("savings.goalHelper")}
+        initialValue={status.user.savingsGoal}
+        isOpen={isGoalModalOpen}
+        isPending={updateSavingsGoalMutation.isPending}
+        onClose={() => setIsGoalModalOpen(false)}
+        onSubmit={(goal) => {
+          void updateSavingsGoalMutation.mutateAsync({ goal }).then(() => setIsGoalModalOpen(false));
+        }}
+        placeholder={t("savings.goalPlaceholder")}
+        question={t("savings.goalQuestion")}
+        title={t("savings.setGoal")}
+      />
+
+      <AmountActionModal
+        confirmLabel={t("savings.deposit")}
+        helperText={t("savings.depositHelper", { amount: formatMoney(status.user.balance) })}
+        isOpen={isDepositModalOpen}
+        isPending={transferSavingsMutation.isPending}
+        max={status.user.balance}
+        onClose={() => setIsDepositModalOpen(false)}
+        onSubmit={(value) => {
+          void transferSavingsMutation
+            .mutateAsync({ amount: value, direction: "to_savings" })
+            .then(() => setIsDepositModalOpen(false));
+        }}
+        placeholder={t("savings.transferPlaceholder")}
+        question={t("savings.depositQuestion")}
+        title={t("savings.deposit")}
+      />
+
+      <AmountActionModal
+        confirmLabel={t("savings.withdraw")}
+        helperText={t("savings.withdrawHelper", { amount: formatMoney(status.user.savings) })}
+        isOpen={isWithdrawModalOpen}
+        isPending={transferSavingsMutation.isPending}
+        max={status.user.savings}
+        onClose={() => setIsWithdrawModalOpen(false)}
+        onSubmit={(value) => {
+          void transferSavingsMutation
+            .mutateAsync({ amount: value, direction: "from_savings" })
+            .then(() => setIsWithdrawModalOpen(false));
+        }}
+        placeholder={t("savings.transferPlaceholder")}
+        question={t("savings.withdrawQuestion")}
+        title={t("savings.withdraw")}
+      />
+
+      <RecurringTemplateModal
+        initialTemplate={editingTemplate}
+        isOpen={isRecurringModalOpen}
+        isPending={saveRecurringTransactionMutation.isPending}
+        onClose={() => {
+          setEditingTemplate(null);
+          setIsRecurringModalOpen(false);
+        }}
+        onSubmit={(template) => {
+          void saveRecurringTransactionMutation.mutateAsync(template).then(() => {
+            setEditingTemplate(null);
+            setIsRecurringModalOpen(false);
+          });
+        }}
+        suggestedAmount={hasValidAmount ? parsedAmount : undefined}
+      />
+
+      <ConfirmActionModal
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("recurring.delete")}
+        description={
+          deletingTemplate
+            ? t("recurring.deleteDescription", { name: deletingTemplate.title })
+            : undefined
+        }
+        isOpen={!!deletingTemplate}
+        isPending={deleteRecurringTransactionMutation.isPending}
+        onClose={() => setDeletingTemplate(null)}
+        onConfirm={() => {
+          if (!deletingTemplate) {
+            return;
+          }
+
+          void deleteRecurringTransactionMutation
+            .mutateAsync({ templateId: deletingTemplate.id })
+            .then(() => setDeletingTemplate(null));
+        }}
+        question={t("recurring.deleteQuestion")}
+        title={t("recurring.delete")}
       />
     </div>
   );

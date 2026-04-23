@@ -1,6 +1,22 @@
 import type { RpcMethod } from "@finance-twa/shared-types";
 
-import { addExpenseHandler, addIncomeHandler, getReportHandler, newMonthHandler } from "./handlers/finance.js";
+import {
+  addExpenseHandler,
+  addIncomeHandler,
+  applyRecurringTransactionHandler,
+  archiveTransactionHandler,
+  deleteRecurringTransactionHandler,
+  getCategoryBreakdownHandler,
+  getRecentExpensesHandler,
+  getReportHandler,
+  getTransactionsHandler,
+  newMonthHandler,
+  restoreTransactionHandler,
+  saveRecurringTransactionHandler,
+  transferSavingsHandler,
+  updateSavingsGoalHandler,
+  updateTransactionHandler,
+} from "./handlers/finance.js";
 import { getUserStatusHandler, initUserHandler } from "./handlers/user.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
 
@@ -13,7 +29,18 @@ const handlers: HandlerMap = {
   "user.getStatus": getUserStatusHandler,
   "finance.addIncome": addIncomeHandler,
   "finance.addExpense": addExpenseHandler,
+  "finance.transferSavings": transferSavingsHandler,
+  "finance.getRecentExpenses": getRecentExpensesHandler,
+  "finance.getTransactions": getTransactionsHandler,
+  "finance.updateTransaction": updateTransactionHandler,
+  "finance.archiveTransaction": archiveTransactionHandler,
+  "finance.restoreTransaction": restoreTransactionHandler,
+  "finance.updateSavingsGoal": updateSavingsGoalHandler,
+  "finance.saveRecurringTransaction": saveRecurringTransactionHandler,
+  "finance.deleteRecurringTransaction": deleteRecurringTransactionHandler,
+  "finance.applyRecurringTransaction": applyRecurringTransactionHandler,
   "finance.getReport": getReportHandler,
+  "finance.getCategoryBreakdown": getCategoryBreakdownHandler,
   "finance.newMonth": newMonthHandler,
 };
 

@@ -130,37 +130,10 @@ async function telegramRequest<T>(method: string, payload?: Record<string, unkno
 
 async function sendStartMessage(chatId: number, firstName?: string): Promise<void> {
   const greetingName = firstName?.trim() ? `, ${firstName}` : "";
-  const baseText = `Hello${greetingName}! Save Up bot is running.`;
-
-  if (webAppUrl?.startsWith("https://")) {
-    await telegramRequest("sendMessage", {
-      chat_id: chatId,
-      text: `${baseText}\n\nTap the button below to open the Mini App.`,
-      reply_markup: {
-        keyboard: [
-          [
-            {
-              text: "Open Save Up",
-              web_app: {
-                url: webAppUrl,
-              },
-            },
-          ],
-        ],
-        resize_keyboard: true,
-        is_persistent: true,
-      },
-    });
-
-    return;
-  }
 
   await telegramRequest("sendMessage", {
     chat_id: chatId,
-    text:
-      `${baseText}\n\n` +
-      "The bot is responding, but the Mini App is not linked yet. " +
-      "Set WEBAPP_URL to a public HTTPS address and restart the bot.",
+    text: `👋 Hello${greetingName}! Welcome to Save Up!\n\nI'm your personal savings assistant. Let's help you reach your financial goals! 💰`,
   });
 }
 

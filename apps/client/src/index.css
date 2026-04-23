@@ -28,6 +28,17 @@ body {
     background-color 0.2s ease;
 }
 
+input[type="number"] {
+  appearance: textfield;
+  -moz-appearance: textfield;
+}
+
+input[type="number"]::-webkit-inner-spin-button,
+input[type="number"]::-webkit-outer-spin-button {
+  appearance: none;
+  margin: 0;
+}
+
 .light,
 [data-theme="light"] {
   --background: oklch(0.96 0.01 145);
@@ -160,45 +171,47 @@ body {
   transform: translateX(-50%);
 }
 
-.finance-bottom-nav {
+.finance-toast-stack {
+  position: fixed;
+  top: calc(18px + var(--safe-top));
+  left: 50%;
+  z-index: 60;
+  display: flex;
+  width: min(420px, calc(100vw - 24px));
+  flex-direction: column;
+  gap: 10px;
+  transform: translateX(-50%);
+}
+
+.finance-toast {
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  background: var(--surface);
+  box-shadow: var(--surface-shadow);
+  padding: 12px 16px;
+  color: var(--foreground);
   backdrop-filter: blur(10px);
+}
+
+.finance-toast[data-tone="success"] {
+  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+}
+
+.finance-toast[data-tone="error"] {
+  border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+}
+
+.finance-bottom-nav {
+  background: color-mix(in srgb, var(--surface) 80%, transparent);
+  backdrop-filter: blur(14px);
 }
 
 .finance-nav-button {
   transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  transform 0.2s ease,
+  box-shadow 0.2s ease;
 }
 
 .finance-nav-button[data-active="true"] {
   box-shadow: 0 14px 34px rgba(188, 255, 102, 0.22);
-}
-
-.finance-chart-grid {
-  display: grid;
-  grid-template-columns: repeat(6, minmax(0, 1fr));
-  align-items: end;
-  gap: 10px;
-  height: 170px;
-}
-
-.finance-chart-column {
-  display: flex;
-  height: 100%;
-  align-items: end;
-  justify-content: center;
-  border-radius: 999px;
-  background: var(--surface-secondary);
-  padding: 5px;
-}
-
-.finance-chart-bar {
-  width: 100%;
-  border-radius: 999px;
-  background: var(--surface-tertiary);
-}
-
-.finance-chart-bar--accent {
-  background: linear-gradient(180deg, rgba(190, 255, 102, 0.98) 0%, rgba(150, 255, 86, 0.76) 100%);
-  box-shadow: 0 0 22px rgba(188, 255, 102, 0.28);
 }

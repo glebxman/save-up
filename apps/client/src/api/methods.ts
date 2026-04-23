@@ -1,4 +1,15 @@
-import type { MonthReport, SavingsPct, Status } from "@/types/finance";
+import type {
+  CategoryBreakdown,
+  ExpenseCategory,
+  ExpenseTransaction,
+  MonthReport,
+  RecurringTransactionPayload,
+  SavingsTransferDirection,
+  Status,
+  Transaction,
+  TransactionFilters,
+  TransactionUpdatePayload,
+} from "@/types/finance";
 
 import { rpcRequest } from "./client";
 
@@ -13,17 +24,75 @@ export function getStatus(initData: string): Promise<Status> {
 export function addIncome(
   initData: string,
   amount: number,
-  savingsPct?: SavingsPct,
+  savingsAmt?: number,
+  note?: string | null,
+  occurredAt?: string,
 ): Promise<Status> {
-  return rpcRequest("finance.addIncome", { initData, amount, savingsPct });
+  return rpcRequest("finance.addIncome", { initData, amount, savingsAmt, note, occurredAt });
 }
 
-export function addExpense(initData: string, amount: number): Promise<Status> {
-  return rpcRequest("finance.addExpense", { initData, amount });
+export function addExpense(
+  initData: string,
+  amount: number,
+  category: ExpenseCategory,
+  note?: string | null,
+  occurredAt?: string,
+): Promise<Status> {
+  return rpcRequest("finance.addExpense", { initData, amount, category, note, occurredAt });
+}
+
+export function transferSavings(
+  initData: string,
+  amount: number,
+  direction: SavingsTransferDirection,
+  note?: string | null,
+  occurredAt?: string,
+): Promise<Status> {
+  return rpcRequest("finance.transferSavings", { initData, amount, direction, note, occurredAt });
+}
+
+export function getRecentExpenses(initData: string, limit?: number): Promise<ExpenseTransaction[]> {
+  return rpcRequest("finance.getRecentExpenses", { initData, limit });
+}
+
+export function getTransactions(initData: string, filters?: TransactionFilters): Promise<Transaction[]> {
+  return rpcRequest("finance.getTransactions", { initData, filters });
+}
+
+export function updateTransaction(initData: string, payload: TransactionUpdatePayload): Promise<Transaction> {
+  return rpcRequest("finance.updateTransaction", { initData, payload });
+}
+
+export function archiveTransaction(initData: string, transactionId: string): Promise<Status> {
+  return rpcRequest("finance.archiveTransaction", { initData, transactionId });
+}
+
+export function restoreTransaction(initData: string, transactionId: string): Promise<Status> {
+  return rpcRequest("finance.restoreTransaction", { initData, transactionId });
+}
+
+export function updateSavingsGoal(initData: string, goal: number): Promise<Status> {
+  return rpcRequest("finance.updateSavingsGoal", { initData, goal });
+}
+
+export function saveRecurringTransaction(initData: string, template: RecurringTransactionPayload): Promise<Status> {
+  return rpcRequest("finance.saveRecurringTransaction", { initData, template });
+}
+
+export function deleteRecurringTransaction(initData: string, templateId: string): Promise<Status> {
+  return rpcRequest("finance.deleteRecurringTransaction", { initData, templateId });
+}
+
+export function applyRecurringTransaction(initData: string, templateId: string): Promise<Status> {
+  return rpcRequest("finance.applyRecurringTransaction", { initData, templateId });
 }
 
 export function getReport(initData: string, monthKey?: string): Promise<MonthReport> {
   return rpcRequest("finance.getReport", { initData, monthKey });
+}
+
+export function getCategoryBreakdown(initData: string, monthKey?: string): Promise<CategoryBreakdown> {
+  return rpcRequest("finance.getCategoryBreakdown", { initData, monthKey });
 }
 
 export function newMonth(initData: string): Promise<Status> {

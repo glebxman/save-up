@@ -1,19 +1,26 @@
-import type { SavingsPct, Status, User } from "@finance-twa/shared-types";
+import type { RecurringTransaction, SavingsPct, Status, User } from "@finance-twa/shared-types";
 
-import { eq } from "drizzle-orm";
+import { and, eq, isNull, sql } from "drizzle-orm";
 
 import { db } from "../config/database.js";
-import { users, type UserRow } from "../db/schema/index.js";
+import { transactions, users, type UserRow } from "../db/schema/index.js";
 import { calculateDailyLimit } from "../utils/daily-limit.js";
-import { getCachedStatus, setCachedStatus } from "./cache.service.js";
+import { getMonthKey } from "../utils/daily-limit.js";
+import { setCachedStatus } from "./cache.service.js";
 
 export function mapUserRow(row: UserRow): User {
+  const recurringTransactions = Array.isArray(row.recurringTemplates)
+    ? row.recurringTemplates as RecurringTransaction[]
+    : [];
+
   return {
     id: row.id,
     telegramId: row.telegramId,
     balance: row.balance,
     savings: row.savings,
     savingsPct: row.savingsPct as SavingsPct,
+    savingsGoal: row.savingsGoal,
+    recurringTransactions,
     monthlyExp: row.monthlyExp,
     createdAt: row.createdAt.toISOString(),
   };
@@ -55,8 +62,41 @@ export async function ensureUser(telegramId: number): Promise<UserRow> {
   return inserted[0] as UserRow;
 }
 
+async function syncCurrentMonthExpense(row: UserRow): Promise<UserRow> {
+  const monthKey = getMonthKey();
+  const totals = await db
+    .select({
+      total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)::numeric(15,2)`,
+    })
+    .from(transactions)
+    .where(
+      and(
+        eq(transactions.userId, row.id),
+        eq(transactions.type, "expense"),
+        eq(transactions.monthKey, monthKey),
+        isNull(transactions.deletedAt),
+      ),
+    )
+    .limit(1);
+  const nextMonthlyExp = Number(totals[0]?.total ?? 0);
+
+  if (row.monthlyExp === nextMonthlyExp) {
+    return row;
+  }
+
+  const updated = await db
+    .update(users)
+    .set({
+      monthlyExp: nextMonthlyExp,
+    })
+    .where(eq(users.id, row.id))
+    .returning();
+
+  return updated[0] as UserRow;
+}
+
 export async function initUserStatus(telegramId: number): Promise<Status> {
-  const user = await ensureUser(telegramId);
+  const user = await syncCurrentMonthExpense(await ensureUser(telegramId));
   const status = buildStatus(user);
 
   await setCachedStatus(telegramId, status);
@@ -65,13 +105,7 @@ export async function initUserStatus(telegramId: number): Promise<Status> {
 }
 
 export async function getStatusByTelegramId(telegramId: number): Promise<Status> {
-  const cached = await getCachedStatus(telegramId);
-
-  if (cached) {
-    return cached;
-  }
-
-  const user = await ensureUser(telegramId);
+  const user = await syncCurrentMonthExpense(await ensureUser(telegramId));
   const status = buildStatus(user);
 
   await setCachedStatus(telegramId, status);
