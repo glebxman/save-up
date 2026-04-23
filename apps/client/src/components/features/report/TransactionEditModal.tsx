@@ -4,6 +4,7 @@ import { Button, Chip, Input, ListBox, Modal, Select, TextArea } from "@heroui/r
 import { useTranslation } from "react-i18next";
 
 import type { ExpenseCategory, Transaction, TransactionUpdatePayload } from "@/types/finance";
+import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
 import { toDateInputValue } from "@/utils/format";
 
 interface TransactionEditModalProps {
@@ -13,17 +14,6 @@ interface TransactionEditModalProps {
   onClose: () => void;
   onSubmit: (payload: TransactionUpdatePayload) => void;
 }
-
-const categories: ExpenseCategory[] = [
-  "food",
-  "taxi",
-  "entertainment",
-  "shopping",
-  "utilities",
-  "health",
-  "education",
-  "other",
-];
 
 export function TransactionEditModal({
   isOpen,
@@ -118,7 +108,7 @@ export function TransactionEditModal({
                       </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          {categories.map((item) => (
+                          {EXPENSE_CATEGORIES.map((item) => (
                             <ListBox.Item id={item} key={item} textValue={t(`expenseCategory.${item}`)}>
                               {t(`expenseCategory.${item}`)}
                             </ListBox.Item>

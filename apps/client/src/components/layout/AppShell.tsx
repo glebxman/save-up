@@ -38,7 +38,7 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
 
       <div className="finance-bottom-nav-wrap">
-        <nav className="finance-bottom-nav flex items-center gap-2 rounded-full px-2 py-2 ">
+        <nav className="finance-bottom-nav flex items-center gap-1 rounded-full px-2 py-2">
           {navItems.map(({ href, icon: Icon, label }) => {
             const isActive =
               href === "/"
@@ -49,12 +49,13 @@ export function AppShell({ children }: PropsWithChildren) {
               <Button
                 key={href}
                 aria-label={label}
-                className="finance-nav-button h-12 w-12 min-w-0 rounded-full p-0"
+                className="finance-nav-button flex h-14 min-w-[72px] flex-col items-center justify-center gap-1 rounded-full px-3 py-2"
                 data-active={isActive}
                 onPress={() => navigate(href)}
                 variant={isActive ? "primary" : "secondary"}
               >
                 <Icon className="h-5 w-5" />
+                <span className="text-[10px] font-medium leading-tight">{label}</span>
               </Button>
             );
           })}

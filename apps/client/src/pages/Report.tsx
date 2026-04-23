@@ -214,17 +214,17 @@ export function Report() {
         </CardHeader>
 
         <CardContent>
-          <div className="grid grid-cols-4 gap-1.5">
+          <div className="flex bg-[var(--surface-secondary)] p-1 rounded-xl">
             {modes.map((m) => (
-              <Button
+              <button
                 key={m}
-                className="w-full text-xs"
-                onPress={() => setMode(m)}
-                size="sm"
-                variant={mode === m ? "primary" : "secondary"}
+                className={`flex-1 h-8 text-xs rounded-lg px-3 transition-colors ${
+                  mode === m ? "bg-[var(--surface)] font-semibold" : ""
+                }`}
+                onClick={() => setMode(m)}
               >
                 {t(`report.mode${m.charAt(0).toUpperCase() + m.slice(1)}`)}
-              </Button>
+              </button>
             ))}
           </div>
 

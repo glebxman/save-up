@@ -1,6 +1,7 @@
 import { Button, Card, CardContent } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
+import { EmptyIcon } from "@/components/layout/icons";
 import type { RecurringTransaction } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
 
@@ -34,7 +35,12 @@ export function RecurringTemplatesCard({
         </div>
 
         {templates.length === 0 ? (
-          <p className="m-0 text-sm text-[var(--muted)]">{t("recurring.empty")}</p>
+          <div className="flex flex-col items-center justify-center gap-3 py-6 text-center">
+            <span className="flex h-12 w-12 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--muted)]">
+              <EmptyIcon className="h-6 w-6" />
+            </span>
+            <p className="m-0 text-sm text-[var(--muted)]">{t("recurring.empty")}</p>
+          </div>
         ) : (
           <div className="divide-y divide-[var(--separator)]">
             {templates.map((template) => {

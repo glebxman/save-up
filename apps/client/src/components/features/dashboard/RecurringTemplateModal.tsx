@@ -4,6 +4,7 @@ import { Button, Chip, Input, ListBox, Modal, Select, TextArea } from "@heroui/r
 import { useTranslation } from "react-i18next";
 
 import type { ExpenseCategory, RecurringTransaction, RecurringTransactionPayload, TransactionType } from "@/types/finance";
+import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
 
 interface RecurringTemplateModalProps {
   isOpen: boolean;
@@ -15,16 +16,6 @@ interface RecurringTemplateModalProps {
 }
 
 const transactionTypes: TransactionType[] = ["income", "expense", "transfer_to_savings", "transfer_from_savings"];
-const categories: ExpenseCategory[] = [
-  "food",
-  "taxi",
-  "entertainment",
-  "shopping",
-  "utilities",
-  "health",
-  "education",
-  "other",
-];
 
 export function RecurringTemplateModal({
   isOpen,
@@ -146,7 +137,7 @@ export function RecurringTemplateModal({
                       </Select.Trigger>
                       <Select.Popover>
                         <ListBox>
-                          {categories.map((item) => (
+                          {EXPENSE_CATEGORIES.map((item) => (
                             <ListBox.Item id={item} key={item} textValue={t(`expenseCategory.${item}`)}>
                               {t(`expenseCategory.${item}`)}
                             </ListBox.Item>

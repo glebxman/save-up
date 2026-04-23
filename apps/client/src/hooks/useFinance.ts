@@ -41,7 +41,6 @@ export function useFinance() {
   const statusKey = ["status", telegramId] as const;
   const reportKey = ["report", telegramId] as const;
   const breakdownKey = ["categoryBreakdown", telegramId] as const;
-  const recentExpensesKey = ["recentExpenses", telegramId] as const;
   const transactionsBaseKey = ["transactions", telegramId] as const;
 
   const statusQuery = useQuery({
@@ -68,14 +67,6 @@ export function useFinance() {
     refetchOnWindowFocus: false,
   });
 
-  const recentExpensesQuery = useQuery({
-    queryKey: recentExpensesKey,
-    enabled: !!initData,
-    queryFn: () => api.getRecentExpenses(initData),
-    staleTime: 15_000,
-    refetchOnWindowFocus: false,
-  });
-
   const liveStatus = optimisticStatus ?? statusQuery.data ?? null;
 
   function notifySuccess(message: string): void {
@@ -99,7 +90,6 @@ export function useFinance() {
   function invalidateRelated(options?: { refreshStatus?: boolean }): void {
     queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
     queryClient.invalidateQueries({ queryKey: breakdownKey }).catch(() => undefined);
-    queryClient.invalidateQueries({ queryKey: recentExpensesKey }).catch(() => undefined);
     queryClient.invalidateQueries({ queryKey: transactionsBaseKey }).catch(() => undefined);
 
     if (options?.refreshStatus) {
@@ -315,11 +305,9 @@ export function useFinance() {
     status: liveStatus,
     report: reportQuery.data,
     breakdown: breakdownQuery.data,
-    recentExpenses: recentExpensesQuery.data ?? [],
     statusQuery,
     reportQuery,
     breakdownQuery,
-    recentExpensesQuery,
     addIncomeMutation,
     addExpenseMutation,
     transferSavingsMutation,

@@ -1,7 +1,6 @@
 import type {
   CategoryBreakdown,
   ExpenseCategory,
-  ExpenseTransaction,
   MonthReport,
   RecurringTransactionPayload,
   SavingsTransferDirection,
@@ -15,10 +14,6 @@ import { rpcRequest } from "./client";
 
 export function initUser(initData: string): Promise<Status> {
   return rpcRequest("user.init", { initData });
-}
-
-export function getStatus(initData: string): Promise<Status> {
-  return rpcRequest("user.getStatus", { initData });
 }
 
 export function addIncome(
@@ -49,10 +44,6 @@ export function transferSavings(
   occurredAt?: string,
 ): Promise<Status> {
   return rpcRequest("finance.transferSavings", { initData, amount, direction, note, occurredAt });
-}
-
-export function getRecentExpenses(initData: string, limit?: number): Promise<ExpenseTransaction[]> {
-  return rpcRequest("finance.getRecentExpenses", { initData, limit });
 }
 
 export function getTransactions(initData: string, filters?: TransactionFilters): Promise<Transaction[]> {

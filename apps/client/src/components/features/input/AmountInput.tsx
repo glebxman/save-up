@@ -1,7 +1,7 @@
 import { Button, Card, CardContent, CardFooter, Input } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
-import { ArrowDownLeftIcon, ArrowUpRightIcon } from "@/components/layout/icons";
+import { ArrowDownLeftIcon, ArrowUpRightIcon, XMarkIcon } from "@/components/layout/icons";
 
 interface AmountInputProps {
   value: string;
@@ -24,21 +24,33 @@ export function AmountInput({ value, onChange, onIncome, onExpense, isIncomeDisa
   return (
     <Card className="overflow-hidden" variant="default">
       <CardContent>
-        <Input
-          className="rounded-full"
-          fullWidth
-          min="0"
-          onChange={(event) => onChange(event.target.value)}
-          placeholder="0.00"
-          step="0.01"
-          type="number"
-          value={value}
-          variant="secondary"
-        />
+        <div className="relative">
+          <Input
+            className="rounded-full"
+            style={{ paddingRight: "2.5rem" }}
+            fullWidth
+            min="0"
+            onChange={(event) => onChange(event.target.value)}
+            placeholder="0.00"
+            step="0.01"
+            type="number"
+            value={value}
+            variant="secondary"
+          />
+          {value && (
+            <button
+              className="finance-input-clear absolute right-3 top-1/2 -translate-y-1/2 flex h-6 w-6 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-tertiary)] hover:text-[var(--foreground)]"
+              onClick={() => onChange("")}
+              type="button"
+            >
+              <XMarkIcon className="h-4 w-4" />
+            </button>
+          )}
+        </div>
       </CardContent>
 
       <CardFooter>
-        <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col gap-3">
           <div className="grid w-full grid-cols-4 gap-2">
             {quickAmounts.map((amount) => (
               <Button key={amount} className="w-full rounded-full" onPress={() => onChange(String(amount))} variant="secondary">

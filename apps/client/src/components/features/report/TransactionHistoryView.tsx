@@ -11,6 +11,7 @@ import { Button, Card, CardContent, Chip, Input, ListBox, Select, Spinner } from
 import { useTranslation } from "react-i18next";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
+import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
 import { useFinance } from "@/hooks/useFinance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 import type { ExpenseCategory, Transaction, TransactionFilters, TransactionType } from "@/types/finance";
@@ -18,18 +19,6 @@ import { formatDateTime, formatMoney } from "@/utils/format";
 import { TransactionEditModal } from "./TransactionEditModal";
 
 const ALL_CATEGORY_KEY = "__all_categories__";
-
-const categories: Array<ExpenseCategory | typeof ALL_CATEGORY_KEY> = [
-  ALL_CATEGORY_KEY,
-  "food",
-  "taxi",
-  "entertainment",
-  "shopping",
-  "utilities",
-  "health",
-  "education",
-  "other",
-];
 
 const transactionTypes: Array<TransactionType | "all"> = [
   "all",
@@ -327,7 +316,7 @@ export function TransactionHistoryView() {
                         </Select.Trigger>
                         <Select.Popover>
                           <ListBox>
-                            {categories.map((category) => (
+                            {[ALL_CATEGORY_KEY, ...EXPENSE_CATEGORIES].map((category) => (
                               <ListBox.Item
                                 id={category}
                                 key={category}
