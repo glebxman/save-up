@@ -15,12 +15,7 @@
   "shell": {
     "greeting": "Hello, {{name}}",
     "welcomeBack": "Welcome back",
-    "notifications": "Notifications",
-    "nav": {
-      "dashboard": "Dashboard",
-      "report": "Report",
-      "settings": "Settings"
-    }
+    "notifications": "Notifications"
   },
   "dashboard": {
     "loading": "Loading your finance status...",

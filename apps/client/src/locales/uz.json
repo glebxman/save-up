@@ -15,12 +15,7 @@
   "shell": {
     "greeting": "Salom, {{name}}",
     "welcomeBack": "Yana ko'rganimdan xursandman",
-    "notifications": "Bildirishnomalar",
-    "nav": {
-      "dashboard": "Asosiy",
-      "report": "Hisobot",
-      "settings": "Sozlamalar"
-    }
+    "notifications": "Bildirishnomalar"
   },
   "dashboard": {
     "loading": "Moliyaviy holatingiz yuklanmoqda...",

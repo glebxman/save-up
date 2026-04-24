@@ -104,20 +104,6 @@ export function Settings() {
         </CardContent>
       </Card>
 
-      <Card className="overflow-hidden" variant="default">
-        <CardContent className="p-4">
-          <div className="flex items-center gap-4">
-            <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-[var(--surface-secondary)] text-[var(--accent)]">
-              <WalletIcon className="h-5 w-5" />
-            </span>
-            <div>
-              <p className="m-0 text-base font-semibold text-[var(--foreground)]">{t("common.appName")}</p>
-              <p className="m-0 mt-0.5 text-sm text-[var(--muted)]">v0.1.0</p>
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-
       <Modal>
         <Modal.Backdrop
           isOpen={activeModal === "theme"}

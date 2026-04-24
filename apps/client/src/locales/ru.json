@@ -15,12 +15,7 @@
   "shell": {
     "greeting": "Привет, {{name}}",
     "welcomeBack": "С возвращением",
-    "notifications": "Уведомления",
-    "nav": {
-      "dashboard": "Главная",
-      "report": "Отчёт",
-      "settings": "Настройки"
-    }
+    "notifications": "Уведомления"
   },
   "dashboard": {
     "loading": "Загружаем ваш финансовый статус...",
