@@ -4,8 +4,10 @@ import { useTranslation } from "react-i18next";
 import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
 import { MonthReport } from "@/components/features/report/MonthReport";
 import { TransactionHistoryView } from "@/components/features/report/TransactionHistoryView";
+import { categoryMeta } from "@/components/features/shared/categoryMeta";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
+import type { ExpenseCategory } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
 
 type ReportMode = "income" | "spending" | "analytics" | "history";
@@ -38,6 +40,10 @@ function getProgressValue(value: number, total: number): number {
   }
 
   return Math.max(6, Math.min(100, Math.round((value / total) * 100)));
+}
+
+function isExpenseCategory(value: string): value is ExpenseCategory {
+  return value in categoryMeta;
 }
 
 export function Report() {
@@ -209,7 +215,7 @@ export function Report() {
         <CardHeader>
           <div>
             <CardDescription>{t("report.statistics")}</CardDescription>
-            <CardTitle className="mt-1 text-[2rem] tracking-[-0.06em]">{activeReport.monthKey}</CardTitle>
+            <CardTitle className="mt-1 text-[2rem] tracking-normal">{activeReport.monthKey}</CardTitle>
           </div>
         </CardHeader>
 
@@ -231,18 +237,16 @@ export function Report() {
           <div className="mt-6 space-y-5" data-onboarding="report-summary">
             <div>
               <p className="mb-1 mt-0 text-sm text-[var(--muted)]">{summary.focusLabel}</p>
-              <strong className="text-[2.45rem] font-semibold tracking-[-0.06em] text-[var(--foreground)]">{summary.focusValue}</strong>
+              <strong className="break-words text-[2.45rem] font-semibold leading-none tracking-normal text-[var(--foreground)]">{summary.focusValue}</strong>
               <p className="m-0 mt-2 max-w-[28ch] text-xs text-[var(--muted)]">{summary.description}</p>
             </div>
 
             <div className="grid grid-cols-2 gap-3">
               {summary.metrics.map((metric) => (
-                <Card key={metric.label} className="rounded-[24px]" variant="secondary">
-                  <CardContent>
-                    <p className="m-0 text-xs text-[var(--muted)]">{metric.label}</p>
-                    <p className="m-0 mt-2 text-lg font-semibold tracking-[-0.04em] text-[var(--foreground)]">{metric.value}</p>
-                  </CardContent>
-                </Card>
+                <div key={metric.label} className="rounded-[24px] bg-[var(--surface-secondary)] px-4 py-4">
+                  <p className="m-0 text-xs text-[var(--muted)]">{metric.label}</p>
+                  <p className="m-0 mt-2 break-words text-lg font-semibold tracking-normal text-[var(--foreground)]">{metric.value}</p>
+                </div>
               ))}
             </div>
 
@@ -255,26 +259,30 @@ export function Report() {
 
             {summary.rows.length > 0 && (
               <div className="space-y-3">
-                {summary.rows.map((row) => (
-                  <div key={row.key} className="space-y-1.5">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className="text-sm text-[var(--foreground)]">{row.label}</span>
-                      <span className="text-sm font-semibold text-[var(--foreground)]">{formatMoney(row.value)}</span>
-                    </div>
-                    <div className="flex items-center gap-2">
-                      <div className="min-w-0 flex-1">
-                        <ProgressBar aria-label={row.label} color="accent" size="lg" value={row.percent}>
-                          <ProgressBar.Track>
-                            <ProgressBar.Fill />
-                          </ProgressBar.Track>
-                        </ProgressBar>
+                {summary.rows.map((row) => {
+                  const rowColor = isExpenseCategory(row.key) ? categoryMeta[row.key].chartColor : undefined;
+
+                  return (
+                    <div key={row.key} className="space-y-1.5">
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="min-w-0 truncate text-sm text-[var(--foreground)]">{row.label}</span>
+                        <span className="max-w-[48%] break-words text-right text-sm font-semibold text-[var(--foreground)]">{formatMoney(row.value)}</span>
                       </div>
-                      <Chip color="accent" size="sm" variant="primary">
-                        {row.percent}%
-                      </Chip>
+                      <div className="flex items-center gap-2">
+                        <div className="min-w-0 flex-1">
+                          <ProgressBar aria-label={row.label} color="accent" size="lg" value={row.percent}>
+                            <ProgressBar.Track>
+                              <ProgressBar.Fill style={rowColor ? { backgroundColor: rowColor } : undefined} />
+                            </ProgressBar.Track>
+                          </ProgressBar>
+                        </div>
+                        <Chip color="accent" size="sm" variant="primary">
+                          {row.percent}%
+                        </Chip>
+                      </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             )}
           </div>

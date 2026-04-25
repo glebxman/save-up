@@ -12,6 +12,9 @@ import { useFinance } from "@/hooks/useFinance";
 import { useTheme, type ThemeMode } from "@/providers/ThemeProvider";
 import { useCurrency, SUPPORTED_CURRENCIES } from "@/hooks/useCurrency";
 import { getCurrencySymbol } from "@/utils/format";
+import ruFlagUrl from "@/assets/ru.svg";
+import ukFlagUrl from "@/assets/uk.svg";
+import uzbFlagUrl from "@/assets/uzb.svg";
 
 type SettingsModal = "theme" | "language" | "currency" | "reset" | null;
 
@@ -63,6 +66,12 @@ export function Settings() {
     zh: "🇨🇳",
   };
 
+  const languageFlagUrls: Partial<Record<AppLanguage, string>> = {
+    en: ukFlagUrl,
+    ru: ruFlagUrl,
+    uz: uzbFlagUrl,
+  };
+
   const themeOptions: Array<{ value: ThemeMode; label: string }> = [
     { value: "auto", label: themeLabels.auto },
     { value: "light", label: themeLabels.light },
@@ -91,6 +100,31 @@ export function Settings() {
     closeActiveModal();
   };
 
+  const renderLanguageFlag = (language: AppLanguage, size: "sm" | "md" = "md") => {
+    const flagUrl = languageFlagUrls[language];
+    const sizeClassName = size === "sm" ? "h-5 w-5" : "h-6 w-6";
+
+    if (flagUrl) {
+      return (
+        <span
+          aria-hidden="true"
+          className={`inline-flex ${sizeClassName} shrink-0 overflow-hidden rounded-full bg-[var(--surface-tertiary)]`}
+        >
+          <img alt="" className="h-full w-full object-cover" src={flagUrl} />
+        </span>
+      );
+    }
+
+    return (
+      <span
+        aria-hidden="true"
+        className={`inline-flex ${sizeClassName} shrink-0 items-center justify-center rounded-full bg-[var(--surface-tertiary)] text-[10px] font-semibold uppercase text-[var(--muted)]`}
+      >
+        {languageFlags[language] || language}
+      </span>
+    );
+  };
+
   const renderLanguageButton = (language: AppLanguage) => (
     <Button
       key={language}
@@ -98,9 +132,7 @@ export function Settings() {
       onPress={() => selectLanguage(language)}
       variant={currentLanguage === language ? "primary" : "secondary"}
     >
-      <span aria-hidden="true" className="text-xl leading-none">
-        {languageFlags[language]}
-      </span>
+      {renderLanguageFlag(language)}
       <span className="min-w-0 flex-1 truncate">{languageLabels[language]}</span>
     </Button>
   );
@@ -188,6 +220,7 @@ export function Settings() {
             </div>
 
             <div className="flex min-w-0 items-center gap-2 text-sm text-[var(--muted)]">
+              {renderLanguageFlag(currentLanguage, "sm")}
               <span className="truncate">{languageLabels[currentLanguage]}</span>
               <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
             </div>

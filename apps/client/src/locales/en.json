@@ -34,7 +34,11 @@
     "healthy": "On track",
     "watch": "Spending fast",
     "spendableNow": "Available now",
-    "monthlyBudget": "Spent this month"
+    "monthlyBudget": "Spent this month",
+    "changeTitle": "Balance change",
+    "changeQuestion": "Are you sure you want to change the balance?",
+    "changeDescription": "Current: {{current}}. New balance: {{next}}.",
+    "changeConfirm": "Continue"
   },
   "dailyLimit": {
     "caption": "Left to spend",
@@ -284,7 +288,13 @@
     "goalUpdated": "Savings goal updated",
     "recurringSaved": "Recurring action saved",
     "recurringDeleted": "Recurring action deleted",
-    "recurringApplied": "Recurring action applied"
+    "recurringApplied": "Recurring action applied",
+    "errors": {
+      "balanceNegative": "Operation would make balance negative",
+      "savingsNegative": "Operation would make savings negative",
+      "insufficientBalance": "Not enough money on balance",
+      "insufficientSavings": "Not enough money in savings"
+    }
   },
   "analytics": {
     "title": "Expense breakdown",
@@ -298,50 +308,54 @@
     "skip": "Skip",
     "back": "Back",
     "next": "Next",
-    "start": "Let's go!",
+    "start": "Done",
     "welcome": {
       "title": "Welcome to Save Up!",
-      "description": "Let's take a quick look at how the app works. It only takes a minute."
+      "description": "We'll show the main places: adding transactions, reading your budget, checking reports, and adjusting settings."
+    },
+    "navigation": {
+      "title": "Bottom menu",
+      "description": "Use these buttons to return to the dashboard, open the report, or go to settings at any time."
     },
     "balance": {
       "title": "Your balance",
-      "description": "This is your current balance. Tap on the number to edit it directly."
+      "description": "This is the money currently available. If the starting amount is wrong, tap the number and enter the correct balance."
     },
     "amount-input": {
       "title": "Income & expenses",
-      "description": "Enter an amount here, then tap Income or Expense. Pick a category and you're done."
+      "description": "Enter an amount manually, then choose Income or Expense. For expenses, the app asks for a category so analytics stay useful."
     },
     "daily-limit": {
       "title": "Daily budget",
-      "description": "Shows how much you can spend today to stay on track until the end of the month."
+      "description": "This shows how much you can spend per day if your current balance is spread evenly until the end of the month."
     },
     "savings": {
       "title": "Savings pocket",
-      "description": "Set a savings goal and move money in or out. You can also save part of each income."
+      "description": "Move money from balance into savings, bring it back when needed, and set a goal to track progress."
     },
     "templates": {
       "title": "Recurring actions",
-      "description": "Create templates for regular transactions like rent or salary. Apply them with one tap."
+      "description": "Add templates for regular transactions like rent, salary, or internet. Then run them with one tap."
     },
     "report-tabs": {
       "title": "Report modes",
-      "description": "Switch between income, spending, analytics, and full transaction history."
+      "description": "The report has separate modes for income, spending, category analytics, and full transaction history."
     },
     "report-summary": {
       "title": "Monthly summary",
-      "description": "Key numbers for the current month: totals, categories, and trends at a glance."
+      "description": "The top area shows the most important monthly numbers. Analytics makes it easier to spot the biggest spending category."
     },
     "settings-theme": {
       "title": "Appearance",
-      "description": "Switch between light, dark, or automatic theme."
+      "description": "Choose light, dark, or automatic theme so the app feels comfortable to use."
     },
     "settings-language": {
       "title": "Language",
-      "description": "Choose between English, Russian, and Uzbek."
+      "description": "Change the interface language here. Your choice is saved for the next launch."
     },
     "settings-currency": {
       "title": "Currency",
-      "description": "Select your preferred currency for displaying all amounts."
+      "description": "Choose the currency used for balances, expenses, savings, and reports."
     },
     "settings-reset": {
       "title": "Reset data",
@@ -349,7 +363,7 @@
     },
     "done": {
       "title": "You're all set!",
-      "description": "Start tracking your finances. You can always come back to any section from the bottom menu."
+      "description": "You can now add your first transaction. The bottom menu will always take you back to the section you need."
     }
   },
   "notFound": {

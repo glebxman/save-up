@@ -16,6 +16,11 @@ interface SpotlightRect {
 const PADDING = 10;
 const BORDER_RADIUS = 26;
 const TOOLTIP_GAP = 14;
+const TARGET_WAIT_DELAY = 700;
+
+function getTargetElement(target: string): HTMLElement | null {
+  return document.querySelector<HTMLElement>(`[data-onboarding="${target}"]`);
+}
 
 function useSpotlightRect(target: string | null, isActive: boolean): SpotlightRect | null {
   const [rect, setRect] = useState<SpotlightRect | null>(null);
@@ -24,17 +29,18 @@ function useSpotlightRect(target: string | null, isActive: boolean): SpotlightRe
   const measure = useCallback(() => {
     if (!target) {
       setRect(null);
-      return;
+      return null;
     }
 
-    const el = document.querySelector(`[data-onboarding="${target}"]`);
+    const el = getTargetElement(target);
     if (!el) {
       setRect(null);
-      return;
+      return null;
     }
 
     const r = el.getBoundingClientRect();
     setRect({ top: r.top, left: r.left, width: r.width, height: r.height });
+    return el;
   }, [target]);
 
   useLayoutEffect(() => {
@@ -45,16 +51,29 @@ function useSpotlightRect(target: string | null, isActive: boolean): SpotlightRe
   useEffect(() => {
     if (!isActive || !target) return;
 
-    const el = document.querySelector(`[data-onboarding="${target}"]`);
-    if (el) {
-      el.scrollIntoView({ behavior: "smooth", block: "center" });
-      const timer = window.setTimeout(measure, 400);
-      return () => window.clearTimeout(timer);
-    }
-  }, [isActive, target, measure]);
+    let hasScrolledToTarget = false;
+    let scrollTimer = 0;
 
-  useEffect(() => {
-    if (!isActive || !target) return;
+    function revealTarget() {
+      const el = measure();
+
+      if (!el) {
+        return;
+      }
+
+      if (!hasScrolledToTarget) {
+        el.scrollIntoView({ behavior: "smooth", block: "center" });
+        hasScrolledToTarget = true;
+        scrollTimer = window.setTimeout(measure, 420);
+      }
+    }
+
+    revealTarget();
+
+    const observer = new MutationObserver(revealTarget);
+    observer.observe(document.body, { attributes: true, childList: true, subtree: true });
+
+    const retryTimer = window.setInterval(revealTarget, 250);
 
     function onResize() {
       cancelAnimationFrame(rafRef.current);
@@ -67,6 +86,9 @@ function useSpotlightRect(target: string | null, isActive: boolean): SpotlightRe
     return () => {
       window.removeEventListener("resize", onResize);
       window.removeEventListener("scroll", onResize, true);
+      observer.disconnect();
+      window.clearInterval(retryTimer);
+      window.clearTimeout(scrollTimer);
       cancelAnimationFrame(rafRef.current);
     };
   }, [isActive, target, measure]);
@@ -74,7 +96,19 @@ function useSpotlightRect(target: string | null, isActive: boolean): SpotlightRe
   return rect;
 }
 
-function SvgOverlay({ rect, onClick }: { rect: SpotlightRect | null; onClick: () => void }) {
+function getSpotlightBox(rect: SpotlightRect) {
+  const vw = window.innerWidth;
+  const vh = window.innerHeight;
+  const left = Math.max(8, rect.left - PADDING);
+  const top = Math.max(8, rect.top - PADDING);
+  const width = Math.max(0, Math.min(vw - left - 8, rect.width + PADDING * 2));
+  const height = Math.max(0, Math.min(vh - top - 8, rect.height + PADDING * 2));
+  const radius = Math.min(BORDER_RADIUS, width / 2, height / 2);
+
+  return { top, left, width, height, radius };
+}
+
+function SvgOverlay({ rect }: { rect: SpotlightRect | null }) {
   const vw = window.innerWidth;
   const vh = window.innerHeight;
 
@@ -82,16 +116,11 @@ function SvgOverlay({ rect, onClick }: { rect: SpotlightRect | null; onClick: ()
     return (
       <div
         className="fixed inset-0 z-[60] bg-black/60"
-        onClick={onClick}
       />
     );
   }
 
-  const x = rect.left - PADDING;
-  const y = rect.top - PADDING;
-  const w = rect.width + PADDING * 2;
-  const h = rect.height + PADDING * 2;
-  const r = BORDER_RADIUS;
+  const { left: x, top: y, width: w, height: h, radius: r } = getSpotlightBox(rect);
 
   const hole = [
     `M ${x + r} ${y}`,
@@ -112,7 +141,6 @@ function SvgOverlay({ rect, onClick }: { rect: SpotlightRect | null; onClick: ()
     <svg
       className="fixed inset-0 z-[60]"
       height={vh}
-      onClick={onClick}
       style={{ pointerEvents: "auto" }}
       width={vw}
     >
@@ -122,6 +150,24 @@ function SvgOverlay({ rect, onClick }: { rect: SpotlightRect | null; onClick: ()
         fillRule="evenodd"
       />
     </svg>
+  );
+}
+
+function SpotlightFrame({ rect }: { rect: SpotlightRect }) {
+  const { left, top, width, height, radius } = getSpotlightBox(rect);
+
+  return (
+    <div
+      aria-hidden="true"
+      className="pointer-events-none fixed z-[61] border border-[color-mix(in_srgb,var(--accent)_86%,white_10%)] shadow-[0_0_0_9999px_transparent,0_0_32px_rgba(239,242,154,0.28)] transition-all duration-300"
+      style={{
+        borderRadius: radius,
+        height,
+        left,
+        top,
+        width,
+      }}
+    />
   );
 }
 
@@ -164,14 +210,24 @@ function TooltipCard({
   const { t } = useTranslation();
 
   return (
-    <div className="w-full max-w-sm rounded-[24px] bg-[var(--overlay)] p-5 text-[var(--overlay-foreground)] shadow-2xl">
-      <StepDots current={current} total={total} />
+    <div
+      aria-describedby={`onboarding-${stepId}-description`}
+      aria-labelledby={`onboarding-${stepId}-title`}
+      className="w-full max-w-sm rounded-[24px] bg-[var(--overlay)] p-5 text-[var(--overlay-foreground)] shadow-2xl"
+      role="dialog"
+    >
+      <div className="flex items-center justify-between gap-3">
+        <span className="shrink-0 rounded-full bg-[var(--surface-secondary)] px-2.5 py-1 text-xs font-semibold text-[var(--muted)]">
+          {current + 1}/{total}
+        </span>
+        <StepDots current={current} total={total} />
+      </div>
 
       <div className="mt-3 text-center">
-        <h3 className="m-0 text-lg font-semibold tracking-[-0.02em]">
+        <h3 id={`onboarding-${stepId}-title`} className="m-0 text-lg font-semibold tracking-normal">
           {t(`onboarding.${stepId}.title`)}
         </h3>
-        <p className="m-0 mt-2 text-sm leading-relaxed text-[var(--muted)]">
+        <p id={`onboarding-${stepId}-description`} className="m-0 mt-2 text-sm leading-relaxed text-[var(--muted)]">
           {t(`onboarding.${stepId}.description`)}
         </p>
       </div>
@@ -206,6 +262,7 @@ export function OnboardingOverlay() {
   const location = useLocation();
   const tooltipRef = useRef<HTMLDivElement>(null);
   const [tooltipPos, setTooltipPos] = useState<{ top: number; left: number } | null>(null);
+  const [showPendingTargetCard, setShowPendingTargetCard] = useState(false);
 
   useEffect(() => {
     start();
@@ -220,9 +277,47 @@ export function OnboardingOverlay() {
     }
   }, [isActive, step.route, location.pathname, navigate]);
 
+  useEffect(() => {
+    if (!isActive) return;
+
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        skip();
+      }
+
+      if (event.key === "ArrowRight") {
+        event.preventDefault();
+        next();
+      }
+
+      if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        prev();
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [isActive, next, prev, skip]);
+
   const isOnCorrectPage = location.pathname === step.route;
   const spotlightRect = useSpotlightRect(isOnCorrectPage ? step.target : null, isActive);
   const hasTarget = step.target !== null;
+  const isWaitingForTarget = isActive && hasTarget && isOnCorrectPage && !spotlightRect;
+
+  useEffect(() => {
+    setShowPendingTargetCard(false);
+
+    if (!isWaitingForTarget) {
+      return undefined;
+    }
+
+    const timer = window.setTimeout(() => setShowPendingTargetCard(true), TARGET_WAIT_DELAY);
+
+    return () => window.clearTimeout(timer);
+  }, [currentStep, isWaitingForTarget]);
 
   useLayoutEffect(() => {
     if (!isActive) return;
@@ -262,15 +357,17 @@ export function OnboardingOverlay() {
 
   if (!isActive) return null;
 
-  const isCentered = !hasTarget || !spotlightRect;
+  const shouldShowTooltip = !hasTarget || !!spotlightRect || showPendingTargetCard;
+  const isCentered = !hasTarget || (!spotlightRect && showPendingTargetCard);
 
   return createPortal(
     <>
-      <SvgOverlay onClick={next} rect={spotlightRect} />
+      <SvgOverlay rect={spotlightRect} />
+      {spotlightRect ? <SpotlightFrame rect={spotlightRect} /> : null}
 
-      {isCentered ? (
+      {!shouldShowTooltip ? null : isCentered ? (
         <div
-          className="fixed inset-0 z-[61] flex items-center justify-center px-4"
+          className="fixed inset-0 z-[62] flex items-center justify-center px-4"
           onClick={(e) => e.stopPropagation()}
         >
           <TooltipCard
@@ -288,7 +385,7 @@ export function OnboardingOverlay() {
       ) : (
         <div
           ref={tooltipRef}
-          className="fixed z-[61]"
+          className="fixed z-[62]"
           onClick={(e) => e.stopPropagation()}
           style={
             tooltipPos

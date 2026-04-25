@@ -671,17 +671,35 @@ export async function updateSavingsGoal(telegramId: number, goal: number): Promi
 
 export async function updateBalance(telegramId: number, balance: number): Promise<Status> {
   const user = await ensureUser(telegramId);
-  const updated = await db
-    .update(users)
-    .set({
-      balance: normalizeBalance(balance),
-    })
-    .where(eq(users.id, user.id))
-    .returning();
+  const targetBalance = normalizeBalance(balance);
+  const updatedUser = await db.transaction(async (tx) => {
+    const rows = await getActiveTransactionsForUser(tx, user.id);
+    const snapshot = buildSnapshot(rows);
+    const delta = roundAmount(targetBalance - snapshot.balance);
+
+    if (delta !== 0) {
+      const amount = Math.abs(delta);
+
+      assertPositiveAmount(amount);
+
+      await tx.insert(transactions).values({
+        userId: user.id,
+        type: delta > 0 ? "income" : "expense",
+        amount,
+        category: delta < 0 ? "other" : null,
+        savingsAmt: null,
+        note: null,
+        monthKey: getMonthKey(),
+        occurredAt: new Date(),
+      });
+    }
+
+    return syncUserSnapshot(tx, user);
+  });
 
   await invalidateStatusCache(telegramId);
 
-  return persistStatus(updated[0] as UserRow);
+  return persistStatus(updatedUser);
 }
 
 export async function resetAccountData(telegramId: number): Promise<Status> {

@@ -336,6 +336,12 @@ function getTransactionImpact(transaction: Transaction): TransactionImpact {
   };
 }
 
+function getLedgerBalanceForUser(telegramId: number): number {
+  return getTransactionsForUser(telegramId)
+    .filter((transaction) => !transaction.deletedAt)
+    .reduce((sum, transaction) => roundAmount(sum + getTransactionImpact(transaction).balance), 0);
+}
+
 function applyImpact(user: User, impact: TransactionImpact, direction: 1 | -1): User {
   return {
     ...user,
@@ -861,9 +867,26 @@ const mockHandlers: {
   "finance.updateBalance": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
+    const targetBalance = normalizeBalance(params.balance);
+    const delta = roundAmount(targetBalance - getLedgerBalanceForUser(telegramId));
+
+    if (delta !== 0) {
+      const amount = Math.abs(delta);
+
+      ensureAmountWithinLimit(amount);
+
+      const transaction = buildTransaction(user.id, {
+        type: delta > 0 ? "income" : "expense",
+        amount,
+        category: delta < 0 ? "other" : null,
+      });
+
+      appendTransaction(transaction);
+    }
+
     const nextUser: User = {
       ...user,
-      balance: normalizeBalance(params.balance),
+      balance: targetBalance,
     };
 
     saveUser(nextUser);

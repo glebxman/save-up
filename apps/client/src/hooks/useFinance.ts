@@ -30,6 +30,18 @@ function computeDailyLimit(balance: number): Status["dailyLimit"] {
   };
 }
 
+const errorTranslationKeys = {
+  "Operation would make balance negative": "feedback.errors.balanceNegative",
+  "Operation would make savings negative": "feedback.errors.savingsNegative",
+  "Insufficient balance for expense": "feedback.errors.insufficientBalance",
+  "Insufficient balance for transfer": "feedback.errors.insufficientBalance",
+  "Insufficient savings for transfer": "feedback.errors.insufficientSavings",
+} as const;
+
+function getErrorTranslationKey(message: string): string | undefined {
+  return errorTranslationKeys[message as keyof typeof errorTranslationKeys];
+}
+
 export function useFinance() {
   const queryClient = useQueryClient();
   const { initData, user, hapticFeedback } = useTelegram();
@@ -75,7 +87,9 @@ export function useFinance() {
   }
 
   function notifyError(error: unknown): void {
-    const message = error instanceof Error ? error.message : t("feedback.genericError");
+    const translationKey = error instanceof Error ? getErrorTranslationKey(error.message) : undefined;
+    const message = translationKey ? t(translationKey) : t("feedback.genericError");
+
     pushToast({ tone: "error", message });
     hapticFeedback?.notificationOccurred("error");
   }
@@ -286,6 +300,7 @@ export function useFinance() {
     },
     onSuccess: (status) => {
       syncStatus(status);
+      invalidateRelated();
     },
   });
 

@@ -10,6 +10,7 @@ export interface OnboardingStep {
 
 export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "welcome", target: null, route: "/" },
+  { id: "navigation", target: "bottom-nav", route: "/" },
   { id: "balance", target: "balance", route: "/" },
   { id: "amount-input", target: "amount-input", route: "/" },
   { id: "daily-limit", target: "daily-limit", route: "/" },
@@ -20,7 +21,6 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "settings-theme", target: "settings-theme", route: "/settings" },
   { id: "settings-language", target: "settings-language", route: "/settings" },
   { id: "settings-currency", target: "settings-currency", route: "/settings" },
-  { id: "settings-reset", target: "settings-reset", route: "/settings" },
   { id: "done", target: null, route: "/" },
 ];
 

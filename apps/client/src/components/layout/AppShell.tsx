@@ -46,8 +46,8 @@ export function AppShell({ children }: PropsWithChildren) {
       </div>
 
       <div className="finance-bottom-nav-wrap">
-        <nav className="finance-bottom-nav flex items-center gap-2 rounded-full px-2.5 py-2.5">
-          {navItems.map(({ href, icon: Icon }) => {
+        <nav className="finance-bottom-nav flex items-center gap-2 rounded-full px-2.5 py-2.5" data-onboarding="bottom-nav">
+          {navItems.map(({ href, icon: Icon, label }) => {
             const isActive =
               href === "/"
                 ? location.pathname === href
@@ -56,6 +56,7 @@ export function AppShell({ children }: PropsWithChildren) {
             return (
               <Button
                 key={href}
+                aria-label={label}
                 className="finance-nav-button flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-full px-3 py-2"
                 data-active={isActive}
                 onPress={() => navigate(href)}

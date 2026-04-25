@@ -16,12 +16,6 @@ interface AmountInputProps {
   helperText?: string;
 }
 
-const quickAmounts = [50000, 100000, 200000, 500000];
-
-function formatQuickAmount(amount: number): string {
-  return amount >= 1000 ? `+${amount / 1000}k` : `+${amount}`;
-}
-
 export function AmountInput({ value, onChange, onIncome, onExpense, isIncomeDisabled, isExpenseDisabled, helperText }: AmountInputProps) {
   const { t } = useTranslation();
   const [displayValue, setDisplayValue] = useState(formatInputWithРазделителями(value));
@@ -30,12 +24,6 @@ export function AmountInput({ value, onChange, onIncome, onExpense, isIncomeDisa
     const formatted = formatInputWithРазделителями(newValue);
     setDisplayValue(formatted);
     onChange(String(parseFormattedInput(formatted)));
-  };
-
-  const handleQuickAmount = (amount: number) => {
-    const formatted = formatInputWithРазделителями(String(amount));
-    setDisplayValue(formatted);
-    onChange(String(amount));
   };
 
   return (
@@ -80,13 +68,6 @@ export function AmountInput({ value, onChange, onIncome, onExpense, isIncomeDisa
 
       <CardFooter>
         <div className="flex w-full flex-col gap-3">
-          <div className="grid w-full grid-cols-4 gap-2">
-            {quickAmounts.map((amount) => (
-              <Button key={amount} className="w-full rounded-[18px]" onPress={() => handleQuickAmount(amount)} variant="secondary">
-                {formatQuickAmount(amount)}
-              </Button>
-            ))}
-          </div>
           <div className="grid w-full grid-cols-2 gap-2">
             <Button className="w-full justify-start px-5" isDisabled={isIncomeDisabled} onPress={onIncome} variant="primary">
               <ArrowUpRightIcon className="h-4 w-4" />
