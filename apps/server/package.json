@@ -7,12 +7,12 @@
     "dev": "npm --prefix ../.. run dev",
     "dev:server": "tsx watch src/server.ts",
     "dev:bot": "tsx watch src/bot.ts",
-    "start": "node dist/src/server.js",
+    "start": "pnpm exec drizzle-kit migrate && node dist/src/server.js",
     "start:bot": "node dist/src/bot.js",
-    "build": "node ./node_modules/typescript/bin/tsc -p tsconfig.json",
-    "typecheck": "node ./node_modules/typescript/bin/tsc -p tsconfig.json --noEmit",
-    "db:generate": "drizzle-kit generate",
-    "db:migrate": "drizzle-kit migrate"
+    "build": "pnpm exec tsc -p tsconfig.json",
+    "typecheck": "pnpm exec tsc -p tsconfig.json --noEmit",
+    "db:generate": "pnpm exec drizzle-kit generate",
+    "db:migrate": "pnpm exec drizzle-kit migrate"
   },
   "dependencies": {
     "@fastify/cors": "^9.0.1",

@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Kullanıcı",
+    "browser": "Tarayıcı",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Hazır",
+    "synced": "Senkronize",
+    "mock": "Mock",
+    "live": "Canlı",
+    "cancel": "İptal"
+  },
+  "shell": {
+    "greeting": "Merhaba, {{name}}",
+    "welcomeBack": "Tekrar hoş geldiniz",
+    "notifications": "Bildirimler"
+  },
+  "dashboard": {
+    "loading": "Finans durumunuz yükleniyor...",
+    "errorCaption": "Yükleme hatası",
+    "errorTitle": "Verileriniz alınamadı",
+    "errorDescription": "Backend RPC endpoint, Telegram initData ve sunucu bağlantısını kontrol edin.",
+    "shortcuts": {
+      "income": "Gelir",
+      "expense": "Gider",
+      "report": "Rapor",
+      "setting": "Ayar"
+    }
+  },
+  "balance": {
+    "caption": "Bakiyem",
+    "healthy": "Plan dahilinde",
+    "watch": "Harcama hızlı",
+    "spendableNow": "Şimdi kullanılabilir",
+    "monthlyBudget": "Bu ay harcandı"
+  },
+  "dailyLimit": {
+    "caption": "Harcanabilir kalan",
+    "days": "{{count}} gün",
+    "description": "Ay sonuna kadar dengede kalmanız için günlük bütçeniz."
+  },
+  "savings": {
+    "caption": "Birikim cebi",
+    "description": "Her gelirden birikime ne kadar ayrılacağını belirleyin.",
+    "setup": "Birikime aktar",
+    "question": "Bu gelirden birikime ne kadar ayrılsın?",
+    "incomeAmount": "Gelir: {{amount}}",
+    "customPlaceholder": "Birikim tutarını girin",
+    "saveNothing": "Hepsini tut",
+    "saveHalf": "Yarısını biriktir",
+    "saveAll": "Hepsini biriktir",
+    "confirm": "Ekle",
+    "helperText": "{{amount}} tutarına kadar istediğiniz miktarı biriktirebilirsiniz.",
+    "manualMode": "Manuel",
+    "goalBadge": "{{value}} hedef",
+    "goalText": "Hedef: {{goal}}. Kalan: {{remaining}}.",
+    "setGoal": "Hedef belirle",
+    "deposit": "Yatır",
+    "withdraw": "Çek",
+    "saveGoal": "Hedefi kaydet",
+    "goalHelper": "Birikim cebiniz için hedef tutarı belirleyin.",
+    "goalPlaceholder": "Hedef tutarı girin",
+    "goalQuestion": "Birikim hedefiniz nedir?",
+    "depositHelper": "Bakiyeden birikime en fazla {{amount}} aktarabilirsiniz.",
+    "depositQuestion": "Bakiyeden birikime ne kadar aktarılsın?",
+    "withdrawHelper": "Birikimden bakiyeye en fazla {{amount}} geri alabilirsiniz.",
+    "withdrawQuestion": "Birikimden bakiyeye ne kadar geri alınsın?",
+    "transferPlaceholder": "Aktarım tutarını girin"
+  },
+  "amountInput": {
+    "caption": "Yeni işlem",
+    "title": "Bir tutar girin",
+    "maxAmount": "Maksimum tutar: {{amount}}"
+  },
+  "report": {
+    "loading": "Aylık raporunuz hazırlanıyor...",
+    "errorCaption": "Rapor hatası",
+    "errorTitle": "Özet yüklenemedi",
+    "errorDescription": "Backend RPC endpoint ve veritabanı bağlantısını kontrol edin.",
+    "statistics": "İstatistik",
+    "modeIncome": "Gelir",
+    "modeSpending": "Harcama",
+    "modeAnalytics": "Analitik",
+    "modeHistory": "Geçmiş",
+    "totalIncome": "Toplam gelir",
+    "totalSpending": "Toplam harcama",
+    "newMonthCaption": "Yeni ay",
+    "newMonthTitle": "Ayı kapat",
+    "newMonthAction": "Aylık harcamayı sıfırla",
+    "ops": "{{count}} öğe"
+  },
+  "monthReport": {
+    "snapshot": "Özet",
+    "overview": "Aylık görünüm",
+    "description": "Bu ayki gelir, harcama ve birikimlere hızlı bakış.",
+    "income": "Gelir",
+    "spending": "Harcama",
+    "saved": "Biriktirildi",
+    "withdrawn": "Çekildi",
+    "netSaved": "Net birikim",
+    "transactions": "İşlemler"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "description": "Uygulamayı özelleştirin.",
+    "adminPanel": "Admin paneli",
+    "adminPanelDescription": "Kullanıcılar, istatistikler ve admin erişimi yönetimi.",
+    "theme": "Görünüm",
+    "language": "Dil",
+    "resetData": "Hesap verilerini sıfırla",
+    "resetDataDescription": "Tüm gelirleri, giderleri, birikim ilerlemesini ve tekrarlayan şablonları sil.",
+    "resetDataModalTitle": "Tehlikeli alan",
+    "resetDataModalQuestion": "Tüm hesap verileri sıfırlansın mı?",
+    "resetDataModalDescription": "Bu işlem tüm işlemleri ve birikim ilerlemesini kalıcı olarak siler ve hesabı temiz duruma getirir.",
+    "resetDataConfirm": "Verileri sıfırla",
+    "themeAuto": "Otomatik",
+    "themeDark": "Koyu",
+    "themeLight": "Açık",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Temayı seç",
+    "themeModalDescription": "Sistem görünümünü kullanın veya uygulamayı elle değiştirin.",
+    "languageModalTitle": "Dili seç",
+    "languageModalDescription": "Uygulamada kullanılacak dili seçin.",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "Diğer diller",
+    "languageHideOther": "Diğer dilleri gizle",
+    "currency": "Para birimi",
+    "currencyModalTitle": "Para birimini seç",
+    "currencyModalDescription": "Uygulamadaki tüm tutarları göstermek için para birimini seçin.",
+    "currencyUzs": "Özbek somu (UZS)",
+    "currencyRub": "Rus rublesi (RUB)",
+    "currencyUsd": "ABD doları (USD)",
+    "currencyEur": "Euro (EUR)",
+    "currencyKzt": "Kazakistan tengesi (KZT)",
+    "currencyTry": "Türk lirası (TRY)",
+    "currencyGbp": "İngiliz sterlini (GBP)",
+    "currencyCny": "Çin yuanı (CNY)"
+  },
+  "admin": {
+    "title": "Admin paneli",
+    "description": "Anonim kullanıcı listesini, istatistikleri görüntüleyin ve admin erişimini yönetin.",
+    "loading": "Admin verileri yükleniyor...",
+    "accessCaption": "Kısıtlı erişim",
+    "accessDenied": "Admin paneline erişiminiz yok",
+    "searchPlaceholder": "Kullanıcı ID veya Telegram ID ile ara",
+    "empty": "Kullanıcı bulunamadı.",
+    "totalUsers": "Toplam kullanıcı",
+    "totalAdmins": "Adminler",
+    "totalTransactions": "İşlemler",
+    "totalBalance": "Toplam bakiye",
+    "totalSavings": "Toplam birikim",
+    "adminBadge": "Admin",
+    "grantAdmin": "Admin ver",
+    "revokeAdmin": "Adminliği al",
+    "alreadyAdmin": "Zaten admin",
+    "prevPage": "Önceki",
+    "nextPage": "Sonraki",
+    "pageInfo": "{{page}} / {{totalPages}} sayfa · {{totalItems}} kullanıcı",
+    "userMeta": "Telegram: {{telegramId}} · oluşturulma: {{createdAt}}",
+    "userStats": "Bakiye: {{balance}} · Birikim: {{savings}} · Aylık harcama: {{monthlyExp}} · İşlemler: {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "Kategori",
+    "question": "Bu gider ne için?",
+    "food": "Yemek",
+    "taxi": "Taksi",
+    "entertainment": "Eğlence",
+    "shopping": "Alışveriş",
+    "utilities": "Faturalar",
+    "health": "Sağlık",
+    "education": "Eğitim",
+    "other": "Diğer"
+  },
+  "expenseEditor": {
+    "title": "Gideri düzelt",
+    "question": "{{amount}} için doğru kategoriyi seçin"
+  },
+  "recentExpenses": {
+    "caption": "Son",
+    "title": "Son giderler",
+    "loading": "Son giderler yükleniyor...",
+    "empty": "Henüz son gider yok.",
+    "changeCategory": "Kategoriyi değiştir",
+    "undo": "İptal",
+    "undoQuestion": "Bu son gider iptal edilsin mi?",
+    "undoDescription": "{{amount}} bakiyeye döner ve işlem iptal edildi olarak işaretlenir."
+  },
+  "limits": {
+    "caption": "Bütçe kontrolü",
+    "title": "Kategori limitleri",
+    "manage": "Yönet",
+    "empty": "Henüz limit yok. Harcama uyarıları almak için ekleyin.",
+    "over": "Limit aşıldı",
+    "ok": "Limit içinde",
+    "question": "Bu ay her kategori için ne kadar harcanabilir?",
+    "placeholder": "Boş = limitsiz",
+    "helperText": "Bu kategori için limit istemiyorsanız boş bırakın.",
+    "save": "Limitleri kaydet"
+  },
+  "recurring": {
+    "caption": "Şablonlar",
+    "title": "Tekrarlayan işlemler",
+    "add": "Ekle",
+    "empty": "Henüz tekrarlayan şablon yok.",
+    "quick": "Hızlı çalıştır",
+    "run": "Çalıştır",
+    "edit": "Düzenle",
+    "delete": "Sil",
+    "name": "Ad",
+    "namePlaceholder": "Kira, maaş, internet...",
+    "type": "Tür",
+    "amount": "Tutar",
+    "category": "Kategori",
+    "savingsPart": "Birikim payı",
+    "note": "Not",
+    "notePlaceholder": "Bu şablon için isteğe bağlı not",
+    "createTitle": "Tekrarlayan işlem oluştur",
+    "editTitle": "Tekrarlayan işlemi düzenle",
+    "save": "Değişiklikleri kaydet",
+    "create": "Şablon oluştur",
+    "deleteQuestion": "Bu tekrarlayan şablon silinsin mi?",
+    "deleteDescription": "{{name}} hızlı listeden kaldırılacak."
+  },
+  "transactionType": {
+    "income": "Gelir",
+    "expense": "Gider",
+    "transfer_to_savings": "Bakiye → birikim",
+    "transfer_from_savings": "Birikim → bakiye"
+  },
+  "history": {
+    "caption": "Tüm işlemler",
+    "title": "İşlem geçmişi",
+    "count": "{{count}} öğe",
+    "month": "Ay",
+    "search": "Ara",
+    "searchPlaceholder": "Not veya türe göre ara",
+    "type": "Tür",
+    "allTypes": "Tüm türler",
+    "category": "Kategori",
+    "allCategories": "Tüm kategoriler",
+    "showArchived": "İptal edilenleri göster",
+    "showFilters": "Daha fazla filtre",
+    "hideFilters": "Daha az filtre",
+    "loading": "İşlemler yükleniyor...",
+    "archived": "İptal edildi",
+    "restore": "Geri getir",
+    "archive": "İptal et",
+    "empty": "Bu filtrelerle eşleşen işlem yok.",
+    "edit": "Düzenle",
+    "editQuestion": "Bu işlemin ayrıntılarını güncelleyin",
+    "amount": "Tutar",
+    "date": "Tarih",
+    "savingsPart": "Birikim payı",
+    "note": "Not",
+    "notePlaceholder": "Bu işlem için not ekleyin",
+    "save": "Değişiklikleri kaydet",
+    "archiveQuestion": "Bu işlem iptal edilsin mi?",
+    "archiveDescription": "İşlem geri alınacak, bakiyeniz ve toplamlar yeniden hesaplanacak.",
+    "restoreQuestion": "Bu işlem geri getirilsin mi?",
+    "restoreDescription": "İşlem tekrar aktif olur ve bakiye ile toplamları etkiler."
+  },
+  "feedback": {
+    "genericError": "Bir şeyler ters gitti. Lütfen tekrar deneyin.",
+    "incomeAdded": "Gelir eklendi",
+    "expenseAdded": "Gider eklendi",
+    "savingsDeposited": "Birikime aktarıldı",
+    "savingsWithdrawn": "Bakiyeye döndü",
+    "accountDataReset": "Hesap verileri sıfırlandı",
+    "transactionUpdated": "İşlem güncellendi",
+    "transactionArchived": "İşlem iptal edildi",
+    "transactionRestored": "İşlem geri getirildi",
+    "goalUpdated": "Birikim hedefi güncellendi",
+    "recurringSaved": "Tekrarlayan işlem kaydedildi",
+    "recurringDeleted": "Tekrarlayan işlem silindi",
+    "recurringApplied": "Tekrarlayan işlem uygulandı"
+  },
+  "analytics": {
+    "title": "Gider dağılımı",
+    "description": "Paranızın nereye gittiğini kategoriye göre görün.",
+    "totalExpenses": "Toplam gider",
+    "transactions": "{{count}} öğe",
+    "ofTotal": "Toplamın {{pct}}%",
+    "noData": "Bu ay için gider verisi yok."
+  },
+  "onboarding": {
+    "skip": "Geç",
+    "back": "Geri",
+    "next": "İleri",
+    "start": "Başlayalım!",
+    "welcome": {
+      "title": "Save Up'a hoş geldiniz!",
+      "description": "Uygulamanın nasıl çalıştığına hızlıca bakalım. Sadece bir dakika sürer."
+    },
+    "balance": {
+      "title": "Bakiyeniz",
+      "description": "Bu mevcut bakiyenizdir. Tutarı doğrudan düzenlemek için sayıya dokunun."
+    },
+    "amount-input": {
+      "title": "Gelir ve gider",
+      "description": "Buraya tutarı girin, ardından Gelir veya Gider'e dokunun. Kategori seçin ve hazır."
+    },
+    "daily-limit": {
+      "title": "Günlük bütçe",
+      "description": "Ay sonuna kadar yetmesi için bugün ne kadar harcayabileceğinizi gösterir."
+    },
+    "savings": {
+      "title": "Birikim cebi",
+      "description": "Birikim hedefi belirleyin ve para yatırıp çekin. Her gelirden bir pay da ayırabilirsiniz."
+    },
+    "templates": {
+      "title": "Tekrarlayan işlemler",
+      "description": "Kira veya maaş gibi düzenli işlemler için şablonlar oluşturun. Tek dokunuşla uygulayın."
+    },
+    "report-tabs": {
+      "title": "Rapor modları",
+      "description": "Gelir, harcama, analitik ve tam işlem geçmişi arasında geçiş yapın."
+    },
+    "report-summary": {
+      "title": "Aylık özet",
+      "description": "Geçerli ay için temel rakamlar: toplamlar, kategoriler ve eğilimler."
+    },
+    "settings-theme": {
+      "title": "Görünüm",
+      "description": "Açık, koyu veya otomatik tema arasında geçiş yapın."
+    },
+    "settings-language": {
+      "title": "Dil",
+      "description": "İngilizce, Rusça ve Özbekçe arasında seçim yapın."
+    },
+    "settings-currency": {
+      "title": "Para birimi",
+      "description": "Tüm tutarları göstermek için tercih ettiğiniz para birimini seçin."
+    },
+    "settings-reset": {
+      "title": "Verileri sıfırla",
+      "description": "Tüm işlemleri, birikimleri ve şablonları kalıcı olarak silip baştan başlayın."
+    },
+    "done": {
+      "title": "Her şey hazır!",
+      "description": "Finansınızı takip etmeye başlayın. Alt menüden istediğiniz bölüme dönebilirsiniz."
+    }
+  },
+  "notFound": {
+    "caption": "Sayfa bulunamadı",
+    "title": "Bu rota mevcut değil",
+    "description": "Bütçenizi takip etmeye devam etmek için panoya dönün.",
+    "action": "Panoya dön"
+  }
+}

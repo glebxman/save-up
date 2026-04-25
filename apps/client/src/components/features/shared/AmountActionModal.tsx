@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Button, Chip, Input, Modal } from "@heroui/react";
+import { Button, Input, Modal } from "@/components/ui";
+import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
 interface AmountActionModalProps {
   isOpen: boolean;
@@ -41,10 +42,11 @@ export function AmountActionModal({
 
   const parsedValue = Number(value);
   const hasValue = value.trim().length > 0;
+  const effectiveMax = max === undefined ? MAX_FINANCE_AMOUNT : Math.min(max, MAX_FINANCE_AMOUNT);
   const isValid = hasValue
     && Number.isFinite(parsedValue)
     && parsedValue >= min
-    && (max === undefined || parsedValue <= max);
+    && parsedValue <= effectiveMax;
 
   return (
     <Modal>
@@ -54,10 +56,8 @@ export function AmountActionModal({
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="primary">
-                  {title}
-                </Chip>
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">{title}</p>
                 <Modal.Heading>{question}</Modal.Heading>
               </div>
             </Modal.Header>
@@ -66,7 +66,7 @@ export function AmountActionModal({
               <div className="flex flex-col gap-3">
                 <Input
                   fullWidth
-                  max={max !== undefined ? String(max) : undefined}
+                  max={String(effectiveMax)}
                   min={String(min)}
                   onChange={(event) => setValue(event.target.value)}
                   placeholder={placeholder}

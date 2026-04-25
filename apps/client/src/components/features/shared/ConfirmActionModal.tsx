@@ -1,4 +1,4 @@
-import { Button, Chip, Modal } from "@heroui/react";
+import { Button, Modal } from "@/components/ui";
 
 interface ConfirmActionModalProps {
   isOpen: boolean;
@@ -31,10 +31,8 @@ export function ConfirmActionModal({
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="warning" variant="primary">
-                  {title}
-                </Chip>
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-warning-eyebrow)]">{title}</p>
                 <Modal.Heading>{question}</Modal.Heading>
               </div>
             </Modal.Header>

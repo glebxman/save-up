@@ -1,9 +1,9 @@
 import { TrophyIcon } from "@heroicons/react/24/solid";
-import { Card, CardContent, Chip, ProgressBar } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import type { CategoryBreakdown } from "@/types/finance";
 import { categoryMeta } from "@/components/features/shared/categoryMeta";
+import { Card, CardContent, Chip, ProgressBar } from "@/components/ui";
 import { formatMoney } from "@/utils/format";
 
 interface CategoryBreakdownViewProps {

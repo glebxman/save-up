@@ -1,5 +1,4 @@
 import {
-  ArrowDownTrayIcon,
   ArrowTrendingDownIcon,
   ArrowTrendingUpIcon,
   FunnelIcon,
@@ -7,11 +6,11 @@ import {
 } from "@heroicons/react/24/outline";
 import { useMemo, useState } from "react";
 
-import { Button, Card, CardContent, Chip, Input, ListBox, Select, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import { Button, Card, CardContent, Chip, Input, Select, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 import type { ExpenseCategory, Transaction, TransactionFilters, TransactionType } from "@/types/finance";
@@ -30,61 +29,6 @@ const transactionTypes: Array<TransactionType | "all"> = [
 
 function getCurrentMonthKey(date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
-
-function escapeCsvCell(value: string | number | null | undefined): string {
-  const normalized = value == null ? "" : String(value);
-
-  if (!/[;"\n\r]/.test(normalized)) {
-    return normalized;
-  }
-
-  return `"${normalized.replaceAll("\"", "\"\"")}"`;
-}
-
-function encodeUtf16Le(content: string): ArrayBuffer {
-  const buffer = new ArrayBuffer((content.length * 2) + 2);
-  const bytes = new Uint8Array(buffer);
-  bytes[0] = 0xff;
-  bytes[1] = 0xfe;
-
-  for (let index = 0; index < content.length; index += 1) {
-    const codeUnit = content.charCodeAt(index);
-    const offset = 2 + (index * 2);
-
-    bytes[offset] = codeUnit & 0xff;
-    bytes[offset + 1] = codeUnit >> 8;
-  }
-
-  return buffer;
-}
-
-function buildCsv(items: Transaction[], t: (key: string, options?: Record<string, unknown>) => string): string {
-  const lines = [
-    [
-      "date",
-      "type",
-      "category",
-      "amount",
-      "savings",
-      "note",
-      "status",
-    ].join(";"),
-  ];
-
-  for (const item of items) {
-    lines.push([
-      escapeCsvCell(item.occurredAt),
-      escapeCsvCell(t(`transactionType.${item.type}`)),
-      escapeCsvCell(item.category ? t(`expenseCategory.${item.category}`) : ""),
-      escapeCsvCell(item.amount),
-      escapeCsvCell(item.savingsAmt ?? ""),
-      escapeCsvCell(item.note ?? ""),
-      escapeCsvCell(item.deletedAt ? "archived" : "active"),
-    ].join(";"));
-  }
-
-  return `sep=;\r\n${lines.join("\r\n")}`;
 }
 
 function getAmountTone(type: TransactionType): string {
@@ -138,45 +82,6 @@ export function TransactionHistoryView() {
   const isInitialLoading = historyQuery.isPending && !historyQuery.data;
   const isRefreshing = historyQuery.isFetching && !!historyQuery.data;
   const categorySelectKey = filters.category === "all" ? ALL_CATEGORY_KEY : (filters.category ?? ALL_CATEGORY_KEY);
-
-  async function exportCsv(): Promise<void> {
-    if (!items.length || isInitialLoading) {
-      return;
-    }
-
-    const filename = `transactions-${filters.monthKey ?? "all"}.csv`;
-    const blob = new Blob([encodeUtf16Le(buildCsv(items, t))], { type: "text/csv;charset=utf-16le" });
-    const url = window.URL.createObjectURL(blob);
-    const navigatorWithShare = navigator as Navigator & {
-      canShare?: (data?: ShareData) => boolean;
-      share?: (data?: ShareData) => Promise<void>;
-    };
-
-    if (typeof File !== "undefined" && navigatorWithShare.share) {
-      const file = new File([blob], filename, { type: blob.type });
-
-      if (!navigatorWithShare.canShare || navigatorWithShare.canShare({ files: [file] })) {
-        try {
-          await navigatorWithShare.share({ files: [file], title: filename });
-          window.URL.revokeObjectURL(url);
-          return;
-        } catch (error) {
-          if (error instanceof DOMException && error.name === "AbortError") {
-            window.URL.revokeObjectURL(url);
-            return;
-          }
-        }
-      }
-    }
-
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    document.body.appendChild(link);
-    link.click();
-    link.remove();
-    window.setTimeout(() => window.URL.revokeObjectURL(url), 0);
-  }
 
   return (
     <>
@@ -266,29 +171,15 @@ export function TransactionHistoryView() {
                     </div>
                   </div>
 
-                  <div className="flex gap-2">
-                    <Button
-                      className="w-full"
-                      onPress={() => setShowFilters((prev) => !prev)}
-                      size="sm"
-                      variant="secondary"
-                    >
-                      <FunnelIcon className="h-4 w-4" />
-                      {showFilters ? t("history.hideFilters") : t("history.showFilters")}
-                    </Button>
-                    <Button
-                      className="w-full"
-                      isDisabled={isInitialLoading || itemCount === 0}
-                      onPress={() => {
-                        void exportCsv();
-                      }}
-                      size="sm"
-                      variant={itemCount > 0 ? "primary" : "secondary"}
-                    >
-                      <ArrowDownTrayIcon className="h-4 w-4" />
-                      {t("history.export")}
-                    </Button>
-                  </div>
+                  <Button
+                    className="w-full"
+                    onPress={() => setShowFilters((prev) => !prev)}
+                    size="sm"
+                    variant="secondary"
+                  >
+                    <FunnelIcon className="h-4 w-4" />
+                    {showFilters ? t("history.hideFilters") : t("history.showFilters")}
+                  </Button>
                 </div>
               </CardContent>
             </Card>
@@ -299,34 +190,22 @@ export function TransactionHistoryView() {
                   <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
                     <label className="text-sm text-[var(--muted)]">
                       {t("history.category")}
-                      <Select
-                        aria-label={t("history.category")}
-                        fullWidth
-                        onSelectionChange={(key) =>
-                          setFilters((current) => ({
-                            ...current,
-                            category: String(key) === ALL_CATEGORY_KEY ? "all" : (String(key) as ExpenseCategory),
-                          }))}
-                        selectedKey={categorySelectKey}
+                    <Select
+                      aria-label={t("history.category")}
+                      fullWidth
+                      onChange={(event) =>
+                        setFilters((current) => ({
+                          ...current,
+                          category: event.target.value === ALL_CATEGORY_KEY ? "all" : (event.target.value as ExpenseCategory),
+                        }))}
+                        value={categorySelectKey}
                         variant="secondary"
                       >
-                        <Select.Trigger>
-                          <Select.Value />
-                          <Select.Indicator />
-                        </Select.Trigger>
-                        <Select.Popover>
-                          <ListBox>
-                            {[ALL_CATEGORY_KEY, ...EXPENSE_CATEGORIES].map((category) => (
-                              <ListBox.Item
-                                id={category}
-                                key={category}
-                                textValue={category === ALL_CATEGORY_KEY ? t("history.allCategories") : t(`expenseCategory.${category}`)}
-                              >
-                                {category === ALL_CATEGORY_KEY ? t("history.allCategories") : t(`expenseCategory.${category}`)}
-                              </ListBox.Item>
-                            ))}
-                          </ListBox>
-                        </Select.Popover>
+                        {[ALL_CATEGORY_KEY, ...EXPENSE_CATEGORIES].map((category) => (
+                          <option key={category} value={category}>
+                            {category === ALL_CATEGORY_KEY ? t("history.allCategories") : t(`expenseCategory.${category}`)}
+                          </option>
+                        ))}
                       </Select>
                     </label>
 

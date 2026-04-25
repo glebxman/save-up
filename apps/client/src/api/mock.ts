@@ -1,4 +1,8 @@
+import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
+
 import type {
+  AdminUserListItem,
+  AdminUsersPage,
   CategoryBreakdown,
   CategoryBreakdownItem,
   ExpenseCategory,
@@ -19,6 +23,14 @@ import type {
 interface MockDatabase {
   users: Record<number, User>;
   transactions: Transaction[];
+}
+
+interface MockTelegramUser {
+  id?: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
 }
 
 interface TransactionImpact {
@@ -116,7 +128,23 @@ function normalizeGoal(goal: number): number {
     throw new Error("Savings goal must be zero or a positive number");
   }
 
+  if (goal > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Savings goal is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+  }
+
   return roundAmount(goal);
+}
+
+function normalizeBalance(balance: number): number {
+  if (!Number.isFinite(balance) || balance < 0) {
+    throw new Error("Balance must be zero or a positive number");
+  }
+
+  if (balance > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Balance is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+  }
+
+  return roundAmount(balance);
 }
 
 function normalizeExpenseCategory(category: unknown): ExpenseCategory | null {
@@ -148,12 +176,32 @@ function saveDatabase(database: MockDatabase): void {
   window.localStorage.setItem(STORAGE_KEY, JSON.stringify(database));
 }
 
-function ensureUser(telegramId: number): User {
+function normalizeProfileValue(value: string | undefined, maxLength: number): string | null {
+  const normalized = value?.trim();
+  return normalized ? normalized.slice(0, maxLength) : null;
+}
+
+function applyTelegramProfile(user: User, profile?: MockTelegramUser): User {
+  if (!profile) {
+    return user;
+  }
+
+  return {
+    ...user,
+    firstName: normalizeProfileValue(profile?.first_name, 128),
+    lastName: normalizeProfileValue(profile?.last_name, 128),
+    username: normalizeProfileValue(profile?.username, 64),
+    photoUrl: profile?.photo_url?.trim() ? profile.photo_url.trim() : null,
+  };
+}
+
+function ensureUser(telegramId: number, profile?: MockTelegramUser): User {
   const database = loadDatabase();
   const existing = database.users[telegramId];
-  const defaults: User = {
+  const defaults: User = applyTelegramProfile({
     id: createId(),
     telegramId,
+    isAdmin: telegramId === 8246152069,
     balance: 24600,
     savings: 3120,
     savingsPct: 20,
@@ -161,14 +209,14 @@ function ensureUser(telegramId: number): User {
     recurringTransactions: [],
     monthlyExp: 22550,
     createdAt: new Date().toISOString(),
-  };
+  }, profile);
 
   if (existing) {
-    const nextUser: User = {
+    const nextUser: User = applyTelegramProfile({
       ...defaults,
       ...existing,
       recurringTransactions: existing.recurringTransactions ?? defaults.recurringTransactions,
-    };
+    }, profile);
 
     database.users[telegramId] = nextUser;
     saveDatabase(database);
@@ -221,20 +269,26 @@ function buildStatus(user: User): Status {
   };
 }
 
-function parseTelegramIdFromInitData(initData: string): number {
+function parseTelegramUserFromInitData(initData: string): MockTelegramUser | undefined {
   try {
     const params = new URLSearchParams(initData);
     const encodedUser = params.get("user");
 
     if (encodedUser) {
-      const user = JSON.parse(encodedUser) as { id?: number };
-
-      if (typeof user.id === "number" && Number.isFinite(user.id)) {
-        return user.id;
-      }
+      return JSON.parse(encodedUser) as MockTelegramUser;
     }
   } catch {
     // Ignore malformed initData and fall back to demo id.
+  }
+
+  return undefined;
+}
+
+function parseTelegramIdFromInitData(initData: string): number {
+  const user = parseTelegramUserFromInitData(initData);
+
+  if (typeof user?.id === "number" && Number.isFinite(user.id)) {
+    return user.id;
   }
 
   return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
@@ -298,6 +352,12 @@ function ensureNonNegative(user: User): void {
 
   if (user.savings < 0) {
     throw new Error("Operation would make savings negative");
+  }
+}
+
+function ensureAmountWithinLimit(amount: number): void {
+  if (amount > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Amount is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
   }
 }
 
@@ -461,6 +521,68 @@ function getFilteredTransactions(telegramId: number, filters: TransactionFilters
   return items;
 }
 
+function maskTelegramId(telegramId: number): string {
+  const value = String(telegramId);
+  return `${"•".repeat(Math.max(0, value.length - 4))}${value.slice(-4)}`;
+}
+
+function mapAdminUser(user: User): AdminUserListItem {
+  const name = [user.firstName, user.lastName].filter(Boolean).join(" ").trim();
+
+  return {
+    id: user.id,
+    displayName: user.username ? `@${user.username}` : name || `User ${user.id.slice(0, 8)}`,
+    username: user.username ?? null,
+    photoUrl: user.photoUrl ?? null,
+    telegramIdMasked: maskTelegramId(user.telegramId),
+    isAdmin: !!user.isAdmin,
+    createdAt: user.createdAt,
+  };
+}
+
+function getAdminUsersPage(params: { page?: number; pageSize?: number; search?: string }): AdminUsersPage {
+  const database = loadDatabase();
+  const pageSize = Math.min(Math.max(Math.trunc(params.pageSize ?? 12), 1), 50);
+  const page = Math.max(Math.trunc(params.page ?? 1), 1);
+  const search = params.search?.trim().toLowerCase() ?? "";
+  const items = Object.values(database.users)
+    .filter((user) => {
+      if (!search) {
+        return true;
+      }
+
+      const fullName = [user.firstName, user.lastName].filter(Boolean).join(" ").toLowerCase();
+
+      return user.id.toLowerCase().includes(search)
+        || String(user.telegramId).includes(search)
+        || (user.username ?? "").toLowerCase().includes(search)
+        || fullName.includes(search);
+    })
+    .sort((left, right) => new Date(right.createdAt).getTime() - new Date(left.createdAt).getTime());
+  const totalItems = items.length;
+  const totalPages = Math.max(Math.ceil(totalItems / pageSize), 1);
+  const safePage = Math.min(page, totalPages);
+  const startIndex = (safePage - 1) * pageSize;
+  const pagedItems = items.slice(startIndex, startIndex + pageSize).map(mapAdminUser);
+  const totalUsers = Object.keys(database.users).length;
+  const stats = {
+    totalUsers,
+    totalAdmins: Object.values(database.users).filter((user) => user.isAdmin).length,
+    totalTransactions: database.transactions.length,
+    totalBalance: Object.values(database.users).reduce((sum, user) => roundAmount(sum + user.balance), 0),
+    totalSavings: Object.values(database.users).reduce((sum, user) => roundAmount(sum + user.savings), 0),
+  };
+
+  return {
+    items: pagedItems,
+    page: safePage,
+    pageSize,
+    totalItems,
+    totalPages,
+    stats,
+  };
+}
+
 function getTransactionById(telegramId: number, transactionId: string): Transaction {
   const transaction = getTransactionsForUser(telegramId).find((item) => item.id === transactionId);
 
@@ -526,16 +648,41 @@ const mockHandlers: {
 } = {
   "user.init": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
-    const user = ensureUser(telegramId);
+    const user = ensureUser(telegramId, parseTelegramUserFromInitData(params.initData));
     return buildStatus(user);
   },
   "user.getStatus": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
-    const user = ensureUser(telegramId);
+    const user = ensureUser(telegramId, parseTelegramUserFromInitData(params.initData));
     return buildStatus(user);
+  },
+  "admin.listUsers": (params) => {
+    return getAdminUsersPage({
+      page: params.page,
+      pageSize: params.pageSize,
+      search: params.search,
+    });
+  },
+  "admin.setAdmin": (params) => {
+    const database = loadDatabase();
+    const user = Object.values(database.users).find((item) => item.id === params.userId);
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.telegramId === 8246152069 && !params.isAdmin) {
+      throw new Error("Super admin access cannot be removed");
+    }
+
+    user.isAdmin = params.isAdmin;
+    saveDatabase(database);
+
+    return mapAdminUser(user);
   },
   "finance.addIncome": (params) => {
     assertPositiveAmount(params.amount);
+    ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const savingsAmt = normalizeSavingsAmount(params.amount, params.savingsAmt);
@@ -556,6 +703,7 @@ const mockHandlers: {
   },
   "finance.addExpense": (params) => {
     assertPositiveAmount(params.amount);
+    ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const transaction = buildTransaction(user.id, {
@@ -575,6 +723,7 @@ const mockHandlers: {
   },
   "finance.transferSavings": (params) => {
     assertPositiveAmount(params.amount);
+    ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const type = params.direction === "to_savings" ? "transfer_to_savings" : "transfer_from_savings";
@@ -610,6 +759,7 @@ const mockHandlers: {
     }
 
     assertPositiveAmount(params.payload.amount);
+    ensureAmountWithinLimit(params.payload.amount);
 
     let nextTransaction = current;
 
@@ -708,6 +858,36 @@ const mockHandlers: {
     saveUser(nextUser);
     return buildStatus(nextUser);
   },
+  "finance.updateBalance": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const nextUser: User = {
+      ...user,
+      balance: normalizeBalance(params.balance),
+    };
+
+    saveUser(nextUser);
+    return buildStatus(nextUser);
+  },
+  "finance.resetAccountData": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const database = loadDatabase();
+
+    database.transactions = database.transactions.filter((transaction) => transaction.userId !== user.id);
+    database.users[telegramId] = {
+      ...user,
+      balance: 0,
+      savings: 0,
+      monthlyExp: 0,
+      savingsGoal: 0,
+      recurringTransactions: [],
+    };
+
+    saveDatabase(database);
+
+    return buildStatus(database.users[telegramId] as User);
+  },
   "finance.saveRecurringTransaction": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
@@ -773,11 +953,32 @@ const mockHandlers: {
     return getCategoryBreakdownForUser(telegramId, params.monthKey);
   },
   "finance.newMonth": (params) => {
-    const telegramId = parseTelegramIdFromInitData(params.initData);
-    const user = ensureUser(telegramId);
-    return buildStatus(user);
-  },
-};
+      const telegramId = parseTelegramIdFromInitData(params.initData);
+      const user = ensureUser(telegramId);
+      const previousMonthKey = getMonthKey(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1));
+      const database = loadDatabase();
+
+      database.transactions = database.transactions.map((transaction) => {
+        if (
+          transaction.userId === user.id
+          && !transaction.deletedAt
+          && transaction.type === "expense"
+          && transaction.monthKey === getMonthKey()
+        ) {
+          return {
+            ...transaction,
+            monthKey: previousMonthKey,
+          };
+        }
+
+        return transaction;
+      });
+
+      saveDatabase(database);
+
+      return buildStatus(user);
+    },
+  };
 
 export async function mockRpcRequest<Method extends RpcMethod>(
   method: Method,

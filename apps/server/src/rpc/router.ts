@@ -1,6 +1,10 @@
 import type { RpcMethod } from "@finance-twa/shared-types";
 
 import {
+  listAdminUsersHandler,
+  setAdminAccessHandler,
+} from "./handlers/admin.js";
+import {
   addExpenseHandler,
   addIncomeHandler,
   applyRecurringTransactionHandler,
@@ -11,9 +15,11 @@ import {
   getReportHandler,
   getTransactionsHandler,
   newMonthHandler,
+  resetAccountDataHandler,
   restoreTransactionHandler,
   saveRecurringTransactionHandler,
   transferSavingsHandler,
+  updateBalanceHandler,
   updateSavingsGoalHandler,
   updateTransactionHandler,
 } from "./handlers/finance.js";
@@ -27,6 +33,8 @@ type HandlerMap = {
 const handlers: HandlerMap = {
   "user.init": initUserHandler,
   "user.getStatus": getUserStatusHandler,
+  "admin.listUsers": listAdminUsersHandler,
+  "admin.setAdmin": setAdminAccessHandler,
   "finance.addIncome": addIncomeHandler,
   "finance.addExpense": addExpenseHandler,
   "finance.transferSavings": transferSavingsHandler,
@@ -36,6 +44,8 @@ const handlers: HandlerMap = {
   "finance.archiveTransaction": archiveTransactionHandler,
   "finance.restoreTransaction": restoreTransactionHandler,
   "finance.updateSavingsGoal": updateSavingsGoalHandler,
+  "finance.updateBalance": updateBalanceHandler,
+  "finance.resetAccountData": resetAccountDataHandler,
   "finance.saveRecurringTransaction": saveRecurringTransactionHandler,
   "finance.deleteRecurringTransaction": deleteRecurringTransactionHandler,
   "finance.applyRecurringTransaction": applyRecurringTransactionHandler,

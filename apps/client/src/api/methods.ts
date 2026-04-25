@@ -1,4 +1,6 @@
 import type {
+  AdminUserListItem,
+  AdminUsersPage,
   CategoryBreakdown,
   ExpenseCategory,
   MonthReport,
@@ -14,6 +16,17 @@ import { rpcRequest } from "./client";
 
 export function initUser(initData: string): Promise<Status> {
   return rpcRequest("user.init", { initData });
+}
+
+export function listAdminUsers(
+  initData: string,
+  params: { page?: number; pageSize?: number; search?: string } = {},
+): Promise<AdminUsersPage> {
+  return rpcRequest("admin.listUsers", { initData, ...params });
+}
+
+export function setAdminAccess(initData: string, userId: string, isAdmin: boolean): Promise<AdminUserListItem> {
+  return rpcRequest("admin.setAdmin", { initData, userId, isAdmin });
 }
 
 export function addIncome(
@@ -64,6 +77,14 @@ export function restoreTransaction(initData: string, transactionId: string): Pro
 
 export function updateSavingsGoal(initData: string, goal: number): Promise<Status> {
   return rpcRequest("finance.updateSavingsGoal", { initData, goal });
+}
+
+export function updateBalance(initData: string, balance: number): Promise<Status> {
+  return rpcRequest("finance.updateBalance", { initData, balance });
+}
+
+export function resetAccountData(initData: string): Promise<Status> {
+  return rpcRequest("finance.resetAccountData", { initData });
 }
 
 export function saveRecurringTransaction(initData: string, template: RecurringTransactionPayload): Promise<Status> {

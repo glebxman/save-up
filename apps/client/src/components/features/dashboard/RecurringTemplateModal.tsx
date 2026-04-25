@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { Button, Chip, Input, ListBox, Modal, Select, TextArea } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import type { ExpenseCategory, RecurringTransaction, RecurringTransactionPayload, TransactionType } from "@/types/finance";
 import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import { Button, Input, Modal, Select, TextArea } from "@/components/ui";
 
 interface RecurringTemplateModalProps {
   isOpen: boolean;
@@ -61,10 +61,10 @@ export function RecurringTemplateModal({
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="primary">
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {t("recurring.caption")}
-                </Chip>
+                </p>
                 <Modal.Heading>
                   {initialTemplate ? t("recurring.editTitle") : t("recurring.createTitle")}
                 </Modal.Heading>
@@ -89,23 +89,15 @@ export function RecurringTemplateModal({
                   <Select
                     aria-label={t("recurring.type")}
                     fullWidth
-                    onSelectionChange={(key) => setType(String(key) as TransactionType)}
-                    selectedKey={type}
+                    onChange={(event) => setType(event.target.value as TransactionType)}
+                    value={type}
                     variant="secondary"
                   >
-                    <Select.Trigger>
-                      <Select.Value />
-                      <Select.Indicator />
-                    </Select.Trigger>
-                    <Select.Popover>
-                      <ListBox>
-                        {transactionTypes.map((item) => (
-                          <ListBox.Item id={item} key={item} textValue={t(`transactionType.${item}`)}>
-                            {t(`transactionType.${item}`)}
-                          </ListBox.Item>
-                        ))}
-                      </ListBox>
-                    </Select.Popover>
+                    {transactionTypes.map((item) => (
+                      <option key={item} value={item}>
+                        {t(`transactionType.${item}`)}
+                      </option>
+                    ))}
                   </Select>
                 </label>
 
@@ -127,23 +119,15 @@ export function RecurringTemplateModal({
                     <Select
                       aria-label={t("recurring.category")}
                       fullWidth
-                      onSelectionChange={(key) => setCategory(String(key) as ExpenseCategory)}
-                      selectedKey={category}
+                      onChange={(event) => setCategory(event.target.value as ExpenseCategory)}
+                      value={category}
                       variant="secondary"
                     >
-                      <Select.Trigger>
-                        <Select.Value />
-                        <Select.Indicator />
-                      </Select.Trigger>
-                      <Select.Popover>
-                        <ListBox>
-                          {EXPENSE_CATEGORIES.map((item) => (
-                            <ListBox.Item id={item} key={item} textValue={t(`expenseCategory.${item}`)}>
-                              {t(`expenseCategory.${item}`)}
-                            </ListBox.Item>
-                          ))}
-                        </ListBox>
-                      </Select.Popover>
+                      {EXPENSE_CATEGORIES.map((item) => (
+                        <option key={item} value={item}>
+                          {t(`expenseCategory.${item}`)}
+                        </option>
+                      ))}
                     </Select>
                   </label>
                 ) : null}

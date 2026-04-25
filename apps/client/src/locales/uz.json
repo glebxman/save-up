@@ -7,14 +7,14 @@
     "mockApi": "Mock API",
     "liveApi": "Live API",
     "ready": "Tayyor",
-    "synced": "Sinxron",
+    "synced": "Sinxronlangan",
     "mock": "Mock",
     "live": "Jonli",
     "cancel": "Bekor qilish"
   },
   "shell": {
     "greeting": "Salom, {{name}}",
-    "welcomeBack": "Yana ko'rganimdan xursandman",
+    "welcomeBack": "Qaytib keldingiz",
     "notifications": "Bildirishnomalar"
   },
   "dashboard": {
@@ -33,7 +33,8 @@
     "caption": "Mening balansim",
     "healthy": "Zaxira yaxshi",
     "watch": "Xarajatlarni kuzating",
-    "spendableNow": "Hozir sarflash mumkin"
+    "spendableNow": "Hozir sarflash mumkin",
+    "monthlyBudget": "Oy bo'yicha xarajat"
   },
   "dailyLimit": {
     "caption": "Bir kunga qolgan limit",
@@ -69,8 +70,9 @@
     "transferPlaceholder": "O'tkazma summasini kiriting"
   },
   "amountInput": {
-    "caption": "Operatsiya paneli",
-    "title": "Summani kiriting"
+    "caption": "Yangi operatsiya",
+    "title": "Summani kiriting",
+    "maxAmount": "Maksimal summa: {{amount}}"
   },
   "report": {
     "loading": "Oylik hisobot tayyorlanmoqda...",
@@ -87,10 +89,10 @@
     "newMonthCaption": "Yangi oy",
     "newMonthTitle": "Oyni yopish",
     "newMonthAction": "Oylik xarajatlarni tozalash",
-    "ops": "{{count}} amal"
+    "ops": "{{count}} ta"
   },
   "monthReport": {
-    "snapshot": "Qisqa ko'rinish",
+    "snapshot": "Xulosa",
     "overview": "Oylik umumiy holat",
     "description": "Ushbu oyda kirgan, chiqqan va jamg'armaga o'tgan mablag'larning ixcham ko'rinishi.",
     "income": "Kirim",
@@ -103,8 +105,16 @@
   "settings": {
     "title": "Sozlamalar",
     "description": "Interfeysni o'zingizga qulay qilib sozlang.",
+    "adminPanel": "Admin panel",
+    "adminPanelDescription": "Foydalanuvchilar, statistika va admin huquqlarini boshqarish.",
     "theme": "Ko'rinish",
     "language": "Til",
+    "resetData": "Hisob ma'lumotlarini tozalash",
+    "resetDataDescription": "Barcha kirim, chiqim, jamg'arma holati va takrorlanuvchi shablonlarni o'chirish.",
+    "resetDataModalTitle": "Xavfli bo'lim",
+    "resetDataModalQuestion": "Hisobdagi barcha ma'lumotlar tozalansinmi?",
+    "resetDataModalDescription": "Barcha amallar va jamg'arma progressi butunlay o'chiriladi. Hisob yangi va toza holatga qaytadi.",
+    "resetDataConfirm": "Ma'lumotlarni tozalash",
     "themeAuto": "Avto",
     "themeDark": "To'q",
     "themeLight": "Yorug'",
@@ -114,15 +124,59 @@
     "languageModalTitle": "Tilni tanlang",
     "languageModalDescription": "Ilova bo'ylab ishlatiladigan tilni tanlang.",
     "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
     "languageRu": "Русский",
-    "languageUz": "O'zbek"
+    "languageUz": "O'zbek",
+    "languageOther": "Boshqa tillar",
+    "languageHideOther": "Boshqa tillarni yashirish",
+    "currency": "Valyuta",
+    "currencyModalTitle": "Valyutani tanlang",
+    "currencyModalDescription": "Ilovadagi barcha summalarni ko'rsatish uchun valyutani tanlang.",
+    "currencyUzs": "O'zbek so'mi (UZS)",
+    "currencyRub": "Rossiya rubli (RUB)",
+    "currencyUsd": "AQSH dollari (USD)",
+    "currencyEur": "Yevro (EUR)",
+    "currencyKzt": "Qozog'iston tengesi (KZT)",
+    "currencyTry": "Turk lirasi (TRY)",
+    "currencyGbp": "Britaniya funti (GBP)",
+    "currencyCny": "Xitoy yuani (CNY)"
+  },
+  "admin": {
+    "title": "Admin panel",
+    "description": "Shaxsiy ma'lumotsiz foydalanuvchilar ro'yxati, statistika va admin huquqlarini boshqarish.",
+    "loading": "Admin ma'lumotlari yuklanmoqda...",
+    "accessCaption": "Kirish cheklangan",
+    "accessDenied": "Sizda admin panelga kirish huquqi yo'q",
+    "searchPlaceholder": "Foydalanuvchi ID yoki Telegram ID bo'yicha qidirish",
+    "empty": "Foydalanuvchilar topilmadi.",
+    "totalUsers": "Jami foydalanuvchilar",
+    "totalAdmins": "Adminlar",
+    "totalTransactions": "Amallar",
+    "totalBalance": "Umumiy balans",
+    "totalSavings": "Umumiy jamg'arma",
+    "adminBadge": "Admin",
+    "grantAdmin": "Admin qilish",
+    "revokeAdmin": "Adminlikni olish",
+    "alreadyAdmin": "Allaqachon admin",
+    "prevPage": "Orqaga",
+    "nextPage": "Keyingi",
+    "pageInfo": "{{page}} / {{totalPages}} sahifa · {{totalItems}} foydalanuvchi",
+    "userMeta": "Telegram: {{telegramId}} · yaratilgan: {{createdAt}}",
+    "userStats": "Balans: {{balance}} · Jamg'arma: {{savings}} · Xarajat: {{monthlyExp}} · Amallar: {{transactions}}"
   },
   "expenseCategory": {
-    "title": "Turkum",
+    "title": "Kategoriya",
     "question": "Bu xarajat nima uchun?",
     "food": "Ovqat",
     "taxi": "Taksi",
-    "entertainment": "Ko'ngilochar",
+    "entertainment": "O'yin-kulgi",
     "shopping": "Xarid",
     "utilities": "Kommunal",
     "health": "Salomatlik",
@@ -131,20 +185,32 @@
   },
   "expenseEditor": {
     "title": "Xarajatni tuzatish",
-    "question": "{{amount}} uchun to'g'ri turkumni tanlang"
+    "question": "{{amount}} uchun to'g'ri kategoriyani tanlang"
   },
   "recentExpenses": {
-    "caption": "Tezkor tuzatish",
+    "caption": "Oxirgilar",
     "title": "So'nggi xarajatlar",
     "loading": "So'nggi xarajatlar yuklanmoqda...",
     "empty": "Hali so'nggi xarajatlar yo'q.",
-    "changeCategory": "Turkumni almashtirish",
-    "undo": "Arxivga olish",
-    "undoQuestion": "Bu xarajatni arxivga o'tkazilsinmi?",
-    "undoDescription": "{{amount}} faol tarixdan chiqadi, lekin keyin tiklash mumkin bo'ladi."
+    "changeCategory": "Kategoriyani almashtirish",
+    "undo": "Bekor qilish",
+    "undoQuestion": "Bu xarajat bekor qilinsinmi?",
+    "undoDescription": "{{amount}} balansga qaytadi va amal bekor qilingan deb belgilanadi."
+  },
+  "limits": {
+    "caption": "Byudjet nazorati",
+    "title": "Kategoriya limitlari",
+    "manage": "Sozlash",
+    "empty": "Limitlar hali belgilanmagan. Ogohlantirish olish uchun ularni qo'shing.",
+    "over": "Limitdan oshgan",
+    "ok": "Norma ichida",
+    "question": "Bu oyda har bir kategoriya uchun qancha sarflash mumkin?",
+    "placeholder": "Bo'sh = limitsiz",
+    "helperText": "Kategoriya uchun limit bo'lmasligini xohlasangiz, bo'sh qoldiring.",
+    "save": "Limitlarni saqlash"
   },
   "recurring": {
-    "caption": "Tez takrorlar",
+    "caption": "Shablonlar",
     "title": "Takrorlanuvchi amallar",
     "add": "Qo'shish",
     "empty": "Hali takrorlanuvchi shablonlar yo'q.",
@@ -156,8 +222,8 @@
     "namePlaceholder": "Ijara, maosh, internet...",
     "type": "Turi",
     "amount": "Summa",
-    "category": "Turkum",
-    "savingsPart": "Jamg'armaga qismi",
+    "category": "Kategoriya",
+    "savingsPart": "Jamg'arma ulushi",
     "note": "Izoh",
     "notePlaceholder": "Shablon uchun ixtiyoriy izoh",
     "createTitle": "Takrorlanuvchi amal yaratish",
@@ -174,7 +240,7 @@
     "transfer_from_savings": "Jamg'arma → balans"
   },
   "history": {
-    "caption": "To'liq jurnal",
+    "caption": "Barcha operatsiyalar",
     "title": "Amallar tarixi",
     "count": "{{count}} ta yozuv",
     "month": "Oy",
@@ -182,29 +248,28 @@
     "searchPlaceholder": "Izoh yoki tur bo'yicha qidiring",
     "type": "Turi",
     "allTypes": "Barcha turlar",
-    "category": "Turkum",
-    "allCategories": "Barcha turkumlar",
-    "showArchived": "Arxivni ko'rsatish",
+    "category": "Kategoriya",
+    "allCategories": "Barcha kategoriyalar",
+    "showArchived": "Bekor qilinganlarni ko'rsatish",
     "showFilters": "Ko'proq filtrlar",
     "hideFilters": "Kamroq filtrlar",
-    "export": "CSV eksport",
     "loading": "Amallar yuklanmoqda...",
-    "archived": "Arxivda",
-    "restore": "Tiklash",
-    "archive": "Arxivga olish",
+    "archived": "Bekor qilingan",
+    "restore": "Qaytarish",
+    "archive": "Bekor qilish",
     "empty": "Bu filtrlarga mos amal topilmadi.",
     "edit": "Tahrirlash",
     "editQuestion": "Bu amal ma'lumotlarini yangilang",
     "amount": "Summa",
     "date": "Sana",
-    "savingsPart": "Jamg'armaga qismi",
+    "savingsPart": "Jamg'arma ulushi",
     "note": "Izoh",
     "notePlaceholder": "Amal uchun izoh qo'shing",
     "save": "O'zgarishlarni saqlash",
-    "archiveQuestion": "Bu amal arxivga o'tkazilsinmi?",
-    "archiveDescription": "U faol tarixdan chiqadi, lekin keyin yana tiklash mumkin bo'ladi.",
-    "restoreQuestion": "Bu amal tiklansinmi?",
-    "restoreDescription": "Amal yana faol bo'ladi va umumiy natijalarga qaytadi."
+    "archiveQuestion": "Bu amal bekor qilinsinmi?",
+    "archiveDescription": "Amal bekor qilinadi va balans hamda umumiy natijalar qayta hisoblanadi.",
+    "restoreQuestion": "Bu amal qaytarilsinmi?",
+    "restoreDescription": "Amal yana faol bo'ladi va balans hamda natijalarga ta'sir qiladi."
   },
   "feedback": {
     "genericError": "Nimadir xato ketdi. Yana urinib ko'ring.",
@@ -212,9 +277,10 @@
     "expenseAdded": "Chiqim qo'shildi",
     "savingsDeposited": "Jamg'armaga o'tkazildi",
     "savingsWithdrawn": "Balansga qaytarildi",
+    "accountDataReset": "Hisob ma'lumotlari tozalandi",
     "transactionUpdated": "Amal yangilandi",
-    "transactionArchived": "Amal arxivga o'tkazildi",
-    "transactionRestored": "Amal tiklandi",
+    "transactionArchived": "Amal bekor qilindi",
+    "transactionRestored": "Amal qaytarildi",
     "goalUpdated": "Jamg'arma maqsadi yangilandi",
     "recurringSaved": "Shablon saqlandi",
     "recurringDeleted": "Shablon o'chirildi",
@@ -222,11 +288,69 @@
   },
   "analytics": {
     "title": "Xarajatlar taqsimoti",
-    "description": "Pulingiz qayerga ketayotganini turkumlar bo'yicha ko'ring.",
+    "description": "Pulingiz qayerga ketayotganini kategoriyalar bo'yicha ko'ring.",
     "totalExpenses": "Jami xarajatlar",
-    "transactions": "{{count}} amal",
+    "transactions": "{{count}} ta",
     "ofTotal": "{{pct}}% umumiydan",
     "noData": "Bu oy uchun xarajat ma'lumotlari hali yo'q."
+  },
+  "onboarding": {
+    "skip": "O'tkazish",
+    "back": "Orqaga",
+    "next": "Keyingi",
+    "start": "Boshlash!",
+    "welcome": {
+      "title": "Save Up'ga xush kelibsiz!",
+      "description": "Ilova qanday ishlashini birga ko'rib chiqamiz. Bu bir daqiqa oladi."
+    },
+    "balance": {
+      "title": "Balans",
+      "description": "Bu yerda joriy balansingiz ko'rsatiladi. Raqamni o'zgartirish uchun ustiga bosing."
+    },
+    "amount-input": {
+      "title": "Kirim va chiqim",
+      "description": "Bu yerga summani kiriting, so'ng Kirim yoki Chiqim tugmasini bosing. Kategoriyani tanlang — tayyor."
+    },
+    "daily-limit": {
+      "title": "Kunlik byudjet",
+      "description": "Oy oxirigacha yetishi uchun bugun qancha sarflash mumkinligini ko'rsatadi."
+    },
+    "savings": {
+      "title": "Jamg'arma",
+      "description": "Jamg'arma maqsadi belgilang va pul o'tkazing. Har bir kirimdan avtomatik ajratish ham mumkin."
+    },
+    "templates": {
+      "title": "Takrorlanuvchi operatsiyalar",
+      "description": "Doimiy xarajatlar uchun shablonlar yarating — ijara, maosh va hokazo. Bir bosishda qo'llang."
+    },
+    "report-tabs": {
+      "title": "Hisobot rejimlari",
+      "description": "Kirim, chiqim, tahlil va to'liq tarix o'rtasida almashing."
+    },
+    "report-summary": {
+      "title": "Oylik xulosa",
+      "description": "Joriy oy uchun asosiy raqamlar: jami, kategoriyalar va tendentsiyalar."
+    },
+    "settings-theme": {
+      "title": "Ko'rinish",
+      "description": "Yorug', to'q yoki avtomatik mavzu o'rtasida almashing."
+    },
+    "settings-language": {
+      "title": "Til",
+      "description": "Ingliz, rus yoki o'zbek tilini tanlang."
+    },
+    "settings-currency": {
+      "title": "Valyuta",
+      "description": "Barcha summalarni ko'rsatish uchun qulay valyutani tanlang."
+    },
+    "settings-reset": {
+      "title": "Ma'lumotlarni tozalash",
+      "description": "Barcha operatsiyalar, jamg'arma va shablonlarni butunlay o'chirish."
+    },
+    "done": {
+      "title": "Hammasi tayyor!",
+      "description": "Moliyangizni boshqarishni boshlang. Har qanday bo'limga pastki menyu orqali o'tish mumkin."
+    }
   },
   "notFound": {
     "caption": "Sahifa topilmadi",

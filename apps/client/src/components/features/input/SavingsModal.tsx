@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 
-import { Button, Chip, Input, Modal } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
+import { Button, Input, Modal } from "@/components/ui";
 import { formatMoney } from "@/utils/format";
+import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
 interface SavingsModalProps {
   amount: number;
@@ -52,10 +53,10 @@ export function SavingsModal({ amount, isOpen, isPending, onClose, onSelect }: S
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="primary">
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {t("savings.setup")}
-                </Chip>
+                </p>
                 <Modal.Heading>{t("savings.question")}</Modal.Heading>
                 <p className="m-0 text-sm text-[var(--muted)]">
                   {t("savings.incomeAmount", { amount: formatMoney(amount) })}
@@ -85,7 +86,7 @@ export function SavingsModal({ amount, isOpen, isPending, onClose, onSelect }: S
                 <div className="flex items-center gap-2">
                   <Input
                     fullWidth
-                    max={String(amount)}
+                    max={String(Math.min(amount, MAX_FINANCE_AMOUNT))}
                     min="0"
                     onChange={(e) => setCustomValue(e.target.value)}
                     placeholder={t("savings.customPlaceholder")}

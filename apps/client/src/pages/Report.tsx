@@ -1,10 +1,10 @@
 import { useMemo, useState } from "react";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
 import { MonthReport } from "@/components/features/report/MonthReport";
 import { TransactionHistoryView } from "@/components/features/report/TransactionHistoryView";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import { formatMoney } from "@/utils/format";
 
@@ -209,17 +209,17 @@ export function Report() {
         <CardHeader>
           <div>
             <CardDescription>{t("report.statistics")}</CardDescription>
-            <CardTitle>{activeReport.monthKey}</CardTitle>
+            <CardTitle className="mt-1 text-[2rem] tracking-[-0.06em]">{activeReport.monthKey}</CardTitle>
           </div>
         </CardHeader>
 
         <CardContent>
-          <div className="flex bg-[var(--surface-secondary)] p-1 rounded-xl">
+          <div className="flex rounded-[22px] bg-[var(--surface-secondary)] p-1" data-onboarding="report-tabs">
             {modes.map((m) => (
               <button
                 key={m}
-                className={`flex-1 h-8 text-xs rounded-lg px-3 transition-colors ${
-                  mode === m ? "bg-[var(--surface)] font-semibold" : ""
+                className={`flex-1 rounded-[18px] px-3 py-2 text-xs transition-colors ${
+                  mode === m ? "bg-[var(--accent)] font-semibold text-[var(--accent-foreground)]" : "text-[var(--muted)]"
                 }`}
                 onClick={() => setMode(m)}
               >
@@ -228,19 +228,19 @@ export function Report() {
             ))}
           </div>
 
-          <div className="mt-5 space-y-4">
+          <div className="mt-6 space-y-5" data-onboarding="report-summary">
             <div>
               <p className="mb-1 mt-0 text-sm text-[var(--muted)]">{summary.focusLabel}</p>
-              <strong className="text-3xl font-semibold text-[var(--foreground)]">{summary.focusValue}</strong>
-              <p className="m-0 mt-2 text-xs text-[var(--muted)]">{summary.description}</p>
+              <strong className="text-[2.45rem] font-semibold tracking-[-0.06em] text-[var(--foreground)]">{summary.focusValue}</strong>
+              <p className="m-0 mt-2 max-w-[28ch] text-xs text-[var(--muted)]">{summary.description}</p>
             </div>
 
-            <div className="grid grid-cols-2 gap-2">
+            <div className="grid grid-cols-2 gap-3">
               {summary.metrics.map((metric) => (
-                <Card key={metric.label} variant="secondary">
+                <Card key={metric.label} className="rounded-[24px]" variant="secondary">
                   <CardContent>
                     <p className="m-0 text-xs text-[var(--muted)]">{metric.label}</p>
-                    <p className="m-0 mt-1 text-lg font-semibold text-[var(--foreground)]">{metric.value}</p>
+                    <p className="m-0 mt-2 text-lg font-semibold tracking-[-0.04em] text-[var(--foreground)]">{metric.value}</p>
                   </CardContent>
                 </Card>
               ))}

@@ -258,6 +258,49 @@ export function useFinance() {
     },
   });
 
+  const updateBalanceMutation = useMutation({
+    mutationFn: ({ balance }: { balance: number }) => api.updateBalance(initData, balance),
+    onMutate: async ({ balance }) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+
+      if (!current) {
+        return { previous: null };
+      }
+
+      const nextBalance = Number(balance.toFixed(2));
+
+      setOptimisticStatus({
+        ...current,
+        user: {
+          ...current.user,
+          balance: nextBalance,
+        },
+        dailyLimit: computeDailyLimit(nextBalance),
+      });
+
+      return { previous: current };
+    },
+    onError: (error, _variables, context) => {
+      setOptimisticStatus(context?.previous ?? null);
+      notifyError(error);
+    },
+    onSuccess: (status) => {
+      syncStatus(status);
+    },
+  });
+
+  const resetAccountDataMutation = useMutation({
+    mutationFn: () => api.resetAccountData(initData),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(t("feedback.accountDataReset"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
   const saveRecurringTransactionMutation = useMutation({
     mutationFn: (template: RecurringTransactionPayload) => api.saveRecurringTransaction(initData, template),
     onSuccess: (status) => {
@@ -297,6 +340,10 @@ export function useFinance() {
     onSuccess: (status) => {
       syncStatus(status);
       invalidateRelated();
+      notifySuccess(t("report.newMonthAction"));
+    },
+    onError: (error) => {
+      notifyError(error);
     },
   });
 
@@ -315,9 +362,11 @@ export function useFinance() {
     archiveTransactionMutation,
     restoreTransactionMutation,
     updateSavingsGoalMutation,
+    resetAccountDataMutation,
     saveRecurringTransactionMutation,
     deleteRecurringTransactionMutation,
     applyRecurringTransactionMutation,
     newMonthMutation,
+    updateBalanceMutation,
   };
 }

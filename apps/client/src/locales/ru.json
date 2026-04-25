@@ -7,7 +7,7 @@
     "mockApi": "Mock API",
     "liveApi": "Live API",
     "ready": "Готово",
-    "synced": "Синхронно",
+    "synced": "Синхронизировано",
     "mock": "Мок",
     "live": "Онлайн",
     "cancel": "Отмена"
@@ -34,7 +34,7 @@
     "healthy": "Хороший запас",
     "watch": "Следите за тратами",
     "spendableNow": "Можно потратить сейчас",
-    "monthlyBudget": "Бюджет на месяц",
+    "monthlyBudget": "Расходы за месяц",
     "tracking": "Отслеживание",
     "trackingValue": "В реальном времени"
   },
@@ -72,8 +72,9 @@
     "transferPlaceholder": "Введите сумму перевода"
   },
   "amountInput": {
-    "caption": "Панель операции",
-    "title": "Введите сумму"
+    "caption": "Новая операция",
+    "title": "Введите сумму",
+    "maxAmount": "Максимальная сумма: {{amount}}"
   },
   "report": {
     "loading": "Собираем отчёт за месяц...",
@@ -90,10 +91,10 @@
     "newMonthCaption": "Новый месяц",
     "newMonthTitle": "Закрыть месяц",
     "newMonthAction": "Сбросить месячные расходы",
-    "ops": "{{count}} оп."
+    "ops": "{{count}} шт."
   },
   "monthReport": {
-    "snapshot": "Снимок",
+    "snapshot": "Сводка",
     "overview": "Сводка за месяц",
     "description": "Короткий обзор денег, которые пришли, ушли и были отложены в этом месяце.",
     "income": "Доход",
@@ -106,8 +107,16 @@
   "settings": {
     "title": "Настройки",
     "description": "Настройте интерфейс под свои предпочтения.",
+    "adminPanel": "Админ панель",
+    "adminPanelDescription": "Пользователи, статистика и выдача прав администратора.",
     "theme": "Внешний вид",
     "language": "Язык",
+    "resetData": "Сбросить данные аккаунта",
+    "resetDataDescription": "Удалить все доходы, расходы, прогресс копилки и повторяющиеся шаблоны.",
+    "resetDataModalTitle": "Опасная зона",
+    "resetDataModalQuestion": "Сбросить все данные аккаунта?",
+    "resetDataModalDescription": "Все операции и прогресс накоплений будут удалены без возможности восстановления. Аккаунт станет чистым, как новый.",
+    "resetDataConfirm": "Сбросить данные",
     "themeAuto": "Авто",
     "themeDark": "Тёмная",
     "themeLight": "Светлая",
@@ -117,8 +126,52 @@
     "languageModalTitle": "Выбор языка",
     "languageModalDescription": "Выберите язык, который будет использоваться в приложении.",
     "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
     "languageRu": "Русский",
-    "languageUz": "O'zbek"
+    "languageUz": "O'zbek",
+    "languageOther": "Другие языки",
+    "languageHideOther": "Скрыть другие языки",
+    "currency": "Валюта",
+    "currencyModalTitle": "Выбор валюты",
+    "currencyModalDescription": "Выберите валюту для отображения всех сумм в приложении.",
+    "currencyUzs": "Узбекский сум (UZS)",
+    "currencyRub": "Российский рубль (RUB)",
+    "currencyUsd": "Доллар США (USD)",
+    "currencyEur": "Евро (EUR)",
+    "currencyKzt": "Казахстанский тенге (KZT)",
+    "currencyTry": "Турецкая лира (TRY)",
+    "currencyGbp": "Британский фунт (GBP)",
+    "currencyCny": "Китайский юань (CNY)"
+  },
+  "admin": {
+    "title": "Админ панель",
+    "description": "Здесь можно посмотреть обезличенный список пользователей, статистику и управлять админкой.",
+    "loading": "Загружаем данные админки...",
+    "accessCaption": "Доступ ограничен",
+    "accessDenied": "У вас нет доступа к админ панели",
+    "searchPlaceholder": "Поиск по ID пользователя или Telegram ID",
+    "empty": "Пользователи не найдены.",
+    "totalUsers": "Всего пользователей",
+    "totalAdmins": "Админов",
+    "totalTransactions": "Операций",
+    "totalBalance": "Общий баланс",
+    "totalSavings": "Общие накопления",
+    "adminBadge": "Админ",
+    "grantAdmin": "Выдать админку",
+    "revokeAdmin": "Забрать админку",
+    "alreadyAdmin": "Уже админ",
+    "prevPage": "Назад",
+    "nextPage": "Дальше",
+    "pageInfo": "Страница {{page}} из {{totalPages}} · {{totalItems}} пользователей",
+    "userMeta": "Telegram: {{telegramId}} · создан: {{createdAt}}",
+    "userStats": "Баланс: {{balance}} · Копилка: {{savings}} · Расходы: {{monthlyExp}} · Операций: {{transactions}}"
   },
   "expenseCategory": {
     "title": "Категория",
@@ -137,14 +190,14 @@
     "question": "Выберите правильную категорию для {{amount}}"
   },
   "recentExpenses": {
-    "caption": "Быстрое исправление",
+    "caption": "Последние",
     "title": "Последние расходы",
     "loading": "Загружаем последние расходы...",
     "empty": "Пока нет недавних расходов.",
     "changeCategory": "Изменить категорию",
-    "undo": "В архив",
-    "undoQuestion": "Убрать этот расход в архив?",
-    "undoDescription": "{{amount}} исчезнет из активной истории, но его можно будет восстановить."
+    "undo": "Отменить",
+    "undoQuestion": "Отменить этот расход?",
+    "undoDescription": "{{amount}} вернётся на баланс, а операция будет помечена как отменённая."
   },
   "limits": {
     "caption": "Контроль бюджета",
@@ -159,7 +212,7 @@
     "save": "Сохранить лимиты"
   },
   "recurring": {
-    "caption": "Быстрые повторы",
+    "caption": "Шаблоны",
     "title": "Повторяющиеся операции",
     "add": "Добавить",
     "empty": "Повторяющихся шаблонов пока нет.",
@@ -189,7 +242,7 @@
     "transfer_from_savings": "Копилка → баланс"
   },
   "history": {
-    "caption": "Полный журнал",
+    "caption": "Все операции",
     "title": "История операций",
     "count": "{{count}} записей",
     "month": "Месяц",
@@ -199,14 +252,13 @@
     "allTypes": "Все типы",
     "category": "Категория",
     "allCategories": "Все категории",
-    "showArchived": "Показать архив",
+    "showArchived": "Показать отменённые",
     "showFilters": "Больше фильтров",
     "hideFilters": "Меньше фильтров",
-    "export": "Экспорт CSV",
     "loading": "Загружаем операции...",
-    "archived": "В архиве",
-    "restore": "Восстановить",
-    "archive": "В архив",
+    "archived": "Отменено",
+    "restore": "Вернуть",
+    "archive": "Отменить",
     "empty": "По этим фильтрам операций нет.",
     "edit": "Изменить",
     "editQuestion": "Обновите данные этой операции",
@@ -216,10 +268,10 @@
     "note": "Заметка",
     "notePlaceholder": "Добавьте заметку к операции",
     "save": "Сохранить изменения",
-    "archiveQuestion": "Убрать эту операцию в архив?",
-    "archiveDescription": "Она пропадёт из активной истории, но позже её можно будет восстановить.",
-    "restoreQuestion": "Восстановить эту операцию?",
-    "restoreDescription": "Операция снова станет активной и вернётся в ваши итоги."
+    "archiveQuestion": "Отменить эту операцию?",
+    "archiveDescription": "Операция будет отменена, а баланс и итоги пересчитаются с учётом этого отката.",
+    "restoreQuestion": "Вернуть эту операцию?",
+    "restoreDescription": "Операция снова станет активной и опять повлияет на баланс и ваши итоги."
   },
   "feedback": {
     "genericError": "Что-то пошло не так. Попробуйте ещё раз.",
@@ -227,9 +279,10 @@
     "expenseAdded": "Расход добавлен",
     "savingsDeposited": "Деньги переведены в копилку",
     "savingsWithdrawn": "Деньги возвращены на баланс",
+    "accountDataReset": "Данные аккаунта сброшены",
     "transactionUpdated": "Операция обновлена",
-    "transactionArchived": "Операция отправлена в архив",
-    "transactionRestored": "Операция восстановлена",
+    "transactionArchived": "Операция отменена",
+    "transactionRestored": "Операция возвращена",
     "goalUpdated": "Цель копилки обновлена",
     "recurringSaved": "Шаблон сохранён",
     "recurringDeleted": "Шаблон удалён",
@@ -239,9 +292,67 @@
     "title": "Расходы по категориям",
     "description": "Посмотрите, куда уходят ваши деньги.",
     "totalExpenses": "Итого расходов",
-    "transactions": "{{count}} оп.",
+    "transactions": "{{count}} шт.",
     "ofTotal": "{{pct}}% от общего",
     "noData": "Данных о расходах за этот месяц пока нет."
+  },
+  "onboarding": {
+    "skip": "Пропустить",
+    "back": "Назад",
+    "next": "Далее",
+    "start": "Начать!",
+    "welcome": {
+      "title": "Добро пожаловать в Save Up!",
+      "description": "Давайте быстро посмотрим, как работает приложение. Это займёт минуту."
+    },
+    "balance": {
+      "title": "Ваш баланс",
+      "description": "Здесь отображается текущий баланс. Нажмите на число, чтобы изменить сумму."
+    },
+    "amount-input": {
+      "title": "Доходы и расходы",
+      "description": "Введите сумму, затем нажмите Доход или Расход. Выберите категорию — готово."
+    },
+    "daily-limit": {
+      "title": "Дневной бюджет",
+      "description": "Показывает, сколько можно потратить сегодня, чтобы хватило до конца месяца."
+    },
+    "savings": {
+      "title": "Копилка",
+      "description": "Задайте цель накопления и переводите деньги туда-обратно. Можно откладывать часть с каждого дохода."
+    },
+    "templates": {
+      "title": "Повторяющиеся операции",
+      "description": "Создавайте шаблоны для регулярных трат — аренда, зарплата и т.д. Применяйте одним нажатием."
+    },
+    "report-tabs": {
+      "title": "Режимы отчёта",
+      "description": "Переключайтесь между доходами, расходами, аналитикой и полной историей."
+    },
+    "report-summary": {
+      "title": "Сводка за месяц",
+      "description": "Ключевые цифры за текущий месяц: итоги, категории и тренды."
+    },
+    "settings-theme": {
+      "title": "Оформление",
+      "description": "Переключайтесь между светлой, тёмной или автоматической темой."
+    },
+    "settings-language": {
+      "title": "Язык",
+      "description": "Выбирайте между английским, русским и узбекским."
+    },
+    "settings-currency": {
+      "title": "Валюта",
+      "description": "Выберите удобную валюту для отображения всех сумм."
+    },
+    "settings-reset": {
+      "title": "Сброс данных",
+      "description": "Безвозвратно удалить все операции, накопления и шаблоны."
+    },
+    "done": {
+      "title": "Всё готово!",
+      "description": "Начинайте вести финансы. В любой раздел можно попасть через нижнее меню."
+    }
   },
   "notFound": {
     "caption": "Страница не найдена",

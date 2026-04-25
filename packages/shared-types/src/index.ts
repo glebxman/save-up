@@ -1,6 +1,8 @@
 export type SavingsPct = number;
 export type TransactionType = "income" | "expense" | "transfer_to_savings" | "transfer_from_savings";
 export type SavingsTransferDirection = "to_savings" | "from_savings";
+export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY";
+export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
 
 export type ExpenseCategory =
   | "food"
@@ -25,6 +27,11 @@ export interface RecurringTransaction {
 export interface User {
   id: string;
   telegramId: number;
+  isAdmin: boolean;
+  firstName?: string | null;
+  lastName?: string | null;
+  username?: string | null;
+  photoUrl?: string | null;
   balance: number;
   savings: number;
   savingsPct: SavingsPct;
@@ -62,6 +69,33 @@ export interface DailyLimit {
 export interface Status {
   user: User;
   dailyLimit: DailyLimit;
+}
+
+export interface AdminUserListItem {
+  id: string;
+  displayName: string;
+  username: string | null;
+  photoUrl: string | null;
+  telegramIdMasked: string;
+  isAdmin: boolean;
+  createdAt: string;
+}
+
+export interface AdminStats {
+  totalUsers: number;
+  totalAdmins: number;
+  totalTransactions: number;
+  totalBalance: number;
+  totalSavings: number;
+}
+
+export interface AdminUsersPage {
+  items: AdminUserListItem[];
+  page: number;
+  pageSize: number;
+  totalItems: number;
+  totalPages: number;
+  stats: AdminStats;
 }
 
 export interface MonthReport {
@@ -199,6 +233,19 @@ export interface RpcMethodMap {
     };
     result: Status;
   };
+  "finance.updateBalance": {
+    params: {
+      initData: string;
+      balance: number;
+    };
+    result: Status;
+  };
+  "finance.resetAccountData": {
+    params: {
+      initData: string;
+    };
+    result: Status;
+  };
   "finance.saveRecurringTransaction": {
     params: {
       initData: string;
@@ -239,6 +286,23 @@ export interface RpcMethodMap {
       initData: string;
     };
     result: Status;
+  };
+  "admin.listUsers": {
+    params: {
+      initData: string;
+      page?: number;
+      pageSize?: number;
+      search?: string;
+    };
+    result: AdminUsersPage;
+  };
+  "admin.setAdmin": {
+    params: {
+      initData: string;
+      userId: string;
+      isAdmin: boolean;
+    };
+    result: AdminUserListItem;
   };
 }
 

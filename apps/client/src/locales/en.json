@@ -31,18 +31,19 @@
   },
   "balance": {
     "caption": "My balance",
-    "healthy": "Healthy runway",
-    "watch": "Watch spending",
-    "spendableNow": "Spendable now"
+    "healthy": "On track",
+    "watch": "Spending fast",
+    "spendableNow": "Available now",
+    "monthlyBudget": "Spent this month"
   },
   "dailyLimit": {
     "caption": "Left to spend",
     "days": "{{count}} days",
-    "description": "This is the pace that keeps your balance spread across the remaining days."
+    "description": "Your daily budget to stay on track until the end of the month."
   },
   "savings": {
     "caption": "Savings pocket",
-    "description": "Choose the exact amount you want to move into savings from each income.",
+    "description": "Set how much of each income goes to savings.",
     "setup": "Savings transfer",
     "question": "How much of this income should go to savings?",
     "incomeAmount": "Income: {{amount}}",
@@ -69,8 +70,9 @@
     "transferPlaceholder": "Enter transfer amount"
   },
   "amountInput": {
-    "caption": "Transaction pad",
-    "title": "Enter an amount"
+    "caption": "New transaction",
+    "title": "Enter an amount",
+    "maxAmount": "Maximum amount: {{amount}}"
   },
   "report": {
     "loading": "Building your monthly report...",
@@ -87,12 +89,12 @@
     "newMonthCaption": "New month",
     "newMonthTitle": "Close out the month",
     "newMonthAction": "Reset monthly spending",
-    "ops": "{{count}} ops"
+    "ops": "{{count}} items"
   },
   "monthReport": {
-    "snapshot": "Snapshot",
+    "snapshot": "Summary",
     "overview": "Monthly overview",
-    "description": "A compact view of the money coming in, going out, and moving into savings this month.",
+    "description": "Income, spending, and savings this month at a glance.",
     "income": "Income",
     "spending": "Spending",
     "saved": "Saved",
@@ -102,9 +104,17 @@
   },
   "settings": {
     "title": "Settings",
-    "description": "Adjust the interface to match your preferences.",
+    "description": "Customize the app.",
+    "adminPanel": "Admin panel",
+    "adminPanelDescription": "Users, stats, and admin access management.",
     "theme": "Appearance",
     "language": "Language",
+    "resetData": "Reset account data",
+    "resetDataDescription": "Delete all income, expenses, savings progress, and recurring templates.",
+    "resetDataModalTitle": "Danger zone",
+    "resetDataModalQuestion": "Reset all account data?",
+    "resetDataModalDescription": "This will permanently remove all transactions and savings progress, and return the account to a clean state.",
+    "resetDataConfirm": "Reset data",
     "themeAuto": "Auto",
     "themeDark": "Dark",
     "themeLight": "Light",
@@ -114,8 +124,52 @@
     "languageModalTitle": "Choose language",
     "languageModalDescription": "Select the language used across the app.",
     "languageEn": "English",
+    "languageKk": "Kazakh",
+    "languageZh": "Chinese",
+    "languageJa": "Japanese",
+    "languageKo": "Korean",
+    "languageTr": "Turkish",
+    "languageEs": "Spanish",
+    "languageFr": "French",
+    "languageDe": "German",
     "languageRu": "Russian",
-    "languageUz": "O'zbek"
+    "languageUz": "O'zbek",
+    "languageOther": "Other languages",
+    "languageHideOther": "Hide other languages",
+    "currency": "Currency",
+    "currencyModalTitle": "Choose currency",
+    "currencyModalDescription": "Select the currency used to display all amounts in the app.",
+    "currencyUzs": "Uzbek som (UZS)",
+    "currencyRub": "Russian ruble (RUB)",
+    "currencyUsd": "US dollar (USD)",
+    "currencyEur": "Euro (EUR)",
+    "currencyKzt": "Kazakhstani tenge (KZT)",
+    "currencyTry": "Turkish lira (TRY)",
+    "currencyGbp": "British pound (GBP)",
+    "currencyCny": "Chinese yuan (CNY)"
+  },
+  "admin": {
+    "title": "Admin panel",
+    "description": "View the anonymized user list, statistics, and manage admin access.",
+    "loading": "Loading admin data...",
+    "accessCaption": "Restricted access",
+    "accessDenied": "You do not have access to the admin panel",
+    "searchPlaceholder": "Search by user ID or Telegram ID",
+    "empty": "No users found.",
+    "totalUsers": "Total users",
+    "totalAdmins": "Admins",
+    "totalTransactions": "Transactions",
+    "totalBalance": "Total balance",
+    "totalSavings": "Total savings",
+    "adminBadge": "Admin",
+    "grantAdmin": "Grant admin",
+    "revokeAdmin": "Revoke admin",
+    "alreadyAdmin": "Already admin",
+    "prevPage": "Previous",
+    "nextPage": "Next",
+    "pageInfo": "Page {{page}} of {{totalPages}} · {{totalItems}} users",
+    "userMeta": "Telegram: {{telegramId}} · created: {{createdAt}}",
+    "userStats": "Balance: {{balance}} · Savings: {{savings}} · Monthly spend: {{monthlyExp}} · Transactions: {{transactions}}"
   },
   "expenseCategory": {
     "title": "Category",
@@ -134,17 +188,29 @@
     "question": "Choose the correct category for {{amount}}"
   },
   "recentExpenses": {
-    "caption": "Quick fix",
+    "caption": "Recent",
     "title": "Recent expenses",
     "loading": "Loading recent expenses...",
     "empty": "No recent expenses yet.",
     "changeCategory": "Change category",
-    "undo": "Archive",
-    "undoQuestion": "Archive this recent expense?",
-    "undoDescription": "{{amount}} will leave the history active only in archived mode."
+    "undo": "Cancel",
+    "undoQuestion": "Cancel this recent expense?",
+    "undoDescription": "{{amount}} will return to balance and the transaction will be marked as canceled."
+  },
+  "limits": {
+    "caption": "Budget control",
+    "title": "Category limits",
+    "manage": "Manage",
+    "empty": "No limits set yet. Add them to get spending warnings.",
+    "over": "Over limit",
+    "ok": "Within limit",
+    "question": "How much can you spend per category this month?",
+    "placeholder": "Empty = no limit",
+    "helperText": "Leave blank if you don't want a limit for this category.",
+    "save": "Save limits"
   },
   "recurring": {
-    "caption": "Quick repeats",
+    "caption": "Templates",
     "title": "Recurring actions",
     "add": "Add",
     "empty": "No recurring templates yet.",
@@ -174,7 +240,7 @@
     "transfer_from_savings": "Savings → balance"
   },
   "history": {
-    "caption": "Full journal",
+    "caption": "All transactions",
     "title": "Transaction history",
     "count": "{{count}} items",
     "month": "Month",
@@ -184,14 +250,13 @@
     "allTypes": "All types",
     "category": "Category",
     "allCategories": "All categories",
-    "showArchived": "Show archived",
+    "showArchived": "Show canceled",
     "showFilters": "More filters",
     "hideFilters": "Less filters",
-    "export": "Export CSV",
     "loading": "Loading transactions...",
-    "archived": "Archived",
-    "restore": "Restore",
-    "archive": "Archive",
+    "archived": "Canceled",
+    "restore": "Bring back",
+    "archive": "Cancel",
     "empty": "No transactions match these filters.",
     "edit": "Edit",
     "editQuestion": "Update the details for this transaction",
@@ -201,10 +266,10 @@
     "note": "Note",
     "notePlaceholder": "Add a note for this transaction",
     "save": "Save changes",
-    "archiveQuestion": "Archive this transaction?",
-    "archiveDescription": "It will disappear from the active history but can still be restored later.",
-    "restoreQuestion": "Restore this transaction?",
-    "restoreDescription": "The transaction will become active again and affect your totals."
+    "archiveQuestion": "Cancel this transaction?",
+    "archiveDescription": "The transaction will be rolled back, and your balance and totals will be recalculated.",
+    "restoreQuestion": "Bring this transaction back?",
+    "restoreDescription": "The transaction will become active again and affect your balance and totals."
   },
   "feedback": {
     "genericError": "Something went wrong. Please try again.",
@@ -212,8 +277,9 @@
     "expenseAdded": "Expense added",
     "savingsDeposited": "Moved to savings",
     "savingsWithdrawn": "Returned to balance",
+    "accountDataReset": "Account data reset",
     "transactionUpdated": "Transaction updated",
-    "transactionArchived": "Transaction archived",
+    "transactionArchived": "Transaction canceled",
     "transactionRestored": "Transaction restored",
     "goalUpdated": "Savings goal updated",
     "recurringSaved": "Recurring action saved",
@@ -222,11 +288,69 @@
   },
   "analytics": {
     "title": "Expense breakdown",
-    "description": "See where your money goes, grouped by category.",
+    "description": "See where your money goes by category.",
     "totalExpenses": "Total expenses",
-    "transactions": "{{count}} txn",
+    "transactions": "{{count}} items",
     "ofTotal": "{{pct}}% of total",
     "noData": "No expense data yet this month."
+  },
+  "onboarding": {
+    "skip": "Skip",
+    "back": "Back",
+    "next": "Next",
+    "start": "Let's go!",
+    "welcome": {
+      "title": "Welcome to Save Up!",
+      "description": "Let's take a quick look at how the app works. It only takes a minute."
+    },
+    "balance": {
+      "title": "Your balance",
+      "description": "This is your current balance. Tap on the number to edit it directly."
+    },
+    "amount-input": {
+      "title": "Income & expenses",
+      "description": "Enter an amount here, then tap Income or Expense. Pick a category and you're done."
+    },
+    "daily-limit": {
+      "title": "Daily budget",
+      "description": "Shows how much you can spend today to stay on track until the end of the month."
+    },
+    "savings": {
+      "title": "Savings pocket",
+      "description": "Set a savings goal and move money in or out. You can also save part of each income."
+    },
+    "templates": {
+      "title": "Recurring actions",
+      "description": "Create templates for regular transactions like rent or salary. Apply them with one tap."
+    },
+    "report-tabs": {
+      "title": "Report modes",
+      "description": "Switch between income, spending, analytics, and full transaction history."
+    },
+    "report-summary": {
+      "title": "Monthly summary",
+      "description": "Key numbers for the current month: totals, categories, and trends at a glance."
+    },
+    "settings-theme": {
+      "title": "Appearance",
+      "description": "Switch between light, dark, or automatic theme."
+    },
+    "settings-language": {
+      "title": "Language",
+      "description": "Choose between English, Russian, and Uzbek."
+    },
+    "settings-currency": {
+      "title": "Currency",
+      "description": "Select your preferred currency for displaying all amounts."
+    },
+    "settings-reset": {
+      "title": "Reset data",
+      "description": "Permanently delete all transactions, savings, and templates to start fresh."
+    },
+    "done": {
+      "title": "You're all set!",
+      "description": "Start tracking your finances. You can always come back to any section from the bottom menu."
+    }
   },
   "notFound": {
     "caption": "Page not found",

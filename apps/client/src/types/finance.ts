@@ -1,4 +1,7 @@
 export type {
+  AdminStats,
+  AdminUserListItem,
+  AdminUsersPage,
   CategoryBreakdown,
   CategoryBreakdownItem,
   DailyLimit,

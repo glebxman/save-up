@@ -1,8 +1,8 @@
-import { Button, Chip, Modal } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import type { ExpenseCategory } from "@/types/finance";
 import { categoryMeta, EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import { Button, Modal } from "@/components/ui";
 
 interface ExpenseCategoryModalProps {
   isOpen: boolean;
@@ -34,10 +34,10 @@ export function ExpenseCategoryModal({
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="primary">
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {title ?? t("expenseCategory.title")}
-                </Chip>
+                </p>
                 <Modal.Heading>{question ?? t("expenseCategory.question")}</Modal.Heading>
               </div>
             </Modal.Header>

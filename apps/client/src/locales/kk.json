@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Пайдаланушы",
+    "browser": "Браузер",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Дайын",
+    "synced": "Синхрондалды",
+    "mock": "Mock",
+    "live": "Онлайн",
+    "cancel": "Болдырмау"
+  },
+  "shell": {
+    "greeting": "Сәлем, {{name}}",
+    "welcomeBack": "Қайта оралдыңыз",
+    "notifications": "Хабарландырулар"
+  },
+  "dashboard": {
+    "loading": "Қаржылық күйіңіз жүктелуде...",
+    "errorCaption": "Жүктеу қатесі",
+    "errorTitle": "Деректерді алу мүмкін болмады",
+    "errorDescription": "Backend RPC endpoint, Telegram initData және сервер байланысын тексеріңіз.",
+    "shortcuts": {
+      "income": "Кіріс",
+      "expense": "Шығыс",
+      "report": "Есеп",
+      "setting": "Баптау"
+    }
+  },
+  "balance": {
+    "caption": "Менің балансым",
+    "healthy": "Жоспар бойынша",
+    "watch": "Шығыс жылдам",
+    "spendableNow": "Қазір қолжетімді",
+    "monthlyBudget": "Осы айда жұмсалды"
+  },
+  "dailyLimit": {
+    "caption": "Жұмсауға қалды",
+    "days": "{{count}} күн",
+    "description": "Ай соңына дейін жоспардан шықпауға арналған күндік бюджет."
+  },
+  "savings": {
+    "caption": "Жинақ қалтасы",
+    "description": "Әр кірістен жинаққа қанша ақша бөлінетінін таңдаңыз.",
+    "setup": "Жинаққа аудару",
+    "question": "Бұл кірістен жинаққа қанша бөлінсін?",
+    "incomeAmount": "Кіріс: {{amount}}",
+    "customPlaceholder": "Жинақ сомасын енгізіңіз",
+    "saveNothing": "Барлығын қалдыру",
+    "saveHalf": "Жартысын жинау",
+    "saveAll": "Барлығын жинау",
+    "confirm": "Қосу",
+    "helperText": "{{amount}} дейін кез келген соманы жинай аласыз.",
+    "manualMode": "Қолмен",
+    "goalBadge": "{{value}} мақсат",
+    "goalText": "Мақсат: {{goal}}. Қалды: {{remaining}}.",
+    "setGoal": "Мақсат қою",
+    "deposit": "Толтыру",
+    "withdraw": "Шығару",
+    "saveGoal": "Мақсатты сақтау",
+    "goalHelper": "Жинақ қалтасы үшін мақсат сомасын белгілеңіз.",
+    "goalPlaceholder": "Мақсат сомасын енгізіңіз",
+    "goalQuestion": "Жинақ мақсатыңыз қандай?",
+    "depositHelper": "Баланстан жинаққа {{amount}} дейін аудара аласыз.",
+    "depositQuestion": "Баланстан жинаққа қанша аудару керек?",
+    "withdrawHelper": "Жинақтан балансқа {{amount}} дейін қайтара аласыз.",
+    "withdrawQuestion": "Жинақтан балансқа қанша қайтару керек?",
+    "transferPlaceholder": "Аударым сомасын енгізіңіз"
+  },
+  "amountInput": {
+    "caption": "Жаңа операция",
+    "title": "Соманы енгізіңіз",
+    "maxAmount": "Ең үлкен сома: {{amount}}"
+  },
+  "report": {
+    "loading": "Айлық есеп дайындалуда...",
+    "errorCaption": "Есеп қатесі",
+    "errorTitle": "Жиынтықты жүктеу мүмкін болмады",
+    "errorDescription": "Backend RPC endpoint және дерекқор байланысын тексеріңіз.",
+    "statistics": "Статистика",
+    "modeIncome": "Кіріс",
+    "modeSpending": "Шығыс",
+    "modeAnalytics": "Талдау",
+    "modeHistory": "Тарих",
+    "totalIncome": "Жалпы кіріс",
+    "totalSpending": "Жалпы шығыс",
+    "newMonthCaption": "Жаңа ай",
+    "newMonthTitle": "Айды жабу",
+    "newMonthAction": "Айлық шығысты тазалау",
+    "ops": "{{count}} элемент"
+  },
+  "monthReport": {
+    "snapshot": "Жиынтық",
+    "overview": "Айлық шолу",
+    "description": "Осы айдағы кіріс, шығыс және жинақтың қысқаша көрінісі.",
+    "income": "Кіріс",
+    "spending": "Шығыс",
+    "saved": "Жиналды",
+    "withdrawn": "Шығарылды",
+    "netSaved": "Таза жинақ",
+    "transactions": "Операциялар"
+  },
+  "settings": {
+    "title": "Баптаулар",
+    "description": "Қолданбаны өзіңізге ыңғайлаңыз.",
+    "adminPanel": "Админ панелі",
+    "adminPanelDescription": "Пайдаланушылар, статистика және админ құқықтарын басқару.",
+    "theme": "Көрініс",
+    "language": "Тіл",
+    "resetData": "Аккаунт деректерін тазалау",
+    "resetDataDescription": "Барлық кірістерді, шығыстарды, жинақ прогресін және қайталанатын үлгілерді өшіру.",
+    "resetDataModalTitle": "Қауіпті аймақ",
+    "resetDataModalQuestion": "Аккаунттағы барлық деректер тазалансын ба?",
+    "resetDataModalDescription": "Бұл барлық операциялар мен жинақ прогресін біржола өшіріп, аккаунтты таза күйге қайтарады.",
+    "resetDataConfirm": "Деректерді тазалау",
+    "themeAuto": "Авто",
+    "themeDark": "Қараңғы",
+    "themeLight": "Жарық",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Тақырыпты таңдаңыз",
+    "themeModalDescription": "Жүйе көрінісін қолданыңыз немесе қолданбаны қолмен ауыстырыңыз.",
+    "languageModalTitle": "Тілді таңдаңыз",
+    "languageModalDescription": "Қолданбада қолданылатын тілді таңдаңыз.",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "Басқа тілдер",
+    "languageHideOther": "Басқа тілдерді жасыру",
+    "currency": "Валюта",
+    "currencyModalTitle": "Валютаны таңдаңыз",
+    "currencyModalDescription": "Қолданбадағы барлық сомаларды көрсету валютасын таңдаңыз.",
+    "currencyUzs": "Өзбек сумы (UZS)",
+    "currencyRub": "Ресей рублі (RUB)",
+    "currencyUsd": "АҚШ доллары (USD)",
+    "currencyEur": "Еуро (EUR)",
+    "currencyKzt": "Қазақстан теңгесі (KZT)",
+    "currencyTry": "Түрік лирасы (TRY)",
+    "currencyGbp": "Британ фунты (GBP)",
+    "currencyCny": "Қытай юані (CNY)"
+  },
+  "admin": {
+    "title": "Админ панелі",
+    "description": "Анонимдендірілген пайдаланушылар тізімін, статистиканы қарап, админ құқықтарын басқарыңыз.",
+    "loading": "Админ деректері жүктелуде...",
+    "accessCaption": "Кіру шектелген",
+    "accessDenied": "Админ панеліне кіру құқығыңыз жоқ",
+    "searchPlaceholder": "Пайдаланушы ID немесе Telegram ID бойынша іздеу",
+    "empty": "Пайдаланушылар табылмады.",
+    "totalUsers": "Барлық пайдаланушылар",
+    "totalAdmins": "Админдер",
+    "totalTransactions": "Операциялар",
+    "totalBalance": "Жалпы баланс",
+    "totalSavings": "Жалпы жинақ",
+    "adminBadge": "Админ",
+    "grantAdmin": "Админ беру",
+    "revokeAdmin": "Админді алып тастау",
+    "alreadyAdmin": "Әлдеқашан админ",
+    "prevPage": "Алдыңғы",
+    "nextPage": "Келесі",
+    "pageInfo": "{{page}} / {{totalPages}} бет · {{totalItems}} пайдаланушы",
+    "userMeta": "Telegram: {{telegramId}} · құрылған: {{createdAt}}",
+    "userStats": "Баланс: {{balance}} · Жинақ: {{savings}} · Айлық шығыс: {{monthlyExp}} · Операциялар: {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "Санат",
+    "question": "Бұл шығыс не үшін?",
+    "food": "Тамақ",
+    "taxi": "Такси",
+    "entertainment": "Ойын-сауық",
+    "shopping": "Сауда",
+    "utilities": "Коммуналдық",
+    "health": "Денсаулық",
+    "education": "Білім",
+    "other": "Басқа"
+  },
+  "expenseEditor": {
+    "title": "Шығысты түзету",
+    "question": "{{amount}} үшін дұрыс санатты таңдаңыз"
+  },
+  "recentExpenses": {
+    "caption": "Соңғылар",
+    "title": "Соңғы шығыстар",
+    "loading": "Соңғы шығыстар жүктелуде...",
+    "empty": "Әзірге соңғы шығыстар жоқ.",
+    "changeCategory": "Санатты өзгерту",
+    "undo": "Болдырмау",
+    "undoQuestion": "Бұл соңғы шығысты болдырмау керек пе?",
+    "undoDescription": "{{amount}} балансқа қайтады, ал операция болдырылмаған деп белгіленеді."
+  },
+  "limits": {
+    "caption": "Бюджет бақылауы",
+    "title": "Санат лимиттері",
+    "manage": "Басқару",
+    "empty": "Лимиттер әлі жоқ. Шығыс ескертулерін көру үшін қосыңыз.",
+    "over": "Лимиттен асты",
+    "ok": "Лимит ішінде",
+    "question": "Осы айда әр санатқа қанша жұмсауға болады?",
+    "placeholder": "Бос = лимит жоқ",
+    "helperText": "Бұл санатқа лимит қажет болмаса, бос қалдырыңыз.",
+    "save": "Лимиттерді сақтау"
+  },
+  "recurring": {
+    "caption": "Үлгілер",
+    "title": "Қайталанатын әрекеттер",
+    "add": "Қосу",
+    "empty": "Әзірге қайталанатын үлгілер жоқ.",
+    "quick": "Жылдам іске қосу",
+    "run": "Іске қосу",
+    "edit": "Өңдеу",
+    "delete": "Өшіру",
+    "name": "Атауы",
+    "namePlaceholder": "Жалдау, жалақы, интернет...",
+    "type": "Түрі",
+    "amount": "Сома",
+    "category": "Санат",
+    "savingsPart": "Жинақ үлесі",
+    "note": "Ескертпе",
+    "notePlaceholder": "Бұл үлгіге қосымша ескертпе",
+    "createTitle": "Қайталанатын әрекет жасау",
+    "editTitle": "Қайталанатын әрекетті өңдеу",
+    "save": "Өзгерістерді сақтау",
+    "create": "Үлгі жасау",
+    "deleteQuestion": "Бұл қайталанатын үлгіні өшіру керек пе?",
+    "deleteDescription": "{{name}} жылдам тізімнен алынады."
+  },
+  "transactionType": {
+    "income": "Кіріс",
+    "expense": "Шығыс",
+    "transfer_to_savings": "Баланс → жинақ",
+    "transfer_from_savings": "Жинақ → баланс"
+  },
+  "history": {
+    "caption": "Барлық операциялар",
+    "title": "Операциялар тарихы",
+    "count": "{{count}} элемент",
+    "month": "Ай",
+    "search": "Іздеу",
+    "searchPlaceholder": "Ескертпе немесе түр бойынша іздеу",
+    "type": "Түрі",
+    "allTypes": "Барлық түрлер",
+    "category": "Санат",
+    "allCategories": "Барлық санаттар",
+    "showArchived": "Болдырылғандарды көрсету",
+    "showFilters": "Көбірек сүзгі",
+    "hideFilters": "Аз сүзгі",
+    "loading": "Операциялар жүктелуде...",
+    "archived": "Болдырылды",
+    "restore": "Қайтару",
+    "archive": "Болдырмау",
+    "empty": "Бұл сүзгілерге сәйкес операция жоқ.",
+    "edit": "Өңдеу",
+    "editQuestion": "Бұл операция мәліметтерін жаңартыңыз",
+    "amount": "Сома",
+    "date": "Күн",
+    "savingsPart": "Жинақ үлесі",
+    "note": "Ескертпе",
+    "notePlaceholder": "Бұл операцияға ескертпе қосыңыз",
+    "save": "Өзгерістерді сақтау",
+    "archiveQuestion": "Бұл операцияны болдырмау керек пе?",
+    "archiveDescription": "Операция кері қайтарылады, баланс пен қорытындылар қайта есептеледі.",
+    "restoreQuestion": "Бұл операцияны қайта қосу керек пе?",
+    "restoreDescription": "Операция қайтадан белсенді болып, баланс пен қорытындыларға әсер етеді."
+  },
+  "feedback": {
+    "genericError": "Бірдеңе дұрыс болмады. Қайталап көріңіз.",
+    "incomeAdded": "Кіріс қосылды",
+    "expenseAdded": "Шығыс қосылды",
+    "savingsDeposited": "Жинаққа аударылды",
+    "savingsWithdrawn": "Балансқа қайтарылды",
+    "accountDataReset": "Аккаунт деректері тазаланды",
+    "transactionUpdated": "Операция жаңартылды",
+    "transactionArchived": "Операция болдырылды",
+    "transactionRestored": "Операция қалпына келтірілді",
+    "goalUpdated": "Жинақ мақсаты жаңартылды",
+    "recurringSaved": "Қайталанатын әрекет сақталды",
+    "recurringDeleted": "Қайталанатын әрекет өшірілді",
+    "recurringApplied": "Қайталанатын әрекет қолданылды"
+  },
+  "analytics": {
+    "title": "Шығыстар бөлінісі",
+    "description": "Ақшаңыздың қайда кететінін санаттар бойынша көріңіз.",
+    "totalExpenses": "Жалпы шығыс",
+    "transactions": "{{count}} элемент",
+    "ofTotal": "Жалпының {{pct}}%",
+    "noData": "Бұл айда шығыс деректері әлі жоқ."
+  },
+  "onboarding": {
+    "skip": "Өткізу",
+    "back": "Артқа",
+    "next": "Келесі",
+    "start": "Бастайық!",
+    "welcome": {
+      "title": "Save Up-қа қош келдіңіз!",
+      "description": "Қолданбаның қалай жұмыс істейтінін жылдам қарап шығайық. Бұл бір минут қана алады."
+    },
+    "balance": {
+      "title": "Сіздің балансыңыз",
+      "description": "Бұл ағымдағы баланс. Соманы өзгерту үшін санды басыңыз."
+    },
+    "amount-input": {
+      "title": "Кіріс және шығыс",
+      "description": "Мұнда соманы енгізіп, Кіріс немесе Шығыс түймесін басыңыз. Санатты таңдасаңыз, дайын."
+    },
+    "daily-limit": {
+      "title": "Күндік бюджет",
+      "description": "Ай соңына дейін жетуі үшін бүгін қанша жұмсауға болатынын көрсетеді."
+    },
+    "savings": {
+      "title": "Жинақ қалтасы",
+      "description": "Жинақ мақсатын қойып, ақшаны кіргізіп немесе шығарыңыз. Әр кірістен бір бөлігін де сақтай аласыз."
+    },
+    "templates": {
+      "title": "Қайталанатын әрекеттер",
+      "description": "Жалдау немесе жалақы сияқты тұрақты операцияларға үлгі жасаңыз. Бір түртумен қолданыңыз."
+    },
+    "report-tabs": {
+      "title": "Есеп режимдері",
+      "description": "Кіріс, шығыс, талдау және толық операция тарихы арасында ауысыңыз."
+    },
+    "report-summary": {
+      "title": "Айлық жиынтық",
+      "description": "Ағымдағы айдың негізгі сандары: қорытындылар, санаттар және үрдістер."
+    },
+    "settings-theme": {
+      "title": "Көрініс",
+      "description": "Жарық, қараңғы немесе автоматты тақырып арасында ауысыңыз."
+    },
+    "settings-language": {
+      "title": "Тіл",
+      "description": "Ағылшын, орыс немесе өзбек тілін таңдаңыз."
+    },
+    "settings-currency": {
+      "title": "Валюта",
+      "description": "Барлық сомаларды көрсетуге ыңғайлы валютаны таңдаңыз."
+    },
+    "settings-reset": {
+      "title": "Деректерді тазалау",
+      "description": "Барлық операцияларды, жинақтарды және үлгілерді біржола өшіріп, жаңадан бастаңыз."
+    },
+    "done": {
+      "title": "Бәрі дайын!",
+      "description": "Қаржыңызды бақылай бастаңыз. Кез келген бөлімге төменгі мәзірден қайта орала аласыз."
+    }
+  },
+  "notFound": {
+    "caption": "Бет табылмады",
+    "title": "Мұндай бағыт жоқ",
+    "description": "Бюджетті бақылауды жалғастыру үшін басты бетке оралыңыз.",
+    "action": "Басты бетке қайту"
+  }
+}

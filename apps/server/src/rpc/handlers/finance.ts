@@ -11,9 +11,11 @@ import {
   getReport,
   getTransactions,
   newMonth,
+  resetAccountData,
   restoreTransaction,
   saveRecurringTransaction,
   transferSavings,
+  updateBalance,
   updateSavingsGoal,
   updateTransaction,
 } from "../../services/finance.service.js";
@@ -93,6 +95,16 @@ export const restoreTransactionHandler: RpcHandler<"finance.restoreTransaction">
 export const updateSavingsGoalHandler: RpcHandler<"finance.updateSavingsGoal"> = async ({ initData, goal }, { app }) => {
   const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
   return updateSavingsGoal(telegramId, goal);
+};
+
+export const updateBalanceHandler: RpcHandler<"finance.updateBalance"> = async ({ initData, balance }, { app }) => {
+  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
+  return updateBalance(telegramId, balance);
+};
+
+export const resetAccountDataHandler: RpcHandler<"finance.resetAccountData"> = async ({ initData }, { app }) => {
+  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
+  return resetAccountData(telegramId);
 };
 
 export const saveRecurringTransactionHandler: RpcHandler<"finance.saveRecurringTransaction"> = async ({ initData, template }, { app }) => {

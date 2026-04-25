@@ -1,11 +1,14 @@
 @import "tailwindcss";
-@import "@heroui/styles";
 
 :root {
   font-family: "Manrope", "Segoe UI", sans-serif;
-  --safe-top: env(safe-area-inset-top, 0px);
+  --telegram-safe-top: env(safe-area-inset-top, 0px);
+  --telegram-safe-bottom: env(safe-area-inset-bottom, 0px);
+  --device-top-extra: 1rem;
+  --app-top-padding: max(1.5rem, calc(var(--telegram-safe-top) + var(--device-top-extra)));
+  --safe-top: var(--telegram-safe-top);
   --safe-right: env(safe-area-inset-right, 0px);
-  --safe-bottom: env(safe-area-inset-bottom, 0px);
+  --safe-bottom: var(--telegram-safe-bottom);
   --safe-left: env(safe-area-inset-left, 0px);
 }
 
@@ -41,115 +44,183 @@ input[type="number"]::-webkit-outer-spin-button {
 
 .light,
 [data-theme="light"] {
-  --background: oklch(0.96 0.01 145);
-  --foreground: oklch(0.22 0.015 145);
+  --background: #dfe5d8;
+  --foreground: #191919;
 
-  --surface: oklch(0.99 0.003 145);
+  --surface: rgba(255, 255, 255, 0.76);
   --surface-foreground: var(--foreground);
-  --surface-secondary: oklch(0.95 0.008 145);
+  --surface-secondary: rgba(26, 26, 26, 0.06);
   --surface-secondary-foreground: var(--foreground);
-  --surface-tertiary: oklch(0.92 0.01 145);
+  --surface-tertiary: rgba(26, 26, 26, 0.1);
   --surface-tertiary-foreground: var(--foreground);
 
-  --overlay: oklch(0.99 0.003 145);
+  --overlay: #f2f4ed;
   --overlay-foreground: var(--foreground);
 
-  --muted: oklch(0.46 0.014 145);
-  --default: oklch(0.92 0.01 145);
+  --muted: rgba(25, 25, 25, 0.58);
+  --default: rgba(255, 255, 255, 0.5);
   --default-foreground: var(--foreground);
 
-  --accent: oklch(0.82 0.2 136);
-  --accent-foreground: oklch(0.21 0.02 145);
+  --accent: #eff29a;
+  --accent-foreground: #1b1b1b;
+  --accent-secondary: #d9e8ff;
+  --accent-tertiary: #f2d6ef;
 
-  --field-background: oklch(0.98 0.004 145);
+  --field-background: rgba(255, 255, 255, 0.54);
   --field-foreground: var(--foreground);
-  --field-placeholder: oklch(0.52 0.012 145);
-  --field-border: oklch(0.84 0.014 145);
+  --field-placeholder: rgba(25, 25, 25, 0.38);
+  --field-border: transparent;
 
-  --success: oklch(0.75 0.18 150);
-  --success-foreground: oklch(0.18 0.01 145);
-  --warning: oklch(0.82 0.14 90);
-  --warning-foreground: oklch(0.2 0.01 145);
-  --danger: oklch(0.63 0.2 29);
-  --danger-foreground: oklch(0.98 0.01 140);
+  --success: #bfe5c8;
+  --success-foreground: #1b1b1b;
+  --warning: #f4d37f;
+  --warning-foreground: #1b1b1b;
+  --danger: #ef8d90;
+  --danger-foreground: #1b1b1b;
 
-  --segment: oklch(0.9 0.01 145);
+  --segment: rgba(255, 255, 255, 0.4);
   --segment-foreground: var(--foreground);
 
-  --border: oklch(0.84 0.014 145);
-  --separator: oklch(0.88 0.012 145);
+  --border: transparent;
+  --separator: rgba(25, 25, 25, 0.08);
   --focus: var(--accent);
   --link: var(--foreground);
-  --backdrop: rgba(210, 225, 205, 0.72);
+  --backdrop: rgba(219, 224, 212, 0.58);
+  --card-glow:
+    radial-gradient(circle at top right, rgba(239, 242, 154, 0.72), transparent 36%),
+    radial-gradient(circle at bottom left, rgba(217, 232, 255, 0.78), transparent 42%);
+  --shell-top: #edf1e8;
+  --shell-gradient:
+    radial-gradient(circle at top center, rgba(239, 242, 154, 0.35), transparent 24%),
+    radial-gradient(circle at 18% 58%, rgba(217, 232, 255, 0.28), transparent 32%),
+    radial-gradient(circle at 88% 78%, rgba(231, 197, 222, 0.18), transparent 24%),
+    linear-gradient(180deg, var(--shell-top) 0%, var(--app-body-background) 100%);
+  --nav-surface: rgba(255, 255, 255, 0.72);
+  --capsule-surface: rgba(25, 25, 25, 0.06);
+  --hero-strong-surface: rgba(255, 255, 255, 0.72);
+  --hero-soft-surface: rgba(255, 255, 255, 0.62);
+  --hero-on-strong: var(--foreground);
+  --hero-secondary-text: rgba(25, 25, 25, 0.64);
+  --hero-positive-text: #7f8f18;
+  --hero-panel-border: rgba(255, 255, 255, 0.78);
+  --hero-outline: rgba(255, 255, 255, 0.7);
+  --hero-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.7) inset,
+    0 14px 34px rgba(124, 132, 114, 0.16);
+  --avatar-ring: rgba(255, 255, 255, 0.5);
+  --modal-eyebrow: #8d8342;
+  --modal-warning-eyebrow: #9b6a46;
+  --toast-surface: rgba(255, 255, 255, 0.82);
+  --toast-border: rgba(255, 255, 255, 0.72);
+  --toast-shadow:
+    0 10px 28px rgba(124, 132, 114, 0.14),
+    0 1px 0 rgba(255, 255, 255, 0.72) inset;
+  --toast-title: var(--foreground);
+  --toast-close-hover: rgba(25, 25, 25, 0.06);
 
-  --surface-shadow:
-    0 0 0 1px rgba(16, 32, 18, 0.04),
-    0 24px 60px rgba(16, 32, 18, 0.08);
-  --overlay-shadow:
-    0 0 0 1px rgba(16, 32, 18, 0.04),
-    0 24px 80px rgba(16, 32, 18, 0.12);
-  --field-shadow: 0 0 0 0 transparent inset;
-  --app-body-background: #eef3ea;
+  --surface-shadow: none;
+  --overlay-shadow: none;
+  --field-shadow: none;
+  --app-body-background: #dce1d6;
+
+  /* Settings colors (light theme) */
+  --settings-green: #3cad8b;
+  --settings-blue: #6084ff;
+  --settings-orange: #fa791d;
+  --settings-red: #e92554;
 }
 
 .dark,
 [data-theme="dark"] {
-  --background: oklch(0.14 0.012 147);
-  --foreground: oklch(0.98 0.01 140);
+  --background: #0f0f10;
+  --foreground: #f3f1ec;
 
-  --surface: oklch(0.22 0.013 147);
+  --surface: rgba(28, 28, 29, 0.92);
   --surface-foreground: var(--foreground);
-  --surface-secondary: oklch(0.27 0.014 147);
+  --surface-secondary: rgba(255, 255, 255, 0.06);
   --surface-secondary-foreground: var(--foreground);
-  --surface-tertiary: oklch(0.31 0.016 147);
+  --surface-tertiary: rgba(255, 255, 255, 0.1);
   --surface-tertiary-foreground: var(--foreground);
 
-  --overlay: oklch(0.2 0.012 147);
+  --overlay: #171718;
   --overlay-foreground: var(--foreground);
 
-  --muted: oklch(0.75 0.012 145);
-  --default: oklch(0.31 0.013 147);
+  --muted: rgba(243, 241, 236, 0.58);
+  --default: rgba(255, 255, 255, 0.08);
   --default-foreground: var(--foreground);
 
-  --accent: oklch(0.86 0.23 136);
-  --accent-foreground: oklch(0.21 0.02 145);
+  --accent: #eef09e;
+  --accent-foreground: #141414;
+  --accent-secondary: #d8def8;
+  --accent-tertiary: #e7c5de;
 
-  --field-background: oklch(0.24 0.012 147);
+  --field-background: rgba(255, 255, 255, 0.055);
   --field-foreground: var(--foreground);
-  --field-placeholder: oklch(0.7 0.01 145);
-  --field-border: oklch(0.34 0.012 147);
+  --field-placeholder: rgba(243, 241, 236, 0.35);
+  --field-border: transparent;
 
-  --success: oklch(0.77 0.19 150);
-  --success-foreground: oklch(0.18 0.01 145);
-  --warning: oklch(0.82 0.14 90);
-  --warning-foreground: oklch(0.2 0.01 145);
-  --danger: oklch(0.63 0.2 29);
-  --danger-foreground: oklch(0.98 0.01 140);
+  --success: #9fcea8;
+  --success-foreground: #141414;
+  --warning: #f1d17a;
+  --warning-foreground: #141414;
+  --danger: #ef8e92;
+  --danger-foreground: #141414;
 
-  --segment: oklch(0.35 0.012 147);
+  --segment: rgba(255, 255, 255, 0.08);
   --segment-foreground: var(--foreground);
 
-  --border: oklch(0.34 0.012 147);
-  --separator: oklch(0.3 0.012 147);
+  --border: transparent;
+  --separator: rgba(255, 255, 255, 0.08);
   --focus: var(--accent);
   --link: var(--foreground);
-  --backdrop: rgba(2, 6, 2, 0.72);
+  --backdrop: rgba(7, 7, 8, 0.72);
+  --card-glow:
+    radial-gradient(circle at top right, rgba(238, 240, 158, 0.82), transparent 36%),
+    radial-gradient(circle at bottom left, rgba(216, 222, 248, 0.72), transparent 42%);
+  --shell-top: #1a1a1b;
+  --shell-gradient:
+    radial-gradient(circle at top center, rgba(239, 242, 154, 0.16), transparent 26%),
+    radial-gradient(circle at 20% 60%, rgba(217, 232, 255, 0.1), transparent 34%),
+    radial-gradient(circle at 88% 78%, rgba(231, 197, 222, 0.12), transparent 26%),
+    linear-gradient(180deg, var(--shell-top) 0%, var(--app-body-background) 100%);
+  --nav-surface: rgba(26, 26, 27, 0.82);
+  --capsule-surface: rgba(255, 255, 255, 0.08);
+  --hero-strong-surface: rgba(20, 20, 20, 0.78);
+  --hero-soft-surface: rgba(20, 20, 20, 0.52);
+  --hero-on-strong: #ffffff;
+  --hero-secondary-text: rgba(255, 255, 255, 0.48);
+  --hero-positive-text: var(--accent);
+  --hero-panel-border: rgba(255, 255, 255, 0.06);
+  --hero-outline: rgba(255, 255, 255, 0.06);
+  --hero-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.04) inset,
+    0 18px 42px rgba(0, 0, 0, 0.32);
+  --avatar-ring: rgba(255, 255, 255, 0.08);
+  --modal-eyebrow: var(--accent);
+  --modal-warning-eyebrow: var(--warning);
+  --toast-surface: rgba(26, 26, 27, 0.9);
+  --toast-border: rgba(255, 255, 255, 0.08);
+  --toast-shadow:
+    0 14px 34px rgba(0, 0, 0, 0.28),
+    0 1px 0 rgba(255, 255, 255, 0.04) inset;
+  --toast-title: var(--foreground);
+  --toast-close-hover: rgba(255, 255, 255, 0.06);
 
-  --surface-shadow:
-    0 0 0 1px rgba(196, 255, 147, 0.05),
-    0 24px 60px rgba(2, 6, 2, 0.45);
-  --overlay-shadow:
-    0 0 0 1px rgba(196, 255, 147, 0.08),
-    0 24px 80px rgba(2, 6, 2, 0.58);
-  --field-shadow: 0 0 0 0 transparent inset;
-  --app-body-background: #0b0f0b;
+  --surface-shadow: none;
+  --overlay-shadow: none;
+  --field-shadow: none;
+  --app-body-background: #101011;
+
+  /* Settings colors (dark theme) */
+  --settings-green: #2f876d;
+  --settings-blue: #4663db;
+  --settings-orange: #d65a14;
+  --settings-red: #bf1f46;
 }
 
 .finance-app-shell {
   min-height: 100vh;
-  background:
-    radial-gradient(circle at top center, rgba(170, 255, 93, 0.1), transparent 30%),
-    linear-gradient(180deg, var(--app-body-background) 0%, var(--background) 100%);
+  background: var(--shell-gradient);
 }
 
 .finance-shell-frame {
@@ -158,7 +229,7 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .finance-main {
-  padding-bottom: calc(124px + var(--safe-bottom));
+  padding-bottom: calc(138px + var(--safe-bottom));
 }
 
 .finance-bottom-nav-wrap {
@@ -177,11 +248,50 @@ input[type="number"]::-webkit-outer-spin-button {
   top: calc(18px + var(--safe-top));
   left: 50%;
   z-index: 60;
-  display: flex;
-  width: min(420px, calc(100vw - 24px));
-  flex-direction: column;
+  display: grid;
+  width: min(392px, calc(100vw - 28px));
   gap: 10px;
   transform: translateX(-50%);
+}
+
+@keyframes modal-sheet-in {
+  from {
+    opacity: 0;
+    transform: translateY(28px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes modal-sheet-out {
+  from {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+}
+
+@keyframes modal-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes modal-backdrop-out {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
 }
 
 @keyframes toast-in {
@@ -207,36 +317,144 @@ input[type="number"]::-webkit-outer-spin-button {
 }
 
 .finance-toast {
-  border: 1px solid var(--border);
-  border-radius: 22px;
-  background: var(--surface);
-  box-shadow: var(--surface-shadow);
-  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-radius: 16px;
+  background: var(--toast-surface);
+  backdrop-filter: blur(18px);
+  padding: 12px 12px 12px 14px;
   color: var(--foreground);
-  backdrop-filter: blur(10px);
+}
+
+.finance-toast[data-state="open"] {
   animation: toast-in 0.3s cubic-bezier(0.21, 1.02, 0.73, 1) forwards;
 }
 
-.finance-toast[data-tone="success"] {
-  border-color: color-mix(in srgb, var(--accent) 45%, var(--border));
+.finance-toast[data-state="closed"] {
+  animation: toast-out 0.22s ease forwards;
 }
 
-.finance-toast[data-tone="error"] {
-  border-color: color-mix(in srgb, var(--danger) 45%, var(--border));
+.finance-toast-main {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 10px;
+  flex: 1;
+}
+
+.finance-toast-copy {
+  min-width: 0;
+}
+
+.finance-toast-title {
+  margin: 0;
+  min-width: 0;
+  color: var(--toast-title);
+  font-size: 14px;
+  font-weight: 600;
+  line-height: 1.4;
+  letter-spacing: -0.01em;
+}
+
+.finance-toast-icon {
+  display: inline-flex;
+  height: 18px;
+  width: 18px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 999px;
+}
+
+.finance-toast-icon-info {
+  background: color-mix(in srgb, var(--accent-secondary) 70%, var(--surface));
+  color: #214fb8;
+}
+
+.finance-toast-icon-success {
+  background: color-mix(in srgb, var(--success) 55%, var(--surface));
+  color: #ffffff;
+}
+
+.finance-toast-icon-error {
+  background: color-mix(in srgb, var(--danger) 55%, var(--surface));
+  color: #ffffff;
+}
+
+.finance-toast-close {
+  display: inline-flex;
+  height: 28px;
+  width: 28px;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: 999px;
+  background: transparent;
+  color: var(--muted);
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.finance-toast-close:hover {
+  background: var(--toast-close-hover);
+  color: var(--foreground);
 }
 
 .finance-bottom-nav {
-  background: color-mix(in srgb, var(--surface) 80%, transparent);
-  backdrop-filter: blur(14px);
-  transition: box-shadow 0.2s ease;
+  background: var(--nav-surface);
+  backdrop-filter: blur(18px);
+  transition: transform 0.2s ease;
 }
 
 .finance-nav-button {
   transition:
     transform 0.2s ease,
-    box-shadow 0.2s ease;
+    background-color 0.2s ease;
 }
 
 .finance-input-clear {
   transition: color 0.15s ease;
+}
+
+.finance-modal-sheet {
+  animation: modal-sheet-in 0.22s cubic-bezier(0.2, 0.9, 0.2, 1);
+}
+
+.finance-modal-backdrop[data-state="open"] {
+  animation: modal-backdrop-in 0.22s ease forwards;
+}
+
+.finance-modal-backdrop[data-state="closed"] {
+  animation: modal-backdrop-out 0.22s ease forwards;
+}
+
+.finance-modal-backdrop[data-state="open"] .finance-modal-sheet {
+  animation: modal-sheet-in 0.22s cubic-bezier(0.2, 0.9, 0.2, 1) forwards;
+}
+
+.finance-modal-backdrop[data-state="closed"] .finance-modal-sheet {
+  animation: modal-sheet-out 0.22s cubic-bezier(0.4, 0, 0.2, 1) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .finance-modal-backdrop,
+  .finance-modal-sheet {
+    animation-duration: 0.01ms !important;
+  }
+}
+
+.finance-hero-card {
+  background:
+    var(--card-glow),
+    linear-gradient(180deg, rgba(255, 255, 255, 0.3), rgba(255, 255, 255, 0.1));
+}
+
+.finance-capsule {
+  background: var(--capsule-surface);
+  backdrop-filter: blur(18px);
 }

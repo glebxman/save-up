@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Usuario",
+    "browser": "Navegador",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Listo",
+    "synced": "Sincronizado",
+    "mock": "Mock",
+    "live": "En vivo",
+    "cancel": "Cancelar"
+  },
+  "shell": {
+    "greeting": "Hola, {{name}}",
+    "welcomeBack": "Bienvenido de nuevo",
+    "notifications": "Notificaciones"
+  },
+  "dashboard": {
+    "loading": "Cargando tu estado financiero...",
+    "errorCaption": "Error de carga",
+    "errorTitle": "No se pudieron obtener tus datos",
+    "errorDescription": "Revisa el endpoint RPC del backend, Telegram initData y la conexión del servidor.",
+    "shortcuts": {
+      "income": "Ingreso",
+      "expense": "Gasto",
+      "report": "Reporte",
+      "setting": "Ajustes"
+    }
+  },
+  "balance": {
+    "caption": "Mi saldo",
+    "healthy": "En buen camino",
+    "watch": "Gasto rápido",
+    "spendableNow": "Disponible ahora",
+    "monthlyBudget": "Gastado este mes"
+  },
+  "dailyLimit": {
+    "caption": "Queda por gastar",
+    "days": "{{count}} días",
+    "description": "Tu presupuesto diario para mantenerte en buen camino hasta fin de mes."
+  },
+  "savings": {
+    "caption": "Bolsillo de ahorro",
+    "description": "Define cuánto de cada ingreso va al ahorro.",
+    "setup": "Transferencia a ahorro",
+    "question": "¿Cuánto de este ingreso debería ir al ahorro?",
+    "incomeAmount": "Ingreso: {{amount}}",
+    "customPlaceholder": "Ingresa el monto de ahorro",
+    "saveNothing": "Conservar todo",
+    "saveHalf": "Ahorrar la mitad",
+    "saveAll": "Ahorrar todo",
+    "confirm": "Agregar",
+    "helperText": "Puedes ahorrar cualquier monto hasta {{amount}}.",
+    "manualMode": "Manual",
+    "goalBadge": "Meta {{value}}",
+    "goalText": "Meta: {{goal}}. Restante: {{remaining}}.",
+    "setGoal": "Definir meta",
+    "deposit": "Depositar",
+    "withdraw": "Retirar",
+    "saveGoal": "Guardar meta",
+    "goalHelper": "Define un monto objetivo para tu bolsillo de ahorro.",
+    "goalPlaceholder": "Ingresa el monto de la meta",
+    "goalQuestion": "¿Cuál es tu meta de ahorro?",
+    "depositHelper": "Puedes mover hasta {{amount}} del saldo al ahorro.",
+    "depositQuestion": "¿Cuánto se debe mover del saldo al ahorro?",
+    "withdrawHelper": "Puedes devolver hasta {{amount}} del ahorro al saldo.",
+    "withdrawQuestion": "¿Cuánto se debe mover del ahorro al saldo?",
+    "transferPlaceholder": "Ingresa el monto de transferencia"
+  },
+  "amountInput": {
+    "caption": "Nueva transacción",
+    "title": "Ingresa un monto",
+    "maxAmount": "Monto máximo: {{amount}}"
+  },
+  "report": {
+    "loading": "Generando tu reporte mensual...",
+    "errorCaption": "Error del reporte",
+    "errorTitle": "No se pudo cargar el resumen",
+    "errorDescription": "Revisa el endpoint RPC del backend y la conexión de la base de datos.",
+    "statistics": "Estadísticas",
+    "modeIncome": "Ingresos",
+    "modeSpending": "Gastos",
+    "modeAnalytics": "Analítica",
+    "modeHistory": "Historial",
+    "totalIncome": "Ingreso total",
+    "totalSpending": "Gasto total",
+    "newMonthCaption": "Nuevo mes",
+    "newMonthTitle": "Cerrar el mes",
+    "newMonthAction": "Restablecer gasto mensual",
+    "ops": "{{count}} elementos"
+  },
+  "monthReport": {
+    "snapshot": "Resumen",
+    "overview": "Vista mensual",
+    "description": "Ingresos, gastos y ahorros de este mes de un vistazo.",
+    "income": "Ingreso",
+    "spending": "Gasto",
+    "saved": "Ahorrado",
+    "withdrawn": "Retirado",
+    "netSaved": "Ahorro neto",
+    "transactions": "Transacciones"
+  },
+  "settings": {
+    "title": "Ajustes",
+    "description": "Personaliza la app.",
+    "adminPanel": "Panel de administración",
+    "adminPanelDescription": "Usuarios, estadísticas y gestión de acceso de administrador.",
+    "theme": "Apariencia",
+    "language": "Idioma",
+    "resetData": "Restablecer datos de la cuenta",
+    "resetDataDescription": "Eliminar todos los ingresos, gastos, progreso de ahorro y plantillas recurrentes.",
+    "resetDataModalTitle": "Zona de riesgo",
+    "resetDataModalQuestion": "¿Restablecer todos los datos de la cuenta?",
+    "resetDataModalDescription": "Esto eliminará permanentemente todas las transacciones y el progreso de ahorro, y devolverá la cuenta a un estado limpio.",
+    "resetDataConfirm": "Restablecer datos",
+    "themeAuto": "Auto",
+    "themeDark": "Oscuro",
+    "themeLight": "Claro",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Elegir tema",
+    "themeModalDescription": "Usa la apariencia del sistema o cambia la app manualmente.",
+    "languageModalTitle": "Elegir idioma",
+    "languageModalDescription": "Selecciona el idioma usado en toda la app.",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "Otros idiomas",
+    "languageHideOther": "Ocultar otros idiomas",
+    "currency": "Moneda",
+    "currencyModalTitle": "Elegir moneda",
+    "currencyModalDescription": "Selecciona la moneda usada para mostrar todos los montos en la app.",
+    "currencyUzs": "Som uzbeko (UZS)",
+    "currencyRub": "Rublo ruso (RUB)",
+    "currencyUsd": "Dólar estadounidense (USD)",
+    "currencyEur": "Euro (EUR)",
+    "currencyKzt": "Tenge kazajo (KZT)",
+    "currencyTry": "Lira turca (TRY)",
+    "currencyGbp": "Libra esterlina (GBP)",
+    "currencyCny": "Yuan chino (CNY)"
+  },
+  "admin": {
+    "title": "Panel de administración",
+    "description": "Consulta la lista anonimizada de usuarios, estadísticas y administra el acceso de administrador.",
+    "loading": "Cargando datos de administración...",
+    "accessCaption": "Acceso restringido",
+    "accessDenied": "No tienes acceso al panel de administración",
+    "searchPlaceholder": "Buscar por ID de usuario o Telegram ID",
+    "empty": "No se encontraron usuarios.",
+    "totalUsers": "Usuarios totales",
+    "totalAdmins": "Administradores",
+    "totalTransactions": "Transacciones",
+    "totalBalance": "Saldo total",
+    "totalSavings": "Ahorro total",
+    "adminBadge": "Admin",
+    "grantAdmin": "Dar admin",
+    "revokeAdmin": "Quitar admin",
+    "alreadyAdmin": "Ya es admin",
+    "prevPage": "Anterior",
+    "nextPage": "Siguiente",
+    "pageInfo": "Página {{page}} de {{totalPages}} · {{totalItems}} usuarios",
+    "userMeta": "Telegram: {{telegramId}} · creado: {{createdAt}}",
+    "userStats": "Saldo: {{balance}} · Ahorro: {{savings}} · Gasto mensual: {{monthlyExp}} · Transacciones: {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "Categoría",
+    "question": "¿Para qué es este gasto?",
+    "food": "Comida",
+    "taxi": "Taxi",
+    "entertainment": "Entretenimiento",
+    "shopping": "Compras",
+    "utilities": "Servicios",
+    "health": "Salud",
+    "education": "Educación",
+    "other": "Otro"
+  },
+  "expenseEditor": {
+    "title": "Corregir gasto",
+    "question": "Elige la categoría correcta para {{amount}}"
+  },
+  "recentExpenses": {
+    "caption": "Reciente",
+    "title": "Gastos recientes",
+    "loading": "Cargando gastos recientes...",
+    "empty": "Aún no hay gastos recientes.",
+    "changeCategory": "Cambiar categoría",
+    "undo": "Cancelar",
+    "undoQuestion": "¿Cancelar este gasto reciente?",
+    "undoDescription": "{{amount}} volverá al saldo y la transacción se marcará como cancelada."
+  },
+  "limits": {
+    "caption": "Control de presupuesto",
+    "title": "Límites por categoría",
+    "manage": "Gestionar",
+    "empty": "Aún no hay límites. Agrégalos para recibir avisos de gasto.",
+    "over": "Sobre el límite",
+    "ok": "Dentro del límite",
+    "question": "¿Cuánto puedes gastar por categoría este mes?",
+    "placeholder": "Vacío = sin límite",
+    "helperText": "Deja vacío si no quieres un límite para esta categoría.",
+    "save": "Guardar límites"
+  },
+  "recurring": {
+    "caption": "Plantillas",
+    "title": "Acciones recurrentes",
+    "add": "Agregar",
+    "empty": "Aún no hay plantillas recurrentes.",
+    "quick": "Ejecución rápida",
+    "run": "Ejecutar",
+    "edit": "Editar",
+    "delete": "Eliminar",
+    "name": "Nombre",
+    "namePlaceholder": "Alquiler, salario, internet...",
+    "type": "Tipo",
+    "amount": "Monto",
+    "category": "Categoría",
+    "savingsPart": "Parte de ahorro",
+    "note": "Nota",
+    "notePlaceholder": "Nota opcional para esta plantilla",
+    "createTitle": "Crear acción recurrente",
+    "editTitle": "Editar acción recurrente",
+    "save": "Guardar cambios",
+    "create": "Crear plantilla",
+    "deleteQuestion": "¿Eliminar esta plantilla recurrente?",
+    "deleteDescription": "{{name}} se quitará de la lista rápida."
+  },
+  "transactionType": {
+    "income": "Ingreso",
+    "expense": "Gasto",
+    "transfer_to_savings": "Saldo → ahorro",
+    "transfer_from_savings": "Ahorro → saldo"
+  },
+  "history": {
+    "caption": "Todas las transacciones",
+    "title": "Historial de transacciones",
+    "count": "{{count}} elementos",
+    "month": "Mes",
+    "search": "Buscar",
+    "searchPlaceholder": "Buscar por nota o tipo",
+    "type": "Tipo",
+    "allTypes": "Todos los tipos",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
+    "showArchived": "Mostrar canceladas",
+    "showFilters": "Más filtros",
+    "hideFilters": "Menos filtros",
+    "loading": "Cargando transacciones...",
+    "archived": "Cancelada",
+    "restore": "Restaurar",
+    "archive": "Cancelar",
+    "empty": "No hay transacciones con estos filtros.",
+    "edit": "Editar",
+    "editQuestion": "Actualiza los detalles de esta transacción",
+    "amount": "Monto",
+    "date": "Fecha",
+    "savingsPart": "Parte de ahorro",
+    "note": "Nota",
+    "notePlaceholder": "Agrega una nota para esta transacción",
+    "save": "Guardar cambios",
+    "archiveQuestion": "¿Cancelar esta transacción?",
+    "archiveDescription": "La transacción se revertirá y se recalcularán tu saldo y totales.",
+    "restoreQuestion": "¿Restaurar esta transacción?",
+    "restoreDescription": "La transacción volverá a estar activa y afectará tu saldo y totales."
+  },
+  "feedback": {
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
+    "incomeAdded": "Ingreso agregado",
+    "expenseAdded": "Gasto agregado",
+    "savingsDeposited": "Movido a ahorro",
+    "savingsWithdrawn": "Devuelto al saldo",
+    "accountDataReset": "Datos de la cuenta restablecidos",
+    "transactionUpdated": "Transacción actualizada",
+    "transactionArchived": "Transacción cancelada",
+    "transactionRestored": "Transacción restaurada",
+    "goalUpdated": "Meta de ahorro actualizada",
+    "recurringSaved": "Acción recurrente guardada",
+    "recurringDeleted": "Acción recurrente eliminada",
+    "recurringApplied": "Acción recurrente aplicada"
+  },
+  "analytics": {
+    "title": "Desglose de gastos",
+    "description": "Ve a dónde va tu dinero por categoría.",
+    "totalExpenses": "Gastos totales",
+    "transactions": "{{count}} elementos",
+    "ofTotal": "{{pct}}% del total",
+    "noData": "Aún no hay datos de gastos este mes."
+  },
+  "onboarding": {
+    "skip": "Saltar",
+    "back": "Atrás",
+    "next": "Siguiente",
+    "start": "¡Vamos!",
+    "welcome": {
+      "title": "¡Bienvenido a Save Up!",
+      "description": "Veamos rápidamente cómo funciona la app. Solo toma un minuto."
+    },
+    "balance": {
+      "title": "Tu saldo",
+      "description": "Este es tu saldo actual. Toca el número para editarlo directamente."
+    },
+    "amount-input": {
+      "title": "Ingresos y gastos",
+      "description": "Ingresa un monto aquí, luego toca Ingreso o Gasto. Elige una categoría y listo."
+    },
+    "daily-limit": {
+      "title": "Presupuesto diario",
+      "description": "Muestra cuánto puedes gastar hoy para mantenerte en buen camino hasta fin de mes."
+    },
+    "savings": {
+      "title": "Bolsillo de ahorro",
+      "description": "Define una meta de ahorro y mueve dinero dentro o fuera. También puedes ahorrar parte de cada ingreso."
+    },
+    "templates": {
+      "title": "Acciones recurrentes",
+      "description": "Crea plantillas para transacciones regulares como alquiler o salario. Aplícalas con un toque."
+    },
+    "report-tabs": {
+      "title": "Modos de reporte",
+      "description": "Cambia entre ingresos, gastos, analítica e historial completo de transacciones."
+    },
+    "report-summary": {
+      "title": "Resumen mensual",
+      "description": "Números clave del mes actual: totales, categorías y tendencias."
+    },
+    "settings-theme": {
+      "title": "Apariencia",
+      "description": "Cambia entre tema claro, oscuro o automático."
+    },
+    "settings-language": {
+      "title": "Idioma",
+      "description": "Elige entre inglés, ruso y uzbeko."
+    },
+    "settings-currency": {
+      "title": "Moneda",
+      "description": "Selecciona tu moneda preferida para mostrar todos los montos."
+    },
+    "settings-reset": {
+      "title": "Restablecer datos",
+      "description": "Elimina permanentemente todas las transacciones, ahorros y plantillas para empezar de nuevo."
+    },
+    "done": {
+      "title": "¡Todo listo!",
+      "description": "Empieza a seguir tus finanzas. Siempre puedes volver a cualquier sección desde el menú inferior."
+    }
+  },
+  "notFound": {
+    "caption": "Página no encontrada",
+    "title": "Esta ruta no existe",
+    "description": "Vuelve al panel para seguir controlando tu presupuesto.",
+    "action": "Volver al panel"
+  }
+}

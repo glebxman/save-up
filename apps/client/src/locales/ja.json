@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "ユーザー",
+    "browser": "ブラウザー",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "準備完了",
+    "synced": "同期済み",
+    "mock": "モック",
+    "live": "ライブ",
+    "cancel": "キャンセル"
+  },
+  "shell": {
+    "greeting": "こんにちは、{{name}}",
+    "welcomeBack": "おかえりなさい",
+    "notifications": "通知"
+  },
+  "dashboard": {
+    "loading": "財務状況を読み込んでいます...",
+    "errorCaption": "読み込みエラー",
+    "errorTitle": "データを取得できませんでした",
+    "errorDescription": "バックエンド RPC エンドポイント、Telegram initData、サーバー接続を確認してください。",
+    "shortcuts": {
+      "income": "収入",
+      "expense": "支出",
+      "report": "レポート",
+      "setting": "設定"
+    }
+  },
+  "balance": {
+    "caption": "残高",
+    "healthy": "順調",
+    "watch": "支出ペースが速い",
+    "spendableNow": "今使える金額",
+    "monthlyBudget": "今月の支出"
+  },
+  "dailyLimit": {
+    "caption": "使える残り",
+    "days": "{{count}} 日",
+    "description": "月末まで無理なく過ごすための1日あたりの予算です。"
+  },
+  "savings": {
+    "caption": "貯金ポケット",
+    "description": "各収入から貯金へ回す金額を設定します。",
+    "setup": "貯金へ移動",
+    "question": "この収入からいくら貯金しますか？",
+    "incomeAmount": "収入: {{amount}}",
+    "customPlaceholder": "貯金額を入力",
+    "saveNothing": "すべて残す",
+    "saveHalf": "半分を貯金",
+    "saveAll": "すべて貯金",
+    "confirm": "追加",
+    "helperText": "{{amount}} までの任意の金額を貯金できます。",
+    "manualMode": "手動",
+    "goalBadge": "{{value}} の目標",
+    "goalText": "目標: {{goal}}。残り: {{remaining}}。",
+    "setGoal": "目標を設定",
+    "deposit": "入金",
+    "withdraw": "引き出し",
+    "saveGoal": "目標を保存",
+    "goalHelper": "貯金ポケットの目標金額を設定します。",
+    "goalPlaceholder": "目標金額を入力",
+    "goalQuestion": "貯金目標はいくらですか？",
+    "depositHelper": "残高から貯金へ最大 {{amount}} まで移動できます。",
+    "depositQuestion": "残高から貯金へいくら移動しますか？",
+    "withdrawHelper": "貯金から残高へ最大 {{amount}} まで戻せます。",
+    "withdrawQuestion": "貯金から残高へいくら戻しますか？",
+    "transferPlaceholder": "移動金額を入力"
+  },
+  "amountInput": {
+    "caption": "新しい取引",
+    "title": "金額を入力",
+    "maxAmount": "最大金額: {{amount}}"
+  },
+  "report": {
+    "loading": "月次レポートを作成しています...",
+    "errorCaption": "レポートエラー",
+    "errorTitle": "集計を読み込めませんでした",
+    "errorDescription": "バックエンド RPC エンドポイントとデータベース接続を確認してください。",
+    "statistics": "統計",
+    "modeIncome": "収入",
+    "modeSpending": "支出",
+    "modeAnalytics": "分析",
+    "modeHistory": "履歴",
+    "totalIncome": "総収入",
+    "totalSpending": "総支出",
+    "newMonthCaption": "新しい月",
+    "newMonthTitle": "月を締める",
+    "newMonthAction": "月間支出をリセット",
+    "ops": "{{count}} 件"
+  },
+  "monthReport": {
+    "snapshot": "サマリー",
+    "overview": "月次概要",
+    "description": "今月の収入、支出、貯金をひと目で確認できます。",
+    "income": "収入",
+    "spending": "支出",
+    "saved": "貯金済み",
+    "withdrawn": "引き出し",
+    "netSaved": "純貯金",
+    "transactions": "取引"
+  },
+  "settings": {
+    "title": "設定",
+    "description": "アプリをカスタマイズします。",
+    "adminPanel": "管理パネル",
+    "adminPanelDescription": "ユーザー、統計、管理権限を管理します。",
+    "theme": "外観",
+    "language": "言語",
+    "resetData": "アカウントデータをリセット",
+    "resetDataDescription": "すべての収入、支出、貯金進捗、定期テンプレートを削除します。",
+    "resetDataModalTitle": "危険ゾーン",
+    "resetDataModalQuestion": "すべてのアカウントデータをリセットしますか？",
+    "resetDataModalDescription": "すべての取引と貯金進捗が完全に削除され、アカウントは初期状態に戻ります。",
+    "resetDataConfirm": "データをリセット",
+    "themeAuto": "自動",
+    "themeDark": "ダーク",
+    "themeLight": "ライト",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "テーマを選択",
+    "themeModalDescription": "システムの外観に合わせるか、手動で切り替えます。",
+    "languageModalTitle": "言語を選択",
+    "languageModalDescription": "アプリ全体で使う言語を選択します。",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "その他の言語",
+    "languageHideOther": "その他の言語を隠す",
+    "currency": "通貨",
+    "currencyModalTitle": "通貨を選択",
+    "currencyModalDescription": "アプリ内の金額表示に使う通貨を選択します。",
+    "currencyUzs": "ウズベキスタン・スム (UZS)",
+    "currencyRub": "ロシア・ルーブル (RUB)",
+    "currencyUsd": "米ドル (USD)",
+    "currencyEur": "ユーロ (EUR)",
+    "currencyKzt": "カザフスタン・テンゲ (KZT)",
+    "currencyTry": "トルコ・リラ (TRY)",
+    "currencyGbp": "英ポンド (GBP)",
+    "currencyCny": "中国人民元 (CNY)"
+  },
+  "admin": {
+    "title": "管理パネル",
+    "description": "匿名化されたユーザー一覧、統計を確認し、管理権限を管理します。",
+    "loading": "管理データを読み込んでいます...",
+    "accessCaption": "アクセス制限",
+    "accessDenied": "管理パネルへのアクセス権がありません",
+    "searchPlaceholder": "ユーザー ID または Telegram ID で検索",
+    "empty": "ユーザーが見つかりません。",
+    "totalUsers": "総ユーザー数",
+    "totalAdmins": "管理者",
+    "totalTransactions": "取引",
+    "totalBalance": "総残高",
+    "totalSavings": "総貯金",
+    "adminBadge": "管理者",
+    "grantAdmin": "管理者にする",
+    "revokeAdmin": "管理者を解除",
+    "alreadyAdmin": "すでに管理者",
+    "prevPage": "前へ",
+    "nextPage": "次へ",
+    "pageInfo": "{{page}} / {{totalPages}} ページ · {{totalItems}} ユーザー",
+    "userMeta": "Telegram: {{telegramId}} · 作成日: {{createdAt}}",
+    "userStats": "残高: {{balance}} · 貯金: {{savings}} · 月間支出: {{monthlyExp}} · 取引: {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "カテゴリ",
+    "question": "この支出は何のためですか？",
+    "food": "食費",
+    "taxi": "タクシー",
+    "entertainment": "娯楽",
+    "shopping": "買い物",
+    "utilities": "公共料金",
+    "health": "健康",
+    "education": "教育",
+    "other": "その他"
+  },
+  "expenseEditor": {
+    "title": "支出を修正",
+    "question": "{{amount}} の正しいカテゴリを選択してください"
+  },
+  "recentExpenses": {
+    "caption": "最近",
+    "title": "最近の支出",
+    "loading": "最近の支出を読み込んでいます...",
+    "empty": "最近の支出はまだありません。",
+    "changeCategory": "カテゴリを変更",
+    "undo": "取消",
+    "undoQuestion": "この最近の支出を取り消しますか？",
+    "undoDescription": "{{amount}} が残高に戻り、取引はキャンセル済みとして扱われます。"
+  },
+  "limits": {
+    "caption": "予算管理",
+    "title": "カテゴリ別上限",
+    "manage": "管理",
+    "empty": "上限はまだ設定されていません。追加すると支出アラートを確認できます。",
+    "over": "上限超過",
+    "ok": "上限内",
+    "question": "今月、各カテゴリにいくら使えますか？",
+    "placeholder": "空欄 = 上限なし",
+    "helperText": "このカテゴリに上限を設定しない場合は空欄のままにしてください。",
+    "save": "上限を保存"
+  },
+  "recurring": {
+    "caption": "テンプレート",
+    "title": "定期アクション",
+    "add": "追加",
+    "empty": "定期テンプレートはまだありません。",
+    "quick": "クイック実行",
+    "run": "実行",
+    "edit": "編集",
+    "delete": "削除",
+    "name": "名前",
+    "namePlaceholder": "家賃、給与、インターネット...",
+    "type": "種類",
+    "amount": "金額",
+    "category": "カテゴリ",
+    "savingsPart": "貯金分",
+    "note": "メモ",
+    "notePlaceholder": "このテンプレートの任意メモ",
+    "createTitle": "定期アクションを作成",
+    "editTitle": "定期アクションを編集",
+    "save": "変更を保存",
+    "create": "テンプレートを作成",
+    "deleteQuestion": "この定期テンプレートを削除しますか？",
+    "deleteDescription": "{{name}} はクイックリストから削除されます。"
+  },
+  "transactionType": {
+    "income": "収入",
+    "expense": "支出",
+    "transfer_to_savings": "残高 → 貯金",
+    "transfer_from_savings": "貯金 → 残高"
+  },
+  "history": {
+    "caption": "すべての取引",
+    "title": "取引履歴",
+    "count": "{{count}} 件",
+    "month": "月",
+    "search": "検索",
+    "searchPlaceholder": "メモまたは種類で検索",
+    "type": "種類",
+    "allTypes": "すべての種類",
+    "category": "カテゴリ",
+    "allCategories": "すべてのカテゴリ",
+    "showArchived": "キャンセル済みを表示",
+    "showFilters": "フィルターを増やす",
+    "hideFilters": "フィルターを減らす",
+    "loading": "取引を読み込んでいます...",
+    "archived": "キャンセル済み",
+    "restore": "復元",
+    "archive": "キャンセル",
+    "empty": "この条件に一致する取引はありません。",
+    "edit": "編集",
+    "editQuestion": "この取引の詳細を更新してください",
+    "amount": "金額",
+    "date": "日付",
+    "savingsPart": "貯金分",
+    "note": "メモ",
+    "notePlaceholder": "この取引にメモを追加",
+    "save": "変更を保存",
+    "archiveQuestion": "この取引をキャンセルしますか？",
+    "archiveDescription": "取引はロールバックされ、残高と合計が再計算されます。",
+    "restoreQuestion": "この取引を復元しますか？",
+    "restoreDescription": "取引は再び有効になり、残高と合計に反映されます。"
+  },
+  "feedback": {
+    "genericError": "問題が発生しました。もう一度お試しください。",
+    "incomeAdded": "収入を追加しました",
+    "expenseAdded": "支出を追加しました",
+    "savingsDeposited": "貯金へ移動しました",
+    "savingsWithdrawn": "残高へ戻しました",
+    "accountDataReset": "アカウントデータをリセットしました",
+    "transactionUpdated": "取引を更新しました",
+    "transactionArchived": "取引をキャンセルしました",
+    "transactionRestored": "取引を復元しました",
+    "goalUpdated": "貯金目標を更新しました",
+    "recurringSaved": "定期アクションを保存しました",
+    "recurringDeleted": "定期アクションを削除しました",
+    "recurringApplied": "定期アクションを適用しました"
+  },
+  "analytics": {
+    "title": "支出の内訳",
+    "description": "お金がどこに使われているかカテゴリ別に確認できます。",
+    "totalExpenses": "総支出",
+    "transactions": "{{count}} 件",
+    "ofTotal": "全体の {{pct}}%",
+    "noData": "今月の支出データはまだありません。"
+  },
+  "onboarding": {
+    "skip": "スキップ",
+    "back": "戻る",
+    "next": "次へ",
+    "start": "始めましょう！",
+    "welcome": {
+      "title": "Save Up へようこそ！",
+      "description": "アプリの使い方をさっと見てみましょう。1分ほどで終わります。"
+    },
+    "balance": {
+      "title": "あなたの残高",
+      "description": "現在の残高です。数字をタップすると直接編集できます。"
+    },
+    "amount-input": {
+      "title": "収入と支出",
+      "description": "ここに金額を入力し、収入または支出をタップします。カテゴリを選べば完了です。"
+    },
+    "daily-limit": {
+      "title": "1日の予算",
+      "description": "月末まで持たせるために、今日使える金額を表示します。"
+    },
+    "savings": {
+      "title": "貯金ポケット",
+      "description": "貯金目標を設定し、お金を出し入れできます。各収入から一部を貯金することもできます。"
+    },
+    "templates": {
+      "title": "定期アクション",
+      "description": "家賃や給与などの定期取引用テンプレートを作成し、ワンタップで適用できます。"
+    },
+    "report-tabs": {
+      "title": "レポートモード",
+      "description": "収入、支出、分析、取引履歴を切り替えます。"
+    },
+    "report-summary": {
+      "title": "月次サマリー",
+      "description": "今月の主要な数字、合計、カテゴリ、傾向をまとめて確認できます。"
+    },
+    "settings-theme": {
+      "title": "外観",
+      "description": "ライト、ダーク、自動テーマを切り替えます。"
+    },
+    "settings-language": {
+      "title": "言語",
+      "description": "英語、ロシア語、ウズベク語から選択します。"
+    },
+    "settings-currency": {
+      "title": "通貨",
+      "description": "すべての金額表示に使う通貨を選択します。"
+    },
+    "settings-reset": {
+      "title": "データをリセット",
+      "description": "すべての取引、貯金、テンプレートを完全に削除してやり直します。"
+    },
+    "done": {
+      "title": "準備完了です！",
+      "description": "家計管理を始めましょう。下部メニューからいつでも各セクションへ戻れます。"
+    }
+  },
+  "notFound": {
+    "caption": "ページが見つかりません",
+    "title": "このルートは存在しません",
+    "description": "予算管理を続けるにはダッシュボードへ戻ってください。",
+    "action": "ダッシュボードへ戻る"
+  }
+}

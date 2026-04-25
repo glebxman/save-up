@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "Utilisateur",
+    "browser": "Navigateur",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "Prêt",
+    "synced": "Synchronisé",
+    "mock": "Mock",
+    "live": "En ligne",
+    "cancel": "Annuler"
+  },
+  "shell": {
+    "greeting": "Bonjour, {{name}}",
+    "welcomeBack": "Bon retour",
+    "notifications": "Notifications"
+  },
+  "dashboard": {
+    "loading": "Chargement de votre situation financière...",
+    "errorCaption": "Erreur de chargement",
+    "errorTitle": "Impossible de récupérer vos données",
+    "errorDescription": "Vérifiez l’endpoint RPC du backend, Telegram initData et la connexion au serveur.",
+    "shortcuts": {
+      "income": "Revenu",
+      "expense": "Dépense",
+      "report": "Rapport",
+      "setting": "Réglages"
+    }
+  },
+  "balance": {
+    "caption": "Mon solde",
+    "healthy": "Sur la bonne voie",
+    "watch": "Dépenses rapides",
+    "spendableNow": "Disponible maintenant",
+    "monthlyBudget": "Dépensé ce mois-ci"
+  },
+  "dailyLimit": {
+    "caption": "Reste à dépenser",
+    "days": "{{count}} jours",
+    "description": "Votre budget quotidien pour rester sur la bonne voie jusqu’à la fin du mois."
+  },
+  "savings": {
+    "caption": "Poche d’épargne",
+    "description": "Définissez quelle part de chaque revenu va à l’épargne.",
+    "setup": "Transfert vers l’épargne",
+    "question": "Quelle part de ce revenu doit aller à l’épargne ?",
+    "incomeAmount": "Revenu : {{amount}}",
+    "customPlaceholder": "Saisir le montant d’épargne",
+    "saveNothing": "Tout garder",
+    "saveHalf": "Épargner la moitié",
+    "saveAll": "Tout épargner",
+    "confirm": "Ajouter",
+    "helperText": "Vous pouvez épargner tout montant jusqu’à {{amount}}.",
+    "manualMode": "Manuel",
+    "goalBadge": "Objectif {{value}}",
+    "goalText": "Objectif : {{goal}}. Restant : {{remaining}}.",
+    "setGoal": "Définir l’objectif",
+    "deposit": "Déposer",
+    "withdraw": "Retirer",
+    "saveGoal": "Enregistrer l’objectif",
+    "goalHelper": "Définissez un montant cible pour votre poche d’épargne.",
+    "goalPlaceholder": "Saisir le montant cible",
+    "goalQuestion": "Quel est votre objectif d’épargne ?",
+    "depositHelper": "Vous pouvez déplacer jusqu’à {{amount}} du solde vers l’épargne.",
+    "depositQuestion": "Combien déplacer du solde vers l’épargne ?",
+    "withdrawHelper": "Vous pouvez ramener jusqu’à {{amount}} de l’épargne vers le solde.",
+    "withdrawQuestion": "Combien ramener de l’épargne vers le solde ?",
+    "transferPlaceholder": "Saisir le montant du transfert"
+  },
+  "amountInput": {
+    "caption": "Nouvelle transaction",
+    "title": "Saisir un montant",
+    "maxAmount": "Montant maximum : {{amount}}"
+  },
+  "report": {
+    "loading": "Préparation de votre rapport mensuel...",
+    "errorCaption": "Erreur de rapport",
+    "errorTitle": "Impossible de charger le résumé",
+    "errorDescription": "Vérifiez l’endpoint RPC du backend et la connexion à la base de données.",
+    "statistics": "Statistiques",
+    "modeIncome": "Revenus",
+    "modeSpending": "Dépenses",
+    "modeAnalytics": "Analyse",
+    "modeHistory": "Historique",
+    "totalIncome": "Revenu total",
+    "totalSpending": "Dépenses totales",
+    "newMonthCaption": "Nouveau mois",
+    "newMonthTitle": "Clôturer le mois",
+    "newMonthAction": "Réinitialiser les dépenses mensuelles",
+    "ops": "{{count}} éléments"
+  },
+  "monthReport": {
+    "snapshot": "Résumé",
+    "overview": "Vue mensuelle",
+    "description": "Revenus, dépenses et épargne de ce mois en un coup d’œil.",
+    "income": "Revenu",
+    "spending": "Dépense",
+    "saved": "Épargné",
+    "withdrawn": "Retiré",
+    "netSaved": "Épargne nette",
+    "transactions": "Transactions"
+  },
+  "settings": {
+    "title": "Réglages",
+    "description": "Personnalisez l’app.",
+    "adminPanel": "Panneau admin",
+    "adminPanelDescription": "Gestion des utilisateurs, statistiques et accès admin.",
+    "theme": "Apparence",
+    "language": "Langue",
+    "resetData": "Réinitialiser les données du compte",
+    "resetDataDescription": "Supprimer tous les revenus, dépenses, progrès d’épargne et modèles récurrents.",
+    "resetDataModalTitle": "Zone dangereuse",
+    "resetDataModalQuestion": "Réinitialiser toutes les données du compte ?",
+    "resetDataModalDescription": "Cela supprimera définitivement toutes les transactions et le progrès d’épargne, puis remettra le compte à zéro.",
+    "resetDataConfirm": "Réinitialiser les données",
+    "themeAuto": "Auto",
+    "themeDark": "Sombre",
+    "themeLight": "Clair",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "Choisir le thème",
+    "themeModalDescription": "Utilisez l’apparence système ou changez l’app manuellement.",
+    "languageModalTitle": "Choisir la langue",
+    "languageModalDescription": "Sélectionnez la langue utilisée dans toute l’app.",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "Autres langues",
+    "languageHideOther": "Masquer les autres langues",
+    "currency": "Devise",
+    "currencyModalTitle": "Choisir la devise",
+    "currencyModalDescription": "Sélectionnez la devise utilisée pour afficher tous les montants dans l’app.",
+    "currencyUzs": "Sum ouzbek (UZS)",
+    "currencyRub": "Rouble russe (RUB)",
+    "currencyUsd": "Dollar américain (USD)",
+    "currencyEur": "Euro (EUR)",
+    "currencyKzt": "Tenge kazakh (KZT)",
+    "currencyTry": "Livre turque (TRY)",
+    "currencyGbp": "Livre sterling (GBP)",
+    "currencyCny": "Yuan chinois (CNY)"
+  },
+  "admin": {
+    "title": "Panneau admin",
+    "description": "Consultez la liste anonymisée des utilisateurs, les statistiques et gérez l’accès admin.",
+    "loading": "Chargement des données admin...",
+    "accessCaption": "Accès restreint",
+    "accessDenied": "Vous n’avez pas accès au panneau admin",
+    "searchPlaceholder": "Rechercher par ID utilisateur ou Telegram ID",
+    "empty": "Aucun utilisateur trouvé.",
+    "totalUsers": "Total utilisateurs",
+    "totalAdmins": "Admins",
+    "totalTransactions": "Transactions",
+    "totalBalance": "Solde total",
+    "totalSavings": "Épargne totale",
+    "adminBadge": "Admin",
+    "grantAdmin": "Accorder admin",
+    "revokeAdmin": "Retirer admin",
+    "alreadyAdmin": "Déjà admin",
+    "prevPage": "Précédent",
+    "nextPage": "Suivant",
+    "pageInfo": "Page {{page}} sur {{totalPages}} · {{totalItems}} utilisateurs",
+    "userMeta": "Telegram : {{telegramId}} · créé : {{createdAt}}",
+    "userStats": "Solde : {{balance}} · Épargne : {{savings}} · Dépense mensuelle : {{monthlyExp}} · Transactions : {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "Catégorie",
+    "question": "À quoi correspond cette dépense ?",
+    "food": "Alimentation",
+    "taxi": "Taxi",
+    "entertainment": "Divertissement",
+    "shopping": "Achats",
+    "utilities": "Services",
+    "health": "Santé",
+    "education": "Éducation",
+    "other": "Autre"
+  },
+  "expenseEditor": {
+    "title": "Corriger la dépense",
+    "question": "Choisissez la bonne catégorie pour {{amount}}"
+  },
+  "recentExpenses": {
+    "caption": "Récent",
+    "title": "Dépenses récentes",
+    "loading": "Chargement des dépenses récentes...",
+    "empty": "Aucune dépense récente pour le moment.",
+    "changeCategory": "Changer la catégorie",
+    "undo": "Annuler",
+    "undoQuestion": "Annuler cette dépense récente ?",
+    "undoDescription": "{{amount}} retournera au solde et la transaction sera marquée comme annulée."
+  },
+  "limits": {
+    "caption": "Contrôle du budget",
+    "title": "Limites par catégorie",
+    "manage": "Gérer",
+    "empty": "Aucune limite définie. Ajoutez-en pour recevoir des alertes de dépense.",
+    "over": "Au-dessus de la limite",
+    "ok": "Dans la limite",
+    "question": "Combien pouvez-vous dépenser par catégorie ce mois-ci ?",
+    "placeholder": "Vide = aucune limite",
+    "helperText": "Laissez vide si vous ne voulez pas de limite pour cette catégorie.",
+    "save": "Enregistrer les limites"
+  },
+  "recurring": {
+    "caption": "Modèles",
+    "title": "Actions récurrentes",
+    "add": "Ajouter",
+    "empty": "Aucun modèle récurrent pour le moment.",
+    "quick": "Exécution rapide",
+    "run": "Lancer",
+    "edit": "Modifier",
+    "delete": "Supprimer",
+    "name": "Nom",
+    "namePlaceholder": "Loyer, salaire, internet...",
+    "type": "Type",
+    "amount": "Montant",
+    "category": "Catégorie",
+    "savingsPart": "Part épargne",
+    "note": "Note",
+    "notePlaceholder": "Note facultative pour ce modèle",
+    "createTitle": "Créer une action récurrente",
+    "editTitle": "Modifier l’action récurrente",
+    "save": "Enregistrer les modifications",
+    "create": "Créer le modèle",
+    "deleteQuestion": "Supprimer ce modèle récurrent ?",
+    "deleteDescription": "{{name}} sera retiré de la liste rapide."
+  },
+  "transactionType": {
+    "income": "Revenu",
+    "expense": "Dépense",
+    "transfer_to_savings": "Solde → épargne",
+    "transfer_from_savings": "Épargne → solde"
+  },
+  "history": {
+    "caption": "Toutes les transactions",
+    "title": "Historique des transactions",
+    "count": "{{count}} éléments",
+    "month": "Mois",
+    "search": "Recherche",
+    "searchPlaceholder": "Rechercher par note ou type",
+    "type": "Type",
+    "allTypes": "Tous les types",
+    "category": "Catégorie",
+    "allCategories": "Toutes les catégories",
+    "showArchived": "Afficher les annulées",
+    "showFilters": "Plus de filtres",
+    "hideFilters": "Moins de filtres",
+    "loading": "Chargement des transactions...",
+    "archived": "Annulée",
+    "restore": "Restaurer",
+    "archive": "Annuler",
+    "empty": "Aucune transaction ne correspond à ces filtres.",
+    "edit": "Modifier",
+    "editQuestion": "Mettez à jour les détails de cette transaction",
+    "amount": "Montant",
+    "date": "Date",
+    "savingsPart": "Part épargne",
+    "note": "Note",
+    "notePlaceholder": "Ajouter une note à cette transaction",
+    "save": "Enregistrer les modifications",
+    "archiveQuestion": "Annuler cette transaction ?",
+    "archiveDescription": "La transaction sera annulée, et votre solde ainsi que les totaux seront recalculés.",
+    "restoreQuestion": "Restaurer cette transaction ?",
+    "restoreDescription": "La transaction redeviendra active et affectera votre solde et vos totaux."
+  },
+  "feedback": {
+    "genericError": "Un problème est survenu. Réessayez.",
+    "incomeAdded": "Revenu ajouté",
+    "expenseAdded": "Dépense ajoutée",
+    "savingsDeposited": "Déplacé vers l’épargne",
+    "savingsWithdrawn": "Retourné au solde",
+    "accountDataReset": "Données du compte réinitialisées",
+    "transactionUpdated": "Transaction mise à jour",
+    "transactionArchived": "Transaction annulée",
+    "transactionRestored": "Transaction restaurée",
+    "goalUpdated": "Objectif d’épargne mis à jour",
+    "recurringSaved": "Action récurrente enregistrée",
+    "recurringDeleted": "Action récurrente supprimée",
+    "recurringApplied": "Action récurrente appliquée"
+  },
+  "analytics": {
+    "title": "Répartition des dépenses",
+    "description": "Voyez où va votre argent par catégorie.",
+    "totalExpenses": "Dépenses totales",
+    "transactions": "{{count}} éléments",
+    "ofTotal": "{{pct}}% du total",
+    "noData": "Aucune donnée de dépense ce mois-ci."
+  },
+  "onboarding": {
+    "skip": "Ignorer",
+    "back": "Retour",
+    "next": "Suivant",
+    "start": "C’est parti !",
+    "welcome": {
+      "title": "Bienvenue dans Save Up !",
+      "description": "Découvrons rapidement le fonctionnement de l’app. Cela prend une minute."
+    },
+    "balance": {
+      "title": "Votre solde",
+      "description": "Voici votre solde actuel. Touchez le nombre pour le modifier directement."
+    },
+    "amount-input": {
+      "title": "Revenus et dépenses",
+      "description": "Saisissez un montant ici, puis touchez Revenu ou Dépense. Choisissez une catégorie et c’est prêt."
+    },
+    "daily-limit": {
+      "title": "Budget quotidien",
+      "description": "Indique combien vous pouvez dépenser aujourd’hui pour tenir jusqu’à la fin du mois."
+    },
+    "savings": {
+      "title": "Poche d’épargne",
+      "description": "Définissez un objectif d’épargne et déplacez de l’argent. Vous pouvez aussi épargner une partie de chaque revenu."
+    },
+    "templates": {
+      "title": "Actions récurrentes",
+      "description": "Créez des modèles pour les transactions régulières comme le loyer ou le salaire. Appliquez-les en un geste."
+    },
+    "report-tabs": {
+      "title": "Modes de rapport",
+      "description": "Passez entre revenus, dépenses, analyse et historique complet des transactions."
+    },
+    "report-summary": {
+      "title": "Résumé mensuel",
+      "description": "Chiffres clés du mois en cours : totaux, catégories et tendances."
+    },
+    "settings-theme": {
+      "title": "Apparence",
+      "description": "Basculez entre thème clair, sombre ou automatique."
+    },
+    "settings-language": {
+      "title": "Langue",
+      "description": "Choisissez entre l’anglais, le russe et l’ouzbek."
+    },
+    "settings-currency": {
+      "title": "Devise",
+      "description": "Sélectionnez votre devise préférée pour afficher tous les montants."
+    },
+    "settings-reset": {
+      "title": "Réinitialiser les données",
+      "description": "Supprimez définitivement toutes les transactions, l’épargne et les modèles pour repartir de zéro."
+    },
+    "done": {
+      "title": "Tout est prêt !",
+      "description": "Commencez à suivre vos finances. Vous pouvez revenir à n’importe quelle section depuis le menu du bas."
+    }
+  },
+  "notFound": {
+    "caption": "Page introuvable",
+    "title": "Cette route n’existe pas",
+    "description": "Revenez au tableau de bord pour continuer à suivre votre budget.",
+    "action": "Retour au tableau de bord"
+  }
+}

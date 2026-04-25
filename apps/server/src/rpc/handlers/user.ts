@@ -10,7 +10,7 @@ export const initUserHandler: RpcHandler<"user.init"> = async ({ initData }, { a
     throw new Error("Telegram user ID is missing in initData");
   }
 
-  return initUserStatus(telegramId);
+  return initUserStatus(telegramId, telegramAuth.user);
 };
 
 export const getUserStatusHandler: RpcHandler<"user.getStatus"> = async ({ initData }, { app }) => {
@@ -21,5 +21,5 @@ export const getUserStatusHandler: RpcHandler<"user.getStatus"> = async ({ initD
     throw new Error("Telegram user ID is missing in initData");
   }
 
-  return getStatusByTelegramId(telegramId);
+  return getStatusByTelegramId(telegramId, telegramAuth.user);
 };

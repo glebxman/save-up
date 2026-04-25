@@ -1,5 +1,9 @@
 import { randomUUID } from "node:crypto";
 
+import {
+  MAX_FINANCE_AMOUNT,
+} from "@finance-twa/shared-types";
+
 import type {
   CategoryBreakdown,
   CategoryBreakdownItem,
@@ -56,9 +60,19 @@ function roundAmount(value: number): number {
   return Number(value.toFixed(2));
 }
 
+function getPreviousMonthKey(date = new Date()): string {
+  const previous = new Date(date);
+  previous.setMonth(previous.getMonth() - 1);
+  return getMonthKey(previous);
+}
+
 function assertPositiveAmount(amount: number): void {
   if (!Number.isFinite(amount) || amount <= 0) {
     throw new Error("Amount must be a positive number");
+  }
+
+  if (amount > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Amount is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
   }
 }
 
@@ -102,7 +116,23 @@ function normalizeGoal(goal: number): number {
     throw new Error("Savings goal must be zero or a positive number");
   }
 
+  if (goal > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Savings goal is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+  }
+
   return roundAmount(goal);
+}
+
+function normalizeBalance(balance: number): number {
+  if (!Number.isFinite(balance) || balance < 0) {
+    throw new Error("Balance must be zero or a positive number");
+  }
+
+  if (balance > MAX_FINANCE_AMOUNT) {
+    throw new Error(`Balance is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+  }
+
+  return roundAmount(balance);
 }
 
 function normalizeExpenseCategory(category: unknown): ExpenseCategory | null {
@@ -639,6 +669,48 @@ export async function updateSavingsGoal(telegramId: number, goal: number): Promi
   return persistStatus(updated[0] as UserRow);
 }
 
+export async function updateBalance(telegramId: number, balance: number): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  const updated = await db
+    .update(users)
+    .set({
+      balance: normalizeBalance(balance),
+    })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  await invalidateStatusCache(telegramId);
+
+  return persistStatus(updated[0] as UserRow);
+}
+
+export async function resetAccountData(telegramId: number): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  const updatedUser = await db.transaction(async (tx) => {
+    await tx
+      .delete(transactions)
+      .where(eq(transactions.userId, user.id));
+
+    const updated = await tx
+      .update(users)
+      .set({
+        balance: 0,
+        savings: 0,
+        monthlyExp: 0,
+        savingsGoal: 0,
+        recurringTemplates: [],
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+
+    return updated[0] as UserRow;
+  });
+
+  await invalidateStatusCache(telegramId);
+
+  return persistStatus(updatedUser);
+}
+
 export async function saveRecurringTransaction(
   telegramId: number,
   payload: RecurringTransactionPayload,
@@ -778,5 +850,28 @@ export async function getCategoryBreakdown(
 
 export async function newMonth(telegramId: number): Promise<Status> {
   const user = await ensureUser(telegramId);
-  return persistStatus(user);
+  const currentMonthKey = getMonthKey();
+  const previousMonthKey = getPreviousMonthKey();
+
+  const updatedUser = await db.transaction(async (tx) => {
+    await tx
+      .update(transactions)
+      .set({
+        monthKey: previousMonthKey,
+      })
+      .where(
+        and(
+          eq(transactions.userId, user.id),
+          eq(transactions.type, "expense"),
+          eq(transactions.monthKey, currentMonthKey),
+          isNull(transactions.deletedAt),
+        ),
+      );
+
+    return syncUserSnapshot(tx, user);
+  });
+
+  await invalidateStatusCache(telegramId);
+
+  return persistStatus(updatedUser);
 }

@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { Button, Chip, Input, ListBox, Modal, Select, TextArea } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import type { ExpenseCategory, Transaction, TransactionUpdatePayload } from "@/types/finance";
 import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import { Button, Input, Modal, Select, TextArea } from "@/components/ui";
 import { toDateInputValue } from "@/utils/format";
 
 interface TransactionEditModalProps {
@@ -60,10 +60,10 @@ export function TransactionEditModal({
             <Modal.CloseTrigger />
 
             <Modal.Header>
-              <div className="flex flex-col gap-2">
-                <Chip color="accent" variant="primary">
+              <div className="flex flex-col items-start gap-2">
+                <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {t("history.edit")}
-                </Chip>
+                </p>
                 <Modal.Heading>{t("history.editQuestion")}</Modal.Heading>
               </div>
             </Modal.Header>
@@ -98,23 +98,15 @@ export function TransactionEditModal({
                     <Select
                       aria-label={t("history.category")}
                       fullWidth
-                      onSelectionChange={(key) => setCategory(String(key) as ExpenseCategory)}
-                      selectedKey={category}
+                      onChange={(event) => setCategory(event.target.value as ExpenseCategory)}
+                      value={category}
                       variant="secondary"
                     >
-                      <Select.Trigger>
-                        <Select.Value />
-                        <Select.Indicator />
-                      </Select.Trigger>
-                      <Select.Popover>
-                        <ListBox>
-                          {EXPENSE_CATEGORIES.map((item) => (
-                            <ListBox.Item id={item} key={item} textValue={t(`expenseCategory.${item}`)}>
-                              {t(`expenseCategory.${item}`)}
-                            </ListBox.Item>
-                          ))}
-                        </ListBox>
-                      </Select.Popover>
+                      {EXPENSE_CATEGORIES.map((item) => (
+                        <option key={item} value={item}>
+                          {t(`expenseCategory.${item}`)}
+                        </option>
+                      ))}
                     </Select>
                   </label>
                 ) : null}

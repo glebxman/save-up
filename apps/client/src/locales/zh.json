@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "用户",
+    "browser": "浏览器",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "就绪",
+    "synced": "已同步",
+    "mock": "模拟",
+    "live": "在线",
+    "cancel": "取消"
+  },
+  "shell": {
+    "greeting": "你好，{{name}}",
+    "welcomeBack": "欢迎回来",
+    "notifications": "通知"
+  },
+  "dashboard": {
+    "loading": "正在加载你的财务状态...",
+    "errorCaption": "加载错误",
+    "errorTitle": "无法获取数据",
+    "errorDescription": "请检查后端 RPC 端点、Telegram initData 和服务器连接。",
+    "shortcuts": {
+      "income": "收入",
+      "expense": "支出",
+      "report": "报表",
+      "setting": "设置"
+    }
+  },
+  "balance": {
+    "caption": "我的余额",
+    "healthy": "进度正常",
+    "watch": "支出偏快",
+    "spendableNow": "当前可用",
+    "monthlyBudget": "本月已花费"
+  },
+  "dailyLimit": {
+    "caption": "可花余额",
+    "days": "{{count}} 天",
+    "description": "这是帮助你在月底前保持节奏的每日预算。"
+  },
+  "savings": {
+    "caption": "储蓄口袋",
+    "description": "设置每笔收入中转入储蓄的金额。",
+    "setup": "储蓄转账",
+    "question": "这笔收入要转入多少到储蓄？",
+    "incomeAmount": "收入：{{amount}}",
+    "customPlaceholder": "输入储蓄金额",
+    "saveNothing": "全部保留",
+    "saveHalf": "储蓄一半",
+    "saveAll": "全部储蓄",
+    "confirm": "添加",
+    "helperText": "你可以储蓄不超过 {{amount}} 的任意金额。",
+    "manualMode": "手动",
+    "goalBadge": "{{value}} 目标",
+    "goalText": "目标：{{goal}}。剩余：{{remaining}}。",
+    "setGoal": "设置目标",
+    "deposit": "存入",
+    "withdraw": "取出",
+    "saveGoal": "保存目标",
+    "goalHelper": "为储蓄口袋设置目标金额。",
+    "goalPlaceholder": "输入目标金额",
+    "goalQuestion": "你的储蓄目标是多少？",
+    "depositHelper": "你最多可以从余额转入 {{amount}} 到储蓄。",
+    "depositQuestion": "要从余额转入多少到储蓄？",
+    "withdrawHelper": "你最多可以从储蓄转回 {{amount}} 到余额。",
+    "withdrawQuestion": "要从储蓄转回多少到余额？",
+    "transferPlaceholder": "输入转账金额"
+  },
+  "amountInput": {
+    "caption": "新交易",
+    "title": "输入金额",
+    "maxAmount": "最大金额：{{amount}}"
+  },
+  "report": {
+    "loading": "正在生成月度报表...",
+    "errorCaption": "报表错误",
+    "errorTitle": "无法加载汇总",
+    "errorDescription": "请检查后端 RPC 端点和数据库连接。",
+    "statistics": "统计",
+    "modeIncome": "收入",
+    "modeSpending": "支出",
+    "modeAnalytics": "分析",
+    "modeHistory": "历史",
+    "totalIncome": "总收入",
+    "totalSpending": "总支出",
+    "newMonthCaption": "新月份",
+    "newMonthTitle": "结清本月",
+    "newMonthAction": "重置月度支出",
+    "ops": "{{count}} 项"
+  },
+  "monthReport": {
+    "snapshot": "摘要",
+    "overview": "月度概览",
+    "description": "一眼查看本月收入、支出和储蓄。",
+    "income": "收入",
+    "spending": "支出",
+    "saved": "已储蓄",
+    "withdrawn": "已取出",
+    "netSaved": "净储蓄",
+    "transactions": "交易"
+  },
+  "settings": {
+    "title": "设置",
+    "description": "自定义应用。",
+    "adminPanel": "管理面板",
+    "adminPanelDescription": "用户、统计和管理员权限管理。",
+    "theme": "外观",
+    "language": "语言",
+    "resetData": "重置账户数据",
+    "resetDataDescription": "删除所有收入、支出、储蓄进度和重复模板。",
+    "resetDataModalTitle": "危险区域",
+    "resetDataModalQuestion": "重置所有账户数据？",
+    "resetDataModalDescription": "这将永久删除所有交易和储蓄进度，并将账户恢复为干净状态。",
+    "resetDataConfirm": "重置数据",
+    "themeAuto": "自动",
+    "themeDark": "深色",
+    "themeLight": "浅色",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "选择主题",
+    "themeModalDescription": "跟随系统外观，或手动切换应用主题。",
+    "languageModalTitle": "选择语言",
+    "languageModalDescription": "选择应用中使用的语言。",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "其他语言",
+    "languageHideOther": "隐藏其他语言",
+    "currency": "货币",
+    "currencyModalTitle": "选择货币",
+    "currencyModalDescription": "选择应用中所有金额显示的货币。",
+    "currencyUzs": "乌兹别克斯坦苏姆 (UZS)",
+    "currencyRub": "俄罗斯卢布 (RUB)",
+    "currencyUsd": "美元 (USD)",
+    "currencyEur": "欧元 (EUR)",
+    "currencyKzt": "哈萨克斯坦坚戈 (KZT)",
+    "currencyTry": "土耳其里拉 (TRY)",
+    "currencyGbp": "英镑 (GBP)",
+    "currencyCny": "人民币 (CNY)"
+  },
+  "admin": {
+    "title": "管理面板",
+    "description": "查看匿名用户列表、统计信息，并管理管理员权限。",
+    "loading": "正在加载管理数据...",
+    "accessCaption": "访问受限",
+    "accessDenied": "你无权访问管理面板",
+    "searchPlaceholder": "按用户 ID 或 Telegram ID 搜索",
+    "empty": "未找到用户。",
+    "totalUsers": "用户总数",
+    "totalAdmins": "管理员",
+    "totalTransactions": "交易",
+    "totalBalance": "总余额",
+    "totalSavings": "总储蓄",
+    "adminBadge": "管理员",
+    "grantAdmin": "授予管理员",
+    "revokeAdmin": "撤销管理员",
+    "alreadyAdmin": "已是管理员",
+    "prevPage": "上一页",
+    "nextPage": "下一页",
+    "pageInfo": "第 {{page}} 页，共 {{totalPages}} 页 · {{totalItems}} 位用户",
+    "userMeta": "Telegram：{{telegramId}} · 创建于：{{createdAt}}",
+    "userStats": "余额：{{balance}} · 储蓄：{{savings}} · 月支出：{{monthlyExp}} · 交易：{{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "分类",
+    "question": "这笔支出用于什么？",
+    "food": "餐饮",
+    "taxi": "出租车",
+    "entertainment": "娱乐",
+    "shopping": "购物",
+    "utilities": "水电杂费",
+    "health": "健康",
+    "education": "教育",
+    "other": "其他"
+  },
+  "expenseEditor": {
+    "title": "修正支出",
+    "question": "为 {{amount}} 选择正确分类"
+  },
+  "recentExpenses": {
+    "caption": "最近",
+    "title": "最近支出",
+    "loading": "正在加载最近支出...",
+    "empty": "还没有最近支出。",
+    "changeCategory": "更改分类",
+    "undo": "取消",
+    "undoQuestion": "取消这笔最近支出？",
+    "undoDescription": "{{amount}} 将返回余额，交易会标记为已取消。"
+  },
+  "limits": {
+    "caption": "预算控制",
+    "title": "分类限额",
+    "manage": "管理",
+    "empty": "还没有设置限额。添加后可提前看到支出提醒。",
+    "over": "超过限额",
+    "ok": "在限额内",
+    "question": "本月每个分类可以花多少？",
+    "placeholder": "留空 = 不限额",
+    "helperText": "如果不想为此分类设置限额，请留空。",
+    "save": "保存限额"
+  },
+  "recurring": {
+    "caption": "模板",
+    "title": "重复操作",
+    "add": "添加",
+    "empty": "还没有重复模板。",
+    "quick": "快速运行",
+    "run": "运行",
+    "edit": "编辑",
+    "delete": "删除",
+    "name": "名称",
+    "namePlaceholder": "房租、工资、网络...",
+    "type": "类型",
+    "amount": "金额",
+    "category": "分类",
+    "savingsPart": "储蓄部分",
+    "note": "备注",
+    "notePlaceholder": "此模板的可选备注",
+    "createTitle": "创建重复操作",
+    "editTitle": "编辑重复操作",
+    "save": "保存更改",
+    "create": "创建模板",
+    "deleteQuestion": "删除这个重复模板？",
+    "deleteDescription": "{{name}} 将从快捷列表中移除。"
+  },
+  "transactionType": {
+    "income": "收入",
+    "expense": "支出",
+    "transfer_to_savings": "余额 → 储蓄",
+    "transfer_from_savings": "储蓄 → 余额"
+  },
+  "history": {
+    "caption": "所有交易",
+    "title": "交易历史",
+    "count": "{{count}} 项",
+    "month": "月份",
+    "search": "搜索",
+    "searchPlaceholder": "按备注或类型搜索",
+    "type": "类型",
+    "allTypes": "所有类型",
+    "category": "分类",
+    "allCategories": "所有分类",
+    "showArchived": "显示已取消",
+    "showFilters": "更多筛选",
+    "hideFilters": "收起筛选",
+    "loading": "正在加载交易...",
+    "archived": "已取消",
+    "restore": "恢复",
+    "archive": "取消",
+    "empty": "没有符合这些筛选条件的交易。",
+    "edit": "编辑",
+    "editQuestion": "更新这笔交易的详情",
+    "amount": "金额",
+    "date": "日期",
+    "savingsPart": "储蓄部分",
+    "note": "备注",
+    "notePlaceholder": "为这笔交易添加备注",
+    "save": "保存更改",
+    "archiveQuestion": "取消这笔交易？",
+    "archiveDescription": "交易将被回滚，余额和合计会重新计算。",
+    "restoreQuestion": "恢复这笔交易？",
+    "restoreDescription": "交易将重新变为有效，并影响余额和合计。"
+  },
+  "feedback": {
+    "genericError": "出了点问题。请重试。",
+    "incomeAdded": "收入已添加",
+    "expenseAdded": "支出已添加",
+    "savingsDeposited": "已转入储蓄",
+    "savingsWithdrawn": "已返回余额",
+    "accountDataReset": "账户数据已重置",
+    "transactionUpdated": "交易已更新",
+    "transactionArchived": "交易已取消",
+    "transactionRestored": "交易已恢复",
+    "goalUpdated": "储蓄目标已更新",
+    "recurringSaved": "重复操作已保存",
+    "recurringDeleted": "重复操作已删除",
+    "recurringApplied": "重复操作已应用"
+  },
+  "analytics": {
+    "title": "支出明细",
+    "description": "按分类查看钱花到哪里。",
+    "totalExpenses": "总支出",
+    "transactions": "{{count}} 项",
+    "ofTotal": "占总额 {{pct}}%",
+    "noData": "本月还没有支出数据。"
+  },
+  "onboarding": {
+    "skip": "跳过",
+    "back": "返回",
+    "next": "下一步",
+    "start": "开始吧！",
+    "welcome": {
+      "title": "欢迎使用 Save Up！",
+      "description": "我们快速看看应用如何工作。只需要一分钟。"
+    },
+    "balance": {
+      "title": "你的余额",
+      "description": "这里显示当前余额。点击数字可直接编辑金额。"
+    },
+    "amount-input": {
+      "title": "收入和支出",
+      "description": "在这里输入金额，然后点击收入或支出。选择分类就完成了。"
+    },
+    "daily-limit": {
+      "title": "每日预算",
+      "description": "显示今天还能花多少，帮助你撑到月底。"
+    },
+    "savings": {
+      "title": "储蓄口袋",
+      "description": "设置储蓄目标并转入或转出资金。你也可以从每笔收入中储蓄一部分。"
+    },
+    "templates": {
+      "title": "重复操作",
+      "description": "为房租或工资等固定交易创建模板。一键应用。"
+    },
+    "report-tabs": {
+      "title": "报表模式",
+      "description": "在收入、支出、分析和完整交易历史之间切换。"
+    },
+    "report-summary": {
+      "title": "月度摘要",
+      "description": "当前月份的关键数字：总额、分类和趋势。"
+    },
+    "settings-theme": {
+      "title": "外观",
+      "description": "在浅色、深色或自动主题之间切换。"
+    },
+    "settings-language": {
+      "title": "语言",
+      "description": "在英语、俄语和乌兹别克语之间选择。"
+    },
+    "settings-currency": {
+      "title": "货币",
+      "description": "选择显示所有金额的首选货币。"
+    },
+    "settings-reset": {
+      "title": "重置数据",
+      "description": "永久删除所有交易、储蓄和模板，从头开始。"
+    },
+    "done": {
+      "title": "全部设置好了！",
+      "description": "开始记录你的财务吧。你可以随时通过底部菜单回到任何部分。"
+    }
+  },
+  "notFound": {
+    "caption": "页面未找到",
+    "title": "该路由不存在",
+    "description": "返回仪表盘继续跟踪预算。",
+    "action": "返回仪表盘"
+  }
+}

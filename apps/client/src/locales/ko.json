@@ -1,0 +1,361 @@
+{
+  "common": {
+    "appName": "Save Up",
+    "defaultUser": "사용자",
+    "browser": "브라우저",
+    "telegram": "Telegram",
+    "mockApi": "Mock API",
+    "liveApi": "Live API",
+    "ready": "준비됨",
+    "synced": "동기화됨",
+    "mock": "모의",
+    "live": "실시간",
+    "cancel": "취소"
+  },
+  "shell": {
+    "greeting": "안녕하세요, {{name}}",
+    "welcomeBack": "다시 오신 것을 환영합니다",
+    "notifications": "알림"
+  },
+  "dashboard": {
+    "loading": "재정 상태를 불러오는 중...",
+    "errorCaption": "로드 오류",
+    "errorTitle": "데이터를 가져올 수 없습니다",
+    "errorDescription": "백엔드 RPC 엔드포인트, Telegram initData, 서버 연결을 확인하세요.",
+    "shortcuts": {
+      "income": "수입",
+      "expense": "지출",
+      "report": "리포트",
+      "setting": "설정"
+    }
+  },
+  "balance": {
+    "caption": "내 잔액",
+    "healthy": "순조로움",
+    "watch": "지출이 빠름",
+    "spendableNow": "지금 사용 가능",
+    "monthlyBudget": "이번 달 지출"
+  },
+  "dailyLimit": {
+    "caption": "남은 사용 가능 금액",
+    "days": "{{count}}일",
+    "description": "월말까지 계획을 지키기 위한 하루 예산입니다."
+  },
+  "savings": {
+    "caption": "저축 포켓",
+    "description": "각 수입에서 저축으로 보낼 금액을 설정하세요.",
+    "setup": "저축 이체",
+    "question": "이 수입 중 얼마를 저축할까요?",
+    "incomeAmount": "수입: {{amount}}",
+    "customPlaceholder": "저축 금액 입력",
+    "saveNothing": "전부 유지",
+    "saveHalf": "절반 저축",
+    "saveAll": "전부 저축",
+    "confirm": "추가",
+    "helperText": "{{amount}}까지 원하는 금액을 저축할 수 있습니다.",
+    "manualMode": "수동",
+    "goalBadge": "{{value}} 목표",
+    "goalText": "목표: {{goal}}. 남은 금액: {{remaining}}.",
+    "setGoal": "목표 설정",
+    "deposit": "입금",
+    "withdraw": "출금",
+    "saveGoal": "목표 저장",
+    "goalHelper": "저축 포켓의 목표 금액을 설정하세요.",
+    "goalPlaceholder": "목표 금액 입력",
+    "goalQuestion": "저축 목표는 얼마인가요?",
+    "depositHelper": "잔액에서 저축으로 최대 {{amount}}까지 옮길 수 있습니다.",
+    "depositQuestion": "잔액에서 저축으로 얼마를 옮길까요?",
+    "withdrawHelper": "저축에서 잔액으로 최대 {{amount}}까지 되돌릴 수 있습니다.",
+    "withdrawQuestion": "저축에서 잔액으로 얼마를 되돌릴까요?",
+    "transferPlaceholder": "이체 금액 입력"
+  },
+  "amountInput": {
+    "caption": "새 거래",
+    "title": "금액 입력",
+    "maxAmount": "최대 금액: {{amount}}"
+  },
+  "report": {
+    "loading": "월간 리포트를 만드는 중...",
+    "errorCaption": "리포트 오류",
+    "errorTitle": "요약을 불러올 수 없습니다",
+    "errorDescription": "백엔드 RPC 엔드포인트와 데이터베이스 연결을 확인하세요.",
+    "statistics": "통계",
+    "modeIncome": "수입",
+    "modeSpending": "지출",
+    "modeAnalytics": "분석",
+    "modeHistory": "기록",
+    "totalIncome": "총수입",
+    "totalSpending": "총지출",
+    "newMonthCaption": "새 달",
+    "newMonthTitle": "이번 달 마감",
+    "newMonthAction": "월간 지출 초기화",
+    "ops": "{{count}}개"
+  },
+  "monthReport": {
+    "snapshot": "요약",
+    "overview": "월간 개요",
+    "description": "이번 달 수입, 지출, 저축을 한눈에 확인하세요.",
+    "income": "수입",
+    "spending": "지출",
+    "saved": "저축됨",
+    "withdrawn": "출금됨",
+    "netSaved": "순저축",
+    "transactions": "거래"
+  },
+  "settings": {
+    "title": "설정",
+    "description": "앱을 원하는 대로 조정하세요.",
+    "adminPanel": "관리자 패널",
+    "adminPanelDescription": "사용자, 통계, 관리자 권한을 관리합니다.",
+    "theme": "화면 모드",
+    "language": "언어",
+    "resetData": "계정 데이터 초기화",
+    "resetDataDescription": "모든 수입, 지출, 저축 진행 상황, 반복 템플릿을 삭제합니다.",
+    "resetDataModalTitle": "위험 구역",
+    "resetDataModalQuestion": "모든 계정 데이터를 초기화할까요?",
+    "resetDataModalDescription": "모든 거래와 저축 진행 상황이 영구적으로 삭제되고 계정이 초기 상태로 돌아갑니다.",
+    "resetDataConfirm": "데이터 초기화",
+    "themeAuto": "자동",
+    "themeDark": "다크",
+    "themeLight": "라이트",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeModalTitle": "테마 선택",
+    "themeModalDescription": "시스템 외관을 따르거나 앱을 직접 전환하세요.",
+    "languageModalTitle": "언어 선택",
+    "languageModalDescription": "앱 전체에서 사용할 언어를 선택하세요.",
+    "languageEn": "English",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
+    "languageDe": "Deutsch",
+    "languageRu": "Русский",
+    "languageUz": "O'zbek",
+    "languageOther": "다른 언어",
+    "languageHideOther": "다른 언어 숨기기",
+    "currency": "통화",
+    "currencyModalTitle": "통화 선택",
+    "currencyModalDescription": "앱의 모든 금액을 표시할 통화를 선택하세요.",
+    "currencyUzs": "우즈베키스탄 숨 (UZS)",
+    "currencyRub": "러시아 루블 (RUB)",
+    "currencyUsd": "미국 달러 (USD)",
+    "currencyEur": "유로 (EUR)",
+    "currencyKzt": "카자흐스탄 텡게 (KZT)",
+    "currencyTry": "터키 리라 (TRY)",
+    "currencyGbp": "영국 파운드 (GBP)",
+    "currencyCny": "중국 위안 (CNY)"
+  },
+  "admin": {
+    "title": "관리자 패널",
+    "description": "익명 처리된 사용자 목록과 통계를 보고 관리자 권한을 관리합니다.",
+    "loading": "관리자 데이터를 불러오는 중...",
+    "accessCaption": "접근 제한",
+    "accessDenied": "관리자 패널에 접근할 수 없습니다",
+    "searchPlaceholder": "사용자 ID 또는 Telegram ID로 검색",
+    "empty": "사용자를 찾을 수 없습니다.",
+    "totalUsers": "전체 사용자",
+    "totalAdmins": "관리자",
+    "totalTransactions": "거래",
+    "totalBalance": "총 잔액",
+    "totalSavings": "총 저축",
+    "adminBadge": "관리자",
+    "grantAdmin": "관리자 부여",
+    "revokeAdmin": "관리자 해제",
+    "alreadyAdmin": "이미 관리자",
+    "prevPage": "이전",
+    "nextPage": "다음",
+    "pageInfo": "{{page}} / {{totalPages}} 페이지 · 사용자 {{totalItems}}명",
+    "userMeta": "Telegram: {{telegramId}} · 생성일: {{createdAt}}",
+    "userStats": "잔액: {{balance}} · 저축: {{savings}} · 월 지출: {{monthlyExp}} · 거래: {{transactions}}"
+  },
+  "expenseCategory": {
+    "title": "카테고리",
+    "question": "이 지출은 무엇인가요?",
+    "food": "식비",
+    "taxi": "택시",
+    "entertainment": "엔터테인먼트",
+    "shopping": "쇼핑",
+    "utilities": "공과금",
+    "health": "건강",
+    "education": "교육",
+    "other": "기타"
+  },
+  "expenseEditor": {
+    "title": "지출 수정",
+    "question": "{{amount}}의 올바른 카테고리를 선택하세요"
+  },
+  "recentExpenses": {
+    "caption": "최근",
+    "title": "최근 지출",
+    "loading": "최근 지출을 불러오는 중...",
+    "empty": "아직 최근 지출이 없습니다.",
+    "changeCategory": "카테고리 변경",
+    "undo": "취소",
+    "undoQuestion": "이 최근 지출을 취소할까요?",
+    "undoDescription": "{{amount}}가 잔액으로 돌아가고 거래가 취소됨으로 표시됩니다."
+  },
+  "limits": {
+    "caption": "예산 관리",
+    "title": "카테고리 한도",
+    "manage": "관리",
+    "empty": "아직 설정된 한도가 없습니다. 추가하면 지출 경고를 받을 수 있습니다.",
+    "over": "한도 초과",
+    "ok": "한도 내",
+    "question": "이번 달 각 카테고리에 얼마까지 쓸 수 있나요?",
+    "placeholder": "비움 = 한도 없음",
+    "helperText": "이 카테고리에 한도를 두지 않으려면 비워 두세요.",
+    "save": "한도 저장"
+  },
+  "recurring": {
+    "caption": "템플릿",
+    "title": "반복 작업",
+    "add": "추가",
+    "empty": "아직 반복 템플릿이 없습니다.",
+    "quick": "빠른 실행",
+    "run": "실행",
+    "edit": "수정",
+    "delete": "삭제",
+    "name": "이름",
+    "namePlaceholder": "월세, 급여, 인터넷...",
+    "type": "유형",
+    "amount": "금액",
+    "category": "카테고리",
+    "savingsPart": "저축 부분",
+    "note": "메모",
+    "notePlaceholder": "이 템플릿에 대한 선택 메모",
+    "createTitle": "반복 작업 만들기",
+    "editTitle": "반복 작업 수정",
+    "save": "변경 사항 저장",
+    "create": "템플릿 만들기",
+    "deleteQuestion": "이 반복 템플릿을 삭제할까요?",
+    "deleteDescription": "{{name}}이 빠른 목록에서 제거됩니다."
+  },
+  "transactionType": {
+    "income": "수입",
+    "expense": "지출",
+    "transfer_to_savings": "잔액 → 저축",
+    "transfer_from_savings": "저축 → 잔액"
+  },
+  "history": {
+    "caption": "모든 거래",
+    "title": "거래 기록",
+    "count": "{{count}}개",
+    "month": "월",
+    "search": "검색",
+    "searchPlaceholder": "메모 또는 유형으로 검색",
+    "type": "유형",
+    "allTypes": "모든 유형",
+    "category": "카테고리",
+    "allCategories": "모든 카테고리",
+    "showArchived": "취소된 항목 표시",
+    "showFilters": "필터 더 보기",
+    "hideFilters": "필터 줄이기",
+    "loading": "거래를 불러오는 중...",
+    "archived": "취소됨",
+    "restore": "복원",
+    "archive": "취소",
+    "empty": "이 필터와 일치하는 거래가 없습니다.",
+    "edit": "수정",
+    "editQuestion": "이 거래의 세부 정보를 업데이트하세요",
+    "amount": "금액",
+    "date": "날짜",
+    "savingsPart": "저축 부분",
+    "note": "메모",
+    "notePlaceholder": "이 거래에 메모 추가",
+    "save": "변경 사항 저장",
+    "archiveQuestion": "이 거래를 취소할까요?",
+    "archiveDescription": "거래가 되돌려지고 잔액과 합계가 다시 계산됩니다.",
+    "restoreQuestion": "이 거래를 복원할까요?",
+    "restoreDescription": "거래가 다시 활성화되어 잔액과 합계에 반영됩니다."
+  },
+  "feedback": {
+    "genericError": "문제가 발생했습니다. 다시 시도하세요.",
+    "incomeAdded": "수입 추가됨",
+    "expenseAdded": "지출 추가됨",
+    "savingsDeposited": "저축으로 이동됨",
+    "savingsWithdrawn": "잔액으로 반환됨",
+    "accountDataReset": "계정 데이터 초기화됨",
+    "transactionUpdated": "거래 업데이트됨",
+    "transactionArchived": "거래 취소됨",
+    "transactionRestored": "거래 복원됨",
+    "goalUpdated": "저축 목표 업데이트됨",
+    "recurringSaved": "반복 작업 저장됨",
+    "recurringDeleted": "반복 작업 삭제됨",
+    "recurringApplied": "반복 작업 적용됨"
+  },
+  "analytics": {
+    "title": "지출 분석",
+    "description": "카테고리별로 돈이 어디로 가는지 확인하세요.",
+    "totalExpenses": "총 지출",
+    "transactions": "{{count}}개",
+    "ofTotal": "전체의 {{pct}}%",
+    "noData": "이번 달 지출 데이터가 아직 없습니다."
+  },
+  "onboarding": {
+    "skip": "건너뛰기",
+    "back": "뒤로",
+    "next": "다음",
+    "start": "시작하기!",
+    "welcome": {
+      "title": "Save Up에 오신 것을 환영합니다!",
+      "description": "앱이 어떻게 작동하는지 빠르게 살펴볼게요. 1분이면 충분합니다."
+    },
+    "balance": {
+      "title": "내 잔액",
+      "description": "현재 잔액입니다. 숫자를 탭하면 바로 수정할 수 있습니다."
+    },
+    "amount-input": {
+      "title": "수입과 지출",
+      "description": "여기에 금액을 입력한 다음 수입 또는 지출을 탭하세요. 카테고리를 선택하면 끝입니다."
+    },
+    "daily-limit": {
+      "title": "일일 예산",
+      "description": "월말까지 유지하기 위해 오늘 얼마를 쓸 수 있는지 보여줍니다."
+    },
+    "savings": {
+      "title": "저축 포켓",
+      "description": "저축 목표를 설정하고 돈을 넣거나 뺄 수 있습니다. 각 수입의 일부를 저축할 수도 있습니다."
+    },
+    "templates": {
+      "title": "반복 작업",
+      "description": "월세나 급여 같은 정기 거래용 템플릿을 만들고 한 번에 적용하세요."
+    },
+    "report-tabs": {
+      "title": "리포트 모드",
+      "description": "수입, 지출, 분석, 전체 거래 기록 사이를 전환하세요."
+    },
+    "report-summary": {
+      "title": "월간 요약",
+      "description": "이번 달의 주요 숫자, 합계, 카테고리, 추세를 한눈에 봅니다."
+    },
+    "settings-theme": {
+      "title": "화면 모드",
+      "description": "라이트, 다크, 자동 테마를 전환하세요."
+    },
+    "settings-language": {
+      "title": "언어",
+      "description": "영어, 러시아어, 우즈베크어 중에서 선택하세요."
+    },
+    "settings-currency": {
+      "title": "통화",
+      "description": "모든 금액을 표시할 선호 통화를 선택하세요."
+    },
+    "settings-reset": {
+      "title": "데이터 초기화",
+      "description": "모든 거래, 저축, 템플릿을 영구적으로 삭제하고 새로 시작합니다."
+    },
+    "done": {
+      "title": "준비 완료!",
+      "description": "재정 관리를 시작하세요. 하단 메뉴에서 언제든지 각 섹션으로 돌아갈 수 있습니다."
+    }
+  },
+  "notFound": {
+    "caption": "페이지를 찾을 수 없음",
+    "title": "이 경로는 존재하지 않습니다",
+    "description": "예산 관리를 계속하려면 대시보드로 돌아가세요.",
+    "action": "대시보드로 돌아가기"
+  }
+}

@@ -1,7 +1,7 @@
-import { Card, CardContent } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import type { MonthReport as MonthReportData } from "@/types/finance";
+import { Card, CardContent } from "@/components/ui";
 import { formatMoney } from "@/utils/format";
 
 interface MonthReportProps {
@@ -23,11 +23,11 @@ export function MonthReport({ report }: MonthReportProps) {
   return (
     <Card variant="default">
       <CardContent>
-        <div className="divide-y divide-[var(--separator)]">
+        <div className="grid gap-3 sm:grid-cols-2">
           {stats.map((stat) => (
-            <div key={stat.label} className="flex items-center justify-between py-2.5 first:pt-0 last:pb-0">
+            <div key={stat.label} className="rounded-[24px] bg-[var(--surface-secondary)] px-4 py-4">
               <span className="text-sm text-[var(--muted)]">{stat.label}</span>
-              <span className="text-sm font-semibold text-[var(--foreground)]">{stat.value}</span>
+              <p className="m-0 mt-2 text-lg font-semibold tracking-[-0.04em] text-[var(--foreground)]">{stat.value}</p>
             </div>
           ))}
         </div>

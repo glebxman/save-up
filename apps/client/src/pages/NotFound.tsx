@@ -1,6 +1,6 @@
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 import { useNavigate } from "react-router-dom";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip } from "@/components/ui";
 
 export function NotFound() {
   const { t } = useTranslation();

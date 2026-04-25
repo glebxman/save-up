@@ -1,6 +1,5 @@
 import { useState } from "react";
 
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Spinner } from "@heroui/react";
 import { useTranslation } from "react-i18next";
 
 import { BalanceCard } from "@/components/features/dashboard/BalanceCard";
@@ -13,12 +12,16 @@ import { AmountInput } from "@/components/features/input/AmountInput";
 import { SavingsModal } from "@/components/features/input/SavingsModal";
 import { AmountActionModal } from "@/components/features/shared/AmountActionModal";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
+import { useTelegram } from "@/hooks/useTelegram";
 import type { ExpenseCategory, RecurringTransaction } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
+import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
 export function Dashboard() {
   const { t } = useTranslation();
+  const { initData } = useTelegram();
   const [amount, setAmount] = useState("");
   const [isIncomeModalOpen, setIsIncomeModalOpen] = useState(false);
   const [isExpenseModalOpen, setIsExpenseModalOpen] = useState(false);
@@ -35,13 +38,24 @@ export function Dashboard() {
     addIncomeMutation,
     transferSavingsMutation,
     updateSavingsGoalMutation,
+    updateBalanceMutation,
     saveRecurringTransactionMutation,
     deleteRecurringTransactionMutation,
     applyRecurringTransactionMutation,
   } = useFinance();
 
   const parsedAmount = Number(amount);
-  const hasValidAmount = Number.isFinite(parsedAmount) && parsedAmount > 0;
+  const hasValidAmount = Number.isFinite(parsedAmount) && parsedAmount > 0 && parsedAmount <= MAX_FINANCE_AMOUNT;
+  const amountHelperText = amount.trim().length > 0 && Number.isFinite(parsedAmount) && parsedAmount > MAX_FINANCE_AMOUNT
+    ? t("amountInput.maxAmount", { amount: formatMoney(MAX_FINANCE_AMOUNT) })
+    : undefined;
+  const errorDetail = !initData
+    ? t("dashboard.openInTelegram", {
+      defaultValue: "Open this mini app inside Telegram so it can pass Telegram initData.",
+    })
+    : statusQuery.isError
+      ? statusQuery.error.message
+      : t("dashboard.errorDescription");
   const busyTemplateId = applyRecurringTransactionMutation.isPending
     ? (applyRecurringTransactionMutation.variables?.templateId ?? null)
     : deleteRecurringTransactionMutation.isPending
@@ -92,26 +106,37 @@ export function Dashboard() {
           </div>
         </CardHeader>
         <CardContent>
-          <p className="m-0 text-sm text-[var(--muted)]">{t("dashboard.errorDescription")}</p>
+          <div className="space-y-3">
+            <p className="m-0 text-sm text-[var(--muted)]">{t("dashboard.errorDescription")}</p>
+            <p className="m-0 break-words text-sm text-[var(--danger)]">{errorDetail}</p>
+          </div>
         </CardContent>
       </Card>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <BalanceCard balance={status.user.balance} monthlyExp={status.user.monthlyExp} />
+    <div className="space-y-4 lg:space-y-5">
+      <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.9fr)]">
+        <BalanceCard
+          balance={status.user.balance}
+          isBalanceSaving={updateBalanceMutation.isPending}
+          monthlyExp={status.user.monthlyExp}
+          onBalanceChange={(balance) => updateBalanceMutation.mutateAsync({ balance })}
+        />
 
-      <AmountInput
-        isExpenseDisabled={!hasValidAmount || isActionBusy}
-        isIncomeDisabled={!hasValidAmount || isActionBusy}
-        onChange={setAmount}
-        onExpense={() => setIsExpenseModalOpen(true)}
-        onIncome={() => setIsIncomeModalOpen(true)}
-        value={amount}
-      />
+        <AmountInput
+          helperText={amountHelperText}
+          isExpenseDisabled={!hasValidAmount || isActionBusy}
+          isIncomeDisabled={!hasValidAmount || isActionBusy}
+          onChange={setAmount}
+          onExpense={() => setIsExpenseModalOpen(true)}
+          onIncome={() => setIsIncomeModalOpen(true)}
+          value={amount}
+        />
+      </div>
 
-      <div className="grid gap-4 sm:grid-cols-2">
+      <div className="grid gap-4 md:grid-cols-2">
         <DailyLimitCard
           dailyLimit={status.dailyLimit.dailyLimit}
           daysRemaining={status.dailyLimit.daysRemaining}
