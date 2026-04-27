@@ -331,6 +331,14 @@
       "title": "Aylık özet",
       "description": "Geçerli ay için temel rakamlar: toplamlar, kategoriler ve eğilimler."
     },
+    "report-details": {
+      "title": "Ayrıntılı rapor",
+      "description": "Bu alan, seçilen moda bağlı olarak tam istatistikleri, kategori dökümünü veya işlem geçmişini gösterir."
+    },
+    "report-new-month": {
+      "title": "Yeni ay",
+      "description": "Ay bittiğinde, bakiyenizi ve tasarruflarınızı korurken harcama istatistiklerinizi sıfırlamak için buraya tıklayın."
+    },
     "settings-theme": {
       "title": "Görünüm",
       "description": "Açık, koyu veya otomatik tema arasında geçiş yapın."

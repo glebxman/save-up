@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+import { completeOnboarding } from "../api/methods";
+
 const STORAGE_KEY = "save-up:onboarding-completed";
 
 export interface OnboardingStep {
@@ -18,6 +20,8 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "templates", target: "templates", route: "/" },
   { id: "report-tabs", target: "report-tabs", route: "/report" },
   { id: "report-summary", target: "report-summary", route: "/report" },
+  { id: "report-details", target: "report-details", route: "/report" },
+  { id: "report-new-month", target: "report-new-month", route: "/report" },
   { id: "settings-theme", target: "settings-theme", route: "/settings" },
   { id: "settings-language", target: "settings-language", route: "/settings" },
   { id: "settings-currency", target: "settings-currency", route: "/settings" },
@@ -26,7 +30,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
 
 export type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]["id"];
 
-function readCompleted(): boolean {
+function readCachedCompleted(): boolean {
   try {
     return localStorage.getItem(STORAGE_KEY) === "1";
   } catch {
@@ -34,7 +38,7 @@ function readCompleted(): boolean {
   }
 }
 
-function writeCompleted(): void {
+function writeCachedCompleted(): void {
   try {
     localStorage.setItem(STORAGE_KEY, "1");
   } catch {
@@ -47,6 +51,9 @@ interface OnboardingState {
   isActive: boolean;
   currentStep: number;
   totalSteps: number;
+  initData: string | null;
+  setInitData: (initData: string) => void;
+  syncFromServer: (completed: boolean) => void;
   start: () => void;
   next: () => void;
   prev: () => void;
@@ -54,11 +61,32 @@ interface OnboardingState {
   complete: () => void;
 }
 
+function markDone(initData: string | null) {
+  writeCachedCompleted();
+  if (initData) {
+    completeOnboarding(initData).catch(() => {});
+  }
+}
+
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
-  isCompleted: readCompleted(),
+  isCompleted: readCachedCompleted(),
   isActive: false,
   currentStep: 0,
   totalSteps: ONBOARDING_STEPS.length,
+  initData: null,
+
+  setInitData: (initData: string) => {
+    set({ initData });
+  },
+
+  syncFromServer: (completed: boolean) => {
+    if (completed) {
+      writeCachedCompleted();
+      set({ isCompleted: true, isActive: false });
+    } else if (!readCachedCompleted()) {
+      set({ isCompleted: false });
+    }
+  },
 
   start: () => {
     if (!get().isCompleted) {
@@ -83,12 +111,12 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   },
 
   skip: () => {
-    writeCompleted();
+    markDone(get().initData);
     set({ isActive: false, isCompleted: true });
   },
 
   complete: () => {
-    writeCompleted();
+    markDone(get().initData);
     set({ isActive: false, isCompleted: true });
   },
 }));

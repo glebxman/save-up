@@ -65,4 +65,10 @@ void i18n.on("languageChanged", (language: string) => {
   }
 });
 
+export function syncLanguageFromServer(language: string | null): void {
+  if (language && SUPPORTED_LANGUAGES.includes(language as AppLanguage) && i18n.resolvedLanguage !== language) {
+    void i18n.changeLanguage(language);
+  }
+}
+
 export default i18n;

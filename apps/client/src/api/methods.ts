@@ -18,6 +18,14 @@ export function initUser(initData: string): Promise<Status> {
   return rpcRequest("user.init", { initData });
 }
 
+export function completeOnboarding(initData: string): Promise<{ ok: true }> {
+  return rpcRequest("user.completeOnboarding", { initData });
+}
+
+export function setLanguage(initData: string, language: string): Promise<{ ok: true }> {
+  return rpcRequest("user.setLanguage", { initData, language });
+}
+
 export function listAdminUsers(
   initData: string,
   params: { page?: number; pageSize?: number; search?: string } = {},

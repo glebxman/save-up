@@ -38,6 +38,8 @@ export interface User {
   savingsGoal: number;
   recurringTransactions: RecurringTransaction[];
   monthlyExp: number;
+  onboardingCompleted: boolean;
+  language: string | null;
   createdAt: string;
 }
 
@@ -286,6 +288,19 @@ export interface RpcMethodMap {
       initData: string;
     };
     result: Status;
+  };
+  "user.completeOnboarding": {
+    params: {
+      initData: string;
+    };
+    result: { ok: true };
+  };
+  "user.setLanguage": {
+    params: {
+      initData: string;
+      language: string;
+    };
+    result: { ok: true };
   };
   "admin.listUsers": {
     params: {

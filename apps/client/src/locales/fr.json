@@ -331,6 +331,14 @@
       "title": "Résumé mensuel",
       "description": "Chiffres clés du mois en cours : totaux, catégories et tendances."
     },
+    "report-details": {
+      "title": "Rapport détaillé",
+      "description": "Cette zone affiche les statistiques complètes, la répartition par catégorie ou l'historique des transactions en fonction du mode sélectionné."
+    },
+    "report-new-month": {
+      "title": "Nouveau mois",
+      "description": "Une fois le mois terminé, cliquez ici pour réinitialiser vos statistiques de dépenses tout en conservant votre solde et vos économies."
+    },
     "settings-theme": {
       "title": "Apparence",
       "description": "Basculez entre thème clair, sombre ou automatique."

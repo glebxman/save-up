@@ -331,6 +331,14 @@
       "title": "月度摘要",
       "description": "当前月份的关键数字：总额、分类和趋势。"
     },
+    "report-details": {
+      "title": "详细报告",
+      "description": "此区域根据所选模式显示完整的统计信息、类别明细或交易历史记录。"
+    },
+    "report-new-month": {
+      "title": "新月份",
+      "description": "当月份结束时，单击此处重置您的支出统计数据，同时保持余额和储蓄不变。"
+    },
     "settings-theme": {
       "title": "外观",
       "description": "在浅色、深色或自动主题之间切换。"

@@ -345,6 +345,14 @@
       "title": "Monthly summary",
       "description": "The top area shows the most important monthly numbers. Analytics makes it easier to spot the biggest spending category."
     },
+    "report-details": {
+      "title": "Detailed report",
+      "description": "This area displays the full statistics, category breakdown, or transaction history depending on the selected mode."
+    },
+    "report-new-month": {
+      "title": "New month",
+      "description": "When the month is over, click here to reset your spending statistics while keeping your balance and savings intact."
+    },
     "settings-theme": {
       "title": "Appearance",
       "description": "Choose light, dark, or automatic theme so the app feels comfortable to use."

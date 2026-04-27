@@ -18,6 +18,8 @@ export const users = pgTable(
     savingsGoal: numeric("savings_goal", { precision: 15, scale: 2, mode: "number" }).notNull().default(0),
     recurringTemplates: jsonb("recurring_templates").$type<RecurringTransaction[]>().notNull().default([]),
     monthlyExp: numeric("monthly_exp", { precision: 15, scale: 2, mode: "number" }).notNull().default(0),
+    onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
+    language: varchar("language", { length: 5 }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({

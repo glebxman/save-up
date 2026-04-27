@@ -23,7 +23,7 @@ import {
   updateSavingsGoalHandler,
   updateTransactionHandler,
 } from "./handlers/finance.js";
-import { getUserStatusHandler, initUserHandler } from "./handlers/user.js";
+import { completeOnboardingHandler, getUserStatusHandler, initUserHandler, setLanguageHandler } from "./handlers/user.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
 
 type HandlerMap = {
@@ -33,6 +33,8 @@ type HandlerMap = {
 const handlers: HandlerMap = {
   "user.init": initUserHandler,
   "user.getStatus": getUserStatusHandler,
+  "user.completeOnboarding": completeOnboardingHandler,
+  "user.setLanguage": setLanguageHandler,
   "admin.listUsers": listAdminUsersHandler,
   "admin.setAdmin": setAdminAccessHandler,
   "finance.addIncome": addIncomeHandler,

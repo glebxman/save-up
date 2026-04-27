@@ -208,6 +208,8 @@ function ensureUser(telegramId: number, profile?: MockTelegramUser): User {
     savingsGoal: 1000000,
     recurringTransactions: [],
     monthlyExp: 22550,
+    onboardingCompleted: false,
+    language: null,
     createdAt: new Date().toISOString(),
   }, profile);
 
@@ -661,6 +663,20 @@ const mockHandlers: {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId, parseTelegramUserFromInitData(params.initData));
     return buildStatus(user);
+  },
+  "user.completeOnboarding": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    user.onboardingCompleted = true;
+    saveUser(user);
+    return { ok: true as const };
+  },
+  "user.setLanguage": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    user.language = params.language;
+    saveUser(user);
+    return { ok: true as const };
   },
   "admin.listUsers": (params) => {
     return getAdminUsersPage({

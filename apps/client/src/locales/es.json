@@ -331,6 +331,14 @@
       "title": "Resumen mensual",
       "description": "Números clave del mes actual: totales, categorías y tendencias."
     },
+    "report-details": {
+      "title": "Informe detallado",
+      "description": "Esta área muestra las estadísticas completas, el desglose de categorías o el historial de transacciones según el modo seleccionado."
+    },
+    "report-new-month": {
+      "title": "Nuevo mes",
+      "description": "Cuando termina el mes, haga clic aquí para restablecer sus estadísticas de gastos manteniendo intactos su saldo y sus ahorros."
+    },
     "settings-theme": {
       "title": "Apariencia",
       "description": "Cambia entre tema claro, oscuro o automático."

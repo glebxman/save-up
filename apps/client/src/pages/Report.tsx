@@ -289,29 +289,33 @@ export function Report() {
         </CardContent>
       </Card>
 
-      {mode === "history" ? (
-        <TransactionHistoryView />
-      ) : mode === "analytics" && breakdown ? (
-        <CategoryBreakdownView breakdown={breakdown} />
-      ) : mode !== "analytics" ? (
-        <MonthReport report={activeReport} />
-      ) : null}
+      <div data-onboarding="report-details">
+        {mode === "history" ? (
+          <TransactionHistoryView />
+        ) : mode === "analytics" && breakdown ? (
+          <CategoryBreakdownView breakdown={breakdown} />
+        ) : mode !== "analytics" ? (
+          <MonthReport report={activeReport} />
+        ) : null}
+      </div>
 
-      <Card variant="default">
-        <CardContent>
-          <p className="m-0 mb-2 text-sm text-[var(--muted)]">{t("report.newMonthCaption")}</p>
-          <Button
-            fullWidth
-            isDisabled={newMonthMutation.isPending}
-            onPress={() => {
-              void newMonthMutation.mutateAsync();
-            }}
-            variant="danger-soft"
-          >
-            {t("report.newMonthAction")}
-          </Button>
-        </CardContent>
-      </Card>
+      <div data-onboarding="report-new-month">
+        <Card variant="default">
+          <CardContent>
+            <p className="m-0 mb-2 text-sm text-[var(--muted)]">{t("report.newMonthCaption")}</p>
+            <Button
+              fullWidth
+              isDisabled={newMonthMutation.isPending}
+              onPress={() => {
+                void newMonthMutation.mutateAsync();
+              }}
+              variant="danger-soft"
+            >
+              {t("report.newMonthAction")}
+            </Button>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }

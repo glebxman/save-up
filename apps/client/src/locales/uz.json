@@ -331,6 +331,14 @@
       "title": "Oylik xulosa",
       "description": "Joriy oy uchun asosiy raqamlar: jami, kategoriyalar va tendentsiyalar."
     },
+    "report-details": {
+      "title": "Batafsil hisobot",
+      "description": "Ushbu hudud tanlangan rejimga qarab to'liq statistika, toifalar taqsimoti yoki tranzaksiyalar tarixini ko'rsatadi."
+    },
+    "report-new-month": {
+      "title": "Yangi oy",
+      "description": "Oy tugagandan so'ng, balans va jamg'armalaringizni saqlab qolgan holda xarajatlar statistikasini tiklash uchun shu yerni bosing."
+    },
     "settings-theme": {
       "title": "Ko'rinish",
       "description": "Yorug', to'q yoki avtomatik mavzu o'rtasida almashing."

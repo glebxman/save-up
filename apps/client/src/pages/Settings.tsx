@@ -8,7 +8,9 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon, LanguageIcon, ThemeIcon } from "@/components/layout/icons";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { Button, Card, CardContent, Modal } from "@/components/ui";
+import { setLanguage } from "@/api/methods";
 import { useFinance } from "@/hooks/useFinance";
+import { useTelegram } from "@/hooks/useTelegram";
 import { useTheme, type ThemeMode } from "@/providers/ThemeProvider";
 import { useCurrency, SUPPORTED_CURRENCIES } from "@/hooks/useCurrency";
 import { getCurrencySymbol } from "@/utils/format";
@@ -22,6 +24,7 @@ export function Settings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const { theme, resolvedTheme, setTheme } = useTheme();
+  const { initData } = useTelegram();
   const { resetAccountDataMutation, status } = useFinance();
   const { currency, setCurrency } = useCurrency();
   const [activeModal, setActiveModal] = useState<SettingsModal>(null);
@@ -97,6 +100,9 @@ export function Settings() {
 
   const selectLanguage = (language: AppLanguage) => {
     void i18n.changeLanguage(language);
+    if (initData) {
+      setLanguage(initData, language).catch(() => {});
+    }
     closeActiveModal();
   };
 

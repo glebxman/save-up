@@ -81,6 +81,8 @@ export function mapUserRow(row: UserRow): User {
     savingsGoal: row.savingsGoal,
     recurringTransactions,
     monthlyExp: row.monthlyExp,
+    onboardingCompleted: row.onboardingCompleted,
+    language: row.language ?? null,
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -271,6 +273,30 @@ export async function listAdminUsers(
     totalPages,
     stats,
   };
+}
+
+export async function completeOnboarding(telegramId: number): Promise<{ ok: true }> {
+  const user = await ensureUser(telegramId);
+
+  if (!user.onboardingCompleted) {
+    await db
+      .update(users)
+      .set({ onboardingCompleted: true })
+      .where(eq(users.id, user.id));
+  }
+
+  return { ok: true };
+}
+
+export async function setUserLanguage(telegramId: number, language: string): Promise<{ ok: true }> {
+  const user = await ensureUser(telegramId);
+
+  await db
+    .update(users)
+    .set({ language })
+    .where(eq(users.id, user.id));
+
+  return { ok: true };
 }
 
 export async function setUserAdminAccess(

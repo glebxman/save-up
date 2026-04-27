@@ -1,4 +1,4 @@
-import { startTransition } from "react";
+import { startTransition, useEffect } from "react";
 
 import type {
   ExpenseCategory,
@@ -11,7 +11,9 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import * as api from "../api/methods";
+import { syncLanguageFromServer } from "../i18n";
 import { useFinanceStore } from "../stores/finance.store";
+import { useOnboardingStore } from "../stores/onboarding.store";
 import { useToastStore } from "../stores/ui.store";
 import { useTelegram } from "./useTelegram";
 
@@ -78,6 +80,19 @@ export function useFinance() {
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
+
+  useEffect(() => {
+    if (initData) {
+      useOnboardingStore.getState().setInitData(initData);
+    }
+  }, [initData]);
+
+  useEffect(() => {
+    if (statusQuery.data) {
+      useOnboardingStore.getState().syncFromServer(statusQuery.data.user.onboardingCompleted);
+      syncLanguageFromServer(statusQuery.data.user.language);
+    }
+  }, [statusQuery.data]);
 
   const liveStatus = optimisticStatus ?? statusQuery.data ?? null;
 

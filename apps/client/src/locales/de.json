@@ -331,6 +331,14 @@
       "title": "Monatsübersicht",
       "description": "Wichtige Zahlen für den aktuellen Monat: Summen, Kategorien und Trends."
     },
+    "report-details": {
+      "title": "Detaillierter Bericht",
+      "description": "Dieser Bereich zeigt die vollständigen Statistiken, die Aufschlüsselung der Kategorien oder den Transaktionsverlauf, je nach ausgewähltem Modus."
+    },
+    "report-new-month": {
+      "title": "Neuer Monat",
+      "description": "Wenn der Monat zu Ende ist, klicken Sie hier, um Ihre Ausgabenstatistiken zurückzusetzen, während Ihr Kontostand und Ihre Ersparnisse erhalten bleiben."
+    },
     "settings-theme": {
       "title": "Darstellung",
       "description": "Wechsle zwischen hellem, dunklem oder automatischem Design."

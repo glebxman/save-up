@@ -331,6 +331,14 @@
       "title": "월간 요약",
       "description": "이번 달의 주요 숫자, 합계, 카테고리, 추세를 한눈에 봅니다."
     },
+    "report-details": {
+      "title": "상세 보고서",
+      "description": "이 영역에는 선택한 모드에 따라 전체 통계, 카테고리 내역 또는 거래 내역이 표시됩니다."
+    },
+    "report-new-month": {
+      "title": "새로운 달",
+      "description": "달이 끝나면 여기를 클릭하여 잔액과 저축을 유지하면서 지출 통계를 재설정하세요."
+    },
     "settings-theme": {
       "title": "화면 모드",
       "description": "라이트, 다크, 자동 테마를 전환하세요."
