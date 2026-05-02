@@ -14,7 +14,9 @@ import { and, count, desc, eq, isNull, or, sql } from "drizzle-orm";
 import { db } from "../config/database.js";
 import { transactions, users, type UserRow } from "../db/schema/index.js";
 import { calculateDailyLimit, getMonthKey } from "../utils/daily-limit.js";
-import { setCachedStatus } from "./cache.service.js";
+import { invalidateStatusCache, setCachedStatus } from "./cache.service.js";
+import { getExchangeRates } from "./currency.service.js";
+
 
 export const SUPER_ADMIN_TELEGRAM_ID = 8246152069;
 
@@ -67,6 +69,10 @@ export function mapUserRow(row: UserRow): User {
     ? row.recurringTemplates as RecurringTransaction[]
     : [];
 
+  // Reset the daily counter if the stored date is not today.
+  const today = new Date().toISOString().slice(0, 10);
+  const voiceDailyUsed = row.voiceDailyDate === today ? row.voiceDailyUsed : 0;
+
   return {
     id: row.id,
     telegramId: row.telegramId,
@@ -83,18 +89,24 @@ export function mapUserRow(row: UserRow): User {
     monthlyExp: row.monthlyExp,
     onboardingCompleted: row.onboardingCompleted,
     language: row.language ?? null,
+    voiceDailyUsed,
     createdAt: row.createdAt.toISOString(),
   };
 }
 
-export function buildStatus(row: UserRow): Status {
+export async function buildStatus(row: UserRow): Promise<Status> {
   const user = mapUserRow(row);
+  const { rates, updatedAt } = await getExchangeRates();
 
   return {
     user,
     dailyLimit: calculateDailyLimit({ balance: user.balance }),
+    rates,
+    ratesUpdatedAt: new Date(updatedAt).toISOString(),
   };
 }
+
+
 
 export async function findUserByTelegramId(telegramId: number): Promise<UserRow | null> {
   const result = await db
@@ -172,23 +184,16 @@ async function syncCurrentMonthExpense(row: UserRow): Promise<UserRow> {
   return updated[0] as UserRow;
 }
 
-export async function initUserStatus(telegramId: number, profile?: TelegramUser): Promise<Status> {
-  const user = await syncCurrentMonthExpense(await ensureUser(telegramId, profile));
-  const status = buildStatus(user);
-
-  await setCachedStatus(telegramId, status);
-
-  return status;
-}
 
 export async function getStatusByTelegramId(telegramId: number, profile?: TelegramUser): Promise<Status> {
   const user = await syncCurrentMonthExpense(await ensureUser(telegramId, profile));
-  const status = buildStatus(user);
+  const status = await buildStatus(user);
 
   await setCachedStatus(telegramId, status);
 
   return status;
 }
+
 
 export async function requireAdminUser(telegramId: number): Promise<UserRow> {
   const user = await ensureUser(telegramId);
@@ -283,6 +288,7 @@ export async function completeOnboarding(telegramId: number): Promise<{ ok: true
       .update(users)
       .set({ onboardingCompleted: true })
       .where(eq(users.id, user.id));
+    await invalidateStatusCache(telegramId);
   }
 
   return { ok: true };
@@ -295,6 +301,8 @@ export async function setUserLanguage(telegramId: number, language: string): Pro
     .update(users)
     .set({ language })
     .where(eq(users.id, user.id));
+
+  await invalidateStatusCache(telegramId);
 
   return { ok: true };
 }

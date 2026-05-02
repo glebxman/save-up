@@ -16,5 +16,6 @@
   "reminder_track_habit": "🔁 Moliyaviy kuzatish odat, odatlar esa ko'payadi! Bugungi tranzaksiyalarni Save Up'ga kiriting.",
   "reminder_small_wins": "🌟 Har bir tejangan miqdor muhim! Ozgina tejash ham moliyaviy ozodlik sari bir qadam. Davom eting!",
   "reminder_review_spending": "🔍 Bu haftagi xarajatlaringizni ko'rib chiqish uchun 2 daqiqa vaqt ajrating. Ajablanarli naqshlar topishingiz mumkin!",
-  "reminder_future_self": "✨ Kelajakdagi o'zingiz bugun qabul qilgan har bir aqlli moliyaviy qaror uchun sizga minnatdor bo'ladi. Save Up'ni oching!"
+  "reminder_future_self": "✨ Kelajakdagi o'zingiz bugun qabul qilgan har bir aqlli moliyaviy qaror uchun sizga minnatdor bo'ladi. Save Up'ni oching!",
+  "voice_limit_reached": "⚠️ Kunlik 5 ta ovozli AI so'rovlaridan foydalandingiz. Ertaga qaytib keling!"
 }

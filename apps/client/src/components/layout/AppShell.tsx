@@ -7,7 +7,6 @@ import { OnboardingOverlay } from "@/components/features/onboarding/OnboardingOv
 import { Avatar, Button } from "@/components/ui";
 import { useTelegram } from "@/hooks/useTelegram";
 import { DashboardIcon, ReportIcon, SettingsIcon } from "./icons";
-import { MenuIcon, SearchIcon } from "./icons";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { t } = useTranslation();

@@ -1,4 +1,5 @@
-import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
+import { MAX_FINANCE_AMOUNT, type CurrencyCode } from "@finance-twa/shared-types";
+
 
 import type {
   AdminUserListItem,
@@ -12,7 +13,6 @@ import type {
   RecurringTransactionPayload,
   RpcMethod,
   RpcMethodMap,
-  SavingsTransferDirection,
   Status,
   Transaction,
   TransactionFilters,
@@ -210,6 +210,7 @@ function ensureUser(telegramId: number, profile?: MockTelegramUser): User {
     monthlyExp: 22550,
     onboardingCompleted: false,
     language: null,
+    voiceDailyUsed: 0,
     createdAt: new Date().toISOString(),
   }, profile);
 
@@ -256,7 +257,42 @@ function updateTransactionRecord(nextTransaction: Transaction): void {
   saveDatabase(database);
 }
 
-function buildStatus(user: User): Status {
+const FALLBACK_RATES: Record<CurrencyCode, number> = {
+  USD: 1,
+  UZS: 12500,
+  RUB: 92,
+  EUR: 0.92,
+  KZT: 450,
+  TRY: 32,
+  GBP: 0.79,
+  CNY: 7.23,
+};
+
+async function getMockExchangeRates(): Promise<Record<CurrencyCode, number>> {
+  try {
+    const response = await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD");
+    const data = await response.json();
+    
+    if (data && data.data && data.data.rates) {
+      const rates: Partial<Record<CurrencyCode, number>> = {};
+      const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY"];
+      
+      for (const code of codes) {
+        const value = data.data.rates[code];
+        rates[code] = value ? parseFloat(value) : FALLBACK_RATES[code];
+      }
+      
+      return rates as Record<CurrencyCode, number>;
+    }
+  } catch (error) {
+    console.error("Mock: Failed to fetch exchange rates:", error);
+  }
+
+  return FALLBACK_RATES;
+}
+
+
+async function buildStatus(user: User): Promise<Status> {
   const monthlyExp = getTransactionsForUser(user.telegramId)
     .filter((transaction) => !transaction.deletedAt && transaction.type === "expense" && transaction.monthKey === getMonthKey())
     .reduce((sum, transaction) => roundAmount(sum + transaction.amount), 0);
@@ -265,11 +301,17 @@ function buildStatus(user: User): Status {
     monthlyExp,
   };
 
+  const rates = await getMockExchangeRates();
+
   return {
     user: nextUser,
     dailyLimit: calculateDailyLimit(nextUser.balance),
+    rates,
+    ratesUpdatedAt: new Date().toISOString(),
   };
+
 }
+
 
 function parseTelegramUserFromInitData(initData: string): MockTelegramUser | undefined {
   try {
@@ -654,16 +696,17 @@ const mockHandlers: {
     params: RpcMethodMap[Method]["params"],
   ) => RpcMethodMap[Method]["result"] | Promise<RpcMethodMap[Method]["result"]>;
 } = {
-  "user.init": (params) => {
+  "user.init": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId, parseTelegramUserFromInitData(params.initData));
-    return buildStatus(user);
+    return await buildStatus(user);
   },
-  "user.getStatus": (params) => {
+  "user.getStatus": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId, parseTelegramUserFromInitData(params.initData));
-    return buildStatus(user);
+    return await buildStatus(user);
   },
+
   "user.completeOnboarding": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
@@ -702,7 +745,8 @@ const mockHandlers: {
 
     return mapAdminUser(user);
   },
-  "finance.addIncome": (params) => {
+  "finance.addIncome": async (params) => {
+
     assertPositiveAmount(params.amount);
     ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
@@ -721,9 +765,9 @@ const mockHandlers: {
     saveUser(nextUser);
     appendTransaction(transaction);
 
-    return buildStatus(nextUser);
+    return await buildStatus(nextUser);
   },
-  "finance.addExpense": (params) => {
+  "finance.addExpense": async (params) => {
     assertPositiveAmount(params.amount);
     ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
@@ -741,9 +785,9 @@ const mockHandlers: {
     saveUser(nextUser);
     appendTransaction(transaction);
 
-    return buildStatus(nextUser);
+    return await buildStatus(nextUser);
   },
-  "finance.transferSavings": (params) => {
+  "finance.transferSavings": async (params) => {
     assertPositiveAmount(params.amount);
     ensureAmountWithinLimit(params.amount);
     const telegramId = parseTelegramIdFromInitData(params.initData);
@@ -761,8 +805,9 @@ const mockHandlers: {
     saveUser(nextUser);
     appendTransaction(transaction);
 
-    return buildStatus(nextUser);
+    return await buildStatus(nextUser);
   },
+
   "finance.getRecentExpenses": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     return getRecentExpensesForUser(telegramId, params.limit);
@@ -838,128 +883,90 @@ const mockHandlers: {
 
     return nextTransaction;
   },
-  "finance.archiveTransaction": (params) => {
+  "finance.archiveTransaction": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const transaction = getTransactionById(telegramId, params.transactionId);
 
-    if (!transaction.deletedAt) {
-      const archived = { ...transaction, deletedAt: new Date().toISOString() };
-      const nextUser = applyImpact(user, getTransactionImpact(transaction), -1);
+    transaction.deletedAt = new Date().toISOString();
+    updateTransactionRecord(transaction);
 
-      ensureNonNegative(nextUser);
-      saveUser(nextUser);
-      updateTransactionRecord(archived);
-
-      return buildStatus(nextUser);
-    }
-
-    return buildStatus(user);
+    return await buildStatus(user);
   },
-  "finance.restoreTransaction": (params) => {
+  "finance.restoreTransaction": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const transaction = getTransactionById(telegramId, params.transactionId);
-    const restored = { ...transaction, deletedAt: null };
-    const nextUser = applyImpact(user, getTransactionImpact(restored), 1);
 
-    ensureNonNegative(nextUser);
-    saveUser(nextUser);
-    updateTransactionRecord(restored);
+    transaction.deletedAt = null;
+    updateTransactionRecord(transaction);
 
-    return buildStatus(nextUser);
+    return await buildStatus(user);
   },
-  "finance.updateSavingsGoal": (params) => {
+  "finance.updateSavingsGoal": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-    const nextUser: User = {
-      ...user,
-      savingsGoal: normalizeGoal(params.goal),
-    };
-
-    saveUser(nextUser);
-    return buildStatus(nextUser);
+    user.savingsGoal = normalizeGoal(params.goal);
+    saveUser(user);
+    return await buildStatus(user);
   },
-  "finance.updateBalance": (params) => {
+  "finance.updateBalance": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const targetBalance = normalizeBalance(params.balance);
-    const delta = roundAmount(targetBalance - getLedgerBalanceForUser(telegramId));
+    const currentBalance = getLedgerBalanceForUser(telegramId);
+    const delta = roundAmount(targetBalance - currentBalance);
 
     if (delta !== 0) {
-      const amount = Math.abs(delta);
-
-      ensureAmountWithinLimit(amount);
-
       const transaction = buildTransaction(user.id, {
         type: delta > 0 ? "income" : "expense",
-        amount,
+        amount: Math.abs(delta),
         category: delta < 0 ? "other" : null,
       });
-
       appendTransaction(transaction);
     }
 
-    const nextUser: User = {
-      ...user,
-      balance: targetBalance,
-    };
-
-    saveUser(nextUser);
-    return buildStatus(nextUser);
+    return await buildStatus(user);
   },
-  "finance.resetAccountData": (params) => {
+  "finance.resetAccountData": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const database = loadDatabase();
 
-    database.transactions = database.transactions.filter((transaction) => transaction.userId !== user.id);
-    database.users[telegramId] = {
-      ...user,
-      balance: 0,
-      savings: 0,
-      monthlyExp: 0,
-      savingsGoal: 0,
-      recurringTransactions: [],
-    };
+    database.transactions = database.transactions.filter((item) => item.userId !== user.id);
+    user.balance = 0;
+    user.savings = 0;
+    user.monthlyExp = 0;
+    user.savingsGoal = 0;
+    user.recurringTransactions = [];
+    database.users[telegramId] = user;
 
     saveDatabase(database);
-
-    return buildStatus(database.users[telegramId] as User);
+    return await buildStatus(user);
   },
-  "finance.saveRecurringTransaction": (params) => {
+  "finance.saveRecurringTransaction": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const nextTemplate = parseRecurringPayload(params.template);
-    const templates = [...user.recurringTransactions];
-    const index = templates.findIndex((item) => item.id === nextTemplate.id);
+    const index = user.recurringTransactions.findIndex((item) => item.id === nextTemplate.id);
 
     if (index >= 0) {
-      templates[index] = nextTemplate;
+      user.recurringTransactions[index] = nextTemplate;
     } else {
-      templates.unshift(nextTemplate);
+      user.recurringTransactions.unshift(nextTemplate);
     }
 
-    const nextUser: User = {
-      ...user,
-      recurringTransactions: templates,
-    };
-
-    saveUser(nextUser);
-    return buildStatus(nextUser);
+    saveUser(user);
+    return await buildStatus(user);
   },
-  "finance.deleteRecurringTransaction": (params) => {
+  "finance.deleteRecurringTransaction": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
-    const nextUser: User = {
-      ...user,
-      recurringTransactions: user.recurringTransactions.filter((item) => item.id !== params.templateId),
-    };
-
-    saveUser(nextUser);
-    return buildStatus(nextUser);
+    user.recurringTransactions = user.recurringTransactions.filter((item) => item.id !== params.templateId);
+    saveUser(user);
+    return await buildStatus(user);
   },
-  "finance.applyRecurringTransaction": (params) => {
+  "finance.applyRecurringTransaction": async (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     const user = ensureUser(telegramId);
     const template = user.recurringTransactions.find((item) => item.id === params.templateId);
@@ -971,17 +978,17 @@ const mockHandlers: {
     const transaction = buildTransaction(user.id, {
       type: template.type,
       amount: template.amount,
-      category: template.category,
       savingsAmt: template.savingsAmt,
+      category: template.category,
       note: template.note ?? template.title,
     });
-    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
 
+    const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
     ensureNonNegative(nextUser);
     saveUser(nextUser);
     appendTransaction(transaction);
 
-    return buildStatus(nextUser);
+    return await buildStatus(nextUser);
   },
   "finance.getReport": (params) => {
     const telegramId = parseTelegramIdFromInitData(params.initData);
@@ -991,33 +998,79 @@ const mockHandlers: {
     const telegramId = parseTelegramIdFromInitData(params.initData);
     return getCategoryBreakdownForUser(telegramId, params.monthKey);
   },
-  "finance.newMonth": (params) => {
-      const telegramId = parseTelegramIdFromInitData(params.initData);
-      const user = ensureUser(telegramId);
-      const previousMonthKey = getMonthKey(new Date(new Date().getFullYear(), new Date().getMonth() - 1, 1));
-      const database = loadDatabase();
+  "finance.newMonth": async (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const database = loadDatabase();
+    const currentMonthKey = getMonthKey();
+    const previousMonthKey = (new Date(new Date().setMonth(new Date().getMonth() - 1))).toISOString().slice(0, 7);
 
-      database.transactions = database.transactions.map((transaction) => {
-        if (
-          transaction.userId === user.id
-          && !transaction.deletedAt
-          && transaction.type === "expense"
-          && transaction.monthKey === getMonthKey()
-        ) {
-          return {
-            ...transaction,
-            monthKey: previousMonthKey,
-          };
-        }
+    database.transactions = database.transactions.map((transaction) => {
+      if (transaction.userId === user.id && transaction.type === "expense" && transaction.monthKey === currentMonthKey && !transaction.deletedAt) {
+        return { ...transaction, monthKey: previousMonthKey };
+      }
+      return transaction;
+    });
 
-        return transaction;
-      });
+    saveDatabase(database);
+    return await buildStatus(user);
+  },
+  "finance.convertCurrency": async (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const database = loadDatabase();
+    const { rate } = params;
 
-      saveDatabase(database);
+    user.balance = roundAmount(user.balance * rate);
+    user.savings = roundAmount(user.savings * rate);
+    user.savingsGoal = roundAmount(user.savingsGoal * rate);
+    user.monthlyExp = roundAmount(user.monthlyExp * rate);
+    user.recurringTransactions = user.recurringTransactions.map((t) => ({
+      ...t,
+      amount: roundAmount(t.amount * rate),
+      savingsAmt: t.savingsAmt ? roundAmount(t.savingsAmt * rate) : null,
+    }));
 
-      return buildStatus(user);
-    },
-  };
+    database.transactions = database.transactions.map((t) => {
+      if (t.userId === user.id) {
+        return {
+          ...t,
+          amount: roundAmount(t.amount * rate),
+          savingsAmt: t.savingsAmt ? roundAmount(t.savingsAmt * rate) : null,
+        };
+      }
+      return t;
+    });
+
+    database.users[telegramId] = user;
+    saveDatabase(database);
+
+    return await buildStatus(user);
+  },
+  "finance.refreshRates": async (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    return await buildStatus(user);
+  },
+  "finance.processVoice": async (_params) => {
+    await new Promise((resolve) => setTimeout(resolve, 1500));
+    const amounts = [500, 1200, 3500, 450];
+    const categories: ExpenseCategory[] = ["taxi", "food", "shopping", "entertainment"];
+    const randomIdx = Math.floor(Math.random() * amounts.length);
+    
+    return {
+      type: "expense" as const,
+      amount: amounts[randomIdx]!,
+      category: categories[randomIdx]!,
+      note: "MOCK: real AI requires npm run dev",
+    };
+  },
+
+
+};
+
+
+
 
 export async function mockRpcRequest<Method extends RpcMethod>(
   method: Method,

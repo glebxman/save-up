@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "用户",
@@ -10,7 +10,12 @@
     "synced": "已同步",
     "mock": "模拟",
     "live": "在线",
-    "cancel": "取消"
+    "cancel": "取消",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "你好，{{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "新月份",
     "newMonthTitle": "结清本月",
     "newMonthAction": "重置月度支出",
-    "ops": "{{count}} 项"
+    "ops": "{{count}} 项",
+    "monthSelector": "报表月份"
   },
   "monthReport": {
     "snapshot": "摘要",
@@ -148,7 +154,9 @@
     "currencyKzt": "哈萨克斯坦坚戈 (KZT)",
     "currencyTry": "土耳其里拉 (TRY)",
     "currencyGbp": "英镑 (GBP)",
-    "currencyCny": "人民币 (CNY)"
+    "currencyCny": "人民币 (CNY)",
+    "exchangeRates": "汇率",
+    "refresh": "刷新"
   },
   "admin": {
     "title": "管理面板",
@@ -286,7 +294,13 @@
     "goalUpdated": "储蓄目标已更新",
     "recurringSaved": "重复操作已保存",
     "recurringDeleted": "重复操作已删除",
-    "recurringApplied": "重复操作已应用"
+    "recurringApplied": "重复操作已应用",
+    "currencyConverted": "金额转换成功",
+    "ratesUpdated": "汇率已更新",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "支出明细",
@@ -294,7 +308,11 @@
     "totalExpenses": "总支出",
     "transactions": "{{count}} 项",
     "ofTotal": "占总额 {{pct}}%",
-    "noData": "本月还没有支出数据。"
+    "noData": "本月还没有支出数据。",
+    "chartTitle": "按类别细分",
+    "topCategory": "最高类别",
+    "howToReadTitle": "条形越长，支出占比越大。",
+    "howToReadDescription": "先看总支出，再看条形最长的类别：那里就是主要支出来源。"
   },
   "onboarding": {
     "skip": "跳过",
@@ -305,13 +323,17 @@
       "title": "欢迎使用 Save Up！",
       "description": "我们快速看看应用如何工作。只需要一分钟。"
     },
+    "navigation": {
+      "title": "底部菜单",
+      "description": "使用这些按钮随时返回仪表板、打开报告或转到设置。"
+    },
     "balance": {
       "title": "你的余额",
       "description": "这里显示当前余额。点击数字可直接编辑金额。"
     },
     "amount-input": {
       "title": "收入和支出",
-      "description": "在这里输入金额，然后点击收入或支出。选择分类就完成了。"
+      "description": "输入金额，根据需要选择交易货币，然后点击收入或支出。应用程序将自动将其转换为您的基本货币。"
     },
     "daily-limit": {
       "title": "每日预算",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "报表模式",
-      "description": "在收入、支出、分析和完整交易历史之间切换。"
+      "description": "打开分析可查看按类别划分的支出。这里也可以切换到收入、支出或完整历史。"
+    },
+    "report-month": {
+      "title": "报表月份",
+      "description": "在这里选择任意月份，只查看该月份的收入、支出、分析和历史记录。你可以选择上个月或一年前的月份进行对比。"
     },
     "report-summary": {
-      "title": "月度摘要",
-      "description": "当前月份的关键数字：总额、分类和趋势。"
+      "title": "分析概览",
+      "description": "先看总支出和最高类别。它们显示花了多少钱，以及主要花在了哪里。"
     },
     "report-details": {
-      "title": "详细报告",
-      "description": "此区域根据所选模式显示完整的统计信息、类别明细或交易历史记录。"
+      "title": "类别条形图",
+      "description": "每一行都是一个类别：右侧是金额，百分比表示占总支出的比例，条形便于快速比较。"
     },
     "report-new-month": {
       "title": "新月份",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "货币",
-      "description": "选择显示所有金额的首选货币。"
+      "description": "选择所有余额和报告的货币。更改货币将自动重新计算您所有的历史数据。"
     },
     "settings-reset": {
       "title": "重置数据",
@@ -367,5 +393,13 @@
     "title": "该路由不存在",
     "description": "返回仪表盘继续跟踪预算。",
     "action": "返回仪表盘"
+  },
+  "ai": {
+    "startRecording": "开始录音",
+    "stopRecording": "停止",
+    "recording": "录音中",
+    "resultTitle": "识别到的交易",
+    "creditsRemaining": "每日剩余请求：{{count}}",
+    "creditsExhausted": "每日 AI 限制已达到"
   }
 }

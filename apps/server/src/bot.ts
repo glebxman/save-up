@@ -102,8 +102,7 @@ import es from "./locales/es.json" with { type: "json" };
 import fr from "./locales/fr.json" with { type: "json" };
 import de from "./locales/de.json" with { type: "json" };
 
-import { addExpense, addIncome } from "./services/finance.service.js";
-import { extractTransactionFromVoice } from "./services/ai.service.js";
+import { addExpense, addIncome, processVoice } from "./services/finance.service.js";
 
 const BOT_MESSAGES: Record<SupportedLang, Record<string, string>> = {
   en, ru, uz, kk, zh, ja, ko, tr, es, fr, de,
@@ -367,14 +366,19 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
 
   try {
     const file = await telegramRequest<{ file_path: string }>("getFile", { file_id: message.voice.file_id });
-    const fileUrl = `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
 
+    if (!file.file_path || !/^[a-zA-Z0-9/_.-]+$/.test(file.file_path)) {
+      throw new Error("Invalid file_path received from Telegram");
+    }
+
+    const fileUrl = `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
     const audioRes = await fetch(fileUrl);
-    if (!audioRes.ok) throw new Error("Failed to download audio from Telegram");
+    if (!audioRes.ok) throw new Error(`Failed to download voice file (HTTP ${audioRes.status})`);
     const arrayBuffer = await audioRes.arrayBuffer();
     const base64Audio = Buffer.from(arrayBuffer).toString("base64");
 
-    const extraction = await extractTransactionFromVoice(base64Audio);
+    // processVoice handles daily limit check and counter increment.
+    const extraction = await processVoice(telegramId, base64Audio);
 
     if (!extraction) {
       await telegramRequest("editMessageText", {
@@ -409,11 +413,14 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
     }
 
   } catch (err) {
+    const isLimitError = err instanceof Error && err.message === "Voice daily limit reached";
     console.error("Voice processing error:", err);
     await telegramRequest("editMessageText", {
       chat_id: chatId,
       message_id: processingMsg.message_id,
-      text: getBotMessage("voice_error", lang) || "❌ Произошла ошибка при обработке."
+      text: isLimitError
+        ? (getBotMessage("voice_limit_reached", lang) || "⚠️ Дневной лимит голосовых запросов исчерпан. Попробуйте завтра.")
+        : (getBotMessage("voice_error", lang) || "❌ Произошла ошибка при обработке."),
     });
   }
 }

@@ -63,6 +63,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
   --accent: #eff29a;
   --accent-foreground: #1b1b1b;
+  --accent-text: #6b7518;
   --accent-secondary: #d9e8ff;
   --accent-tertiary: #f2d6ef;
 
@@ -151,6 +152,7 @@ input[type="number"]::-webkit-outer-spin-button {
 
   --accent: #eef09e;
   --accent-foreground: #141414;
+  --accent-text: #eef09e;
   --accent-secondary: #d8def8;
   --accent-tertiary: #e7c5de;
 
@@ -457,4 +459,33 @@ input[type="number"]::-webkit-outer-spin-button {
 .finance-capsule {
   background: var(--capsule-surface);
   backdrop-filter: blur(18px);
+}
+
+.finance-analytics-breakdown {
+  border-radius: 24px;
+  background: var(--surface-secondary);
+  padding: 16px;
+}
+
+.finance-analytics-category {
+  border-radius: 20px;
+  background: color-mix(in srgb, var(--surface) 54%, transparent);
+  padding: 13px;
+}
+
+.finance-analytics-bar {
+  position: relative;
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--surface-tertiary);
+  margin-top: 12px;
+}
+
+.finance-analytics-bar-fill {
+  position: absolute;
+  inset: 0 auto 0 0;
+  min-width: 10px;
+  border-radius: inherit;
+  background: var(--category-color);
 }

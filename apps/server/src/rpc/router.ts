@@ -9,6 +9,7 @@ import {
   addIncomeHandler,
   applyRecurringTransactionHandler,
   archiveTransactionHandler,
+  convertCurrencyHandler,
   deleteRecurringTransactionHandler,
   getCategoryBreakdownHandler,
   getRecentExpensesHandler,
@@ -16,13 +17,17 @@ import {
   getTransactionsHandler,
   newMonthHandler,
   resetAccountDataHandler,
+  refreshRatesHandler,
   restoreTransactionHandler,
   saveRecurringTransactionHandler,
   transferSavingsHandler,
   updateBalanceHandler,
   updateSavingsGoalHandler,
   updateTransactionHandler,
+  processVoiceHandler,
 } from "./handlers/finance.js";
+
+
 import { completeOnboardingHandler, getUserStatusHandler, initUserHandler, setLanguageHandler } from "./handlers/user.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
 
@@ -54,7 +59,12 @@ const handlers: HandlerMap = {
   "finance.getReport": getReportHandler,
   "finance.getCategoryBreakdown": getCategoryBreakdownHandler,
   "finance.newMonth": newMonthHandler,
+  "finance.convertCurrency": convertCurrencyHandler,
+  "finance.refreshRates": refreshRatesHandler,
+  "finance.processVoice": processVoiceHandler,
 };
+
+
 
 function makeError(id: JsonRpcRequest["id"], code: number, message: string, data?: unknown): JsonRpcFailure {
   return {

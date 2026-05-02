@@ -1,3 +1,4 @@
+import { eq } from "drizzle-orm";
 import { db } from "./config/database.js";
 import { users } from "./db/schema/index.js";
 
@@ -40,7 +41,8 @@ const REMINDER_KEYS = [
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 const CHECK_INTERVAL_MS = 60 * 60 * 1000;
 
-const lastSentMap = new Map<number, number>();
+
+
 
 function pickRandomKey(): string {
   return REMINDER_KEYS[Math.floor(Math.random() * REMINDER_KEYS.length)]!;
@@ -67,11 +69,15 @@ async function runReminderBatch(botToken: string): Promise<void> {
   const now = Date.now();
   console.log("[Reminders] Running batch...");
 
-  let allUsers: { telegramId: number; language: string | null }[];
+  let allUsers: { telegramId: number; language: string | null; lastReminderSentAt: Date | null }[];
 
   try {
     allUsers = await db
-      .select({ telegramId: users.telegramId, language: users.language })
+      .select({ 
+        telegramId: users.telegramId, 
+        language: users.language,
+        lastReminderSentAt: users.lastReminderSentAt 
+      })
       .from(users);
   } catch (err) {
     console.error("[Reminders] Failed to fetch users:", err);
@@ -81,7 +87,7 @@ async function runReminderBatch(botToken: string): Promise<void> {
   let sent = 0;
 
   for (const user of allUsers) {
-    const lastSent = lastSentMap.get(user.telegramId) ?? 0;
+    const lastSent = user.lastReminderSentAt ? new Date(user.lastReminderSentAt).getTime() : 0;
     if (now - lastSent < THREE_DAYS_MS) continue;
 
     const key = pickRandomKey();
@@ -89,7 +95,10 @@ async function runReminderBatch(botToken: string): Promise<void> {
 
     try {
       await sendTelegramMessage(botToken, user.telegramId, text);
-      lastSentMap.set(user.telegramId, now);
+      await db
+        .update(users)
+        .set({ lastReminderSentAt: new Date() })
+        .where(eq(users.telegramId, user.telegramId));
       sent++;
     } catch (err) {
       console.error(`[Reminders] Error sending to ${user.telegramId}:`, err);

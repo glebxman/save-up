@@ -46,7 +46,7 @@ export function formatMoney(value: number, currency?: CurrencyCode): string {
 
   const formatted = new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: curr === "UZS" ? 0 : 2,
   }).format(value);
 
   return `${formatted} ${symbol}`;

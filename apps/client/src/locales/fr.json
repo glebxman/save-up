@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Utilisateur",
@@ -10,7 +10,12 @@
     "synced": "Synchronisé",
     "mock": "Mock",
     "live": "En ligne",
-    "cancel": "Annuler"
+    "cancel": "Annuler",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "Bonjour, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "Nouveau mois",
     "newMonthTitle": "Clôturer le mois",
     "newMonthAction": "Réinitialiser les dépenses mensuelles",
-    "ops": "{{count}} éléments"
+    "ops": "{{count}} éléments",
+    "monthSelector": "Mois du rapport"
   },
   "monthReport": {
     "snapshot": "Résumé",
@@ -148,7 +154,9 @@
     "currencyKzt": "Tenge kazakh (KZT)",
     "currencyTry": "Livre turque (TRY)",
     "currencyGbp": "Livre sterling (GBP)",
-    "currencyCny": "Yuan chinois (CNY)"
+    "currencyCny": "Yuan chinois (CNY)",
+    "exchangeRates": "Taux de change",
+    "refresh": "Actualiser"
   },
   "admin": {
     "title": "Panneau admin",
@@ -286,7 +294,13 @@
     "goalUpdated": "Objectif d’épargne mis à jour",
     "recurringSaved": "Action récurrente enregistrée",
     "recurringDeleted": "Action récurrente supprimée",
-    "recurringApplied": "Action récurrente appliquée"
+    "recurringApplied": "Action récurrente appliquée",
+    "currencyConverted": "Montants convertis avec succès",
+    "ratesUpdated": "Taux de change mis à jour",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "Répartition des dépenses",
@@ -294,7 +308,11 @@
     "totalExpenses": "Dépenses totales",
     "transactions": "{{count}} éléments",
     "ofTotal": "{{pct}}% du total",
-    "noData": "Aucune donnée de dépense ce mois-ci."
+    "noData": "Aucune donnée de dépense ce mois-ci.",
+    "chartTitle": "Repartition par categorie",
+    "topCategory": "Categorie principale",
+    "howToReadTitle": "Plus la barre est longue, plus la part des depenses est grande.",
+    "howToReadDescription": "Commencez par le total, puis regardez la categorie avec la barre la plus longue : c'est le principal poste de depenses."
   },
   "onboarding": {
     "skip": "Ignorer",
@@ -305,13 +323,17 @@
       "title": "Bienvenue dans Save Up !",
       "description": "Découvrons rapidement le fonctionnement de l’app. Cela prend une minute."
     },
+    "navigation": {
+      "title": "Menu inférieur",
+      "description": "Utilisez ces boutons pour retourner au tableau de bord, ouvrir le rapport ou accéder aux paramètres à tout moment."
+    },
     "balance": {
       "title": "Votre solde",
       "description": "Voici votre solde actuel. Touchez le nombre pour le modifier directement."
     },
     "amount-input": {
       "title": "Revenus et dépenses",
-      "description": "Saisissez un montant ici, puis touchez Revenu ou Dépense. Choisissez une catégorie et c’est prêt."
+      "description": "Saisissez un montant, choisissez la devise de la transaction (si nécessaire) et appuyez sur Revenu ou Dépense. L'application le convertira automatiquement dans votre devise de base."
     },
     "daily-limit": {
       "title": "Budget quotidien",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "Modes de rapport",
-      "description": "Passez entre revenus, dépenses, analyse et historique complet des transactions."
+      "description": "Ouvrez Analytics pour voir les depenses par categorie. Vous pouvez aussi passer aux revenus, depenses ou a l'historique complet."
+    },
+    "report-month": {
+      "title": "Mois du rapport",
+      "description": "Choisissez ici un mois pour voir les revenus, depenses, analyses et historique de cette periode. Vous pouvez ainsi verifier le mois dernier ou un mois d'il y a un an."
     },
     "report-summary": {
-      "title": "Résumé mensuel",
-      "description": "Chiffres clés du mois en cours : totaux, catégories et tendances."
+      "title": "Vue d'ensemble analytics",
+      "description": "Commencez par le total des depenses et la categorie principale. Ils indiquent combien a ete depense et ou se trouve la plus grande part."
     },
     "report-details": {
-      "title": "Rapport détaillé",
-      "description": "Cette zone affiche les statistiques complètes, la répartition par catégorie ou l'historique des transactions en fonction du mode sélectionné."
+      "title": "Barres par categorie",
+      "description": "Chaque ligne est une categorie : le montant est a droite, le pourcentage indique sa part, et la barre facilite la comparaison."
     },
     "report-new-month": {
       "title": "Nouveau mois",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "Devise",
-      "description": "Sélectionnez votre devise préférée pour afficher tous les montants."
+      "description": "Choisissez la devise pour tous les soldes et rapports. Le changement recalculera automatiquement toutes vos données historiques."
     },
     "settings-reset": {
       "title": "Réinitialiser les données",
@@ -367,5 +393,13 @@
     "title": "Cette route n’existe pas",
     "description": "Revenez au tableau de bord pour continuer à suivre votre budget.",
     "action": "Retour au tableau de bord"
+  },
+  "ai": {
+    "startRecording": "Démarrer l'enregistrement",
+    "stopRecording": "Arrêter",
+    "recording": "Enregistrement",
+    "resultTitle": "Transaction détectée",
+    "creditsRemaining": "Requêtes quotidiennes restantes : {{count}}",
+    "creditsExhausted": "Limite quotidienne d'IA atteinte"
   }
 }

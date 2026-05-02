@@ -16,5 +16,6 @@
   "reminder_track_habit": "🔁 Financial tracking is a habit, and habits compound! Log today's transactions in Save Up.",
   "reminder_small_wins": "🌟 Every saved sum counts! Even a little saved is a step toward financial freedom. Keep going!",
   "reminder_review_spending": "🔍 Take 2 minutes to review your spending this week. You might find surprising patterns!",
-  "reminder_future_self": "✨ Your future self will thank you for every smart financial decision you make today. Open Save Up!"
+  "reminder_future_self": "✨ Your future self will thank you for every smart financial decision you make today. Open Save Up!",
+  "voice_limit_reached": "⚠️ You have used all 5 daily AI voice requests. Come back tomorrow!"
 }

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-
-import { Button, Input, Modal } from "@/components/ui";
+import { Button, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
+
 
 interface AmountActionModalProps {
   isOpen: boolean;
@@ -17,7 +17,6 @@ interface AmountActionModalProps {
   onClose: () => void;
   onSubmit: (value: number) => void;
 }
-
 export function AmountActionModal({
   isOpen,
   isPending,
@@ -50,19 +49,19 @@ export function AmountActionModal({
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+        <ModalContainer placement="center" size="sm">
+          <ModalDialog>
+            <ModalCloseTrigger />
 
-            <Modal.Header>
+            <ModalHeader>
               <div className="flex flex-col items-start gap-2">
                 <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">{title}</p>
-                <Modal.Heading>{question}</Modal.Heading>
+                <ModalHeading>{question}</ModalHeading>
               </div>
-            </Modal.Header>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
               <div className="flex flex-col gap-3">
                 <Input
                   fullWidth
@@ -88,10 +87,11 @@ export function AmountActionModal({
                   {confirmLabel}
                 </Button>
               </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+            </ModalBody>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </Modal>
   );
 }
+

@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Usuario",
@@ -10,7 +10,12 @@
     "synced": "Sincronizado",
     "mock": "Mock",
     "live": "En vivo",
-    "cancel": "Cancelar"
+    "cancel": "Cancelar",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "Hola, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "Nuevo mes",
     "newMonthTitle": "Cerrar el mes",
     "newMonthAction": "Restablecer gasto mensual",
-    "ops": "{{count}} elementos"
+    "ops": "{{count}} elementos",
+    "monthSelector": "Mes del informe"
   },
   "monthReport": {
     "snapshot": "Resumen",
@@ -148,7 +154,9 @@
     "currencyKzt": "Tenge kazajo (KZT)",
     "currencyTry": "Lira turca (TRY)",
     "currencyGbp": "Libra esterlina (GBP)",
-    "currencyCny": "Yuan chino (CNY)"
+    "currencyCny": "Yuan chino (CNY)",
+    "exchangeRates": "Tipos de cambio",
+    "refresh": "Actualizar"
   },
   "admin": {
     "title": "Panel de administración",
@@ -286,7 +294,13 @@
     "goalUpdated": "Meta de ahorro actualizada",
     "recurringSaved": "Acción recurrente guardada",
     "recurringDeleted": "Acción recurrente eliminada",
-    "recurringApplied": "Acción recurrente aplicada"
+    "recurringApplied": "Acción recurrente aplicada",
+    "currencyConverted": "Montos convertidos con éxito",
+    "ratesUpdated": "Tipos de cambio actualizados",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "Desglose de gastos",
@@ -294,7 +308,11 @@
     "totalExpenses": "Gastos totales",
     "transactions": "{{count}} elementos",
     "ofTotal": "{{pct}}% del total",
-    "noData": "Aún no hay datos de gastos este mes."
+    "noData": "Aún no hay datos de gastos este mes.",
+    "chartTitle": "Desglose por categorias",
+    "topCategory": "Categoria principal",
+    "howToReadTitle": "Cuanto mas larga la barra, mayor es la parte del gasto.",
+    "howToReadDescription": "Empieza con el total y luego revisa la categoria con la barra mas larga: ahi esta el mayor bloque de gastos."
   },
   "onboarding": {
     "skip": "Saltar",
@@ -305,13 +323,17 @@
       "title": "¡Bienvenido a Save Up!",
       "description": "Veamos rápidamente cómo funciona la app. Solo toma un minuto."
     },
+    "navigation": {
+      "title": "Menú inferior",
+      "description": "Usa estos botones para volver al panel, abrir el informe o ir a la configuración en cualquier momento."
+    },
     "balance": {
       "title": "Tu saldo",
       "description": "Este es tu saldo actual. Toca el número para editarlo directamente."
     },
     "amount-input": {
       "title": "Ingresos y gastos",
-      "description": "Ingresa un monto aquí, luego toca Ingreso o Gasto. Elige una categoría y listo."
+      "description": "Ingrese un monto, elija la moneda de la transacción (si es necesario) y toque Ingreso o Gasto. La aplicación lo convertirá automáticamente a su moneda base."
     },
     "daily-limit": {
       "title": "Presupuesto diario",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "Modos de reporte",
-      "description": "Cambia entre ingresos, gastos, analítica e historial completo de transacciones."
+      "description": "Abre Analitica para ver gastos por categoria. Aqui tambien puedes cambiar a ingresos, gastos o historial completo."
+    },
+    "report-month": {
+      "title": "Mes del informe",
+      "description": "Elige cualquier mes para ver ingresos, gastos, analitica e historial de ese periodo. Asi puedes revisar el mes pasado o un mes de hace un ano."
     },
     "report-summary": {
-      "title": "Resumen mensual",
-      "description": "Números clave del mes actual: totales, categorías y tendencias."
+      "title": "Resumen de analitica",
+      "description": "Empieza por el total de gastos y la categoria principal. Muestran cuanto se gasto y donde se fue la mayor parte."
     },
     "report-details": {
-      "title": "Informe detallado",
-      "description": "Esta área muestra las estadísticas completas, el desglose de categorías o el historial de transacciones según el modo seleccionado."
+      "title": "Barras por categoria",
+      "description": "Cada fila es una categoria: el importe esta a la derecha, el porcentaje muestra su parte y la barra ayuda a comparar rapido."
     },
     "report-new-month": {
       "title": "Nuevo mes",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "Moneda",
-      "description": "Selecciona tu moneda preferida para mostrar todos los montos."
+      "description": "Elija la moneda para todos los saldos e informes. Cambiarla recalculará automáticamente todos sus datos históricos."
     },
     "settings-reset": {
       "title": "Restablecer datos",
@@ -367,5 +393,13 @@
     "title": "Esta ruta no existe",
     "description": "Vuelve al panel para seguir controlando tu presupuesto.",
     "action": "Volver al panel"
+  },
+  "ai": {
+    "startRecording": "Iniciar grabación",
+    "stopRecording": "Detener",
+    "recording": "Grabando",
+    "resultTitle": "Transacción detectada",
+    "creditsRemaining": "Solicitudes diarias restantes: {{count}}",
+    "creditsExhausted": "Límite diario de IA alcanzado"
   }
 }

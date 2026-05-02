@@ -1,20 +1,19 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
-
 import type { AppLanguage } from "@/i18n";
-import type { CurrencyCode } from "@finance-twa/shared-types";
 import i18n, { OTHER_LANGUAGES, PRIMARY_LANGUAGES, SUPPORTED_LANGUAGES } from "@/i18n";
 import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon, LanguageIcon, ThemeIcon } from "@/components/layout/icons";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
-import { Button, Card, CardContent, Modal } from "@/components/ui";
-import { setLanguage } from "@/api/methods";
+import { Button, Card, CardContent, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
+
 import { useFinance } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
 import { useTheme, type ThemeMode } from "@/providers/ThemeProvider";
 import { useCurrency, SUPPORTED_CURRENCIES } from "@/hooks/useCurrency";
 import { getCurrencySymbol } from "@/utils/format";
 import { useOnboardingStore } from "@/stores/onboarding.store";
+import { getConversionRate } from "@/utils/exchange-rates";
 import ruFlagUrl from "@/assets/ru.svg";
 import ukFlagUrl from "@/assets/uk.svg";
 import uzbFlagUrl from "@/assets/uzb.svg";
@@ -26,7 +25,8 @@ export function Settings() {
   const navigate = useNavigate();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const { initData } = useTelegram();
-  const { resetAccountDataMutation, status } = useFinance();
+  const { resetAccountDataMutation, status, updateLanguageMutation, convertCurrencyMutation, refreshRatesMutation } = useFinance();
+
   const { currency, setCurrency } = useCurrency();
   const restartOnboarding = useOnboardingStore((s) => s.restart);
   const [activeModal, setActiveModal] = useState<SettingsModal>(null);
@@ -103,7 +103,7 @@ export function Settings() {
   const selectLanguage = (language: AppLanguage) => {
     void i18n.changeLanguage(language);
     if (initData) {
-      setLanguage(initData, language).catch(() => {});
+      updateLanguageMutation.mutate(language);
     }
     closeActiveModal();
   };
@@ -237,7 +237,7 @@ export function Settings() {
           <div className="mx-4 h-px bg-[var(--separator)]" />
 
           <button
-            className="flex w-full items-center justify-between gap-4 pt-3 text-left"
+            className="flex w-full items-center justify-between gap-4 pb-3 pt-3 text-left"
             data-onboarding="settings-currency"
             onClick={() => setActiveModal("currency")}
             type="button"
@@ -259,8 +259,39 @@ export function Settings() {
               <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
             </div>
           </button>
+
+          <div className="mx-4 h-px bg-[var(--separator)]" />
+
+          <div className="flex w-full items-center justify-between gap-4 pt-3 text-left">
+            <div className="flex min-w-0 items-center gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-[var(--surface-secondary)] text-[var(--foreground)]">
+                <svg aria-hidden="true" className={`h-5 w-5 ${refreshRatesMutation.isPending ? "animate-spin" : ""}`} fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+              </span>
+
+              <div className="min-w-0">
+                <p className="m-0 text-base font-semibold text-[var(--foreground)]">
+                  {t("settings.exchangeRates")}
+                </p>
+                <p className="m-0 text-xs text-[var(--muted)]">
+                  {status?.ratesUpdatedAt ? new Date(status.ratesUpdatedAt).toLocaleString(i18n.language, { hour: "2-digit", minute: "2-digit" }) : "..."}
+                </p>
+              </div>
+            </div>
+
+            <Button
+              className="h-8 px-3 text-xs"
+              isDisabled={refreshRatesMutation.isPending}
+              onPress={() => refreshRatesMutation.mutate()}
+              variant="secondary"
+            >
+              {t("settings.refresh")}
+            </Button>
+          </div>
         </CardContent>
       </Card>
+
 
       <Card className="overflow-hidden" variant="default">
         <CardContent className="p-0">
@@ -318,25 +349,25 @@ export function Settings() {
         </CardContent>
       </Card>
       <Modal>
-        <Modal.Backdrop
+        <ModalBackdrop
           isOpen={activeModal === "theme"}
           onOpenChange={(nextOpen) => !nextOpen && setActiveModal(null)}
           variant="blur"
         >
-          <Modal.Container placement="center" size="sm">
-            <Modal.Dialog>
-              <Modal.CloseTrigger />
+          <ModalContainer placement="center" size="sm">
+            <ModalDialog>
+              <ModalCloseTrigger />
 
-              <Modal.Header>
+              <ModalHeader>
                 <div className="flex flex-col gap-2">
-                  <Modal.Heading>{t("settings.themeModalTitle")}</Modal.Heading>
+                  <ModalHeading>{t("settings.themeModalTitle")}</ModalHeading>
                   <p className="m-0 text-sm text-[var(--muted)]">
                     {t("settings.themeModalDescription")}
                   </p>
                 </div>
-              </Modal.Header>
+              </ModalHeader>
 
-              <Modal.Body>
+              <ModalBody>
                 <div className="grid gap-3">
                   {themeOptions.map((option) => (
                     <Button
@@ -352,32 +383,32 @@ export function Settings() {
                     </Button>
                   ))}
                 </div>
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
+              </ModalBody>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
 
       <Modal>
-        <Modal.Backdrop
+        <ModalBackdrop
           isOpen={activeModal === "language"}
           onOpenChange={(nextOpen) => !nextOpen && closeActiveModal()}
           variant="blur"
         >
-          <Modal.Container placement="center" size={showOtherLanguages ? "md" : "sm"}>
-            <Modal.Dialog>
-              <Modal.CloseTrigger />
+          <ModalContainer placement="center" size={showOtherLanguages ? "md" : "sm"}>
+            <ModalDialog>
+              <ModalCloseTrigger />
 
-              <Modal.Header>
+              <ModalHeader>
                 <div className="flex flex-col gap-2">
-                  <Modal.Heading>{t("settings.languageModalTitle")}</Modal.Heading>
+                  <ModalHeading>{t("settings.languageModalTitle")}</ModalHeading>
                   <p className="m-0 text-sm text-[var(--muted)]">
                     {t("settings.languageModalDescription")}
                   </p>
                 </div>
-              </Modal.Header>
+              </ModalHeader>
 
-              <Modal.Body>
+              <ModalBody>
                 <div className="grid gap-3">
                   {PRIMARY_LANGUAGES.map(renderLanguageButton)}
 
@@ -395,51 +426,56 @@ export function Settings() {
                     </div>
                   ) : null}
                 </div>
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
+              </ModalBody>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
 
       <Modal>
-        <Modal.Backdrop
+        <ModalBackdrop
           isOpen={activeModal === "currency"}
           onOpenChange={(nextOpen) => !nextOpen && setActiveModal(null)}
           variant="blur"
         >
-          <Modal.Container placement="center" size="sm">
-            <Modal.Dialog>
-              <Modal.CloseTrigger />
+          <ModalContainer placement="center" size="sm">
+            <ModalDialog>
+              <ModalCloseTrigger />
 
-              <Modal.Header>
+              <ModalHeader>
                 <div className="flex flex-col gap-2">
-                  <Modal.Heading>{t("settings.currencyModalTitle")}</Modal.Heading>
+                  <ModalHeading>{t("settings.currencyModalTitle")}</ModalHeading>
                   <p className="m-0 text-sm text-[var(--muted)]">
                     {t("settings.currencyModalDescription")}
                   </p>
                 </div>
-              </Modal.Header>
+              </ModalHeader>
 
-              <Modal.Body>
+              <ModalBody>
                 <div className="grid gap-3">
                   {SUPPORTED_CURRENCIES.map((curr) => (
                     <Button
                       key={curr}
                       className="w-full"
                       onPress={() => {
-                        setCurrency(curr);
+                        if (curr !== currency) {
+                          const rate = getConversionRate(currency, curr);
+                          convertCurrencyMutation.mutate({ rate });
+                          setCurrency(curr);
+                        }
                         setActiveModal(null);
                       }}
                       variant={currency === curr ? "primary" : "secondary"}
+                      isDisabled={convertCurrencyMutation.isPending}
                     >
                       {t(`settings.currency${curr.charAt(0).toUpperCase() + curr.slice(1).toLowerCase()}`)}
                     </Button>
                   ))}
                 </div>
-              </Modal.Body>
-            </Modal.Dialog>
-          </Modal.Container>
-        </Modal.Backdrop>
+              </ModalBody>
+            </ModalDialog>
+          </ModalContainer>
+        </ModalBackdrop>
       </Modal>
 
       <ConfirmActionModal
@@ -464,3 +500,4 @@ export function Settings() {
     </div>
   );
 }
+

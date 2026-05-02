@@ -11,9 +11,10 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 
-function cn(...values: Array<string | false | null | undefined>) {
+export function cn(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
 }
+
 
 type ButtonVariant = "primary" | "secondary" | "danger-soft";
 type ButtonSize = "sm" | "md";
@@ -280,7 +281,8 @@ interface ModalContextValue {
 
 const ModalContext = createContext<ModalContextValue | null>(null);
 
-function ModalRoot({ children }: PropsWithChildren) {
+export function ModalRoot({ children }: PropsWithChildren) {
+
   return <>{children}</>;
 }
 
@@ -292,7 +294,8 @@ interface ModalBackdropProps extends PropsWithChildren {
 
 const MODAL_ANIMATION_MS = 220;
 
-function ModalBackdrop({ children, isOpen, onOpenChange, variant: _variant }: ModalBackdropProps) {
+export function ModalBackdrop({ children, isOpen, onOpenChange, variant: _variant }: ModalBackdropProps) {
+
   const [shouldRender, setShouldRender] = useState(isOpen);
 
   useEffect(() => {
@@ -353,7 +356,8 @@ interface ModalContainerProps extends PropsWithChildren {
   placement?: "center";
 }
 
-function ModalContainer({ children, size = "sm", placement: _placement }: ModalContainerProps) {
+export function ModalContainer({ children, size = "sm", placement: _placement }: ModalContainerProps) {
+
   return (
     <div className={cn("w-full self-end", size === "sm" ? "max-w-sm" : "max-w-md")}>
       {children}
@@ -361,7 +365,8 @@ function ModalContainer({ children, size = "sm", placement: _placement }: ModalC
   );
 }
 
-function ModalDialog({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function ModalDialog({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+
   return (
     <div
       {...props}
@@ -376,7 +381,8 @@ function ModalDialog({ children, className, ...props }: HTMLAttributes<HTMLDivEl
   );
 }
 
-function ModalCloseTrigger() {
+export function ModalCloseTrigger() {
+
   const context = useContext(ModalContext);
 
   if (!context) {
@@ -407,7 +413,8 @@ function ModalCloseTrigger() {
   );
 }
 
-function ModalHeader({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function ModalHeader({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+
   return (
     <div {...props} className={cn("px-5 pt-8 sm:px-6", className)}>
       {children}
@@ -415,7 +422,8 @@ function ModalHeader({ children, className, ...props }: HTMLAttributes<HTMLDivEl
   );
 }
 
-function ModalBody({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function ModalBody({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+
   return (
     <div {...props} className={cn("px-5 pb-5 pt-3 sm:px-6 sm:pb-6", className)}>
       {children}
@@ -423,11 +431,21 @@ function ModalBody({ children, className, ...props }: HTMLAttributes<HTMLDivElem
   );
 }
 
-function ModalHeading({ children, className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+export function ModalHeading({ children, className, ...props }: HTMLAttributes<HTMLHeadingElement>) {
+
   return (
     <h2 {...props} className={cn("m-0 text-xl font-semibold tracking-[-0.03em]", className)}>
       {children}
     </h2>
+  );
+}
+
+export function ModalFooter({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+
+  return (
+    <div {...props} className={cn("px-5 pb-5 pt-2 sm:px-6 sm:pb-6", className)}>
+      {children}
+    </div>
   );
 }
 
@@ -439,7 +457,9 @@ export const Modal = Object.assign(ModalRoot, {
   Header: ModalHeader,
   Body: ModalBody,
   Heading: ModalHeading,
+  Footer: ModalFooter,
 });
+
 
 function AvatarRoot({ children, className, ...props }: HTMLAttributes<HTMLSpanElement>) {
   return (
@@ -463,4 +483,25 @@ export const Avatar = Object.assign(AvatarRoot, {
   Image: AvatarImage,
 });
 
+interface SkeletonProps extends HTMLAttributes<HTMLDivElement> {
+  variant?: "rectangular" | "circular" | "text";
+}
+
+export function Skeleton({ className, variant = "rectangular", ...props }: SkeletonProps) {
+  return (
+    <div
+      {...props}
+      className={cn(
+        "animate-shimmer",
+        variant === "circular" && "rounded-full",
+        variant === "rectangular" && "rounded-[30px]",
+        variant === "text" && "h-4 rounded-md",
+        className,
+      )}
+    />
+  );
+}
+
+
 export type { ReactNode };
+

@@ -4,6 +4,7 @@ import {
   FunnelIcon,
   InboxIcon,
 } from "@heroicons/react/24/outline";
+import type { Dispatch, SetStateAction } from "react";
 import { useMemo, useState } from "react";
 
 import { useTranslation } from "react-i18next";
@@ -39,7 +40,17 @@ function getAmountTone(type: TransactionType): string {
   return "text-[var(--danger)]";
 }
 
-export function TransactionHistoryView() {
+interface TransactionHistoryViewProps {
+  filters?: TransactionFilters;
+  hideMonthFilter?: boolean;
+  onFiltersChange?: Dispatch<SetStateAction<TransactionFilters>>;
+}
+
+export function TransactionHistoryView({
+  filters: controlledFilters,
+  hideMonthFilter = false,
+  onFiltersChange,
+}: TransactionHistoryViewProps = {}) {
   const { t } = useTranslation();
   const {
     updateTransactionMutation,
@@ -49,13 +60,15 @@ export function TransactionHistoryView() {
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [confirmingTransaction, setConfirmingTransaction] = useState<Transaction | null>(null);
   const [showFilters, setShowFilters] = useState(false);
-  const [filters, setFilters] = useState<TransactionFilters>({
+  const [internalFilters, setInternalFilters] = useState<TransactionFilters>({
     monthKey: getCurrentMonthKey(),
     type: "all",
     category: "all",
     search: "",
     includeDeleted: false,
   });
+  const filters = controlledFilters ?? internalFilters;
+  const setFilters = onFiltersChange ?? setInternalFilters;
   const historyQuery = useTransactionHistory(filters);
   const activeTransactionId = archiveTransactionMutation.isPending
     ? (archiveTransactionMutation.variables?.transactionId ?? null)
@@ -100,28 +113,32 @@ export function TransactionHistoryView() {
 
             <div className="grid grid-cols-2 gap-2">
               <Card variant="secondary">
-                <CardContent>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+                <CardContent className="p-4">
+                  <div className="relative min-h-[58px] pr-9">
+                    <div className="min-w-0">
                       <p className="m-0 text-xs text-[var(--muted)]">{t("monthReport.income")}</p>
-                      <p className="m-0 mt-1 text-lg font-semibold text-[var(--foreground)]">{formatMoney(visibleIncome)}</p>
+                      <p className="m-0 mt-2 whitespace-nowrap text-[clamp(0.88rem,3.6vw,1.125rem)] font-semibold leading-tight tracking-normal text-[var(--foreground)]">
+                        {formatMoney(visibleIncome)}
+                      </p>
                     </div>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--accent)]">
-                      <ArrowTrendingUpIcon className="h-5 w-5" />
+                    <span className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--accent)]">
+                      <ArrowTrendingUpIcon className="h-4 w-4" />
                     </span>
                   </div>
                 </CardContent>
               </Card>
 
               <Card variant="secondary">
-                <CardContent>
-                  <div className="flex items-start justify-between gap-3">
-                    <div>
+                <CardContent className="p-4">
+                  <div className="relative min-h-[58px] pr-9">
+                    <div className="min-w-0">
                       <p className="m-0 text-xs text-[var(--muted)]">{t("monthReport.spending")}</p>
-                      <p className="m-0 mt-1 text-lg font-semibold text-[var(--foreground)]">{formatMoney(visibleSpending)}</p>
+                      <p className="m-0 mt-2 whitespace-nowrap text-[clamp(0.88rem,3.6vw,1.125rem)] font-semibold leading-tight tracking-normal text-[var(--foreground)]">
+                        {formatMoney(visibleSpending)}
+                      </p>
                     </div>
-                    <span className="flex h-9 w-9 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--danger)]">
-                      <ArrowTrendingDownIcon className="h-5 w-5" />
+                    <span className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--danger)]">
+                      <ArrowTrendingDownIcon className="h-4 w-4" />
                     </span>
                   </div>
                 </CardContent>
@@ -131,17 +148,19 @@ export function TransactionHistoryView() {
             <Card variant="secondary">
               <CardContent>
                 <div className="grid gap-3">
-                  <div className="grid gap-3 sm:grid-cols-2">
-                    <label className="text-sm text-[var(--muted)]">
-                      {t("history.month")}
-                      <Input
-                        fullWidth
-                        onChange={(event) => setFilters((current) => ({ ...current, monthKey: event.target.value }))}
-                        type="month"
-                        value={filters.monthKey ?? ""}
-                        variant="secondary"
-                      />
-                    </label>
+                  <div className={`grid gap-3 ${hideMonthFilter ? "" : "sm:grid-cols-2"}`}>
+                    {!hideMonthFilter && (
+                      <label className="text-sm text-[var(--muted)]">
+                        {t("history.month")}
+                        <Input
+                          fullWidth
+                          onChange={(event) => setFilters((current) => ({ ...current, monthKey: event.target.value }))}
+                          type="month"
+                          value={filters.monthKey ?? ""}
+                          variant="secondary"
+                        />
+                      </label>
+                    )}
 
                     <label className="text-sm text-[var(--muted)]">
                       {t("history.search")}

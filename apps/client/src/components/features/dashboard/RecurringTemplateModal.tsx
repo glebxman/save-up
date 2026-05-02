@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
-
 import { useTranslation } from "react-i18next";
-
 import type { ExpenseCategory, RecurringTransaction, RecurringTransactionPayload, TransactionType } from "@/types/finance";
 import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
-import { Button, Input, Modal, Select, TextArea } from "@/components/ui";
+import { Button, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody, Select, TextArea } from "@/components/ui";
+
 
 interface RecurringTemplateModalProps {
   isOpen: boolean;
@@ -55,23 +54,23 @@ export function RecurringTemplateModal({
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <Modal.Container placement="center" size="md">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+        <ModalContainer placement="center" size="md">
+          <ModalDialog>
+            <ModalCloseTrigger />
 
-            <Modal.Header>
+            <ModalHeader>
               <div className="flex flex-col items-start gap-2">
                 <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {t("recurring.caption")}
                 </p>
-                <Modal.Heading>
+                <ModalHeading>
                   {initialTemplate ? t("recurring.editTitle") : t("recurring.createTitle")}
-                </Modal.Heading>
+                </ModalHeading>
               </div>
-            </Modal.Header>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
               <div className="grid gap-3">
                 <label className="text-sm text-[var(--muted)]">
                   {t("recurring.name")}
@@ -176,10 +175,11 @@ export function RecurringTemplateModal({
                   {initialTemplate ? t("recurring.save") : t("recurring.create")}
                 </Button>
               </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+            </ModalBody>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </Modal>
   );
 }
+

@@ -26,7 +26,43 @@ import { db } from "../config/database.js";
 import { transactions, users, type TransactionRow, type UserRow } from "../db/schema/index.js";
 import { getMonthKey } from "../utils/daily-limit.js";
 import { invalidateStatusCache, setCachedStatus } from "./cache.service.js";
-import { buildStatus, ensureUser } from "./user.service.js";
+import { buildStatus, ensureUser, SUPER_ADMIN_TELEGRAM_ID } from "./user.service.js";
+import { extractTransactionFromVoice } from "./ai.service.js";
+import { getExchangeRates } from "./currency.service.js";
+import { VOICE_CREDITS_DAILY_LIMIT } from "@finance-twa/shared-types";
+
+export async function processVoice(telegramId: number, base64Audio: string) {
+  const user = await ensureUser(telegramId);
+  const isAdmin = user.isAdmin || telegramId === SUPER_ADMIN_TELEGRAM_ID;
+  const today = new Date().toISOString().slice(0, 10);
+
+  if (!isAdmin) {
+    const isNewDay = user.voiceDailyDate !== today;
+    const usedToday = isNewDay ? 0 : user.voiceDailyUsed;
+
+    if (usedToday >= VOICE_CREDITS_DAILY_LIMIT) {
+      throw new Error("Voice daily limit reached");
+    }
+  }
+
+  const result = await extractTransactionFromVoice(base64Audio);
+
+  // Only charge a credit when AI successfully extracted a transaction.
+  if (result && !isAdmin) {
+    const isNewDay = user.voiceDailyDate !== today;
+    const nextCount = isNewDay ? 1 : user.voiceDailyUsed + 1;
+
+    await db
+      .update(users)
+      .set({ voiceDailyUsed: nextCount, voiceDailyDate: today })
+      .where(eq(users.id, user.id));
+
+    await invalidateStatusCache(telegramId);
+  }
+
+  return result;
+}
+
 
 type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -303,7 +339,7 @@ async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promise<UserR
 }
 
 async function persistStatus(row: UserRow): Promise<Status> {
-  const status = buildStatus(row);
+  const status = await buildStatus(row);
 
   await setCachedStatus(row.telegramId, status);
 
@@ -892,4 +928,52 @@ export async function newMonth(telegramId: number): Promise<Status> {
   await invalidateStatusCache(telegramId);
 
   return persistStatus(updatedUser);
+}
+
+export async function convertCurrency(telegramId: number, rate: number): Promise<Status> {
+  if (rate <= 0) {
+    throw new Error("Conversion rate must be positive");
+  }
+
+  const user = await ensureUser(telegramId);
+  const updatedUser = await db.transaction(async (tx) => {
+    const templates = mapRecurringTemplates(user);
+    const convertedTemplates = templates.map((t) => ({
+      ...t,
+      amount: roundAmount(t.amount * rate),
+      savingsAmt: t.savingsAmt ? roundAmount(t.savingsAmt * rate) : null,
+    }));
+
+    const updated = await tx
+      .update(users)
+      .set({
+        balance: roundAmount(user.balance * rate),
+        savings: roundAmount(user.savings * rate),
+        savingsGoal: roundAmount(user.savingsGoal * rate),
+        monthlyExp: roundAmount(user.monthlyExp * rate),
+        recurringTemplates: convertedTemplates,
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+
+    await tx
+      .update(transactions)
+      .set({
+        amount: sql`ROUND((${transactions.amount} * ${rate})::numeric, 2)::float8`,
+        savingsAmt: sql`CASE WHEN ${transactions.savingsAmt} IS NOT NULL THEN ROUND((${transactions.savingsAmt} * ${rate})::numeric, 2)::float8 ELSE NULL END`,
+      })
+      .where(eq(transactions.userId, user.id));
+
+    return updated[0] as UserRow;
+  });
+
+  await invalidateStatusCache(telegramId);
+
+  return persistStatus(updatedUser);
+}
+export async function refreshRates(telegramId: number): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  await getExchangeRates(true);
+  await invalidateStatusCache(telegramId);
+  return persistStatus(user);
 }

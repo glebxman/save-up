@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "사용자",
@@ -10,7 +10,12 @@
     "synced": "동기화됨",
     "mock": "모의",
     "live": "실시간",
-    "cancel": "취소"
+    "cancel": "취소",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "안녕하세요, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "새 달",
     "newMonthTitle": "이번 달 마감",
     "newMonthAction": "월간 지출 초기화",
-    "ops": "{{count}}개"
+    "ops": "{{count}}개",
+    "monthSelector": "리포트 월"
   },
   "monthReport": {
     "snapshot": "요약",
@@ -148,7 +154,9 @@
     "currencyKzt": "카자흐스탄 텡게 (KZT)",
     "currencyTry": "터키 리라 (TRY)",
     "currencyGbp": "영국 파운드 (GBP)",
-    "currencyCny": "중국 위안 (CNY)"
+    "currencyCny": "중국 위안 (CNY)",
+    "exchangeRates": "환율",
+    "refresh": "새ро고침"
   },
   "admin": {
     "title": "관리자 패널",
@@ -286,7 +294,13 @@
     "goalUpdated": "저축 목표 업데이트됨",
     "recurringSaved": "반복 작업 저장됨",
     "recurringDeleted": "반복 작업 삭제됨",
-    "recurringApplied": "반복 작업 적용됨"
+    "recurringApplied": "반복 작업 적용됨",
+    "currencyConverted": "금액이 성공적으로 변환되었습니다",
+    "ratesUpdated": "환율이 업데이트되었습니다",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "지출 분석",
@@ -294,7 +308,11 @@
     "totalExpenses": "총 지출",
     "transactions": "{{count}}개",
     "ofTotal": "전체의 {{pct}}%",
-    "noData": "이번 달 지출 데이터가 아직 없습니다."
+    "noData": "이번 달 지출 데이터가 아직 없습니다.",
+    "chartTitle": "카테고리별 내역",
+    "topCategory": "가장 큰 카테고리",
+    "howToReadTitle": "막대가 길수록 지출 비중이 큽니다.",
+    "howToReadDescription": "먼저 총 지출을 보고, 가장 긴 막대의 카테고리를 확인하세요. 주요 지출 영역입니다."
   },
   "onboarding": {
     "skip": "건너뛰기",
@@ -305,13 +323,17 @@
       "title": "Save Up에 오신 것을 환영합니다!",
       "description": "앱이 어떻게 작동하는지 빠르게 살펴볼게요. 1분이면 충분합니다."
     },
+    "navigation": {
+      "title": "하단 메뉴",
+      "description": "이 버튼을 사용하여 언제든지 대시보드로 돌아가거나 보고서를 열거나 설정으로 이동할 수 있습니다."
+    },
     "balance": {
       "title": "내 잔액",
       "description": "현재 잔액입니다. 숫자를 탭하면 바로 수정할 수 있습니다."
     },
     "amount-input": {
       "title": "수입과 지출",
-      "description": "여기에 금액을 입력한 다음 수입 또는 지출을 탭하세요. 카테고리를 선택하면 끝입니다."
+      "description": "금액을 입력하고 필요한 경우 통화를 선택한 다음 수입 또는 지출을 누르세요. 앱이 자동으로 기본 통화로 변환합니다."
     },
     "daily-limit": {
       "title": "일일 예산",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "리포트 모드",
-      "description": "수입, 지출, 분석, 전체 거래 기록 사이를 전환하세요."
+      "description": "분석을 열면 카테고리별 지출을 볼 수 있습니다. 여기서 수입, 지출, 전체 내역으로도 전환할 수 있습니다."
+    },
+    "report-month": {
+      "title": "리포트 월",
+      "description": "여기에서 월을 선택하면 해당 기간의 수입, 지출, 분석, 내역만 볼 수 있습니다. 지난달이나 1년 전의 달을 골라 비교할 수 있습니다."
     },
     "report-summary": {
-      "title": "월간 요약",
-      "description": "이번 달의 주요 숫자, 합계, 카테고리, 추세를 한눈에 봅니다."
+      "title": "분석 개요",
+      "description": "총 지출과 가장 큰 카테고리부터 보세요. 얼마를 썼고 어디에 가장 많이 썼는지 보여줍니다."
     },
     "report-details": {
-      "title": "상세 보고서",
-      "description": "이 영역에는 선택한 모드에 따라 전체 통계, 카테고리 내역 또는 거래 내역이 표시됩니다."
+      "title": "카테고리 막대",
+      "description": "각 행은 카테고리입니다. 오른쪽은 금액, 퍼센트는 전체 지출 중 비중, 막대는 비교를 쉽게 해줍니다."
     },
     "report-new-month": {
       "title": "새로운 달",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "통화",
-      "description": "모든 금액을 표시할 선호 통화를 선택하세요."
+      "description": "모든 잔액과 보고서의 통화를 선택하세요. 통화를 변경하면 모든 내역 데이터가 자동으로 다시 계산됩니다."
     },
     "settings-reset": {
       "title": "데이터 초기화",
@@ -367,5 +393,13 @@
     "title": "이 경로는 존재하지 않습니다",
     "description": "예산 관리를 계속하려면 대시보드로 돌아가세요.",
     "action": "대시보드로 돌아가기"
+  },
+  "ai": {
+    "startRecording": "녹음 시작",
+    "stopRecording": "중지",
+    "recording": "녹음 중",
+    "resultTitle": "인식된 거래",
+    "creditsRemaining": "오늘 남은 요청: {{count}}",
+    "creditsExhausted": "일일 AI 제한에 도달했습니다"
   }
 }

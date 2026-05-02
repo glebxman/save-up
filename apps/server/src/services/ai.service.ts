@@ -1,23 +1,34 @@
+import type { ExpenseCategory } from "@finance-twa/shared-types";
 import { env } from "../config/env.js";
 
 export interface TransactionExtraction {
   type: "expense" | "income";
   amount: number;
-  category: "food" | "taxi" | "entertainment" | "shopping" | "utilities" | "health" | "education" | "other" | "salary" | "investment" | "gift" | "other_income";
+  category: ExpenseCategory;
   note?: string;
 }
 
-const SYSTEM_PROMPT = `
-You are a helpful financial assistant processing voice messages from a Telegram bot.
-The user is speaking about a financial transaction (either an expense or an income).
-Your job is to transcribe the audio and extract the transaction details into JSON.
+interface OpenAIChatResponse {
+  choices?: Array<{
+    message?: {
+      content?: string | null;
+    };
+  }>;
+}
 
-IMPORTANT RULES:
-1. Identify if it's an "expense" (потратил, купил, расход) or "income" (получил, заработал, доход).
-2. Extract the exact "amount" as a number.
-3. For expenses, categorize it into exactly one of these categories: food, taxi, entertainment, shopping, utilities, health, education, other. If it's income, use "other" for category.
-4. Provide a brief "note" capturing what the transaction was for (e.g. "на обед", "зарплата", "купил продукты").
-5. Respond ONLY with a valid JSON object matching the schema below. No markdown formatting, no code blocks, just raw JSON.
+
+const SYSTEM_PROMPT = `
+You are a helpful financial assistant for a Telegram Mini App.
+The user will provide a transcribed text from a voice message about a financial transaction.
+Your job is to extract the transaction details into JSON.
+
+RULES:
+1. Identify if it's an "expense" (e.g., потратил, купил, расход, оплатил) or "income" (e.g., получил, заработал, доход, пришли деньги).
+2. Extract the "amount" as a number. Ignore currency symbols or text, just get the numeric value.
+3. For expenses, categorize it into exactly one of: food, taxi, entertainment, shopping, utilities, health, education, other.
+4. For income, use "other" for category.
+5. Provide a brief "note" in the same language as the user (mostly Russian or Uzbek).
+6. Respond ONLY with raw JSON. No markdown.
 
 SCHEMA:
 {
@@ -28,56 +39,74 @@ SCHEMA:
 }
 `;
 
+
 export async function extractTransactionFromVoice(base64Audio: string): Promise<TransactionExtraction | null> {
-  if (!env.OPENROUTER_API_KEY) {
-    console.error("OPENROUTER_API_KEY is missing");
+  if (!env.OPENAI_API_KEY) {
+    console.error("OPENAI_API_KEY is missing");
     return null;
   }
 
   try {
-    const payload = {
-      model: "google/gemini-2.5-flash",
-      max_tokens: 300,
+    const audioBuffer = Buffer.from(base64Audio, "base64");
+    const blob = new Blob([audioBuffer], { type: "audio/ogg" });
+    const formData = new FormData();
+
+    formData.append("file", blob, "voice.ogg");
+    formData.append("model", "whisper-1");
+
+    const transcribeRes = await fetch("https://api.openai.com/v1/audio/transcriptions", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${env.OPENAI_API_KEY}`,
+      },
+      body: formData
+    });
+
+    if (!transcribeRes.ok) {
+      console.error("OpenAI Whisper error:", await transcribeRes.text());
+      return null;
+    }
+
+    const transcribeData = await transcribeRes.json() as { text: string };
+    const transcription = transcribeData.text;
+
+    if (!transcription || transcription.trim().length === 0) {
+      console.error("Empty transcription");
+      return null;
+    }
+
+    const chatPayload = {
+      model: "gpt-4o-mini",
+      temperature: 0,
       messages: [
-        {
-          role: "user",
-          content: [
-            { type: "text", text: SYSTEM_PROMPT },
-            {
-              type: "image_url",
-              image_url: {
-                url: `data:audio/ogg;base64,${base64Audio}`
-              }
-            }
-          ]
-        }
+        { role: "system", content: SYSTEM_PROMPT },
+        { role: "user", content: transcription }
       ]
     };
 
-    const response = await fetch("https://openrouter.ai/api/v1/chat/completions", {
+    const chatRes = await fetch("https://api.openai.com/v1/chat/completions", {
       method: "POST",
       headers: {
-        "Authorization": `Bearer ${env.OPENROUTER_API_KEY}`,
+        "Authorization": `Bearer ${env.OPENAI_API_KEY}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify(payload)
+      body: JSON.stringify(chatPayload)
     });
 
-    if (!response.ok) {
-      console.error("OpenRouter API error:", await response.text());
+    if (!chatRes.ok) {
+      console.error("OpenAI Chat error:", await chatRes.text());
       return null;
     }
 
-    const data = await response.json();
-    const rawContent = data.choices?.[0]?.message?.content;
+    const chatData = await chatRes.json() as OpenAIChatResponse;
+    const rawContent = chatData.choices?.[0]?.message?.content;
 
     if (!rawContent) {
-      console.error("No content in OpenRouter response");
+      console.error("No content in OpenAI response");
       return null;
     }
 
-    const jsonStr = rawContent.replace(/```json/g, '').replace(/```/g, '').trim();
-
+    const jsonStr = rawContent.replace(/^```(?:json)?\s*/i, "").replace(/\s*```$/i, "").trim();
     return JSON.parse(jsonStr) as TransactionExtraction;
   } catch (error) {
     console.error("Failed to extract transaction from voice:", error);

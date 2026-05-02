@@ -16,5 +16,6 @@
   "reminder_track_habit": "🔁 财务追踪是一种习惯，习惯会复利增长！在 Save Up 中记录今天的交易吧。",
   "reminder_small_wins": "🌟 每笔储蓄都算数！就算省下一点也是走向财务自由的一步，继续加油！",
   "reminder_review_spending": "🔍 花2分钟回顾本周消费，您可能会发现意想不到的规律！",
-  "reminder_future_self": "✨ 未来的你会感谢今天每一个明智的财务决定。打开 Save Up！"
+  "reminder_future_self": "✨ 未来的你会感谢今天每一个明智的财务决定。打开 Save Up！",
+  "voice_limit_reached": "⚠️ 您已用完每日 5 次 AI 语音请求。请明天再来！"
 }

@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "ユーザー",
@@ -10,7 +10,12 @@
     "synced": "同期済み",
     "mock": "モック",
     "live": "ライブ",
-    "cancel": "キャンセル"
+    "cancel": "キャンセル",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "こんにちは、{{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "新しい月",
     "newMonthTitle": "月を締める",
     "newMonthAction": "月間支出をリセット",
-    "ops": "{{count}} 件"
+    "ops": "{{count}} 件",
+    "monthSelector": "レポートの月"
   },
   "monthReport": {
     "snapshot": "サマリー",
@@ -148,7 +154,9 @@
     "currencyKzt": "カザフスタン・テンゲ (KZT)",
     "currencyTry": "トルコ・リラ (TRY)",
     "currencyGbp": "英ポンド (GBP)",
-    "currencyCny": "中国人民元 (CNY)"
+    "currencyCny": "中国人民元 (CNY)",
+    "exchangeRates": "為替レート",
+    "refresh": "更新"
   },
   "admin": {
     "title": "管理パネル",
@@ -286,7 +294,13 @@
     "goalUpdated": "貯金目標を更新しました",
     "recurringSaved": "定期アクションを保存しました",
     "recurringDeleted": "定期アクションを削除しました",
-    "recurringApplied": "定期アクションを適用しました"
+    "recurringApplied": "定期アクションを適用しました",
+    "currencyConverted": "金額の変換に成功しました",
+    "ratesUpdated": "為替レートが更新されました",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "支出の内訳",
@@ -294,7 +308,11 @@
     "totalExpenses": "総支出",
     "transactions": "{{count}} 件",
     "ofTotal": "全体の {{pct}}%",
-    "noData": "今月の支出データはまだありません。"
+    "noData": "今月の支出データはまだありません。",
+    "chartTitle": "カテゴリ別の内訳",
+    "topCategory": "最大カテゴリ",
+    "howToReadTitle": "バーが長いほど、支出の割合が大きいことを示します。",
+    "howToReadDescription": "まず合計支出を見て、次に一番長いバーのカテゴリを確認します。そこが主な支出先です。"
   },
   "onboarding": {
     "skip": "スキップ",
@@ -305,13 +323,17 @@
       "title": "Save Up へようこそ！",
       "description": "アプリの使い方をさっと見てみましょう。1分ほどで終わります。"
     },
+    "navigation": {
+      "title": "下部メニュー",
+      "description": "これらのボタンを使用して、いつでもダッシュボードに戻ったり、レポートを開いたり、設定に移動したりできます。"
+    },
     "balance": {
       "title": "あなたの残高",
       "description": "現在の残高です。数字をタップすると直接編集できます。"
     },
     "amount-input": {
       "title": "収入と支出",
-      "description": "ここに金額を入力し、収入または支出をタップします。カテゴリを選べば完了です。"
+      "description": "金額を入力し、必要に応じて通貨を選択して「収入」または「支出」をタップします。アプリが自動的に基本通貨に変換します。"
     },
     "daily-limit": {
       "title": "1日の予算",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "レポートモード",
-      "description": "収入、支出、分析、取引履歴を切り替えます。"
+      "description": "分析を開くとカテゴリ別の支出を確認できます。ここから収入、支出、全履歴にも切り替えられます。"
+    },
+    "report-month": {
+      "title": "レポートの月",
+      "description": "ここで月を選ぶと、その月の収入、支出、分析、履歴だけを確認できます。先月や1年前の月を選んで比較できます。"
     },
     "report-summary": {
-      "title": "月次サマリー",
-      "description": "今月の主要な数字、合計、カテゴリ、傾向をまとめて確認できます。"
+      "title": "分析の概要",
+      "description": "合計支出と最大カテゴリから確認しましょう。いくら使ったか、どこに最も多く使ったかが分かります。"
     },
     "report-details": {
-      "title": "詳細レポート",
-      "description": "この領域には、選択したモードに応じて、完全な統計、カテゴリの内訳、またはトランザクションの履歴が表示されます。"
+      "title": "カテゴリバー",
+      "description": "各行はカテゴリです。右に金額、割合は全支出に占める比率、バーは比較しやすくするためのものです。"
     },
     "report-new-month": {
       "title": "新しい月",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "通貨",
-      "description": "すべての金額表示に使う通貨を選択します。"
+      "description": "すべての残高とレポートの通貨を選択します。変更すると、すべての履歴データが自動的に再計算されます。"
     },
     "settings-reset": {
       "title": "データをリセット",
@@ -367,5 +393,13 @@
     "title": "このルートは存在しません",
     "description": "予算管理を続けるにはダッシュボードへ戻ってください。",
     "action": "ダッシュボードへ戻る"
+  },
+  "ai": {
+    "startRecording": "録音を開始",
+    "stopRecording": "停止",
+    "recording": "録音中",
+    "resultTitle": "検出された取引",
+    "creditsRemaining": "本日の残りリクエスト：{{count}}",
+    "creditsExhausted": "1日のAI制限に達しました"
   }
 }

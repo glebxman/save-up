@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Nutzer",
@@ -10,7 +10,12 @@
     "synced": "Synchronisiert",
     "mock": "Mock",
     "live": "Live",
-    "cancel": "Abbrechen"
+    "cancel": "Abbrechen",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "Hallo, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "Neuer Monat",
     "newMonthTitle": "Monat abschließen",
     "newMonthAction": "Monatsausgaben zurücksetzen",
-    "ops": "{{count}} Einträge"
+    "ops": "{{count}} Einträge",
+    "monthSelector": "Berichtsmonat"
   },
   "monthReport": {
     "snapshot": "Zusammenfassung",
@@ -148,7 +154,9 @@
     "currencyKzt": "Kasachischer Tenge (KZT)",
     "currencyTry": "Türkische Lira (TRY)",
     "currencyGbp": "Britisches Pfund (GBP)",
-    "currencyCny": "Chinesischer Yuan (CNY)"
+    "currencyCny": "Chinesischer Yuan (CNY)",
+    "exchangeRates": "Wechselkurse",
+    "refresh": "Aktualisieren"
   },
   "admin": {
     "title": "Adminbereich",
@@ -286,7 +294,13 @@
     "goalUpdated": "Sparziel aktualisiert",
     "recurringSaved": "Wiederkehrende Aktion gespeichert",
     "recurringDeleted": "Wiederkehrende Aktion gelöscht",
-    "recurringApplied": "Wiederkehrende Aktion angewendet"
+    "recurringApplied": "Wiederkehrende Aktion angewendet",
+    "currencyConverted": "Beträge erfolgreich konvertiert",
+    "ratesUpdated": "Wechselkurse aktualisiert",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "Ausgabenaufschlüsselung",
@@ -294,7 +308,11 @@
     "totalExpenses": "Gesamtausgaben",
     "transactions": "{{count}} Einträge",
     "ofTotal": "{{pct}}% des Gesamtbetrags",
-    "noData": "Für diesen Monat gibt es noch keine Ausgabendaten."
+    "noData": "Für diesen Monat gibt es noch keine Ausgabendaten.",
+    "chartTitle": "Aufteilung nach Kategorien",
+    "topCategory": "Top-Kategorie",
+    "howToReadTitle": "Je laenger der Balken, desto groesser der Ausgabenanteil.",
+    "howToReadDescription": "Beginnen Sie mit der Gesamtsumme und pruefen Sie dann die Kategorie mit dem laengsten Balken: dort liegt der groesste Ausgabenblock."
   },
   "onboarding": {
     "skip": "Überspringen",
@@ -305,13 +323,17 @@
       "title": "Willkommen bei Save Up!",
       "description": "Schauen wir uns kurz an, wie die App funktioniert. Das dauert nur eine Minute."
     },
+    "navigation": {
+      "title": "Unteres Menü",
+      "description": "Verwenden Sie diese Schaltflächen, um jederzeit zum Dashboard zurückzukehren, den Bericht zu öffnen oder zu den Einstellungen zu gelangen."
+    },
     "balance": {
       "title": "Dein Kontostand",
       "description": "Das ist dein aktueller Kontostand. Tippe auf die Zahl, um sie direkt zu bearbeiten."
     },
     "amount-input": {
       "title": "Einnahmen und Ausgaben",
-      "description": "Gib hier einen Betrag ein und tippe dann auf Einnahme oder Ausgabe. Kategorie wählen, fertig."
+      "description": "Geben Sie einen Betrag ein, wählen Sie bei Bedarf die Währung und tippen Sie auf Einnahme oder Ausgabe. Die App konvertiert ihn automatisch in Ihre Basiswährung."
     },
     "daily-limit": {
       "title": "Tagesbudget",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "Berichtsmodi",
-      "description": "Wechsle zwischen Einnahmen, Ausgaben, Analyse und vollständigem Transaktionsverlauf."
+      "description": "Oeffnen Sie Analytics, um Ausgaben nach Kategorien zu sehen. Hier koennen Sie auch zu Einnahmen, Ausgaben oder der vollstaendigen Historie wechseln."
+    },
+    "report-month": {
+      "title": "Berichtsmonat",
+      "description": "Waehle hier einen Monat, um Einnahmen, Ausgaben, Analysen und Verlauf nur fuer diesen Zeitraum zu sehen. So kannst du auch den letzten Monat oder ein Jahr zurueck pruefen."
     },
     "report-summary": {
-      "title": "Monatsübersicht",
-      "description": "Wichtige Zahlen für den aktuellen Monat: Summen, Kategorien und Trends."
+      "title": "Analytics-Ueberblick",
+      "description": "Beginnen Sie mit den Gesamtausgaben und der Top-Kategorie. Sie zeigen, wie viel ausgegeben wurde und wohin der groesste Anteil ging."
     },
     "report-details": {
-      "title": "Detaillierter Bericht",
-      "description": "Dieser Bereich zeigt die vollständigen Statistiken, die Aufschlüsselung der Kategorien oder den Transaktionsverlauf, je nach ausgewähltem Modus."
+      "title": "Kategorie-Balken",
+      "description": "Jede Zeile ist eine Kategorie: rechts steht der Betrag, der Prozentsatz zeigt den Anteil, und der Balken macht den Vergleich einfach."
     },
     "report-new-month": {
       "title": "Neuer Monat",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "Währung",
-      "description": "Wähle deine bevorzugte Währung zur Anzeige aller Beträge."
+      "description": "Wählen Sie die Währung für alle Salden und Berichte. Eine Änderung berechnet automatisch alle Ihre historischen Daten neu."
     },
     "settings-reset": {
       "title": "Daten zurücksetzen",
@@ -367,5 +393,13 @@
     "title": "Diese Route existiert nicht",
     "description": "Kehre zum Dashboard zurück, um dein Budget weiter zu verfolgen.",
     "action": "Zurück zum Dashboard"
+  },
+  "ai": {
+    "startRecording": "Aufnahme starten",
+    "stopRecording": "Stoppen",
+    "recording": "Aufnahme läuft",
+    "resultTitle": "Erkannte Transaktion",
+    "creditsRemaining": "Verbleibende täгliche Anfragen: {{count}}",
+    "creditsExhausted": "Tägliches KI-Limit erreicht"
   }
 }

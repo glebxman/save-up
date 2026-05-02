@@ -3,6 +3,7 @@ export type TransactionType = "income" | "expense" | "transfer_to_savings" | "tr
 export type SavingsTransferDirection = "to_savings" | "from_savings";
 export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY";
 export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
+export const VOICE_CREDITS_DAILY_LIMIT = 5;
 
 export type ExpenseCategory =
   | "food"
@@ -40,6 +41,7 @@ export interface User {
   monthlyExp: number;
   onboardingCompleted: boolean;
   language: string | null;
+  voiceDailyUsed: number;
   createdAt: string;
 }
 
@@ -71,7 +73,10 @@ export interface DailyLimit {
 export interface Status {
   user: User;
   dailyLimit: DailyLimit;
+  rates: Record<CurrencyCode, number>;
+  ratesUpdatedAt: string;
 }
+
 
 export interface AdminUserListItem {
   id: string;
@@ -319,6 +324,32 @@ export interface RpcMethodMap {
     };
     result: AdminUserListItem;
   };
+  "finance.convertCurrency": {
+    params: {
+      initData: string;
+      rate: number;
+    };
+    result: Status;
+  };
+  "finance.refreshRates": {
+    params: {
+      initData: string;
+    };
+    result: Status;
+  };
+  "finance.processVoice": {
+    params: {
+      initData: string;
+      base64Audio: string;
+    };
+    result: {
+      type: "expense" | "income";
+      amount: number;
+      category: ExpenseCategory;
+      note?: string;
+    } | null;
+  };
 }
+
 
 export type RpcMethod = keyof RpcMethodMap;

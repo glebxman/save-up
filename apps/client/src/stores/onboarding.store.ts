@@ -19,6 +19,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "savings", target: "savings", route: "/" },
   { id: "templates", target: "templates", route: "/" },
   { id: "report-tabs", target: "report-tabs", route: "/report" },
+  { id: "report-month", target: "report-month", route: "/report" },
   { id: "report-summary", target: "report-summary", route: "/report" },
   { id: "report-details", target: "report-details", route: "/report" },
   { id: "report-new-month", target: "report-new-month", route: "/report" },

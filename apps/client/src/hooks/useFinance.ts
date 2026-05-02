@@ -12,7 +12,9 @@ import { useTranslation } from "react-i18next";
 
 import * as api from "../api/methods";
 import { syncLanguageFromServer } from "../i18n";
+import { setGlobalRates } from "../utils/exchange-rates";
 import { useFinanceStore } from "../stores/finance.store";
+
 import { useOnboardingStore } from "../stores/onboarding.store";
 import { useToastStore } from "../stores/ui.store";
 import { useTelegram } from "./useTelegram";
@@ -44,7 +46,11 @@ function getErrorTranslationKey(message: string): string | undefined {
   return errorTranslationKeys[message as keyof typeof errorTranslationKeys];
 }
 
-export function useFinance() {
+interface UseFinanceOptions {
+  reportMonthKey?: string;
+}
+
+export function useFinance(options: UseFinanceOptions = {}) {
   const queryClient = useQueryClient();
   const { initData, user, hapticFeedback } = useTelegram();
   const { t } = useTranslation();
@@ -53,8 +59,10 @@ export function useFinance() {
   const setOptimisticStatus = useFinanceStore((state) => state.setOptimisticStatus);
   const telegramId = user?.id ?? Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
   const statusKey = ["status", telegramId] as const;
-  const reportKey = ["report", telegramId] as const;
-  const breakdownKey = ["categoryBreakdown", telegramId] as const;
+  const reportBaseKey = ["report", telegramId] as const;
+  const breakdownBaseKey = ["categoryBreakdown", telegramId] as const;
+  const reportKey = [...reportBaseKey, options.reportMonthKey ?? null] as const;
+  const breakdownKey = [...breakdownBaseKey, options.reportMonthKey ?? null] as const;
   const transactionsBaseKey = ["transactions", telegramId] as const;
 
   const statusQuery = useQuery({
@@ -63,12 +71,16 @@ export function useFinance() {
     queryFn: () => api.initUser(initData),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
+    refetchInterval: 1000 * 60 * 15,
+    refetchIntervalInBackground: false,
+    retry: 2,
   });
+
 
   const reportQuery = useQuery({
     queryKey: reportKey,
     enabled: !!initData,
-    queryFn: () => api.getReport(initData),
+    queryFn: () => api.getReport(initData, options.reportMonthKey),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
@@ -76,7 +88,7 @@ export function useFinance() {
   const breakdownQuery = useQuery({
     queryKey: breakdownKey,
     enabled: !!initData,
-    queryFn: () => api.getCategoryBreakdown(initData),
+    queryFn: () => api.getCategoryBreakdown(initData, options.reportMonthKey),
     staleTime: 30_000,
     refetchOnWindowFocus: false,
   });
@@ -91,8 +103,10 @@ export function useFinance() {
     if (statusQuery.data) {
       useOnboardingStore.getState().syncFromServer(statusQuery.data.user.onboardingCompleted);
       syncLanguageFromServer(statusQuery.data.user.language);
+      setGlobalRates(statusQuery.data.rates);
     }
   }, [statusQuery.data]);
+
 
   const liveStatus = optimisticStatus ?? statusQuery.data ?? null;
 
@@ -113,12 +127,13 @@ export function useFinance() {
     startTransition(() => {
       setOptimisticStatus(null);
       queryClient.setQueryData(statusKey, status);
+      setGlobalRates(status.rates);
     });
   }
 
   function invalidateRelated(options?: { refreshStatus?: boolean }): void {
-    queryClient.invalidateQueries({ queryKey: reportKey }).catch(() => undefined);
-    queryClient.invalidateQueries({ queryKey: breakdownKey }).catch(() => undefined);
+    queryClient.invalidateQueries({ queryKey: reportBaseKey }).catch(() => undefined);
+    queryClient.invalidateQueries({ queryKey: breakdownBaseKey }).catch(() => undefined);
     queryClient.invalidateQueries({ queryKey: transactionsBaseKey }).catch(() => undefined);
 
     if (options?.refreshStatus) {
@@ -331,6 +346,43 @@ export function useFinance() {
     },
   });
 
+  const updateLanguageMutation = useMutation({
+    mutationFn: (language: string) => api.setLanguage(initData, language),
+    onMutate: async (language) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+
+      if (!current) {
+        return { previous: null };
+      }
+
+      setOptimisticStatus({
+        ...current,
+        user: {
+          ...current.user,
+          language,
+        },
+      });
+
+      return { previous: current };
+    },
+    onError: (error, _variables, context) => {
+      setOptimisticStatus(context?.previous ?? null);
+      notifyError(error);
+    },
+    onSuccess: (_, language) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+      if (current) {
+        syncStatus({
+          ...current,
+          user: {
+            ...current.user,
+            language,
+          },
+        });
+      }
+    },
+  });
+
   const saveRecurringTransactionMutation = useMutation({
     mutationFn: (template: RecurringTransactionPayload) => api.saveRecurringTransaction(initData, template),
     onSuccess: (status) => {
@@ -377,6 +429,36 @@ export function useFinance() {
     },
   });
 
+  const convertCurrencyMutation = useMutation({
+    mutationFn: ({ rate }: { rate: number }) => api.convertCurrency(initData, rate),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
+      notifySuccess(t("feedback.currencyConverted"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const refreshRatesMutation = useMutation({
+    mutationFn: () => api.refreshRates(initData),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.ratesUpdated"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const processVoiceMutation = useMutation({
+    mutationFn: ({ base64Audio }: { base64Audio: string }) => api.processVoice(initData, base64Audio),
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
   return {
     telegramId,
     status: liveStatus,
@@ -398,5 +480,10 @@ export function useFinance() {
     applyRecurringTransactionMutation,
     newMonthMutation,
     updateBalanceMutation,
+    updateLanguageMutation,
+    convertCurrencyMutation,
+    refreshRatesMutation,
+    processVoiceMutation,
   };
+
 }

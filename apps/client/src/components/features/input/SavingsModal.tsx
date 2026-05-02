@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from "react";
-
 import { useTranslation } from "react-i18next";
-
-import { Button, Input, Modal } from "@/components/ui";
+import { Button, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 import { formatMoney } from "@/utils/format";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
+
 
 interface SavingsModalProps {
   amount: number;
@@ -47,24 +46,24 @@ export function SavingsModal({ amount, isOpen, isPending, onClose, onSelect }: S
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+        <ModalContainer placement="center" size="sm">
+          <ModalDialog>
+            <ModalCloseTrigger />
 
-            <Modal.Header>
+            <ModalHeader>
               <div className="flex flex-col items-start gap-2">
                 <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {t("savings.setup")}
                 </p>
-                <Modal.Heading>{t("savings.question")}</Modal.Heading>
+                <ModalHeading>{t("savings.question")}</ModalHeading>
                 <p className="m-0 text-sm text-[var(--muted)]">
                   {t("savings.incomeAmount", { amount: formatMoney(amount) })}
                 </p>
               </div>
-            </Modal.Header>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
               <div className="flex flex-col gap-3">
                 <div className="grid grid-cols-3 gap-2">
                   {quickActions.map(({ key, label, value }) => (
@@ -108,10 +107,11 @@ export function SavingsModal({ amount, isOpen, isPending, onClose, onSelect }: S
                   {t("savings.helperText", { amount: formatMoney(amount) })}
                 </p>
               </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+            </ModalBody>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </Modal>
   );
 }
+

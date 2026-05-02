@@ -16,5 +16,6 @@
   "reminder_track_habit": "🔁 家計管理は習慣、習慣は積み重なる！Save Upに今日の取引を記録しましょう。",
   "reminder_small_wins": "🌟 節約した金額はどんな少額でも大切です！財務的自由への一歩、続けましょう！",
   "reminder_review_spending": "🔍 今週の支出を2分で振り返りましょう。意外な支出パターンが見つかるかも！",
-  "reminder_future_self": "✨ 今日の賢いお金の判断に、未来の自分が感謝するはずです。Save Upを開きましょう！"
+  "reminder_future_self": "✨ 今日の賢いお金の判断に、未来の自分が感謝するはずです。Save Upを開きましょう！",
+  "voice_limit_reached": "⚠️ 1日のAI音声リクエストの制限（5回）に達しました。明日またお試しください。"
 }

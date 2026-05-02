@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Saver",
@@ -10,7 +10,12 @@
     "synced": "Synced",
     "mock": "Mock",
     "live": "Live",
-    "cancel": "Cancel"
+    "cancel": "Cancel",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "Hello, {{name}}",
@@ -93,7 +98,8 @@
     "newMonthCaption": "New month",
     "newMonthTitle": "Close out the month",
     "newMonthAction": "Reset monthly spending",
-    "ops": "{{count}} items"
+    "ops": "{{count}} items",
+    "monthSelector": "Report month"
   },
   "monthReport": {
     "snapshot": "Summary",
@@ -119,8 +125,6 @@
     "resetDataModalQuestion": "Reset all account data?",
     "resetDataModalDescription": "This will permanently remove all transactions and savings progress, and return the account to a clean state.",
     "resetDataConfirm": "Reset data",
-    "restartTutorial": "Restart tutorial",
-    "restartTutorialDescription": "Walk through the app guide again from the beginning.",
     "restartTutorial": "Restart tutorial",
     "restartTutorialDescription": "Walk through the app guide again from the beginning.",
     "themeAuto": "Auto",
@@ -154,7 +158,9 @@
     "currencyKzt": "Kazakhstani tenge (KZT)",
     "currencyTry": "Turkish lira (TRY)",
     "currencyGbp": "British pound (GBP)",
-    "currencyCny": "Chinese yuan (CNY)"
+    "currencyCny": "Chinese yuan (CNY)",
+    "exchangeRates": "Exchange Rates",
+    "refresh": "Refresh"
   },
   "admin": {
     "title": "Admin panel",
@@ -293,12 +299,16 @@
     "recurringSaved": "Recurring action saved",
     "recurringDeleted": "Recurring action deleted",
     "recurringApplied": "Recurring action applied",
+    "currencyConverted": "Amounts converted successfully",
     "errors": {
       "balanceNegative": "Operation would make balance negative",
       "savingsNegative": "Operation would make savings negative",
       "insufficientBalance": "Not enough money on balance",
-      "insufficientSavings": "Not enough money in savings"
-    }
+      "insufficientSavings": "Not enough money in savings",
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    },
+    "ratesUpdated": "Exchange rates updated"
   },
   "analytics": {
     "title": "Expense breakdown",
@@ -306,7 +316,11 @@
     "totalExpenses": "Total expenses",
     "transactions": "{{count}} items",
     "ofTotal": "{{pct}}% of total",
-    "noData": "No expense data yet this month."
+    "noData": "No expense data yet this month.",
+    "chartTitle": "Category breakdown",
+    "topCategory": "Top category",
+    "howToReadTitle": "Longer bar means a bigger share of spending.",
+    "howToReadDescription": "Start with the total, then check the category with the longest bar to find the main spending area."
   },
   "onboarding": {
     "skip": "Skip",
@@ -343,15 +357,19 @@
     },
     "report-tabs": {
       "title": "Report modes",
-      "description": "The report has separate modes for income, spending, category analytics, and full transaction history."
+      "description": "Open Analytics to see spending by category. You can still switch to income, spending, or full history here."
+    },
+    "report-month": {
+      "title": "Report month",
+      "description": "Choose any month here to view that month's income, spending, analytics, and history. Pick a past month to compare it with the current one."
     },
     "report-summary": {
-      "title": "Monthly summary",
-      "description": "The top area shows the most important monthly numbers. Analytics makes it easier to spot the biggest spending category."
+      "title": "Analytics overview",
+      "description": "Start with total expenses and the top category. They show how much was spent and where the main share went."
     },
     "report-details": {
-      "title": "Detailed report",
-      "description": "This area displays the full statistics, category breakdown, or transaction history depending on the selected mode."
+      "title": "Category bars",
+      "description": "Each row is a category: the amount is on the right, the percent shows its share, and the bar makes categories easy to compare."
     },
     "report-new-month": {
       "title": "New month",
@@ -383,5 +401,13 @@
     "title": "This route does not exist",
     "description": "Return to the dashboard to continue tracking your budget.",
     "action": "Back to dashboard"
+  },
+  "ai": {
+    "startRecording": "Start recording",
+    "stopRecording": "Stop recording",
+    "recording": "Recording",
+    "resultTitle": "Detected Transaction",
+    "creditsRemaining": "Daily requests left: {{count}}",
+    "creditsExhausted": "Daily AI limit reached"
   }
 }

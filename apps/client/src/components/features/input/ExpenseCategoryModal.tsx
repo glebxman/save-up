@@ -1,8 +1,8 @@
 import { useTranslation } from "react-i18next";
-
 import type { ExpenseCategory } from "@/types/finance";
 import { categoryMeta, EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
-import { Button, Modal } from "@/components/ui";
+import { Button, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
+
 
 interface ExpenseCategoryModalProps {
   isOpen: boolean;
@@ -13,7 +13,6 @@ interface ExpenseCategoryModalProps {
   title?: string;
   question?: string;
 }
-
 
 export function ExpenseCategoryModal({
   isOpen,
@@ -28,21 +27,21 @@ export function ExpenseCategoryModal({
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+        <ModalContainer placement="center" size="sm">
+          <ModalDialog>
+            <ModalCloseTrigger />
 
-            <Modal.Header>
+            <ModalHeader>
               <div className="flex flex-col items-start gap-2">
                 <p className="m-0 text-sm font-semibold text-[var(--modal-eyebrow)]">
                   {title ?? t("expenseCategory.title")}
                 </p>
-                <Modal.Heading>{question ?? t("expenseCategory.question")}</Modal.Heading>
+                <ModalHeading>{question ?? t("expenseCategory.question")}</ModalHeading>
               </div>
-            </Modal.Header>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
               <div className="grid grid-cols-4 gap-2">
                 {EXPENSE_CATEGORIES.map((key) => {
                   const meta = categoryMeta[key];
@@ -63,10 +62,11 @@ export function ExpenseCategoryModal({
                   );
                 })}
               </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+            </ModalBody>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </Modal>
   );
 }
+

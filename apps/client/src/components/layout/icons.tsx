@@ -15,9 +15,10 @@ export {
   ClockIcon,
   XMarkIcon,
   InboxIcon as EmptyIcon,
-  MagnifyingGlassIcon as SearchIcon,
-  Bars3Icon as MenuIcon,
+  MicrophoneIcon,
+  StopIcon,
 } from "@heroicons/react/24/solid";
+
 
 export function FoodIcon(props: SVGProps<SVGSVGElement>) {
   return (

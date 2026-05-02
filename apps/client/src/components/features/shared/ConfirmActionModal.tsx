@@ -1,4 +1,4 @@
-import { Button, Modal } from "@/components/ui";
+import { Button, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 
 interface ConfirmActionModalProps {
   isOpen: boolean;
@@ -25,19 +25,19 @@ export function ConfirmActionModal({
 }: ConfirmActionModalProps) {
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <Modal.Container placement="center" size="sm">
-          <Modal.Dialog>
-            <Modal.CloseTrigger />
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+        <ModalContainer placement="center" size="sm">
+          <ModalDialog>
+            <ModalCloseTrigger />
 
-            <Modal.Header>
+            <ModalHeader>
               <div className="flex flex-col items-start gap-2">
                 <p className="m-0 text-sm font-semibold text-[var(--modal-warning-eyebrow)]">{title}</p>
-                <Modal.Heading>{question}</Modal.Heading>
+                <ModalHeading>{question}</ModalHeading>
               </div>
-            </Modal.Header>
+            </ModalHeader>
 
-            <Modal.Body>
+            <ModalBody>
               <div className="flex flex-col gap-3">
                 {description ? <p className="m-0 text-sm text-[var(--muted)]">{description}</p> : null}
 
@@ -50,10 +50,11 @@ export function ConfirmActionModal({
                   </Button>
                 </div>
               </div>
-            </Modal.Body>
-          </Modal.Dialog>
-        </Modal.Container>
-      </Modal.Backdrop>
+            </ModalBody>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </Modal>
   );
 }
+

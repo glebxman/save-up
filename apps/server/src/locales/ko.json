@@ -16,5 +16,6 @@
   "reminder_track_habit": "🔁 재정 기록은 습관이고, 습관은 복리로 쌓입니다! Save Up에 오늘의 거래를 기록하세요.",
   "reminder_small_wins": "🌟 절약한 모든 금액이 중요합니다! 조금이라도 저축하면 재정적 자유를 향한 한 걸음입니다. 계속하세요!",
   "reminder_review_spending": "🔍 이번 주 지출을 2분 동안 검토해 보세요. 놀라운 패턴을 발견할 수도 있어요!",
-  "reminder_future_self": "✨ 오늘 내리는 현명한 재정적 결정 하나하나에 미래의 당신이 감사할 것입니다. Save Up을 열어보세요!"
+  "reminder_future_self": "✨ 오늘 내리는 현명한 재정적 결정 하나하나에 미래의 당신이 감사할 것입니다. Save Up을 열어보세요!",
+  "voice_limit_reached": "⚠️ 일일 AI 음성 요청 5회를 모두 사용하셨습니다. 내일 다시 방문해주세요!"
 }

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
@@ -7,8 +7,12 @@ import { TransactionHistoryView } from "@/components/features/report/Transaction
 import { categoryMeta } from "@/components/features/shared/categoryMeta";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
-import type { ExpenseCategory } from "@/types/finance";
+import type { ExpenseCategory, TransactionFilters } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
+
+function getCurrentMonthKey(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
 
 type ReportMode = "income" | "spending" | "analytics" | "history";
 
@@ -48,8 +52,18 @@ function isExpenseCategory(value: string): value is ExpenseCategory {
 
 export function Report() {
   const { t } = useTranslation();
-  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation } = useFinance();
+  const [selectedMonthKey, setSelectedMonthKey] = useState(getCurrentMonthKey());
+  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation } = useFinance({
+    reportMonthKey: selectedMonthKey,
+  });
   const [mode, setMode] = useState<ReportMode>("income");
+  const [historyFilters, setHistoryFilters] = useState<TransactionFilters>({
+    monthKey: selectedMonthKey,
+    type: "all",
+    category: "all",
+    search: "",
+    includeDeleted: false,
+  });
   const activeReport = report ?? {
     monthKey: "",
     incomeTotal: 0,
@@ -59,6 +73,13 @@ export function Report() {
     netSavingsTotal: 0,
     transactionCount: 0,
   };
+
+  useEffect(() => {
+    setHistoryFilters((current) => ({
+      ...current,
+      monthKey: selectedMonthKey,
+    }));
+  }, [selectedMonthKey]);
 
   const topBreakdownItems = useMemo(
     () => [...(breakdown?.items ?? [])].sort((a, b) => b.total - a.total).slice(0, 3),
@@ -212,20 +233,45 @@ export function Report() {
   return (
     <div className="space-y-4">
       <Card className="overflow-hidden" variant="default">
-        <CardHeader>
+        <CardHeader className="grid gap-4 sm:grid-cols-[minmax(0,1fr)_auto] sm:items-start">
           <div>
             <CardDescription>{t("report.statistics")}</CardDescription>
             <CardTitle className="mt-1 text-[2rem] tracking-normal">{activeReport.monthKey}</CardTitle>
           </div>
+
+          <label
+            className="grid gap-1.5 rounded-[20px] bg-[var(--surface-secondary)] px-3 py-2 text-xs text-[var(--muted)] sm:min-w-[10.5rem]"
+            data-onboarding="report-month"
+          >
+            <span>{t("report.monthSelector")}</span>
+            <input
+              className="min-h-10 rounded-[16px] border border-[var(--field-border)] bg-[var(--field-background)] px-3 text-sm font-semibold text-[var(--field-foreground)] outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
+              max={getCurrentMonthKey()}
+              onChange={(event) => {
+                if (event.target.value) {
+                  setSelectedMonthKey(event.target.value);
+                }
+              }}
+              type="month"
+              value={selectedMonthKey}
+            />
+          </label>
         </CardHeader>
 
         <CardContent>
-          <div className="flex rounded-[22px] bg-[var(--surface-secondary)] p-1" data-onboarding="report-tabs">
+          <div className="relative flex rounded-[22px] bg-[var(--surface-secondary)] p-1" data-onboarding="report-tabs">
+            <div
+              className="absolute bottom-1 top-1 rounded-[18px] bg-[var(--accent)] transition-transform duration-300 ease-[cubic-bezier(0.4,0,0.2,1)]"
+              style={{
+                width: `calc((100% - 8px) / ${modes.length})`,
+                transform: `translateX(calc(100% * ${modes.indexOf(mode)}))`,
+              }}
+            />
             {modes.map((m) => (
               <button
                 key={m}
-                className={`flex-1 rounded-[18px] px-3 py-2 text-xs transition-colors ${
-                  mode === m ? "bg-[var(--accent)] font-semibold text-[var(--accent-foreground)]" : "text-[var(--muted)]"
+                className={`relative z-10 flex-1 rounded-[18px] px-3 py-2 text-xs transition-colors duration-300 ${
+                  mode === m ? "font-semibold text-[var(--accent-foreground)]" : "text-[var(--muted)] hover:text-[var(--foreground)]"
                 }`}
                 onClick={() => setMode(m)}
               >
@@ -291,7 +337,7 @@ export function Report() {
 
       <div data-onboarding="report-details">
         {mode === "history" ? (
-          <TransactionHistoryView />
+          <TransactionHistoryView filters={historyFilters} hideMonthFilter onFiltersChange={setHistoryFilters} />
         ) : mode === "analytics" && breakdown ? (
           <CategoryBreakdownView breakdown={breakdown} />
         ) : mode !== "analytics" ? (

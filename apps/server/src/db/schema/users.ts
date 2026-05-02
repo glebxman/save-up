@@ -17,9 +17,13 @@ export const users = pgTable(
     savingsPct: smallint("savings_pct").notNull().default(20),
     savingsGoal: numeric("savings_goal", { precision: 15, scale: 2, mode: "number" }).notNull().default(0),
     recurringTemplates: jsonb("recurring_templates").$type<RecurringTransaction[]>().notNull().default([]),
+    categoryLimits: jsonb("category_limits").notNull().default({}),
     monthlyExp: numeric("monthly_exp", { precision: 15, scale: 2, mode: "number" }).notNull().default(0),
     onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
     language: varchar("language", { length: 5 }),
+    voiceDailyUsed: smallint("voice_daily_used").notNull().default(0),
+    voiceDailyDate: varchar("voice_daily_date", { length: 10 }),
+    lastReminderSentAt: timestamp("last_reminder_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({

@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Kullanıcı",
@@ -10,7 +10,12 @@
     "synced": "Senkronize",
     "mock": "Mock",
     "live": "Canlı",
-    "cancel": "İptal"
+    "cancel": "İptal",
+    "type": "Type",
+    "amount": "Amount",
+    "category": "Category",
+    "note": "Note",
+    "confirm": "Confirm"
   },
   "shell": {
     "greeting": "Merhaba, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "Yeni ay",
     "newMonthTitle": "Ayı kapat",
     "newMonthAction": "Aylık harcamayı sıfırla",
-    "ops": "{{count}} öğe"
+    "ops": "{{count}} öğe",
+    "monthSelector": "Rapor ayi"
   },
   "monthReport": {
     "snapshot": "Özet",
@@ -148,7 +154,9 @@
     "currencyKzt": "Kazakistan tengesi (KZT)",
     "currencyTry": "Türk lirası (TRY)",
     "currencyGbp": "İngiliz sterlini (GBP)",
-    "currencyCny": "Çin yuanı (CNY)"
+    "currencyCny": "Çin yuanı (CNY)",
+    "exchangeRates": "Döviz kurları",
+    "refresh": "Yenile"
   },
   "admin": {
     "title": "Admin paneli",
@@ -286,7 +294,13 @@
     "goalUpdated": "Birikim hedefi güncellendi",
     "recurringSaved": "Tekrarlayan işlem kaydedildi",
     "recurringDeleted": "Tekrarlayan işlem silindi",
-    "recurringApplied": "Tekrarlayan işlem uygulandı"
+    "recurringApplied": "Tekrarlayan işlem uygulandı",
+    "currencyConverted": "Tutarlar başarıyla dönüştürüldü",
+    "ratesUpdated": "Döviz kurları güncellendi",
+    "errors": {
+      "micAccess": "Microphone access denied",
+      "aiFailed": "AI could not process this audio"
+    }
   },
   "analytics": {
     "title": "Gider dağılımı",
@@ -294,7 +308,11 @@
     "totalExpenses": "Toplam gider",
     "transactions": "{{count}} öğe",
     "ofTotal": "Toplamın {{pct}}%",
-    "noData": "Bu ay için gider verisi yok."
+    "noData": "Bu ay için gider verisi yok.",
+    "chartTitle": "Kategori dagilimi",
+    "topCategory": "En buyuk kategori",
+    "howToReadTitle": "Cubuk ne kadar uzunsa harcama payi o kadar buyuktur.",
+    "howToReadDescription": "Once toplam harcamaya bakin, sonra en uzun cubuga sahip kategoriyi kontrol edin: ana harcama alani orasidir."
   },
   "onboarding": {
     "skip": "Geç",
@@ -305,13 +323,17 @@
       "title": "Save Up'a hoş geldiniz!",
       "description": "Uygulamanın nasıl çalıştığına hızlıca bakalım. Sadece bir dakika sürer."
     },
+    "navigation": {
+      "title": "Alt menü",
+      "description": "İstediğiniz zaman panele dönmek, raporu açmak veya ayarlara gitmek için bu düğmeleri kullanın."
+    },
     "balance": {
       "title": "Bakiyeniz",
       "description": "Bu mevcut bakiyenizdir. Tutarı doğrudan düzenlemek için sayıya dokunun."
     },
     "amount-input": {
       "title": "Gelir ve gider",
-      "description": "Buraya tutarı girin, ardından Gelir veya Gider'e dokunun. Kategori seçin ve hazır."
+      "description": "Bir tutar girin, gerekirse işlem para birimini seçin ve Gelir veya Gider'e dokunun. Uygulama bunu otomatik olarak temel para biriminize dönüştürecektir."
     },
     "daily-limit": {
       "title": "Günlük bütçe",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "Rapor modları",
-      "description": "Gelir, harcama, analitik ve tam işlem geçmişi arasında geçiş yapın."
+      "description": "Kategori bazli harcamalari gormek icin Analitigi acin. Buradan gelir, gider veya tam gecmise de gecebilirsiniz."
+    },
+    "report-month": {
+      "title": "Rapor ayi",
+      "description": "Buradan bir ay secerek sadece o donemin gelirlerini, giderlerini, analizini ve gecmisini gorebilirsin. Gecen ayi veya bir yil onceki ayi karsilastirmak icin sec."
     },
     "report-summary": {
-      "title": "Aylık özet",
-      "description": "Geçerli ay için temel rakamlar: toplamlar, kategoriler ve eğilimler."
+      "title": "Analitik ozeti",
+      "description": "Toplam harcama ve en buyuk kategoriyle baslayin. Ne kadar harcandigini ve ana payin nereye gittigini gosterirler."
     },
     "report-details": {
-      "title": "Ayrıntılı rapor",
-      "description": "Bu alan, seçilen moda bağlı olarak tam istatistikleri, kategori dökümünü veya işlem geçmişini gösterir."
+      "title": "Kategori cubuklari",
+      "description": "Her satir bir kategoridir: sagda tutar, yuzde toplam harcamadaki payi gosterir, cubuk ise karsilastirmayi kolaylastirir."
     },
     "report-new-month": {
       "title": "Yeni ay",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "Para birimi",
-      "description": "Tüm tutarları göstermek için tercih ettiğiniz para birimini seçin."
+      "description": "Tüm bakiyeler ve raporlar için para birimini seçin. Bunu değiştirmek, tüm geçmiş verilerinizi otomatik olarak yeniden hesaplayacaktır."
     },
     "settings-reset": {
       "title": "Verileri sıfırla",
@@ -367,5 +393,13 @@
     "title": "Bu rota mevcut değil",
     "description": "Bütçenizi takip etmeye devam etmek için panoya dönün.",
     "action": "Panoya dön"
+  },
+  "ai": {
+    "startRecording": "Kaydı başlat",
+    "stopRecording": "Durdur",
+    "recording": "Kaydediliyor",
+    "resultTitle": "Tespit edilen işlem",
+    "creditsRemaining": "Kalan günlük istekler: {{count}}",
+    "creditsExhausted": "Günlük AI sınırına ulaşıldı"
   }
 }

@@ -118,3 +118,25 @@ export function getCategoryBreakdown(initData: string, monthKey?: string): Promi
 export function newMonth(initData: string): Promise<Status> {
   return rpcRequest("finance.newMonth", { initData });
 }
+
+export function convertCurrency(initData: string, rate: number): Promise<Status> {
+  return rpcRequest("finance.convertCurrency", { initData, rate });
+}
+
+export function refreshRates(initData: string): Promise<Status> {
+  return rpcRequest("finance.refreshRates", { initData });
+}
+
+export function processVoice(
+  initData: string,
+  base64Audio: string,
+): Promise<{
+  type: "expense" | "income";
+  amount: number;
+  category: ExpenseCategory;
+  note?: string;
+} | null> {
+  return rpcRequest("finance.processVoice", { initData, base64Audio });
+}
+
+

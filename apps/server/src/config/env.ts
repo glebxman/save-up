@@ -43,7 +43,7 @@ const envSchema = z.object({
   CACHE_TTL_SECONDS: z.coerce.number().int().positive().default(300),
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   RATE_LIMIT_WINDOW: z.string().default("1 minute"),
-  OPENROUTER_API_KEY: z.string().optional(),
+  OPENAI_API_KEY: z.string().optional(),
 });
 
 const parsed = envSchema.safeParse(process.env);

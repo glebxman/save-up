@@ -1,4 +1,4 @@
-﻿{
+{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Foydalanuvchi",
@@ -10,7 +10,12 @@
     "synced": "Sinxronlangan",
     "mock": "Mock",
     "live": "Jonli",
-    "cancel": "Bekor qilish"
+    "cancel": "Bekor qilish",
+    "type": "Turi",
+    "amount": "Summa",
+    "category": "Kategoriya",
+    "note": "Eslatma",
+    "confirm": "Tasdiqlash"
   },
   "shell": {
     "greeting": "Salom, {{name}}",
@@ -89,7 +94,8 @@
     "newMonthCaption": "Yangi oy",
     "newMonthTitle": "Oyni yopish",
     "newMonthAction": "Oylik xarajatlarni tozalash",
-    "ops": "{{count}} ta"
+    "ops": "{{count}} ta",
+    "monthSelector": "Hisobot oyi"
   },
   "monthReport": {
     "snapshot": "Xulosa",
@@ -148,7 +154,9 @@
     "currencyKzt": "Qozog'iston tengesi (KZT)",
     "currencyTry": "Turk lirasi (TRY)",
     "currencyGbp": "Britaniya funti (GBP)",
-    "currencyCny": "Xitoy yuani (CNY)"
+    "currencyCny": "Xitoy yuani (CNY)",
+    "exchangeRates": "Valyuta kurslari",
+    "refresh": "Yangilash"
   },
   "admin": {
     "title": "Admin panel",
@@ -286,7 +294,13 @@
     "goalUpdated": "Jamg'arma maqsadi yangilandi",
     "recurringSaved": "Shablon saqlandi",
     "recurringDeleted": "Shablon o'chirildi",
-    "recurringApplied": "Shablon qo'llandi"
+    "recurringApplied": "Shablon qo'llandi",
+    "currencyConverted": "Summalar muvaffaqiyatli konvertatsiya qilindi",
+    "ratesUpdated": "Valyuta kurslari yangilandi",
+    "errors": {
+      "micAccess": "Mikrofonga ruxsat berilmadi",
+      "aiFailed": "AI ovozni tani olmadi"
+    }
   },
   "analytics": {
     "title": "Xarajatlar taqsimoti",
@@ -294,7 +308,11 @@
     "totalExpenses": "Jami xarajatlar",
     "transactions": "{{count}} ta",
     "ofTotal": "{{pct}}% umumiydan",
-    "noData": "Bu oy uchun xarajat ma'lumotlari hali yo'q."
+    "noData": "Bu oy uchun xarajat ma'lumotlari hali yo'q.",
+    "chartTitle": "Kategoriyalar bo'yicha taqsimot",
+    "topCategory": "Eng katta kategoriya",
+    "howToReadTitle": "Shkala qancha uzun bo'lsa, xarajat ulushi shuncha katta.",
+    "howToReadDescription": "Avval jami xarajatni ko'ring, keyin eng uzun shkalali kategoriyani tekshiring: asosiy xarajat shu yerda."
   },
   "onboarding": {
     "skip": "O'tkazish",
@@ -305,13 +323,17 @@
       "title": "Save Up'ga xush kelibsiz!",
       "description": "Ilova qanday ishlashini birga ko'rib chiqamiz. Bu bir daqiqa oladi."
     },
+    "navigation": {
+      "title": "Pastki menyu",
+      "description": "Istalgan vaqtda boshqaruv paneliga qaytish, hisobotni ochish yoki sozlamalarga o'tish uchun ushbu tugmalardan foydalaning."
+    },
     "balance": {
       "title": "Balans",
       "description": "Bu yerda joriy balansingiz ko'rsatiladi. Raqamni o'zgartirish uchun ustiga bosing."
     },
     "amount-input": {
       "title": "Kirim va chiqim",
-      "description": "Bu yerga summani kiriting, so'ng Kirim yoki Chiqim tugmasini bosing. Kategoriyani tanlang — tayyor."
+      "description": "Summani kiriting, kerak bo'lsa valyutani tanlang va Daromad yoki Xarajat tugmasini bosing. Ilova uni avtomatik ravishda asosiy valyutangizga o'giradi."
     },
     "daily-limit": {
       "title": "Kunlik byudjet",
@@ -327,15 +349,19 @@
     },
     "report-tabs": {
       "title": "Hisobot rejimlari",
-      "description": "Kirim, chiqim, tahlil va to'liq tarix o'rtasida almashing."
+      "description": "Kategoriyalar bo'yicha xarajatlarni ko'rish uchun Tahlilni oching. Bu yerdan kirim, chiqim yoki to'liq tarixga ham o'tish mumkin."
+    },
+    "report-month": {
+      "title": "Hisobot oyi",
+      "description": "Bu yerdan istalgan oyni tanlab, aynan shu davrdagi daromad, xarajat, tahlil va tarixni ko'rishingiz mumkin. O'tgan oy yoki bir yil oldingi oyni solishtirish uchun tanlang."
     },
     "report-summary": {
-      "title": "Oylik xulosa",
-      "description": "Joriy oy uchun asosiy raqamlar: jami, kategoriyalar va tendentsiyalar."
+      "title": "Tahlil ko'rinishi",
+      "description": "Jami xarajat va eng katta kategoriyadan boshlang. Ular qancha sarflanganini va pulning asosiy qismi qayerga ketganini ko'rsatadi."
     },
     "report-details": {
-      "title": "Batafsil hisobot",
-      "description": "Ushbu hudud tanlangan rejimga qarab to'liq statistika, toifalar taqsimoti yoki tranzaksiyalar tarixini ko'rsatadi."
+      "title": "Kategoriya shkalalari",
+      "description": "Har bir qator kategoriya: o'ngda summa, foiz umumiy xarajatdagi ulushni ko'rsatadi, shkala esa solishtirishni osonlashtiradi."
     },
     "report-new-month": {
       "title": "Yangi oy",
@@ -351,7 +377,7 @@
     },
     "settings-currency": {
       "title": "Valyuta",
-      "description": "Barcha summalarni ko'rsatish uchun qulay valyutani tanlang."
+      "description": "Barcha balanslar va hisobotlar uchun valyutani tanlang. Uni o'zgartirish barcha tarixiy ma'lumotlaringizni avtomatik ravishda qayta hisoblab chiqadi."
     },
     "settings-reset": {
       "title": "Ma'lumotlarni tozalash",
@@ -367,5 +393,13 @@
     "title": "Bunday yo'nalish mavjud emas",
     "description": "Byudjetni davom ettirish uchun asosiy sahifaga qayting.",
     "action": "Asosiyga qaytish"
+  },
+  "ai": {
+    "startRecording": "Yozishni boshlash",
+    "stopRecording": "To'xtatish",
+    "recording": "Yozilmoqda",
+    "resultTitle": "Aniqlangan operatsiya",
+    "creditsRemaining": "Kunlik qolgan so'rovlar: {{count}}",
+    "creditsExhausted": "Kunlik AI limiti tugadi"
   }
 }
