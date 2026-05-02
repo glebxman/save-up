@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Пользователь",
@@ -121,6 +121,8 @@
     "resetDataModalQuestion": "Сбросить все данные аккаунта?",
     "resetDataModalDescription": "Все операции и прогресс накоплений будут удалены без возможности восстановления. Аккаунт станет чистым, как новый.",
     "resetDataConfirm": "Сбросить данные",
+    "restartTutorial": "Пройти обучение заново",
+    "restartTutorialDescription": "Запустить пошаговое знакомство с приложением с самого начала.",
     "themeAuto": "Авто",
     "themeDark": "Тёмная",
     "themeLight": "Светлая",

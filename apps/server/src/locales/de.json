@@ -2,5 +2,19 @@
   "choose_language": "🌍 Bitte wähle deine Sprache:",
   "welcome": "👋 Hallo{name}! Willkommen bei Save Up!\n\nIch bin dein persönlicher Sparassistent. Lass uns deine finanziellen Ziele erreichen! 💰",
   "language_set": "✅ Sprache auf Deutsch eingestellt!",
-  "open_app": "📱 App öffnen"
+  "open_app": "📱 App öffnen",
+  "processing_voice": "🎙 Sprachnachricht wird verarbeitet...",
+  "voice_error": "❌ Die Transaktion konnte nicht erkannt werden. Bitte versuche es erneut.",
+  "voice_expense_saved": "✅ Ausgabe gespeichert: {amount} ({category})\n📝 {note}",
+  "voice_income_saved": "✅ Einnahme gespeichert: {amount}\n📝 {note}",
+  "reminder_add_expense": "💸 Hast du heute etwas ausgegeben? Vergiss nicht, es in Save Up zu erfassen!",
+  "reminder_add_income": "💰 Hast du etwas verdient? Erfasse dein Einkommen in Save Up und sieh, wie deine Ersparnisse wachsen!",
+  "reminder_check_balance": "📊 Schneller Kontostand-Check! Öffne Save Up und schau, wie deine Finanzen diesen Monat stehen.",
+  "reminder_savings_tip": "🏦 Spar-Tipp: Schon 10 % jedes Einkommens zu sparen macht langfristig einen riesigen Unterschied. Sind deine Ersparnisse auf Kurs?",
+  "reminder_daily_limit": "📅 Dein Tagesbudget ist dein Superpower! Schau dir dein Tageslimit in Save Up an und gib heute klüger aus.",
+  "reminder_monthly_goal": "🎯 Wie nah bist du deinem monatlichen Sparziel? Öffne Save Up und überprüfe deinen Fortschritt!",
+  "reminder_track_habit": "🔁 Finanzen tracken ist eine Gewohnheit, und Gewohnheiten wirken wie Zinseszins! Erfasse heute deine Transaktionen in Save Up.",
+  "reminder_small_wins": "🌟 Jeder gesparte Betrag zählt! Schon ein bisschen gespart ist ein Schritt zur finanziellen Freiheit. Weiter so!",
+  "reminder_review_spending": "🔍 Nimm dir 2 Minuten, um deine Ausgaben dieser Woche zu überprüfen. Du könntest überraschende Muster entdecken!",
+  "reminder_future_self": "✨ Dein zukünftiges Ich wird dir für jede kluge Finanzentscheidung danken, die du heute triffst. Öffne Save Up!"
 }

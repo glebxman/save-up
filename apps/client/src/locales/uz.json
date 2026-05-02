@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Foydalanuvchi",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "Hisobdagi barcha ma'lumotlar tozalansinmi?",
     "resetDataModalDescription": "Barcha amallar va jamg'arma progressi butunlay o'chiriladi. Hisob yangi va toza holatga qaytadi.",
     "resetDataConfirm": "Ma'lumotlarni tozalash",
+    "restartTutorial": "O'qitishni qaytadan boshlash",
+    "restartTutorialDescription": "Ilovani boshidan boshlab bosqichma-bosqich o'rganing.",
     "themeAuto": "Avto",
     "themeDark": "To'q",
     "themeLight": "Yorug'",

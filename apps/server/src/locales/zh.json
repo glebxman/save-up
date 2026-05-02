@@ -2,5 +2,19 @@
   "choose_language": "🌍 请选择您的语言：",
   "welcome": "👋 你好{name}！欢迎使用 Save Up！\n\n我是你的个人储蓄助手。让我们帮助你实现财务目标！💰",
   "language_set": "✅ 语言已设置为中文！",
-  "open_app": "📱 打开应用"
+  "open_app": "📱 打开应用",
+  "processing_voice": "🎙 正在处理您的语音消息...",
+  "voice_error": "❌ 无法识别交易。请重试。",
+  "voice_expense_saved": "✅ 支出已记录：{amount}（{category}）\n📝 {note}",
+  "voice_income_saved": "✅ 收入已记录：{amount}\n📝 {note}",
+  "reminder_add_expense": "💸 今天有消费吗？别忘了在 Save Up 中记录支出，小记录带来大洞察！",
+  "reminder_add_income": "💰 收到钱了吗？在 Save Up 中记录收入，看着您的储蓄不断增长！",
+  "reminder_check_balance": "📊 快速查看余额！打开 Save Up，看看本月财务状况如何。",
+  "reminder_savings_tip": "🏦 储蓄技巧：每次收入存下10%，时间长了会有巨大差别。您的储蓄计划进展如何？",
+  "reminder_daily_limit": "📅 您的每日预算是超能力！查看 Save Up 中的每日限额，今天花得更聪明。",
+  "reminder_monthly_goal": "🎯 距离您的月度储蓄目标还有多远？打开 Save Up 查看进度！",
+  "reminder_track_habit": "🔁 财务追踪是一种习惯，习惯会复利增长！在 Save Up 中记录今天的交易吧。",
+  "reminder_small_wins": "🌟 每笔储蓄都算数！就算省下一点也是走向财务自由的一步，继续加油！",
+  "reminder_review_spending": "🔍 花2分钟回顾本周消费，您可能会发现意想不到的规律！",
+  "reminder_future_self": "✨ 未来的你会感谢今天每一个明智的财务决定。打开 Save Up！"
 }

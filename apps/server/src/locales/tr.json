@@ -2,5 +2,19 @@
   "choose_language": "🌍 Lütfen dilinizi seçin:",
   "welcome": "👋 Merhaba{name}! Save Up'a hoş geldiniz!\n\nBen kişisel tasarruf asistanınızım. Finansal hedeflerinize ulaşmanıza yardımcı olalım! 💰",
   "language_set": "✅ Dil Türkçe olarak ayarlandı!",
-  "open_app": "📱 Uygulamayı Aç"
+  "open_app": "📱 Uygulamayı Aç",
+  "processing_voice": "🎙 Sesli mesajınız işleniyor...",
+  "voice_error": "❌ İşlem tanınamadı. Lütfen tekrar deneyin.",
+  "voice_expense_saved": "✅ Gider kaydedildi: {amount} ({category})\n📝 {note}",
+  "voice_income_saved": "✅ Gelir kaydedildi: {amount}\n📝 {note}",
+  "reminder_add_expense": "💸 Bugün bir şey harcadınız mı? Save Up'a gider eklemeyi unutmayın!",
+  "reminder_add_income": "💰 Para kazandınız mı? Save Up'a gelirinizi ekleyin ve birikimlerinizin büyümesini izleyin!",
+  "reminder_check_balance": "📊 Hızlı bakiye kontrolü! Save Up'ı açın ve bu ay finanslarınızın nasıl gittiğini görün.",
+  "reminder_savings_tip": "🏦 Tasarruf ipucu: Her gelirin %10'unu bir kenara koymak zamanla büyük fark yaratır. Birikimleriniz yolunda mı?",
+  "reminder_daily_limit": "📅 Günlük bütçeniz bir süpergüçtür! Save Up'taki günlük limitinizi kontrol edin ve bugün daha akıllı harcayın.",
+  "reminder_monthly_goal": "🎯 Aylık tasarruf hedefinize ne kadar yakınsınız? Save Up'ı açın ve ilerlemenizi kontrol edin!",
+  "reminder_track_habit": "🔁 Finansal takip bir alışkanlık, alışkanlıklar birikir! Save Up'a bugünkü işlemleri kaydedin.",
+  "reminder_small_wins": "🌟 Her tasarruf edilen miktar önemlidir! Az da olsa biriktirmek finansal özgürlüğe giden bir adımdır. Devam edin!",
+  "reminder_review_spending": "🔍 Bu haftaki harcamalarınızı gözden geçirmek için 2 dakika ayırın. Şaşırtıcı kalıplar bulabilirsiniz!",
+  "reminder_future_self": "✨ Gelecekteki kendiniz, bugün aldığınız her akıllı finansal karar için size teşekkür edecek. Save Up'ı açın!"
 }

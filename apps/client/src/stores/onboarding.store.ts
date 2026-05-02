@@ -55,6 +55,8 @@ interface OnboardingState {
   setInitData: (initData: string) => void;
   syncFromServer: (completed: boolean) => void;
   start: () => void;
+  restart: () => void;
+  forceRestarted: boolean;
   next: () => void;
   prev: () => void;
   skip: () => void;
@@ -64,13 +66,14 @@ interface OnboardingState {
 function markDone(initData: string | null) {
   writeCachedCompleted();
   if (initData) {
-    completeOnboarding(initData).catch(() => {});
+    completeOnboarding(initData).catch(() => { });
   }
 }
 
 export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   isCompleted: readCachedCompleted(),
   isActive: false,
+  forceRestarted: false,
   currentStep: 0,
   totalSteps: ONBOARDING_STEPS.length,
   initData: null,
@@ -80,18 +83,30 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
   },
 
   syncFromServer: (completed: boolean) => {
+    const { isCompleted, isActive, forceRestarted } = get();
+
     if (completed) {
       writeCachedCompleted();
-      set({ isCompleted: true, isActive: false });
-    } else if (!readCachedCompleted()) {
+      if (!forceRestarted) {
+        set({ isCompleted: true, isActive: false });
+      }
+    } else if (!isCompleted && !isActive) {
       set({ isCompleted: false });
+      setTimeout(() => useOnboardingStore.getState().start(), 0);
     }
   },
 
   start: () => {
-    if (!get().isCompleted) {
+    const { isCompleted, isActive } = get();
+    if (!isCompleted && !isActive) {
       set({ isActive: true, currentStep: 0 });
     }
+  },
+
+  restart: () => {
+    // Clear localStorage so it won't be treated as completed on next reload
+    try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    set({ isCompleted: false, isActive: true, currentStep: 0, forceRestarted: true });
   },
 
   next: () => {
@@ -112,11 +127,11 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 
   skip: () => {
     markDone(get().initData);
-    set({ isActive: false, isCompleted: true });
+    set({ isActive: false, isCompleted: true, forceRestarted: false });
   },
 
   complete: () => {
     markDone(get().initData);
-    set({ isActive: false, isCompleted: true });
+    set({ isActive: false, isCompleted: true, forceRestarted: false });
   },
 }));

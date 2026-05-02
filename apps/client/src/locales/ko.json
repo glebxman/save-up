@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "사용자",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "모든 계정 데이터를 초기화할까요?",
     "resetDataModalDescription": "모든 거래와 저축 진행 상황이 영구적으로 삭제되고 계정이 초기 상태로 돌아갑니다.",
     "resetDataConfirm": "데이터 초기화",
+    "restartTutorial": "튜토리얼 다시 시작",
+    "restartTutorialDescription": "앱 가이드를 처음부터 다시 살펴보세요.",
     "themeAuto": "자동",
     "themeDark": "다크",
     "themeLight": "라이트",

@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "ユーザー",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "すべてのアカウントデータをリセットしますか？",
     "resetDataModalDescription": "すべての取引と貯金進捗が完全に削除され、アカウントは初期状態に戻ります。",
     "resetDataConfirm": "データをリセット",
+    "restartTutorial": "チュートリアルを再開",
+    "restartTutorialDescription": "アプリのガイドを最初からもう一度確認できます。",
     "themeAuto": "自動",
     "themeDark": "ダーク",
     "themeLight": "ライト",

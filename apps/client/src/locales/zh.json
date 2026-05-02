@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "用户",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "重置所有账户数据？",
     "resetDataModalDescription": "这将永久删除所有交易和储蓄进度，并将账户恢复为干净状态。",
     "resetDataConfirm": "重置数据",
+    "restartTutorial": "重新开始教程",
+    "restartTutorialDescription": "从头开始逐步了解应用程序。",
     "themeAuto": "自动",
     "themeDark": "深色",
     "themeLight": "浅色",

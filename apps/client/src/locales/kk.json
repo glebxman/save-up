@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Пайдаланушы",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "Аккаунттағы барлық деректер тазалансын ба?",
     "resetDataModalDescription": "Бұл барлық операциялар мен жинақ прогресін біржола өшіріп, аккаунтты таза күйге қайтарады.",
     "resetDataConfirm": "Деректерді тазалау",
+    "restartTutorial": "Оқытуды қайта бастау",
+    "restartTutorialDescription": "Қолданбаны басынан бастап қадамдық нұсқаулықтан өтіңіз.",
     "themeAuto": "Авто",
     "themeDark": "Қараңғы",
     "themeLight": "Жарық",

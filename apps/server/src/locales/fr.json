@@ -2,5 +2,19 @@
   "choose_language": "🌍 Veuillez choisir votre langue :",
   "welcome": "👋 Bonjour{name} ! Bienvenue sur Save Up !\n\nJe suis votre assistant d'épargne personnel. Atteignons vos objectifs financiers ! 💰",
   "language_set": "✅ Langue définie sur Français !",
-  "open_app": "📱 Ouvrir l'appli"
+  "open_app": "📱 Ouvrir l'appli",
+  "processing_voice": "🎙 Traitement de votre message vocal...",
+  "voice_error": "❌ Impossible de reconnaître l'opération. Veuillez réessayer.",
+  "voice_expense_saved": "✅ Dépense enregistrée : {amount} ({category})\n📝 {note}",
+  "voice_income_saved": "✅ Revenu enregistré : {amount}\n📝 {note}",
+  "reminder_add_expense": "💸 Vous avez dépensé quelque chose aujourd'hui ? N'oubliez pas de l'enregistrer dans Save Up !",
+  "reminder_add_income": "💰 Vous avez reçu de l'argent ? Enregistrez vos revenus dans Save Up et regardez vos économies grandir !",
+  "reminder_check_balance": "📊 Vérification rapide du solde ! Ouvrez Save Up et voyez comment se portent vos finances ce mois-ci.",
+  "reminder_savings_tip": "🏦 Conseil d'épargne : même mettre de côté 10 % de chaque revenu fait une énorme différence à long terme. Vos économies sont-elles sur la bonne voie ?",
+  "reminder_daily_limit": "📅 Votre budget quotidien est un superpouvoir ! Vérifiez votre limite quotidienne dans Save Up et dépensez plus intelligemment aujourd'hui.",
+  "reminder_monthly_goal": "🎯 À quel point êtes-vous proche de votre objectif d'épargne mensuel ? Ouvrez Save Up et vérifiez votre progression !",
+  "reminder_track_habit": "🔁 Le suivi financier est une habitude, et les habitudes se cumulent ! Enregistrez les transactions d'aujourd'hui dans Save Up.",
+  "reminder_small_wins": "🌟 Chaque somme économisée compte ! Même peu épargné est un pas vers la liberté financière. Continuez !",
+  "reminder_review_spending": "🔍 Prenez 2 minutes pour passer en revue vos dépenses de cette semaine. Vous pourriez trouver des tendances surprenantes !",
+  "reminder_future_self": "✨ Votre futur vous remerciera pour chaque décision financière intelligente prise aujourd'hui. Ouvrez Save Up !"
 }

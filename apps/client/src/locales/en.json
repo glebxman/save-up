@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Saver",
@@ -119,6 +119,10 @@
     "resetDataModalQuestion": "Reset all account data?",
     "resetDataModalDescription": "This will permanently remove all transactions and savings progress, and return the account to a clean state.",
     "resetDataConfirm": "Reset data",
+    "restartTutorial": "Restart tutorial",
+    "restartTutorialDescription": "Walk through the app guide again from the beginning.",
+    "restartTutorial": "Restart tutorial",
+    "restartTutorialDescription": "Walk through the app guide again from the beginning.",
     "themeAuto": "Auto",
     "themeDark": "Dark",
     "themeLight": "Light",

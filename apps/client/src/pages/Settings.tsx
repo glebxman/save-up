@@ -14,6 +14,7 @@ import { useTelegram } from "@/hooks/useTelegram";
 import { useTheme, type ThemeMode } from "@/providers/ThemeProvider";
 import { useCurrency, SUPPORTED_CURRENCIES } from "@/hooks/useCurrency";
 import { getCurrencySymbol } from "@/utils/format";
+import { useOnboardingStore } from "@/stores/onboarding.store";
 import ruFlagUrl from "@/assets/ru.svg";
 import ukFlagUrl from "@/assets/uk.svg";
 import uzbFlagUrl from "@/assets/uzb.svg";
@@ -27,6 +28,7 @@ export function Settings() {
   const { initData } = useTelegram();
   const { resetAccountDataMutation, status } = useFinance();
   const { currency, setCurrency } = useCurrency();
+  const restartOnboarding = useOnboardingStore((s) => s.restart);
   const [activeModal, setActiveModal] = useState<SettingsModal>(null);
   const [showOtherLanguages, setShowOtherLanguages] = useState(false);
 
@@ -256,6 +258,35 @@ export function Settings() {
               <span className="truncate">{currency}</span>
               <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
             </div>
+          </button>
+        </CardContent>
+      </Card>
+
+      <Card className="overflow-hidden" variant="default">
+        <CardContent className="p-0">
+          <button
+            className="flex w-full items-center justify-between gap-4 text-left"
+            onClick={() => { navigate("/"); restartOnboarding(); }}
+            type="button"
+          >
+            <div className="flex min-w-0 items-center gap-4">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-[var(--settings-blue)] text-white">
+                <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2Z" clipRule="evenodd" />
+                </svg>
+              </span>
+
+              <div className="min-w-0">
+                <p className="m-0 text-base font-semibold text-[var(--foreground)]">
+                  {t("settings.restartTutorial")}
+                </p>
+                <p className="m-0 mt-0.5 text-sm text-[var(--muted)]">
+                  {t("settings.restartTutorialDescription")}
+                </p>
+              </div>
+            </div>
+
+            <ChevronRightIcon className="h-4 w-4 shrink-0 text-[var(--muted)] opacity-70" />
           </button>
         </CardContent>
       </Card>

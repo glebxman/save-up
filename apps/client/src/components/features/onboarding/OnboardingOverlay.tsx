@@ -177,9 +177,8 @@ function StepDots({ current, total }: { current: number; total: number }) {
       {Array.from({ length: total }, (_, i) => (
         <span
           key={i}
-          className={`block h-1.5 rounded-full transition-all duration-200 ${
-            i === current ? "w-5 bg-[var(--accent)]" : "w-1.5 bg-white/20"
-          }`}
+          className={`block h-1.5 rounded-full transition-all duration-200 ${i === current ? "w-5 bg-[var(--accent)]" : "w-1.5 bg-white/20"
+            }`}
         />
       ))}
     </div>
@@ -256,7 +255,7 @@ function TooltipCard({
 }
 
 export function OnboardingOverlay() {
-  const { isActive, currentStep, totalSteps, start, next, prev, skip, complete } =
+  const { isActive, currentStep, totalSteps, next, prev, skip, complete } =
     useOnboardingStore();
   const navigate = useNavigate();
   const location = useLocation();
@@ -265,8 +264,9 @@ export function OnboardingOverlay() {
   const [showPendingTargetCard, setShowPendingTargetCard] = useState(false);
 
   useEffect(() => {
-    start();
-  }, [start]);
+    useOnboardingStore.getState().start();
+  }, []);
+
 
   const step = ONBOARDING_STEPS[currentStep] ?? ONBOARDING_STEPS[0]!;
 

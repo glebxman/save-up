@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Utilisateur",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "Réinitialiser toutes les données du compte ?",
     "resetDataModalDescription": "Cela supprimera définitivement toutes les transactions et le progrès d’épargne, puis remettra le compte à zéro.",
     "resetDataConfirm": "Réinitialiser les données",
+    "restartTutorial": "Recommencer le tutoriel",
+    "restartTutorialDescription": "Parcourez a nouveau le guide de l'application depuis le debut.",
     "themeAuto": "Auto",
     "themeDark": "Sombre",
     "themeLight": "Clair",

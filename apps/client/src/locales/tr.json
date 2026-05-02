@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Kullanıcı",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "Tüm hesap verileri sıfırlansın mı?",
     "resetDataModalDescription": "Bu işlem tüm işlemleri ve birikim ilerlemesini kalıcı olarak siler ve hesabı temiz duruma getirir.",
     "resetDataConfirm": "Verileri sıfırla",
+    "restartTutorial": "Eğitimi yeniden başlat",
+    "restartTutorialDescription": "Uygulama rehberini baştan takip edin.",
     "themeAuto": "Otomatik",
     "themeDark": "Koyu",
     "themeLight": "Açık",

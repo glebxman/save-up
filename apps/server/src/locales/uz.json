@@ -2,5 +2,19 @@
   "choose_language": "🌍 Iltimos, tilni tanlang:",
   "welcome": "👋 Salom{name}! Save Up'ga xush kelibsiz!\n\nMen sizning shaxsiy jamg'arma yordamchingizman. Keling, moliyaviy maqsadlaringizga erishishga yordam beraylik! 💰",
   "language_set": "✅ Til o'rnatildi: O'zbek!",
-  "open_app": "📱 Ilovani ochish"
+  "open_app": "📱 Ilovani ochish",
+  "processing_voice": "🎙 Ovozli xabar qayta ishlanmoqda...",
+  "voice_error": "❌ Operatsiyani aniqlab bo'lmadi. Qaytadan urinib ko'ring.",
+  "voice_expense_saved": "✅ Xarajat saqlandi: {amount} ({category})\n📝 {note}",
+  "voice_income_saved": "✅ Daromad saqlandi: {amount}\n📝 {note}",
+  "reminder_add_expense": "💸 Bugun biror narsa sarfladingizmi? Save Up'ga xarajatni kiritishni unutmang!",
+  "reminder_add_income": "💰 Pul oldingizmi? Save Up'ga daromadingizni kiriting va jamg'armangiz o'sishini kuzating!",
+  "reminder_check_balance": "📊 Tez balans tekshiruvi! Save Up'ni oching va bu oy moliyaviy ahvolingizni ko'ring.",
+  "reminder_savings_tip": "🏦 Jamg'arish maslahat: har bir daromaddan 10% ajratish vaqt o'tishi bilan katta farq qiladi. Jamg'armalaringiz yo'lda?",
+  "reminder_daily_limit": "📅 Kunlik byudjetingiz super kuch! Save Up'dagi kunlik limitingizni tekshiring va bugun aqlliroq xarajat qiling.",
+  "reminder_monthly_goal": "🎯 Oylik jamg'arma maqsadingizga qanchalik yaqinsiz? Save Up'ni oching va taraqqiyotingizni tekshiring!",
+  "reminder_track_habit": "🔁 Moliyaviy kuzatish odat, odatlar esa ko'payadi! Bugungi tranzaksiyalarni Save Up'ga kiriting.",
+  "reminder_small_wins": "🌟 Har bir tejangan miqdor muhim! Ozgina tejash ham moliyaviy ozodlik sari bir qadam. Davom eting!",
+  "reminder_review_spending": "🔍 Bu haftagi xarajatlaringizni ko'rib chiqish uchun 2 daqiqa vaqt ajrating. Ajablanarli naqshlar topishingiz mumkin!",
+  "reminder_future_self": "✨ Kelajakdagi o'zingiz bugun qabul qilgan har bir aqlli moliyaviy qaror uchun sizga minnatdor bo'ladi. Save Up'ni oching!"
 }

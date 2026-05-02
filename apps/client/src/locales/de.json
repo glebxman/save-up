@@ -1,4 +1,4 @@
-{
+﻿{
   "common": {
     "appName": "Save Up",
     "defaultUser": "Nutzer",
@@ -115,6 +115,8 @@
     "resetDataModalQuestion": "Alle Kontodaten zurücksetzen?",
     "resetDataModalDescription": "Dadurch werden alle Transaktionen und Sparfortschritte dauerhaft entfernt und das Konto wird auf einen leeren Zustand zurückgesetzt.",
     "resetDataConfirm": "Daten zurücksetzen",
+    "restartTutorial": "Tutorial neu starten",
+    "restartTutorialDescription": "Gehe die App-Anleitung von Anfang an noch einmal durch.",
     "themeAuto": "Auto",
     "themeDark": "Dunkel",
     "themeLight": "Hell",

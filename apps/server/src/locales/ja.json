@@ -2,5 +2,19 @@
   "choose_language": "🌍 言語を選択してください：",
   "welcome": "👋 こんにちは{name}！Save Upへようこそ！\n\n私はあなたの貯蓄アシスタントです。一緒に目標を達成しましょう！💰",
   "language_set": "✅ 言語が日本語に設定されました！",
-  "open_app": "📱 アプリを開く"
+  "open_app": "📱 アプリを開く",
+  "processing_voice": "🎙 音声メッセージを処理中...",
+  "voice_error": "❌ 取引を認識できませんでした。もう一度お試しください。",
+  "voice_expense_saved": "✅ 支出を記録しました：{amount}（{category}）\n📝 {note}",
+  "voice_income_saved": "✅ 収入を記録しました：{amount}\n📝 {note}",
+  "reminder_add_expense": "💸 今日何か使いましたか？Save Upに支出を記録して、お金の流れを把握しましょう！",
+  "reminder_add_income": "💰 収入がありましたか？Save Upに記録して、貯蓄が増えていくのを実感しましょう！",
+  "reminder_check_balance": "📊 残高チェック！Save Upを開いて今月の家計を確認しましょう。",
+  "reminder_savings_tip": "🏦 貯蓄のコツ：収入の10%を積み立てるだけで、長期的に大きな差が生まれます。貯蓄は順調ですか？",
+  "reminder_daily_limit": "📅 1日の予算は最強の武器！Save Upで日別上限を確認して、今日をもっとスマートに過ごしましょう。",
+  "reminder_monthly_goal": "🎯 月間貯蓄目標にどれくらい近づきましたか？Save Upを開いて進捗を確認しましょう！",
+  "reminder_track_habit": "🔁 家計管理は習慣、習慣は積み重なる！Save Upに今日の取引を記録しましょう。",
+  "reminder_small_wins": "🌟 節約した金額はどんな少額でも大切です！財務的自由への一歩、続けましょう！",
+  "reminder_review_spending": "🔍 今週の支出を2分で振り返りましょう。意外な支出パターンが見つかるかも！",
+  "reminder_future_self": "✨ 今日の賢いお金の判断に、未来の自分が感謝するはずです。Save Upを開きましょう！"
 }

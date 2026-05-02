@@ -7,6 +7,8 @@ import { eq } from "drizzle-orm";
 import { db } from "./config/database.js";
 import { env } from "./config/env.js";
 import { users } from "./db/schema/index.js";
+import type { ExpenseCategory } from "@finance-twa/shared-types";
+import { startReminderScheduler } from "./reminder.js";
 
 interface TelegramUser {
   id: number;
@@ -22,6 +24,10 @@ interface TelegramMessage {
   chat: TelegramChat;
   text?: string;
   from?: TelegramUser;
+  voice?: {
+    file_id: string;
+    duration: number;
+  };
 }
 
 interface CallbackQuery {
@@ -95,6 +101,9 @@ import tr from "./locales/tr.json" with { type: "json" };
 import es from "./locales/es.json" with { type: "json" };
 import fr from "./locales/fr.json" with { type: "json" };
 import de from "./locales/de.json" with { type: "json" };
+
+import { addExpense, addIncome } from "./services/finance.service.js";
+import { extractTransactionFromVoice } from "./services/ai.service.js";
 
 const BOT_MESSAGES: Record<SupportedLang, Record<string, string>> = {
   en, ru, uz, kk, zh, ja, ko, tr, es, fr, de,
@@ -344,9 +353,79 @@ async function handleLanguageCallback(callbackQuery: CallbackQuery): Promise<voi
   }
 }
 
+async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId || !message.voice) return;
+
+  const chatId = message.chat.id;
+  const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
+
+  const processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
+    chat_id: chatId,
+    text: getBotMessage("processing_voice", lang) || "🎙 Обрабатываю голосовое сообщение..."
+  });
+
+  try {
+    const file = await telegramRequest<{ file_path: string }>("getFile", { file_id: message.voice.file_id });
+    const fileUrl = `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+
+    const audioRes = await fetch(fileUrl);
+    if (!audioRes.ok) throw new Error("Failed to download audio from Telegram");
+    const arrayBuffer = await audioRes.arrayBuffer();
+    const base64Audio = Buffer.from(arrayBuffer).toString("base64");
+
+    const extraction = await extractTransactionFromVoice(base64Audio);
+
+    if (!extraction) {
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: getBotMessage("voice_error", lang) || "❌ Не удалось распознать операцию. Попробуйте сказать иначе."
+      });
+      return;
+    }
+
+    if (extraction.type === "expense") {
+      await addExpense(telegramId, extraction.amount, extraction.category as ExpenseCategory, extraction.note);
+      const expenseText = getBotMessage("voice_expense_saved", lang)
+        .replace("{amount}", String(extraction.amount))
+        .replace("{category}", extraction.category)
+        .replace("{note}", extraction.note || "");
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: expenseText,
+      });
+    } else if (extraction.type === "income") {
+      await addIncome(telegramId, extraction.amount, 0, extraction.note);
+      const incomeText = getBotMessage("voice_income_saved", lang)
+        .replace("{amount}", String(extraction.amount))
+        .replace("{note}", extraction.note || "");
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: incomeText,
+      });
+    }
+
+  } catch (err) {
+    console.error("Voice processing error:", err);
+    await telegramRequest("editMessageText", {
+      chat_id: chatId,
+      message_id: processingMsg.message_id,
+      text: getBotMessage("voice_error", lang) || "❌ Произошла ошибка при обработке."
+    });
+  }
+}
+
 async function handleUpdate(update: TelegramUpdate): Promise<void> {
   if (update.message && isStartCommand(update.message.text)) {
     await handleStartCommand(update.message);
+    return;
+  }
+
+  if (update.message?.voice) {
+    await handleVoiceMessage(update.message);
     return;
   }
 
@@ -390,7 +469,7 @@ async function pollUpdates(): Promise<void> {
             try {
               await handleUpdate(update);
             } catch (err) {
-              console.error(`Error processing update ${update.update_id}:`, err);
+              console.error(`Error processing update ${update.update_id}: `, err);
             }
           })
         );
@@ -424,6 +503,7 @@ async function startBot(): Promise<void> {
   });
 
   await configureBot();
+  startReminderScheduler(env.TELEGRAM_BOT_TOKEN);
   console.log("Telegram bot polling started.");
   await pollUpdates();
 }
