@@ -1,4 +1,7 @@
 import type { CurrencyCode } from "@finance-twa/shared-types";
+import { logger } from "../utils/logger.js";
+
+const log = logger.child({ service: "currency" });
 
 const FALLBACK_RATES: Record<CurrencyCode, number> = {
   USD: 1,
@@ -52,14 +55,14 @@ export async function getExchangeRates(force = false): Promise<{ rates: Record<C
         return { rates: cachedRates, updatedAt: lastFetchTime };
       }
     } catch (error) {
-      console.error("Failed to fetch exchange rates:", error);
+      log.error({ err: error }, "Failed to fetch exchange rates");
     } finally {
       activeFetchPromise = null;
     }
 
     return {
       rates: cachedRates || FALLBACK_RATES,
-      updatedAt: lastFetchTime || now
+      updatedAt: lastFetchTime || now,
     };
   })();
 

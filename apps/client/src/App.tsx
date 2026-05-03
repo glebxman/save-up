@@ -1,6 +1,7 @@
 import { useLocation, Route, Routes } from "react-router-dom";
 import { AnimatePresence, motion } from "framer-motion";
-import type { PropsWithChildren } from "react";
+import { useEffect, useState, type PropsWithChildren } from "react";
+import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Admin } from "@/pages/Admin";
@@ -19,6 +20,28 @@ const PageTransition = ({ children }: PropsWithChildren) => (
     {children}
   </motion.div>
 );
+
+function OfflineBanner() {
+  const { t } = useTranslation();
+  const [offline, setOffline] = useState(!navigator.onLine);
+
+  useEffect(() => {
+    const on = () => setOffline(false);
+    const off = () => setOffline(true);
+    window.addEventListener("online", on);
+    window.addEventListener("offline", off);
+    return () => { window.removeEventListener("online", on); window.removeEventListener("offline", off); };
+  }, []);
+
+  if (!offline) return null;
+
+  return (
+    <div className="fixed bottom-0 left-0 right-0 z-50 flex items-center justify-center gap-2 bg-[var(--warning)] px-4 py-2 text-sm font-medium text-white">
+      <span>📡</span>
+      <span>{t("common.offline")}</span>
+    </div>
+  );
+}
 
 function App() {
   const location = useLocation();
@@ -69,6 +92,7 @@ function App() {
           />
         </Routes>
       </AnimatePresence>
+      <OfflineBanner />
     </AppShell>
   );
 }

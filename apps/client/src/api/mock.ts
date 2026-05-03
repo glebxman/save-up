@@ -147,10 +147,8 @@ function normalizeBalance(balance: number): number {
   return roundAmount(balance);
 }
 
-function normalizeExpenseCategory(category: unknown): ExpenseCategory | null {
-  return typeof category === "string" && expenseCategories.has(category as ExpenseCategory)
-    ? category as ExpenseCategory
-    : null;
+function normalizeExpenseCategory(category: unknown): string | null {
+  return typeof category === "string" && category.length > 0 ? category : null;
 }
 
 function loadDatabase(): MockDatabase {
@@ -211,6 +209,8 @@ function ensureUser(telegramId: number, profile?: MockTelegramUser): User {
     onboardingCompleted: false,
     language: null,
     voiceDailyUsed: 0,
+    categoryCustomizations: {},
+    customCategories: [],
     createdAt: new Date().toISOString(),
   }, profile);
 
@@ -272,16 +272,16 @@ async function getMockExchangeRates(): Promise<Record<CurrencyCode, number>> {
   try {
     const response = await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD");
     const data = await response.json();
-    
+
     if (data && data.data && data.data.rates) {
       const rates: Partial<Record<CurrencyCode, number>> = {};
       const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY"];
-      
+
       for (const code of codes) {
         const value = data.data.rates[code];
         rates[code] = value ? parseFloat(value) : FALLBACK_RATES[code];
       }
-      
+
       return rates as Record<CurrencyCode, number>;
     }
   } catch (error) {
@@ -292,8 +292,7 @@ async function getMockExchangeRates(): Promise<Record<CurrencyCode, number>> {
 }
 
 
-async function buildStatus(user: User): Promise<Status> {
-  const monthlyExp = getTransactionsForUser(user.telegramId)
+async function buildStatus(user: User): Promise<Status> {  const monthlyExp = getTransactionsForUser(user.telegramId)
     .filter((transaction) => !transaction.deletedAt && transaction.type === "expense" && transaction.monthKey === getMonthKey())
     .reduce((sum, transaction) => roundAmount(sum + transaction.amount), 0);
   const nextUser: User = {
@@ -309,9 +308,7 @@ async function buildStatus(user: User): Promise<Status> {
     rates,
     ratesUpdatedAt: new Date().toISOString(),
   };
-
 }
-
 
 function parseTelegramUserFromInitData(initData: string): MockTelegramUser | undefined {
   try {
@@ -417,7 +414,7 @@ function buildTransaction(
     id?: string;
     type: TransactionType;
     amount: number;
-    category?: ExpenseCategory | null;
+    category?: string | null;
     savingsAmt?: number | null;
     note?: string | null;
     occurredAt?: string;
@@ -512,7 +509,7 @@ function getCategoryBreakdownForUser(telegramId: number, monthKey = getMonthKey(
   }
 
   const items: CategoryBreakdownItem[] = Array.from(grouped.entries()).map(([category, data]) => ({
-    category: category as ExpenseCategory,
+    category,
     ...data,
   }));
 
@@ -720,6 +717,38 @@ const mockHandlers: {
     user.language = params.language;
     saveUser(user);
     return { ok: true as const };
+  },
+  "user.setCategoryCustomization": (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    user.categoryCustomizations = {
+      ...(user.categoryCustomizations ?? {}),
+      [params.category]: {
+        name: params.name.trim() || undefined,
+        emoji: params.emoji.trim() || undefined,
+      },
+    };
+    saveUser(user);
+    return { ok: true as const };
+  },
+  "user.addCustomCategory": async (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    const current = user.customCategories ?? [];
+    if (current.length >= 8) {
+      throw new Error("Maximum of 8 custom categories reached");
+    }
+    const id = `c_${Math.random().toString(36).slice(2, 12)}`;
+    user.customCategories = [...current, { id, name: params.name.trim(), emoji: params.emoji.trim() }];
+    saveUser(user);
+    return buildStatus(user);
+  },
+  "user.deleteCustomCategory": async (params) => {
+    const telegramId = parseTelegramIdFromInitData(params.initData);
+    const user = ensureUser(telegramId);
+    user.customCategories = (user.customCategories ?? []).filter((c) => c.id !== params.id);
+    saveUser(user);
+    return buildStatus(user);
   },
   "admin.listUsers": (params) => {
     return getAdminUsersPage({
@@ -1065,12 +1094,7 @@ const mockHandlers: {
       note: "MOCK: real AI requires npm run dev",
     };
   },
-
-
 };
-
-
-
 
 export async function mockRpcRequest<Method extends RpcMethod>(
   method: Method,

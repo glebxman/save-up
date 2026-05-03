@@ -2,6 +2,9 @@ import type { Status } from "@finance-twa/shared-types";
 
 import { env } from "../config/env.js";
 import { redis } from "../config/redis.js";
+import { logger } from "../utils/logger.js";
+
+const log = logger.child({ service: "cache" });
 
 interface MemoryCacheEntry {
   expiresAt: number;
@@ -50,7 +53,7 @@ function disableRedis(error: unknown): void {
   }
 
   redisWarningShown = true;
-  console.warn("Redis is unavailable. Falling back to in-memory cache.", error);
+    log.warn({ err: error }, "Redis is unavailable. Falling back to in-memory cache.");
 }
 
 async function ensureRedisConnection(): Promise<boolean> {
@@ -78,13 +81,9 @@ export async function getCachedStatus(telegramId: number): Promise<Status | null
   }
 
   try {
-    const payload = await redis.get(getStatusKey(telegramId));
-
-    if (!payload) {
-      return null;
-    }
-
-    return JSON.parse(payload) as Status;
+    const raw = await redis.get(getStatusKey(telegramId));
+    if (!raw) return null;
+    return JSON.parse(raw) as Status;
   } catch (error) {
     disableRedis(error);
     return getMemoryStatus(telegramId);

@@ -54,6 +54,7 @@ export const transactionFiltersSchema = z.object({
   category: z.string().optional(),
   search: z.string().optional(),
   limit: z.number().int().min(1).max(200).optional(),
+  offset: z.number().int().min(0).optional(),
   includeDeleted: z.boolean().optional(),
 });
 
@@ -105,6 +106,8 @@ export const recurringPayloadSchema = z.object({
   category: z.string().nullable().optional(),
   savingsAmt: z.number().min(0).nullable().optional(),
   note: z.string().max(240).nullable().optional(),
+  dayOfMonth: z.number().int().min(1).max(28).nullable().optional(),
+  autoApply: z.boolean().optional(),
 });
 
 
@@ -153,7 +156,25 @@ export const financeRefreshRatesSchema = z.object({
 
 export const financeProcessVoiceSchema = z.object({
   initData: initDataSchema,
-  base64Audio: z.string().min(1),
+  base64Audio: z.string().min(1).max(5_242_880),
+});
+
+export const userSetCategoryCustomizationSchema = z.object({
+  initData: initDataSchema,
+  category: z.enum(["food", "taxi", "entertainment", "shopping", "utilities", "health", "education", "other"]),
+  name: z.string().max(30),
+  emoji: z.string().max(8),
+});
+
+export const userAddCustomCategorySchema = z.object({
+  initData: initDataSchema,
+  name: z.string().min(1).max(30),
+  emoji: z.string().min(1).max(8),
+});
+
+export const userDeleteCustomCategorySchema = z.object({
+  initData: initDataSchema,
+  id: z.string().min(1).max(20),
 });
 
 export const adminListUsersSchema = z.object({

@@ -489,3 +489,23 @@ input[type="number"]::-webkit-outer-spin-button {
   border-radius: inherit;
   background: var(--category-color);
 }
+
+@keyframes shimmer {
+  0% {
+    background-position: -400px 0;
+  }
+  100% {
+    background-position: 400px 0;
+  }
+}
+
+.animate-shimmer {
+  background: linear-gradient(
+    90deg,
+    var(--surface-secondary) 0%,
+    var(--surface-tertiary, color-mix(in srgb, var(--surface-secondary) 60%, var(--foreground) 6%)) 40%,
+    var(--surface-secondary) 80%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s ease-in-out infinite;
+}

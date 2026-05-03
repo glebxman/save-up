@@ -11,6 +11,7 @@
     "mock": "Мок",
     "live": "Онлайн",
     "cancel": "Отмена",
+    "offline": "Нет интернета. Некоторые функции недоступны.",
     "type": "Тип",
     "amount": "Сумма",
     "category": "Категория",
@@ -40,8 +41,6 @@
     "watch": "Следите за тратами",
     "spendableNow": "Можно потратить сейчас",
     "monthlyBudget": "Расходы за месяц",
-    "tracking": "Отслеживание",
-    "trackingValue": "В реальном времени",
     "changeTitle": "Изменение баланса",
     "changeQuestion": "Вы уверены, что хотите изменить баланс?",
     "changeDescription": "Сейчас: {{current}}. Новый баланс: {{next}}.",
@@ -162,7 +161,22 @@
     "currencyGbp": "Британский фунт (GBP)",
     "currencyCny": "Китайский юань (CNY)",
     "exchangeRates": "Курсы валют",
-    "refresh": "Обновить"
+    "refresh": "Обновить",
+    "categories": "Категории",
+    "categoriesDescription": "Переименуйте категории и выберите иконку.",
+    "editCategory": "Изменить категорию",
+    "categoryEmoji": "Иконка (эмодзи)",
+    "categoryName": "Название",
+    "categoryResetTip": "Оставьте пустым, чтобы вернуть стандартные.",
+    "categorySaved": "Категория сохранена",
+    "save": "Сохранить",
+    "addCategory": "Добавить категорию",
+    "customCategories": "Свои",
+    "deleteCategory": "Удалить",
+    "deleteCategoryTitle": "Удалить категорию",
+    "deleteCategoryQuestion": "Удалить эту категорию?",
+    "deleteCategoryDescription": "Прошлые расходы в этой категории сохранятся.",
+    "categoryNamePlaceholder": "Например: Спортзал, Питомец, Авто..."
   },
   "admin": {
     "title": "Админ панель",
@@ -197,7 +211,9 @@
     "utilities": "Коммуналка",
     "health": "Здоровье",
     "education": "Образование",
-    "other": "Другое"
+    "other": "Другое",
+    "notePlaceholder": "Комментарий (необязательно)",
+    "confirm": "Добавить расход"
   },
   "expenseEditor": {
     "title": "Исправить расход",
@@ -245,6 +261,8 @@
     "createTitle": "Создать повторяющуюся операцию",
     "editTitle": "Изменить повторяющуюся операцию",
     "save": "Сохранить изменения",
+    "dayOfMonth": "День месяца",
+    "autoApply": "Автосписание",
     "create": "Создать шаблон",
     "deleteQuestion": "Удалить этот шаблон?",
     "deleteDescription": "{{name}} исчезнет из быстрого списка."
@@ -274,6 +292,7 @@
     "restore": "Вернуть",
     "archive": "Отменить",
     "empty": "По этим фильтрам операций нет.",
+    "loadMore": "Загрузить ещё",
     "edit": "Изменить",
     "editQuestion": "Обновите данные этой операции",
     "amount": "Сумма",
@@ -310,7 +329,9 @@
       "micAccess": "Доступ к микрофону отклонен",
       "aiFailed": "AI не смог распознать голос"
     },
-    "ratesUpdated": "Курсы валют обновлены"
+    "ratesUpdated": "Курсы валют обновлены",
+    "categoryAdded": "Категория добавлена",
+    "categoryDeleted": "Категория удалена"
   },
   "analytics": {
     "title": "Расходы по категориям",

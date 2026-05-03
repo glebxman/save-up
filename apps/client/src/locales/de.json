@@ -11,6 +11,7 @@
     "mock": "Mock",
     "live": "Live",
     "cancel": "Abbrechen",
+    "offline": "Keine Internetverbindung. Einige Funktionen nicht verfügbar.",
     "type": "Type",
     "amount": "Amount",
     "category": "Category",
@@ -19,14 +20,14 @@
   },
   "shell": {
     "greeting": "Hallo, {{name}}",
-    "welcomeBack": "Willkommen zurück",
+    "welcomeBack": "Willkommen zurГјck",
     "notifications": "Benachrichtigungen"
   },
   "dashboard": {
     "loading": "Dein Finanzstatus wird geladen...",
     "errorCaption": "Ladefehler",
     "errorTitle": "Deine Daten konnten nicht geladen werden",
-    "errorDescription": "Prüfe den Backend-RPC-Endpunkt, Telegram initData und die Serververbindung.",
+    "errorDescription": "PrГјfe den Backend-RPC-Endpunkt, Telegram initData und die Serververbindung.",
     "shortcuts": {
       "income": "Einnahme",
       "expense": "Ausgabe",
@@ -38,8 +39,12 @@
     "caption": "Mein Kontostand",
     "healthy": "Im Plan",
     "watch": "Ausgaben zu schnell",
-    "spendableNow": "Jetzt verfügbar",
-    "monthlyBudget": "Diesen Monat ausgegeben"
+    "spendableNow": "Jetzt verfГјgbar",
+    "monthlyBudget": "Diesen Monat ausgegeben",
+    "changeTitle": "Kontostand aendern",
+    "changeQuestion": "Moechten Sie den Kontostand wirklich aendern?",
+    "changeDescription": "Aktuell: {{current}}. Neuer Kontostand: {{next}}.",
+    "changeConfirm": "Weiter"
   },
   "dailyLimit": {
     "caption": "Noch ausgebbar",
@@ -49,14 +54,14 @@
   "savings": {
     "caption": "Sparfach",
     "description": "Lege fest, wie viel von jeder Einnahme gespart wird.",
-    "setup": "In Ersparnisse übertragen",
+    "setup": "In Ersparnisse Гјbertragen",
     "question": "Wie viel von dieser Einnahme soll gespart werden?",
     "incomeAmount": "Einnahme: {{amount}}",
     "customPlaceholder": "Sparbetrag eingeben",
     "saveNothing": "Alles behalten",
-    "saveHalf": "Die Hälfte sparen",
+    "saveHalf": "Die HГ¤lfte sparen",
     "saveAll": "Alles sparen",
-    "confirm": "Hinzufügen",
+    "confirm": "HinzufГјgen",
     "helperText": "Du kannst jeden Betrag bis {{amount}} sparen.",
     "manualMode": "Manuell",
     "goalBadge": "{{value}} Ziel",
@@ -65,14 +70,14 @@
     "deposit": "Einzahlen",
     "withdraw": "Abheben",
     "saveGoal": "Ziel speichern",
-    "goalHelper": "Lege einen Zielbetrag für dein Sparfach fest.",
+    "goalHelper": "Lege einen Zielbetrag fГјr dein Sparfach fest.",
     "goalPlaceholder": "Zielbetrag eingeben",
     "goalQuestion": "Was ist dein Sparziel?",
     "depositHelper": "Du kannst bis zu {{amount}} vom Kontostand in Ersparnisse verschieben.",
     "depositQuestion": "Wie viel soll vom Kontostand in Ersparnisse verschoben werden?",
-    "withdrawHelper": "Du kannst bis zu {{amount}} aus Ersparnissen zurück zum Kontostand holen.",
-    "withdrawQuestion": "Wie viel soll aus Ersparnissen zurück zum Kontostand?",
-    "transferPlaceholder": "Überweisungsbetrag eingeben"
+    "withdrawHelper": "Du kannst bis zu {{amount}} aus Ersparnissen zurГјck zum Kontostand holen.",
+    "withdrawQuestion": "Wie viel soll aus Ersparnissen zurГјck zum Kontostand?",
+    "transferPlaceholder": "Гњberweisungsbetrag eingeben"
   },
   "amountInput": {
     "caption": "Neue Transaktion",
@@ -83,7 +88,7 @@
     "loading": "Dein Monatsbericht wird erstellt...",
     "errorCaption": "Berichtsfehler",
     "errorTitle": "Die Zusammenfassung konnte nicht geladen werden",
-    "errorDescription": "Prüfe den Backend-RPC-Endpunkt und die Datenbankverbindung.",
+    "errorDescription": "PrГјfe den Backend-RPC-Endpunkt und die Datenbankverbindung.",
     "statistics": "Statistik",
     "modeIncome": "Einnahmen",
     "modeSpending": "Ausgaben",
@@ -92,14 +97,14 @@
     "totalIncome": "Gesamteinnahmen",
     "totalSpending": "Gesamtausgaben",
     "newMonthCaption": "Neuer Monat",
-    "newMonthTitle": "Monat abschließen",
-    "newMonthAction": "Monatsausgaben zurücksetzen",
-    "ops": "{{count}} Einträge",
+    "newMonthTitle": "Monat abschlieГџen",
+    "newMonthAction": "Monatsausgaben zurГјcksetzen",
+    "ops": "{{count}} EintrГ¤ge",
     "monthSelector": "Berichtsmonat"
   },
   "monthReport": {
     "snapshot": "Zusammenfassung",
-    "overview": "Monatsübersicht",
+    "overview": "MonatsГјbersicht",
     "description": "Einnahmen, Ausgaben und Ersparnisse dieses Monats auf einen Blick.",
     "income": "Einnahmen",
     "spending": "Ausgaben",
@@ -115,54 +120,71 @@
     "adminPanelDescription": "Nutzer, Statistiken und Adminzugriff verwalten.",
     "theme": "Darstellung",
     "language": "Sprache",
-    "resetData": "Kontodaten zurücksetzen",
-    "resetDataDescription": "Alle Einnahmen, Ausgaben, Sparfortschritte und wiederkehrenden Vorlagen löschen.",
+    "resetData": "Kontodaten zurГјcksetzen",
+    "resetDataDescription": "Alle Einnahmen, Ausgaben, Sparfortschritte und wiederkehrenden Vorlagen lГ¶schen.",
     "resetDataModalTitle": "Gefahrenbereich",
-    "resetDataModalQuestion": "Alle Kontodaten zurücksetzen?",
-    "resetDataModalDescription": "Dadurch werden alle Transaktionen und Sparfortschritte dauerhaft entfernt und das Konto wird auf einen leeren Zustand zurückgesetzt.",
-    "resetDataConfirm": "Daten zurücksetzen",
+    "resetDataModalQuestion": "Alle Kontodaten zurГјcksetzen?",
+    "resetDataModalDescription": "Dadurch werden alle Transaktionen und Sparfortschritte dauerhaft entfernt und das Konto wird auf einen leeren Zustand zurГјckgesetzt.",
+    "resetDataConfirm": "Daten zurГјcksetzen",
     "restartTutorial": "Tutorial neu starten",
     "restartTutorialDescription": "Gehe die App-Anleitung von Anfang an noch einmal durch.",
     "themeAuto": "Auto",
     "themeDark": "Dunkel",
     "themeLight": "Hell",
-    "themeAutoResolved": "{{mode}} • {{theme}}",
-    "themeModalTitle": "Design wählen",
+    "themeAutoResolved": "{{mode}} вЂў {{theme}}",
+    "themeModalTitle": "Design wГ¤hlen",
     "themeModalDescription": "Nutze die Systemeinstellung oder wechsle die App manuell.",
-    "languageModalTitle": "Sprache wählen",
-    "languageModalDescription": "Wähle die Sprache, die in der App verwendet wird.",
+    "languageModalTitle": "Sprache wГ¤hlen",
+    "languageModalDescription": "WГ¤hle die Sprache, die in der App verwendet wird.",
     "languageEn": "English",
-    "languageKk": "Қазақша",
-    "languageZh": "中文",
-    "languageJa": "日本語",
-    "languageKo": "한국어",
-    "languageTr": "Türkçe",
-    "languageEs": "Español",
-    "languageFr": "Français",
+    "languageKk": "ТљР°Р·Р°Т›С€Р°",
+    "languageZh": "дё­ж–‡",
+    "languageJa": "ж—Ґжњ¬иЄћ",
+    "languageKo": "н•њкµ­м–ґ",
+    "languageTr": "TГјrkГ§e",
+    "languageEs": "EspaГ±ol",
+    "languageFr": "FranГ§ais",
     "languageDe": "Deutsch",
-    "languageRu": "Русский",
+    "languageRu": "Р СѓСЃСЃРєРёР№",
     "languageUz": "O'zbek",
     "languageOther": "Andere Sprachen",
     "languageHideOther": "Andere Sprachen ausblenden",
-    "currency": "Währung",
-    "currencyModalTitle": "Währung wählen",
-    "currencyModalDescription": "Wähle die Währung, in der alle Beträge in der App angezeigt werden.",
+    "currency": "WГ¤hrung",
+    "currencyModalTitle": "WГ¤hrung wГ¤hlen",
+    "currencyModalDescription": "WГ¤hle die WГ¤hrung, in der alle BetrГ¤ge in der App angezeigt werden.",
     "currencyUzs": "Usbekischer Som (UZS)",
     "currencyRub": "Russischer Rubel (RUB)",
     "currencyUsd": "US-Dollar (USD)",
     "currencyEur": "Euro (EUR)",
     "currencyKzt": "Kasachischer Tenge (KZT)",
-    "currencyTry": "Türkische Lira (TRY)",
+    "currencyTry": "TГјrkische Lira (TRY)",
     "currencyGbp": "Britisches Pfund (GBP)",
     "currencyCny": "Chinesischer Yuan (CNY)",
     "exchangeRates": "Wechselkurse",
-    "refresh": "Aktualisieren"
+    "refresh": "Aktualisieren",
+    "categories": "",
+    "categoriesDescription": "",
+    "editCategory": "",
+    "categoryEmoji": "",
+    "categoryName": "",
+    "categoryResetTip": "",
+    "categorySaved": "",
+    "save": "",
+    "dayOfMonth": "Tag des Monats",
+    "autoApply": "Automatisch anwenden",
+    "addCategory": "",
+    "customCategories": "",
+    "deleteCategory": "",
+    "deleteCategoryTitle": "",
+    "deleteCategoryQuestion": "",
+    "deleteCategoryDescription": "",
+    "categoryNamePlaceholder": ""
   },
   "admin": {
     "title": "Adminbereich",
     "description": "Anonymisierte Nutzerliste und Statistiken ansehen sowie Adminzugriff verwalten.",
     "loading": "Admin-Daten werden geladen...",
-    "accessCaption": "Eingeschränkter Zugriff",
+    "accessCaption": "EingeschrГ¤nkter Zugriff",
     "accessDenied": "Du hast keinen Zugriff auf den Adminbereich",
     "searchPlaceholder": "Nach Nutzer-ID oder Telegram-ID suchen",
     "empty": "Keine Nutzer gefunden.",
@@ -175,15 +197,15 @@
     "grantAdmin": "Admin vergeben",
     "revokeAdmin": "Admin entziehen",
     "alreadyAdmin": "Bereits Admin",
-    "prevPage": "Zurück",
+    "prevPage": "ZurГјck",
     "nextPage": "Weiter",
-    "pageInfo": "Seite {{page}} von {{totalPages}} · {{totalItems}} Nutzer",
-    "userMeta": "Telegram: {{telegramId}} · erstellt: {{createdAt}}",
-    "userStats": "Saldo: {{balance}} · Ersparnisse: {{savings}} · Monatsausgaben: {{monthlyExp}} · Transaktionen: {{transactions}}"
+    "pageInfo": "Seite {{page}} von {{totalPages}} В· {{totalItems}} Nutzer",
+    "userMeta": "Telegram: {{telegramId}} В· erstellt: {{createdAt}}",
+    "userStats": "Saldo: {{balance}} В· Ersparnisse: {{savings}} В· Monatsausgaben: {{monthlyExp}} В· Transaktionen: {{transactions}}"
   },
   "expenseCategory": {
     "title": "Kategorie",
-    "question": "Wofür ist diese Ausgabe?",
+    "question": "WofГјr ist diese Ausgabe?",
     "food": "Essen",
     "taxi": "Taxi",
     "entertainment": "Unterhaltung",
@@ -191,43 +213,47 @@
     "utilities": "Nebenkosten",
     "health": "Gesundheit",
     "education": "Bildung",
-    "other": "Sonstiges"
+    "other": "Sonstiges",
+    "notePlaceholder": "",
+    "confirm": ""
   },
   "expenseEditor": {
     "title": "Ausgabe korrigieren",
-    "question": "Wähle die richtige Kategorie für {{amount}}"
+    "question": "WГ¤hle die richtige Kategorie fГјr {{amount}}"
   },
   "recentExpenses": {
     "caption": "Zuletzt",
     "title": "Letzte Ausgaben",
     "loading": "Letzte Ausgaben werden geladen...",
     "empty": "Noch keine letzten Ausgaben.",
-    "changeCategory": "Kategorie ändern",
+    "changeCategory": "Kategorie Г¤ndern",
     "undo": "Abbrechen",
     "undoQuestion": "Diese letzte Ausgabe abbrechen?",
-    "undoDescription": "{{amount}} wird zum Kontostand zurückgebucht und die Transaktion als abgebrochen markiert."
+    "undoDescription": "{{amount}} wird zum Kontostand zurГјckgebucht und die Transaktion als abgebrochen markiert."
   },
   "limits": {
     "caption": "Budgetkontrolle",
     "title": "Kategorielimits",
     "manage": "Verwalten",
-    "empty": "Noch keine Limits gesetzt. Füge sie hinzu, um Ausgabenwarnungen zu sehen.",
-    "over": "Limit überschritten",
+    "empty": "Noch keine Limits gesetzt. FГјge sie hinzu, um Ausgabenwarnungen zu sehen.",
+    "over": "Limit Гјberschritten",
     "ok": "Im Limit",
     "question": "Wie viel darfst du diesen Monat pro Kategorie ausgeben?",
     "placeholder": "Leer = kein Limit",
-    "helperText": "Leer lassen, wenn du für diese Kategorie kein Limit möchtest.",
-    "save": "Limits speichern"
+    "helperText": "Leer lassen, wenn du fГјr diese Kategorie kein Limit mГ¶chtest.",
+    "save": "Limits speichern",
+    "dayOfMonth": "Tag des Monats",
+    "autoApply": "Automatisch anwenden"
   },
   "recurring": {
     "caption": "Vorlagen",
     "title": "Wiederkehrende Aktionen",
-    "add": "Hinzufügen",
+    "add": "HinzufГјgen",
     "empty": "Noch keine wiederkehrenden Vorlagen.",
-    "quick": "Schnell ausführen",
-    "run": "Ausführen",
+    "quick": "Schnell ausfГјhren",
+    "run": "AusfГјhren",
     "edit": "Bearbeiten",
-    "delete": "Löschen",
+    "delete": "LГ¶schen",
     "name": "Name",
     "namePlaceholder": "Miete, Gehalt, Internet...",
     "type": "Typ",
@@ -235,24 +261,26 @@
     "category": "Kategorie",
     "savingsPart": "Sparanteil",
     "note": "Notiz",
-    "notePlaceholder": "Optionale Notiz für diese Vorlage",
+    "notePlaceholder": "Optionale Notiz fГјr diese Vorlage",
     "createTitle": "Wiederkehrende Aktion erstellen",
     "editTitle": "Wiederkehrende Aktion bearbeiten",
-    "save": "Änderungen speichern",
+    "save": "Г„nderungen speichern",
+    "dayOfMonth": "Tag des Monats",
+    "autoApply": "Automatisch anwenden",
     "create": "Vorlage erstellen",
-    "deleteQuestion": "Diese wiederkehrende Vorlage löschen?",
+    "deleteQuestion": "Diese wiederkehrende Vorlage lГ¶schen?",
     "deleteDescription": "{{name}} wird aus der Schnellliste entfernt."
   },
   "transactionType": {
     "income": "Einnahme",
     "expense": "Ausgabe",
-    "transfer_to_savings": "Kontostand → Ersparnisse",
-    "transfer_from_savings": "Ersparnisse → Kontostand"
+    "transfer_to_savings": "Kontostand в†’ Ersparnisse",
+    "transfer_from_savings": "Ersparnisse в†’ Kontostand"
   },
   "history": {
     "caption": "Alle Transaktionen",
     "title": "Transaktionsverlauf",
-    "count": "{{count}} Einträge",
+    "count": "{{count}} EintrГ¤ge",
     "month": "Monat",
     "search": "Suche",
     "searchPlaceholder": "Nach Notiz oder Typ suchen",
@@ -274,58 +302,67 @@
     "date": "Datum",
     "savingsPart": "Sparanteil",
     "note": "Notiz",
-    "notePlaceholder": "Notiz zu dieser Transaktion hinzufügen",
-    "save": "Änderungen speichern",
+    "notePlaceholder": "Notiz zu dieser Transaktion hinzufГјgen",
+    "save": "Г„nderungen speichern",
+    "dayOfMonth": "Tag des Monats",
+    "autoApply": "Automatisch anwenden",
     "archiveQuestion": "Diese Transaktion abbrechen?",
-    "archiveDescription": "Die Transaktion wird zurückgesetzt, und dein Kontostand sowie die Summen werden neu berechnet.",
+    "archiveDescription": "Die Transaktion wird zurГјckgesetzt, und dein Kontostand sowie die Summen werden neu berechnet.",
     "restoreQuestion": "Diese Transaktion wiederherstellen?",
-    "restoreDescription": "Die Transaktion wird wieder aktiv und beeinflusst deinen Kontostand und deine Summen."
+    "restoreDescription": "Die Transaktion wird wieder aktiv und beeinflusst deinen Kontostand und deine Summen.",
+    "loadMore": "Mehr laden"
   },
   "feedback": {
     "genericError": "Etwas ist schiefgelaufen. Bitte versuche es erneut.",
-    "incomeAdded": "Einnahme hinzugefügt",
-    "expenseAdded": "Ausgabe hinzugefügt",
+    "incomeAdded": "Einnahme hinzugefГјgt",
+    "expenseAdded": "Ausgabe hinzugefГјgt",
     "savingsDeposited": "In Ersparnisse verschoben",
-    "savingsWithdrawn": "Zum Kontostand zurückgeführt",
-    "accountDataReset": "Kontodaten zurückgesetzt",
+    "savingsWithdrawn": "Zum Kontostand zurГјckgefГјhrt",
+    "accountDataReset": "Kontodaten zurГјckgesetzt",
     "transactionUpdated": "Transaktion aktualisiert",
     "transactionArchived": "Transaktion abgebrochen",
     "transactionRestored": "Transaktion wiederhergestellt",
     "goalUpdated": "Sparziel aktualisiert",
     "recurringSaved": "Wiederkehrende Aktion gespeichert",
-    "recurringDeleted": "Wiederkehrende Aktion gelöscht",
+    "recurringDeleted": "Wiederkehrende Aktion gelГ¶scht",
     "recurringApplied": "Wiederkehrende Aktion angewendet",
-    "currencyConverted": "Beträge erfolgreich konvertiert",
+    "currencyConverted": "BetrГ¤ge erfolgreich konvertiert",
     "ratesUpdated": "Wechselkurse aktualisiert",
     "errors": {
       "micAccess": "Microphone access denied",
-      "aiFailed": "AI could not process this audio"
-    }
+      "aiFailed": "AI could not process this audio",
+      "balanceNegative": "Das Guthaben wuerde negativ",
+      "savingsNegative": "Das Ersparnis wuerde negativ",
+      "insufficientBalance": "Nicht genug Geld auf dem Konto",
+      "insufficientSavings": "Nicht genug Geld in den Ersparnissen"
+    },
+    "categoryAdded": "",
+    "categoryDeleted": ""
   },
   "analytics": {
-    "title": "Ausgabenaufschlüsselung",
+    "title": "AusgabenaufschlГјsselung",
     "description": "Sieh nach Kategorie, wohin dein Geld geht.",
     "totalExpenses": "Gesamtausgaben",
-    "transactions": "{{count}} Einträge",
+    "transactions": "{{count}} EintrГ¤ge",
     "ofTotal": "{{pct}}% des Gesamtbetrags",
-    "noData": "Für diesen Monat gibt es noch keine Ausgabendaten.",
+    "noData": "FГјr diesen Monat gibt es noch keine Ausgabendaten.",
     "chartTitle": "Aufteilung nach Kategorien",
     "topCategory": "Top-Kategorie",
     "howToReadTitle": "Je laenger der Balken, desto groesser der Ausgabenanteil.",
     "howToReadDescription": "Beginnen Sie mit der Gesamtsumme und pruefen Sie dann die Kategorie mit dem laengsten Balken: dort liegt der groesste Ausgabenblock."
   },
   "onboarding": {
-    "skip": "Überspringen",
-    "back": "Zurück",
+    "skip": "Гњberspringen",
+    "back": "ZurГјck",
     "next": "Weiter",
-    "start": "Los geht’s!",
+    "start": "Los gehtвЂ™s!",
     "welcome": {
       "title": "Willkommen bei Save Up!",
       "description": "Schauen wir uns kurz an, wie die App funktioniert. Das dauert nur eine Minute."
     },
     "navigation": {
-      "title": "Unteres Menü",
-      "description": "Verwenden Sie diese Schaltflächen, um jederzeit zum Dashboard zurückzukehren, den Bericht zu öffnen oder zu den Einstellungen zu gelangen."
+      "title": "Unteres MenГј",
+      "description": "Verwenden Sie diese SchaltflГ¤chen, um jederzeit zum Dashboard zurГјckzukehren, den Bericht zu Г¶ffnen oder zu den Einstellungen zu gelangen."
     },
     "balance": {
       "title": "Dein Kontostand",
@@ -333,7 +370,7 @@
     },
     "amount-input": {
       "title": "Einnahmen und Ausgaben",
-      "description": "Geben Sie einen Betrag ein, wählen Sie bei Bedarf die Währung und tippen Sie auf Einnahme oder Ausgabe. Die App konvertiert ihn automatisch in Ihre Basiswährung."
+      "description": "Geben Sie einen Betrag ein, wГ¤hlen Sie bei Bedarf die WГ¤hrung und tippen Sie auf Einnahme oder Ausgabe. Die App konvertiert ihn automatisch in Ihre BasiswГ¤hrung."
     },
     "daily-limit": {
       "title": "Tagesbudget",
@@ -345,7 +382,7 @@
     },
     "templates": {
       "title": "Wiederkehrende Aktionen",
-      "description": "Erstelle Vorlagen für regelmäßige Transaktionen wie Miete oder Gehalt. Mit einem Tippen anwenden."
+      "description": "Erstelle Vorlagen fГјr regelmГ¤Гџige Transaktionen wie Miete oder Gehalt. Mit einem Tippen anwenden."
     },
     "report-tabs": {
       "title": "Berichtsmodi",
@@ -365,7 +402,7 @@
     },
     "report-new-month": {
       "title": "Neuer Monat",
-      "description": "Wenn der Monat zu Ende ist, klicken Sie hier, um Ihre Ausgabenstatistiken zurückzusetzen, während Ihr Kontostand und Ihre Ersparnisse erhalten bleiben."
+      "description": "Wenn der Monat zu Ende ist, klicken Sie hier, um Ihre Ausgabenstatistiken zurГјckzusetzen, wГ¤hrend Ihr Kontostand und Ihre Ersparnisse erhalten bleiben."
     },
     "settings-theme": {
       "title": "Darstellung",
@@ -373,33 +410,33 @@
     },
     "settings-language": {
       "title": "Sprache",
-      "description": "Wähle zwischen Englisch, Russisch und Usbekisch."
+      "description": "WГ¤hle zwischen Englisch, Russisch und Usbekisch."
     },
     "settings-currency": {
-      "title": "Währung",
-      "description": "Wählen Sie die Währung für alle Salden und Berichte. Eine Änderung berechnet automatisch alle Ihre historischen Daten neu."
+      "title": "WГ¤hrung",
+      "description": "WГ¤hlen Sie die WГ¤hrung fГјr alle Salden und Berichte. Eine Г„nderung berechnet automatisch alle Ihre historischen Daten neu."
     },
     "settings-reset": {
-      "title": "Daten zurücksetzen",
-      "description": "Alle Transaktionen, Ersparnisse und Vorlagen dauerhaft löschen, um neu zu starten."
+      "title": "Daten zurГјcksetzen",
+      "description": "Alle Transaktionen, Ersparnisse und Vorlagen dauerhaft lГ¶schen, um neu zu starten."
     },
     "done": {
       "title": "Alles bereit!",
-      "description": "Beginne mit dem Verfolgen deiner Finanzen. Du kannst jederzeit über das untere Menü zu jedem Bereich zurückkehren."
+      "description": "Beginne mit dem Verfolgen deiner Finanzen. Du kannst jederzeit Гјber das untere MenГј zu jedem Bereich zurГјckkehren."
     }
   },
   "notFound": {
     "caption": "Seite nicht gefunden",
     "title": "Diese Route existiert nicht",
-    "description": "Kehre zum Dashboard zurück, um dein Budget weiter zu verfolgen.",
-    "action": "Zurück zum Dashboard"
+    "description": "Kehre zum Dashboard zurГјck, um dein Budget weiter zu verfolgen.",
+    "action": "ZurГјck zum Dashboard"
   },
   "ai": {
     "startRecording": "Aufnahme starten",
     "stopRecording": "Stoppen",
-    "recording": "Aufnahme läuft",
+    "recording": "Aufnahme lГ¤uft",
     "resultTitle": "Erkannte Transaktion",
-    "creditsRemaining": "Verbleibende täгliche Anfragen: {{count}}",
-    "creditsExhausted": "Tägliches KI-Limit erreicht"
+    "creditsRemaining": "Verbleibende tГ¤Ріliche Anfragen: {{count}}",
+    "creditsExhausted": "TГ¤gliches KI-Limit erreicht"
   }
 }

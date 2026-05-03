@@ -9,9 +9,25 @@ import { corsPlugin } from "./plugins/cors.js";
 import { helmetPlugin } from "./plugins/helmet.js";
 import { rpcPlugin } from "./plugins/rpc.js";
 
+const isDev = env.NODE_ENV !== "production";
+
 export async function buildApp() {
   const app = Fastify({
-    logger: true,
+    logger: {
+      level: process.env["LOG_LEVEL"] ?? (isDev ? "debug" : "info"),
+      ...(isDev && {
+        transport: {
+          target: "pino-pretty",
+          options: { colorize: true, translateTime: "SYS:HH:MM:ss", ignore: "pid,hostname" },
+        },
+      }),
+      serializers: {
+        req(req) {
+          return { method: req.method, url: req.url, reqId: req.id };
+        },
+      },
+    },
+    genReqId: () => crypto.randomUUID(),
   });
 
   await app.register(corsPlugin);

@@ -1,29 +1,10 @@
 import { eq } from "drizzle-orm";
 import { db } from "./config/database.js";
 import { users } from "./db/schema/index.js";
+import { logger } from "./utils/logger.js";
+import { getBotMessage } from "./utils/i18n.js";
 
-import en from "./locales/en.json" with { type: "json" };
-import ru from "./locales/ru.json" with { type: "json" };
-import uz from "./locales/uz.json" with { type: "json" };
-import kk from "./locales/kk.json" with { type: "json" };
-import zh from "./locales/zh.json" with { type: "json" };
-import ja from "./locales/ja.json" with { type: "json" };
-import ko from "./locales/ko.json" with { type: "json" };
-import tr from "./locales/tr.json" with { type: "json" };
-import es from "./locales/es.json" with { type: "json" };
-import fr from "./locales/fr.json" with { type: "json" };
-import de from "./locales/de.json" with { type: "json" };
-
-type SupportedLang = "en" | "ru" | "uz" | "kk" | "zh" | "ja" | "ko" | "tr" | "es" | "fr" | "de";
-
-const LOCALES: Record<SupportedLang, Record<string, string>> = {
-  en, ru, uz, kk, zh, ja, ko, tr, es, fr, de,
-};
-
-function getMessage(key: string, lang: string): string {
-  const l = (LOCALES[lang as SupportedLang] ? lang : "en") as SupportedLang;
-  return LOCALES[l]?.[key] ?? LOCALES["en"]?.[key] ?? "";
-}
+const log = logger.child({ module: "reminders" });
 
 const REMINDER_KEYS = [
   "reminder_add_expense",
@@ -40,9 +21,6 @@ const REMINDER_KEYS = [
 
 const THREE_DAYS_MS = 3 * 24 * 60 * 60 * 1000;
 const CHECK_INTERVAL_MS = 60 * 60 * 1000;
-
-
-
 
 function pickRandomKey(): string {
   return REMINDER_KEYS[Math.floor(Math.random() * REMINDER_KEYS.length)]!;
@@ -61,13 +39,13 @@ async function sendTelegramMessage(
 
   if (!res.ok) {
     const err = await res.text();
-    console.error(`[Reminders] Failed to send to ${chatId}:`, err);
+    log.error({ chatId, status: res.status, err }, "Failed to send reminder");
   }
 }
 
 async function runReminderBatch(botToken: string): Promise<void> {
   const now = Date.now();
-  console.log("[Reminders] Running batch...");
+  log.debug("Running reminder batch");
 
   let allUsers: { telegramId: number; language: string | null; lastReminderSentAt: Date | null }[];
 
@@ -80,7 +58,7 @@ async function runReminderBatch(botToken: string): Promise<void> {
       })
       .from(users);
   } catch (err) {
-    console.error("[Reminders] Failed to fetch users:", err);
+    log.error({ err }, "Failed to fetch users for reminders");
     return;
   }
 
@@ -91,7 +69,7 @@ async function runReminderBatch(botToken: string): Promise<void> {
     if (now - lastSent < THREE_DAYS_MS) continue;
 
     const key = pickRandomKey();
-    const text = getMessage(key, user.language ?? "en");
+    const text = getBotMessage(key, user.language ?? "en");
 
     try {
       await sendTelegramMessage(botToken, user.telegramId, text);
@@ -101,25 +79,25 @@ async function runReminderBatch(botToken: string): Promise<void> {
         .where(eq(users.telegramId, user.telegramId));
       sent++;
     } catch (err) {
-      console.error(`[Reminders] Error sending to ${user.telegramId}:`, err);
+      log.error({ err, telegramId: user.telegramId }, "Error sending reminder");
     }
 
     await new Promise((r) => setTimeout(r, 100));
   }
 
-  console.log(`[Reminders] Batch done. Sent ${sent}/${allUsers.length}.`);
+  log.info({ sent, total: allUsers.length }, "Reminder batch done");
 }
 
 export function startReminderScheduler(botToken: string): void {
-  console.log("[Reminders] Scheduler started (interval: 1h, send interval per user: 3d).");
+  log.info("Reminder scheduler started (interval: 1h, send interval per user: 3d)");
 
   runReminderBatch(botToken).catch((err) =>
-    console.error("[Reminders] Startup batch error:", err),
+    log.error({ err }, "Startup reminder batch error"),
   );
 
   setInterval(() => {
     runReminderBatch(botToken).catch((err) =>
-      console.error("[Reminders] Scheduled batch error:", err),
+      log.error({ err }, "Scheduled reminder batch error"),
     );
   }, CHECK_INTERVAL_MS);
 }

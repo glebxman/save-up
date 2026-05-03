@@ -1,24 +1,6 @@
-import { index, numeric, pgEnum, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
+import { index, numeric, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { users } from "./users.js";
-
-export const transactionTypeEnum = pgEnum("transaction_type", [
-  "income",
-  "expense",
-  "transfer_to_savings",
-  "transfer_from_savings",
-]);
-
-export const expenseCategoryEnum = pgEnum("expense_category", [
-  "food",
-  "taxi",
-  "entertainment",
-  "shopping",
-  "utilities",
-  "health",
-  "education",
-  "other",
-]);
 
 export const transactions = pgTable(
   "transactions",
@@ -27,8 +9,8 @@ export const transactions = pgTable(
     userId: uuid("user_id")
       .notNull()
       .references(() => users.id, { onDelete: "cascade" }),
-    type: transactionTypeEnum("type").notNull(),
-    category: expenseCategoryEnum("category"),
+    type: varchar("type", { length: 30 }).notNull(),
+    category: varchar("category", { length: 50 }),
     amount: numeric("amount", { precision: 15, scale: 2, mode: "number" }).notNull(),
     savingsAmt: numeric("savings_amt", { precision: 15, scale: 2, mode: "number" }),
     note: text("note"),
@@ -47,4 +29,3 @@ export const transactions = pgTable(
 );
 
 export type TransactionRow = typeof transactions.$inferSelect;
-export type InsertTransactionRow = typeof transactions.$inferInsert;

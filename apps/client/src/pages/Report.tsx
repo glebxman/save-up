@@ -4,17 +4,15 @@ import { useTranslation } from "react-i18next";
 import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
 import { MonthReport } from "@/components/features/report/MonthReport";
 import { TransactionHistoryView } from "@/components/features/report/TransactionHistoryView";
-import { categoryMeta } from "@/components/features/shared/categoryMeta";
-import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Spinner } from "@/components/ui";
+import { getCategoryDisplay, isBuiltinCategory } from "@/components/features/shared/categoryMeta";
+import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Skeleton } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
-import type { ExpenseCategory, TransactionFilters } from "@/types/finance";
+import type { TransactionFilters } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
 
 function getCurrentMonthKey(date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
 }
-
-type ReportMode = "income" | "spending" | "analytics" | "history";
 
 interface SummaryMetric {
   label: string;
@@ -46,16 +44,16 @@ function getProgressValue(value: number, total: number): number {
   return Math.max(6, Math.min(100, Math.round((value / total) * 100)));
 }
 
-function isExpenseCategory(value: string): value is ExpenseCategory {
-  return value in categoryMeta;
-}
+type ReportMode = "income" | "spending" | "analytics" | "history";
 
 export function Report() {
   const { t } = useTranslation();
   const [selectedMonthKey, setSelectedMonthKey] = useState(getCurrentMonthKey());
-  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation } = useFinance({
+  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation, status } = useFinance({
     reportMonthKey: selectedMonthKey,
   });
+  const customCategories = status?.user.customCategories ?? [];
+  const customizations = status?.user.categoryCustomizations ?? {};
   const [mode, setMode] = useState<ReportMode>("income");
   const [historyFilters, setHistoryFilters] = useState<TransactionFilters>({
     monthKey: selectedMonthKey,
@@ -133,7 +131,9 @@ export function Report() {
             : t("analytics.noData"),
         metrics: [
           {
-            label: topBreakdownItems[0] ? t(`expenseCategory.${topBreakdownItems[0].category}`) : t("analytics.title"),
+            label: topBreakdownItems[0]
+              ? getCategoryDisplay(topBreakdownItems[0].category, { customCategories, customizations, t }).name
+              : t("analytics.title"),
             value: topBreakdownItems[0] ? formatMoney(topBreakdownItems[0].total) : "0",
           },
           {
@@ -143,7 +143,7 @@ export function Report() {
         ],
         rows: topBreakdownItems.map((item) => ({
           key: item.category,
-          label: t(`expenseCategory.${item.category}`),
+          label: getCategoryDisplay(item.category, { customCategories, customizations, t }).name,
           value: item.total,
           percent: getProgressValue(item.total, breakdown?.expenseTotal ?? 0),
         })),
@@ -196,6 +196,8 @@ export function Report() {
     breakdown?.expenseTotal,
     breakdownQuery.isPending,
     cashflowRows,
+    customCategories,
+    customizations,
     mode,
     t,
     topBreakdownItems,
@@ -203,14 +205,42 @@ export function Report() {
 
   if (reportQuery.isPending && !report) {
     return (
-      <Card variant="default">
-        <CardContent>
-          <div className="flex items-center gap-3 py-3">
-            <Spinner />
-            <span>{t("report.loading")}</span>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="space-y-4">
+        <Card variant="default">
+          <CardContent className="space-y-5">
+            <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
+              <div className="space-y-2">
+                <Skeleton variant="text" className="h-3 w-20" />
+                <Skeleton variant="text" className="h-9 w-40" />
+              </div>
+              <Skeleton className="h-[72px] w-full rounded-[20px] sm:w-44" />
+            </div>
+            <Skeleton className="h-11 w-full rounded-[22px]" />
+            <div className="space-y-4 pt-2">
+              <div className="space-y-1.5">
+                <Skeleton variant="text" className="h-3 w-24" />
+                <Skeleton variant="text" className="h-10 w-36" />
+                <Skeleton variant="text" className="h-3 w-48" />
+              </div>
+              <div className="grid grid-cols-2 gap-3">
+                <Skeleton className="h-20 rounded-[24px]" />
+                <Skeleton className="h-20 rounded-[24px]" />
+              </div>
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <Skeleton variant="text" className="h-3 w-24" />
+                      <Skeleton variant="text" className="h-3 w-16" />
+                    </div>
+                    <Skeleton className="h-3 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     );
   }
 
@@ -297,16 +327,23 @@ export function Report() {
             </div>
 
             {mode === "analytics" && breakdownQuery.isPending && !breakdown && (
-              <div className="flex items-center gap-3 py-2 text-sm text-[var(--muted)]">
-                <Spinner />
-                <span>{t("report.loading")}</span>
+              <div className="space-y-3">
+                {[1, 2, 3].map((i) => (
+                  <div key={i} className="space-y-1.5">
+                    <div className="flex justify-between">
+                      <Skeleton variant="text" className="h-3 w-24" />
+                      <Skeleton variant="text" className="h-3 w-16" />
+                    </div>
+                    <Skeleton className="h-3 rounded-full" />
+                  </div>
+                ))}
               </div>
             )}
 
             {summary.rows.length > 0 && (
               <div className="space-y-3">
                 {summary.rows.map((row) => {
-                  const rowColor = isExpenseCategory(row.key) ? categoryMeta[row.key].chartColor : undefined;
+                  const rowColor = getCategoryDisplay(row.key, { customCategories, customizations }).chartColor;
 
                   return (
                     <div key={row.key} className="space-y-1.5">
@@ -338,8 +375,14 @@ export function Report() {
       <div data-onboarding="report-details">
         {mode === "history" ? (
           <TransactionHistoryView filters={historyFilters} hideMonthFilter onFiltersChange={setHistoryFilters} />
-        ) : mode === "analytics" && breakdown ? (
+        ) : mode === "analytics" && breakdown && breakdown.items.length > 0 ? (
           <CategoryBreakdownView breakdown={breakdown} />
+        ) : mode === "analytics" && !breakdownQuery.isPending ? (
+          <Card variant="secondary">
+            <CardContent>
+              <p className="py-4 text-center text-sm text-[var(--muted)]">{t("analytics.noData")}</p>
+            </CardContent>
+          </Card>
         ) : mode !== "analytics" ? (
           <MonthReport report={activeReport} />
         ) : null}

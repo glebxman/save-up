@@ -4,7 +4,7 @@ import { useTranslation } from "react-i18next";
 import { ArrowDownLeftIcon, ArrowUpRightIcon, XMarkIcon } from "@/components/layout/icons";
 import { Button, Card, CardContent, CardFooter, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 
-import { formatInputWithРазделителями, parseFormattedInput, getCurrencySymbol, formatMoney } from "@/utils/format";
+import { formatGroupedNumber, parseFormattedInput, getCurrencySymbol, formatMoney } from "@/utils/format";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getConversionRate } from "@/utils/exchange-rates";
 import { MAX_FINANCE_AMOUNT, type CurrencyCode } from "@finance-twa/shared-types";
@@ -38,16 +38,14 @@ export function AmountInput({
   const { t } = useTranslation();
   const { currency: baseCurrency } = useCurrency();
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
-  const [displayValue, setDisplayValue] = useState(formatInputWithРазделителями(value));
+  const [displayValue, setDisplayValue] = useState(formatGroupedNumber(value));
 
   const rate = getConversionRate(currency as CurrencyCode, baseCurrency);
   const convertedValue = Number(value) * rate;
   const isDifferentCurrency = currency !== baseCurrency;
 
-
-
   const handleInputChange = (newValue: string) => {
-    const formatted = formatInputWithРазделителями(newValue);
+    const formatted = formatGroupedNumber(newValue);
     setDisplayValue(formatted);
     onChange(String(parseFormattedInput(formatted)));
   };
@@ -56,13 +54,11 @@ export function AmountInput({
     handleInputChange(String(result.amount));
     // We can't easily trigger the parent's onIncome/onExpense modals here without exposing them or using a timeout
     // Actually they are passed as props, so we can call them.
-    if (result.type === "income") {
-      onIncome?.();
+    if (result.type === "income") {      onIncome?.();
     } else {
       onExpense?.();
     }
   };
-
 
   return (
     <Card className="overflow-hidden" data-onboarding="amount-input" variant="default">

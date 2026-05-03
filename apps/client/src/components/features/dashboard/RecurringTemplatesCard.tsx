@@ -56,6 +56,9 @@ export function RecurringTemplatesCard({
                       <p className="m-0 truncate text-sm font-medium text-[var(--foreground)]">{template.title}</p>
                       <p className="m-0 mt-1 text-xs text-[var(--muted)]">
                         {t(`transactionType.${template.type}`)} &middot; {formatMoney(template.amount)}
+                        {template.autoApply && template.dayOfMonth
+                          ? <> &middot; <span className="text-[var(--accent)]">⚡ {template.dayOfMonth}</span></>
+                          : null}
                       </p>
                     </div>
                   </div>

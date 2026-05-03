@@ -1,5 +1,6 @@
 import { env } from "./config/env.js";
 import { buildApp } from "./app.js";
+import { logger } from "./utils/logger.js";
 
 function isAddressInUseError(error: unknown): error is NodeJS.ErrnoException {
   return error instanceof Error && "code" in error && error.code === "EADDRINUSE";
@@ -25,6 +26,6 @@ async function start() {
 }
 
 start().catch((error) => {
-  console.error(error);
+  logger.error({ err: error }, "Failed to start server");
   process.exit(1);
 });

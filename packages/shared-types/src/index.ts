@@ -1,4 +1,18 @@
 export type SavingsPct = number;
+
+export interface CategoryCustomization {
+  name?: string;
+  emoji?: string;
+}
+
+export interface CustomCategory {
+  id: string;
+  name: string;
+  emoji: string;
+}
+
+export const MAX_CUSTOM_CATEGORIES = 8;
+
 export type TransactionType = "income" | "expense" | "transfer_to_savings" | "transfer_from_savings";
 export type SavingsTransferDirection = "to_savings" | "from_savings";
 export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY";
@@ -21,8 +35,10 @@ export interface RecurringTransaction {
   type: TransactionType;
   amount: number;
   savingsAmt: number | null;
-  category: ExpenseCategory | null;
+  category: string | null;
   note: string | null;
+  dayOfMonth?: number | null;
+  autoApply?: boolean;
 }
 
 export interface User {
@@ -42,6 +58,8 @@ export interface User {
   onboardingCompleted: boolean;
   language: string | null;
   voiceDailyUsed: number;
+  categoryCustomizations: Partial<Record<ExpenseCategory, CategoryCustomization>>;
+  customCategories: CustomCategory[];
   createdAt: string;
 }
 
@@ -51,7 +69,7 @@ export interface Transaction {
   type: TransactionType;
   amount: number;
   savingsAmt: number | null;
-  category: ExpenseCategory | null;
+  category: string | null;
   note: string | null;
   monthKey: string;
   occurredAt: string;
@@ -62,7 +80,7 @@ export interface Transaction {
 export interface ExpenseTransaction extends Transaction {
   type: "expense";
   savingsAmt: null;
-  category: ExpenseCategory;
+  category: string;
 }
 
 export interface DailyLimit {
@@ -116,7 +134,7 @@ export interface MonthReport {
 }
 
 export interface CategoryBreakdownItem {
-  category: ExpenseCategory;
+  category: string;
   total: number;
   count: number;
 }
@@ -130,17 +148,18 @@ export interface CategoryBreakdown {
 export interface TransactionFilters {
   monthKey?: string;
   type?: TransactionType | "all";
-  category?: ExpenseCategory | "all";
+  category?: string | "all";
   search?: string;
   includeDeleted?: boolean;
   limit?: number;
+  offset?: number;
 }
 
 export interface TransactionUpdatePayload {
   transactionId: string;
   amount: number;
   savingsAmt?: number;
-  category?: ExpenseCategory | null;
+  category?: string | null;
   note?: string | null;
   occurredAt?: string;
 }
@@ -151,8 +170,10 @@ export interface RecurringTransactionPayload {
   type: TransactionType;
   amount: number;
   savingsAmt?: number | null;
-  category?: ExpenseCategory | null;
+  category?: string | null;
   note?: string | null;
+  dayOfMonth?: number | null;
+  autoApply?: boolean;
 }
 
 export interface RpcMethodMap {
@@ -182,7 +203,7 @@ export interface RpcMethodMap {
     params: {
       initData: string;
       amount: number;
-      category: ExpenseCategory;
+      category: string;
       note?: string | null;
       occurredAt?: string;
     };
@@ -345,9 +366,33 @@ export interface RpcMethodMap {
     result: {
       type: "expense" | "income";
       amount: number;
-      category: ExpenseCategory;
+      category: string;
       note?: string;
     } | null;
+  };
+  "user.setCategoryCustomization": {
+    params: {
+      initData: string;
+      category: ExpenseCategory;
+      name: string;
+      emoji: string;
+    };
+    result: { ok: true };
+  };
+  "user.addCustomCategory": {
+    params: {
+      initData: string;
+      name: string;
+      emoji: string;
+    };
+    result: Status;
+  };
+  "user.deleteCustomCategory": {
+    params: {
+      initData: string;
+      id: string;
+    };
+    result: Status;
   };
 }
 

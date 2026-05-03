@@ -6,6 +6,8 @@ import { useNavigate } from "react-router-dom";
 import { ChevronRightIcon, LanguageIcon, ThemeIcon } from "@/components/layout/icons";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { Button, Card, CardContent, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
+import { CategoryEditModal } from "@/components/features/settings/CategoryEditModal";
+import { NewCategoryModal } from "@/components/features/settings/NewCategoryModal";
 
 import { useFinance } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
@@ -14,6 +16,8 @@ import { useCurrency, SUPPORTED_CURRENCIES } from "@/hooks/useCurrency";
 import { getCurrencySymbol } from "@/utils/format";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import { getConversionRate } from "@/utils/exchange-rates";
+import { categoryMeta, EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import type { ExpenseCategory } from "@/types/finance";
 import ruFlagUrl from "@/assets/ru.svg";
 import ukFlagUrl from "@/assets/uk.svg";
 import uzbFlagUrl from "@/assets/uzb.svg";
@@ -25,12 +29,15 @@ export function Settings() {
   const navigate = useNavigate();
   const { theme, resolvedTheme, setTheme } = useTheme();
   const { initData } = useTelegram();
-  const { resetAccountDataMutation, status, updateLanguageMutation, convertCurrencyMutation, refreshRatesMutation } = useFinance();
+  const { resetAccountDataMutation, status, updateLanguageMutation, convertCurrencyMutation, refreshRatesMutation, setCategoryCustomizationMutation, addCustomCategoryMutation, deleteCustomCategoryMutation } = useFinance();
 
   const { currency, setCurrency } = useCurrency();
   const restartOnboarding = useOnboardingStore((s) => s.restart);
   const [activeModal, setActiveModal] = useState<SettingsModal>(null);
   const [showOtherLanguages, setShowOtherLanguages] = useState(false);
+  const [editingCategory, setEditingCategory] = useState<ExpenseCategory | null>(null);
+  const [showNewCategoryModal, setShowNewCategoryModal] = useState(false);
+  const [deletingCategoryId, setDeletingCategoryId] = useState<string | null>(null);
 
   const resolvedLanguage = (i18n.resolvedLanguage ?? "en").slice(0, 2);
   const currentLanguage = SUPPORTED_LANGUAGES.includes(resolvedLanguage as AppLanguage)
@@ -292,6 +299,69 @@ export function Settings() {
         </CardContent>
       </Card>
 
+      <Card className="overflow-hidden" variant="default">
+        <CardContent className="p-0">
+          <div className="mb-3">
+            <p className="m-0 text-base font-semibold text-[var(--foreground)]">
+              {t("settings.categories")}
+            </p>
+            <p className="m-0 mt-0.5 text-xs text-[var(--muted)]">
+              {t("settings.categoriesDescription")}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-4 gap-2">
+            {EXPENSE_CATEGORIES.map((key) => {
+              const meta = categoryMeta[key];
+              const custom = status?.user.categoryCustomizations?.[key];
+              const emoji = custom?.emoji;
+              const label = custom?.name ?? t(`expenseCategory.${key}`);
+
+              return (
+                <button
+                  key={key}
+                  className="flex flex-col items-center gap-1.5 rounded-[14px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
+                  onClick={() => setEditingCategory(key)}
+                  type="button"
+                >
+                  {emoji ? (
+                    <span className="text-2xl leading-none">{emoji}</span>
+                  ) : (
+                    <meta.icon className={`h-6 w-6 ${meta.color}`} />
+                  )}
+                  <span className="text-[10px] leading-tight text-[var(--foreground)]">{label}</span>
+                </button>
+              );
+            })}
+
+            {(status?.user.customCategories ?? []).map((cat) => (
+              <div key={cat.id} className="relative">
+                <button
+                  className="flex w-full flex-col items-center gap-1.5 rounded-[14px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
+                  onClick={() => setDeletingCategoryId(cat.id)}
+                  type="button"
+                >
+                  <span className="text-2xl leading-none">{cat.emoji}</span>
+                  <span className="text-[10px] leading-tight text-[var(--foreground)]">{cat.name}</span>
+                </button>
+                <span className="absolute -right-1 -top-1 flex h-5 w-5 items-center justify-center rounded-full bg-[var(--danger)] text-[10px] font-bold text-white leading-none">
+                  ×
+                </span>
+              </div>
+            ))}
+          </div>
+
+          <button
+            className="mt-3 flex w-full items-center justify-center gap-2 rounded-[14px] border-2 border-dashed border-[var(--separator)] py-3 text-sm font-medium text-[var(--muted)] transition-colors hover:border-[var(--accent)] hover:text-[var(--accent)] active:opacity-70"
+            disabled={(status?.user.customCategories?.length ?? 0) >= 8}
+            onClick={() => setShowNewCategoryModal(true)}
+            type="button"
+          >
+            <span className="text-lg leading-none">+</span>
+            {t("settings.addCategory")}
+          </button>
+        </CardContent>
+      </Card>
 
       <Card className="overflow-hidden" variant="default">
         <CardContent className="p-0">
@@ -299,8 +369,7 @@ export function Settings() {
             className="flex w-full items-center justify-between gap-4 text-left"
             onClick={() => { navigate("/"); restartOnboarding(); }}
             type="button"
-          >
-            <div className="flex min-w-0 items-center gap-4">
+          >            <div className="flex min-w-0 items-center gap-4">
               <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-[18px] bg-[var(--settings-blue)] text-white">
                 <svg aria-hidden="true" className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 1 0 0-16 8 8 0 0 0 0 16ZM9.555 7.168A1 1 0 0 0 8 8v4a1 1 0 0 0 1.555.832l3-2a1 1 0 0 0 0-1.664l-3-2Z" clipRule="evenodd" />
@@ -496,6 +565,54 @@ export function Settings() {
         }}
         question={t("settings.resetDataModalQuestion")}
         title={t("settings.resetDataModalTitle")}
+      />
+
+      <CategoryEditModal
+        category={editingCategory}
+        customization={editingCategory ? status?.user.categoryCustomizations?.[editingCategory] : undefined}
+        isOpen={editingCategory !== null}
+        isPending={setCategoryCustomizationMutation.isPending}
+        onClose={() => setEditingCategory(null)}
+        onSave={(category, name, emoji) => {
+          setCategoryCustomizationMutation.mutate(
+            { category, name, emoji },
+            { onSuccess: () => setEditingCategory(null) },
+          );
+        }}
+      />
+
+      <NewCategoryModal
+        isOpen={showNewCategoryModal}
+        isPending={addCustomCategoryMutation.isPending}
+        onClose={() => setShowNewCategoryModal(false)}
+        onSave={(name, emoji) => {
+          addCustomCategoryMutation.mutate(
+            { name, emoji },
+            { onSuccess: () => setShowNewCategoryModal(false) },
+          );
+        }}
+      />
+
+      <ConfirmActionModal
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("settings.deleteCategory")}
+        description={t("settings.deleteCategoryDescription")}
+        isOpen={deletingCategoryId !== null}
+        isPending={deleteCustomCategoryMutation.isPending}
+        onClose={() => {
+          if (!deleteCustomCategoryMutation.isPending) {
+            setDeletingCategoryId(null);
+          }
+        }}
+        onConfirm={() => {
+          if (!deletingCategoryId) return;
+          deleteCustomCategoryMutation.mutate(
+            { id: deletingCategoryId },
+            { onSuccess: () => setDeletingCategoryId(null) },
+          );
+        }}
+        question={t("settings.deleteCategoryQuestion")}
+        title={t("settings.deleteCategoryTitle")}
       />
     </div>
   );

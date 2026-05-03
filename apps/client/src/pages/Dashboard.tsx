@@ -19,7 +19,7 @@ import { useFinance } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getConversionRate } from "@/utils/exchange-rates";
-import type { ExpenseCategory, RecurringTransaction } from "@/types/finance";
+import type { RecurringTransaction } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
 import { MAX_FINANCE_AMOUNT, type CurrencyCode } from "@finance-twa/shared-types";
 
@@ -70,7 +70,7 @@ export function Dashboard() {
       : null;
   const isActionBusy = addExpenseMutation.isPending || addIncomeMutation.isPending;
 
-  async function handleExpense(category: ExpenseCategory): Promise<void> {
+  async function handleExpense(category: string, note?: string): Promise<void> {
     if (!hasValidAmount) {
       return;
     }
@@ -78,7 +78,7 @@ export function Dashboard() {
     const rate = getConversionRate(inputCurrency, baseCurrency);
     const convertedAmount = parsedAmount * rate;
 
-    await addExpenseMutation.mutateAsync({ amount: convertedAmount, category });
+    await addExpenseMutation.mutateAsync({ amount: convertedAmount, category, note });
     setAmount("");
     setIsExpenseModalOpen(false);
   }
@@ -262,11 +262,13 @@ export function Dashboard() {
         />
 
         <ExpenseCategoryModal
+          categoryCustomizations={status.user.categoryCustomizations}
+          customCategories={status.user.customCategories}
           isOpen={isExpenseModalOpen}
           isPending={addExpenseMutation.isPending}
           onClose={() => setIsExpenseModalOpen(false)}
-          onSelect={(category) => {
-            void handleExpense(category);
+          onSelect={(category, note) => {
+            void handleExpense(category, note);
           }}
         />
 

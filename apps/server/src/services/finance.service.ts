@@ -24,6 +24,8 @@ import { and, count, desc, eq, ilike, isNull, sql } from "drizzle-orm";
 
 import { db } from "../config/database.js";
 import { transactions, users, type TransactionRow, type UserRow } from "../db/schema/index.js";
+import { AppError, ErrorCode } from "../utils/errors.js";
+import { escapeIlike } from "../utils/sql.js";
 import { getMonthKey } from "../utils/daily-limit.js";
 import { invalidateStatusCache, setCachedStatus } from "./cache.service.js";
 import { buildStatus, ensureUser, SUPER_ADMIN_TELEGRAM_ID } from "./user.service.js";
@@ -41,13 +43,13 @@ export async function processVoice(telegramId: number, base64Audio: string) {
     const usedToday = isNewDay ? 0 : user.voiceDailyUsed;
 
     if (usedToday >= VOICE_CREDITS_DAILY_LIMIT) {
-      throw new Error("Voice daily limit reached");
+      throw new AppError(ErrorCode.LIMIT_REACHED, "Voice daily limit reached");
     }
   }
 
-  const result = await extractTransactionFromVoice(base64Audio);
+  const customCategories = Array.isArray(user.customCategories) ? user.customCategories as import("@finance-twa/shared-types").CustomCategory[] : [];
+  const result = await extractTransactionFromVoice(base64Audio, customCategories);
 
-  // Only charge a credit when AI successfully extracted a transaction.
   if (result && !isAdmin) {
     const isNewDay = user.voiceDailyDate !== today;
     const nextCount = isNewDay ? 1 : user.voiceDailyUsed + 1;
@@ -63,7 +65,6 @@ export async function processVoice(telegramId: number, base64Audio: string) {
   return result;
 }
 
-
 type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
 interface ParsedTemplate {
@@ -71,7 +72,7 @@ interface ParsedTemplate {
   type: TransactionType;
   amount: number;
   savingsAmt: number | null;
-  category: ExpenseCategory | null;
+  category: string | null;
   note: string | null;
 }
 
@@ -104,11 +105,11 @@ function getPreviousMonthKey(date = new Date()): string {
 
 function assertPositiveAmount(amount: number): void {
   if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Amount must be a positive number");
+    throw new AppError(ErrorCode.VALIDATION, "Amount must be a positive number");
   }
 
   if (amount > MAX_FINANCE_AMOUNT) {
-    throw new Error(`Amount is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+    throw new AppError(ErrorCode.VALIDATION, `Amount is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
   }
 }
 
@@ -318,11 +319,11 @@ async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promise<UserR
   const snapshot = buildSnapshot(rows);
 
   if (snapshot.balance < 0) {
-    throw new Error("Operation would make balance negative");
+    throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, "Operation would make balance negative");
   }
 
   if (snapshot.savings < 0) {
-    throw new Error("Operation would make savings negative");
+    throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, "Operation would make savings negative");
   }
 
   const updated = await tx
@@ -367,7 +368,7 @@ async function findTransactionForUser(
   const transaction = rows[0];
 
   if (!transaction) {
-    throw new Error("Transaction not found");
+    throw new AppError(ErrorCode.NOT_FOUND, "Transaction not found");
   }
 
   return transaction;
@@ -424,7 +425,7 @@ async function createTransaction(
   input: {
     type: TransactionType;
     amount: number;
-    category?: ExpenseCategory | null;
+    category?: string | null;
     savingsAmt?: number | null;
     note?: string | null;
     occurredAt?: string;
@@ -474,7 +475,7 @@ export async function addIncome(
 export async function addExpense(
   telegramId: number,
   amount: number,
-  category: ExpenseCategory,
+  category: string,
   note?: string | null,
   occurredAt?: string,
 ): Promise<Status> {
@@ -483,7 +484,7 @@ export async function addExpense(
   const user = await ensureUser(telegramId);
 
   if (user.balance < amount) {
-    throw new Error("Insufficient balance for expense");
+    throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, "Insufficient balance for expense");
   }
 
   const updatedUser = await db.transaction(async (tx) =>
@@ -512,11 +513,11 @@ export async function transferSavings(
   const user = await ensureUser(telegramId);
 
   if (direction === "to_savings" && user.balance < amount) {
-    throw new Error("Insufficient balance for transfer");
+    throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, "Insufficient balance for transfer");
   }
 
   if (direction === "from_savings" && user.savings < amount) {
-    throw new Error("Insufficient savings for transfer");
+    throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, "Insufficient savings for transfer");
   }
 
   const updatedUser = await db.transaction(async (tx) =>
@@ -577,17 +578,20 @@ export async function getTransactions(
   }
 
   if (filters.search?.trim()) {
-    whereClauses.push(ilike(transactions.note, `%${filters.search.trim()}%`));
+    const escaped = escapeIlike(filters.search.trim());
+    whereClauses.push(ilike(transactions.note, `%${escaped}%`));
   }
+
+  const limit = Math.min(Math.max(Math.trunc(filters.limit ?? 50), 1), 200);
+  const offset = Math.max(Math.trunc(filters.offset ?? 0), 0);
 
   const baseQuery = db
     .select()
     .from(transactions)
     .where(and(...whereClauses))
     .orderBy(desc(transactions.occurredAt), desc(transactions.createdAt));
-  const rows = filters.limit
-    ? await baseQuery.limit(Math.min(Math.max(Math.trunc(filters.limit), 1), 200))
-    : await baseQuery;
+
+  const rows = await baseQuery.limit(limit).offset(offset);
 
   return rows.map((row) => mapTransactionRow(row));
 }
@@ -605,7 +609,7 @@ export async function updateTransaction(
 
     assertPositiveAmount(nextAmount);
 
-    let nextCategory = current.category as ExpenseCategory | null;
+    let nextCategory: string | null = current.category ?? null;
     let nextSavingsAmt = current.savingsAmt;
 
     if (current.type === "income") {
@@ -615,7 +619,7 @@ export async function updateTransaction(
 
     if (current.type === "expense") {
       nextSavingsAmt = null;
-      nextCategory = payload.category ?? (current.category as ExpenseCategory | null);
+      nextCategory = payload.category ?? current.category;
 
       if (!nextCategory) {
         throw new Error("Expense category is required");
@@ -775,6 +779,10 @@ export async function saveRecurringTransaction(
   const nextTemplate: RecurringTransaction = {
     id: payload.id ?? randomUUID(),
     ...parsed,
+    dayOfMonth: typeof payload.dayOfMonth === "number" && payload.dayOfMonth >= 1 && payload.dayOfMonth <= 28
+      ? payload.dayOfMonth
+      : null,
+    autoApply: payload.autoApply === true,
   };
   const index = templates.findIndex((item) => item.id === nextTemplate.id);
 
@@ -818,7 +826,7 @@ export async function applyRecurringTransaction(telegramId: number, templateId: 
   const template = mapRecurringTemplates(user).find((item) => item.id === templateId);
 
   if (!template) {
-    throw new Error("Recurring transaction not found");
+    throw new AppError(ErrorCode.NOT_FOUND, "Recurring transaction not found");
   }
 
   const updatedUser = await db.transaction(async (tx) => {
@@ -893,7 +901,7 @@ export async function getCategoryBreakdown(
   const items: CategoryBreakdownItem[] = rows
     .filter((row) => row.category !== null)
     .map((row) => ({
-      category: row.category as ExpenseCategory,
+      category: row.category as string,
       total: Number(row.total),
       count: Number(row.count),
     }));
@@ -971,8 +979,7 @@ export async function convertCurrency(telegramId: number, rate: number): Promise
 
   return persistStatus(updatedUser);
 }
-export async function refreshRates(telegramId: number): Promise<Status> {
-  const user = await ensureUser(telegramId);
+export async function refreshRates(telegramId: number): Promise<Status> {  const user = await ensureUser(telegramId);
   await getExchangeRates(true);
   await invalidateStatusCache(telegramId);
   return persistStatus(user);

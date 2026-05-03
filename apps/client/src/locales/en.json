@@ -11,6 +11,7 @@
     "mock": "Mock",
     "live": "Live",
     "cancel": "Cancel",
+    "offline": "No internet connection. Some features may be unavailable.",
     "type": "Type",
     "amount": "Amount",
     "category": "Category",
@@ -160,7 +161,22 @@
     "currencyGbp": "British pound (GBP)",
     "currencyCny": "Chinese yuan (CNY)",
     "exchangeRates": "Exchange Rates",
-    "refresh": "Refresh"
+    "refresh": "Refresh",
+    "categories": "Categories",
+    "categoriesDescription": "Rename categories and choose their icon.",
+    "editCategory": "Edit category",
+    "categoryEmoji": "Icon (emoji)",
+    "categoryName": "Name",
+    "categoryResetTip": "Leave empty to restore the default.",
+    "categorySaved": "Category saved",
+    "save": "Save",
+    "addCategory": "Add category",
+    "customCategories": "Custom",
+    "deleteCategory": "Delete",
+    "deleteCategoryTitle": "Delete category",
+    "deleteCategoryQuestion": "Delete this category?",
+    "deleteCategoryDescription": "Past expenses in this category will keep their data.",
+    "categoryNamePlaceholder": "e.g. Gym, Pets, Car..."
   },
   "admin": {
     "title": "Admin panel",
@@ -195,7 +211,9 @@
     "utilities": "Utilities",
     "health": "Health",
     "education": "Education",
-    "other": "Other"
+    "other": "Other",
+    "notePlaceholder": "Comment (optional)",
+    "confirm": "Add expense"
   },
   "expenseEditor": {
     "title": "Fix expense",
@@ -243,6 +261,8 @@
     "createTitle": "Create recurring action",
     "editTitle": "Edit recurring action",
     "save": "Save changes",
+    "dayOfMonth": "Day of month",
+    "autoApply": "Auto-apply",
     "create": "Create template",
     "deleteQuestion": "Delete this recurring template?",
     "deleteDescription": "{{name}} will be removed from the quick list."
@@ -272,6 +292,7 @@
     "restore": "Bring back",
     "archive": "Cancel",
     "empty": "No transactions match these filters.",
+    "loadMore": "Load more",
     "edit": "Edit",
     "editQuestion": "Update the details for this transaction",
     "amount": "Amount",
@@ -308,6 +329,8 @@
       "micAccess": "Microphone access denied",
       "aiFailed": "AI could not process this audio"
     },
+    "categoryAdded": "Category added",
+    "categoryDeleted": "Category deleted",
     "ratesUpdated": "Exchange rates updated"
   },
   "analytics": {

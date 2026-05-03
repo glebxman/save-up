@@ -1,4 +1,4 @@
-import type { RecurringTransaction } from "@finance-twa/shared-types";
+import type { CategoryCustomization, CustomCategory, ExpenseCategory, RecurringTransaction } from "@finance-twa/shared-types";
 
 import { bigint, boolean, jsonb, numeric, pgTable, smallint, text, timestamp, uniqueIndex, uuid, varchar } from "drizzle-orm/pg-core";
 
@@ -23,6 +23,8 @@ export const users = pgTable(
     language: varchar("language", { length: 5 }),
     voiceDailyUsed: smallint("voice_daily_used").notNull().default(0),
     voiceDailyDate: varchar("voice_daily_date", { length: 10 }),
+    categoryCustomizations: jsonb("category_customizations").$type<Partial<Record<ExpenseCategory, CategoryCustomization>>>().notNull().default({}),
+    customCategories: jsonb("custom_categories").$type<CustomCategory[]>().notNull().default([]),
     lastReminderSentAt: timestamp("last_reminder_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
@@ -32,4 +34,3 @@ export const users = pgTable(
 );
 
 export type UserRow = typeof users.$inferSelect;
-export type InsertUserRow = typeof users.$inferInsert;

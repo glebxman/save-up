@@ -4,6 +4,8 @@ import { useTranslation } from "react-i18next";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { WalletIcon } from "@/components/layout/icons";
 import { Card, CardContent } from "@/components/ui";
+import { useCountUp } from "@/hooks/useCountUp";
+import { hapticNotification } from "@/utils/haptic";
 import { formatMoney } from "@/utils/format";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
@@ -37,6 +39,7 @@ export function BalanceCard({
   const [pendingBalance, setPendingBalance] = useState<number | null>(null);
   const isHealthy = balance >= monthlyExp;
   const spendableNow = Math.max(balance - monthlyExp, 0);
+  const animatedBalance = useCountUp(balance, !isEditingBalance);
 
   useEffect(() => {
     return () => {
@@ -122,7 +125,10 @@ export function BalanceCard({
     }
 
     void Promise.resolve(onBalanceChange(pendingBalance))
-      .then(() => setPendingBalance(null))
+      .then(() => {
+        setPendingBalance(null);
+        hapticNotification("success");
+      })
       .catch(() => undefined);
   }
 
@@ -174,7 +180,7 @@ export function BalanceCard({
                     onClick={startBalanceEdit}
                     type="button"
                   >
-                    {formatMoney(balance)}
+                    {formatMoney(animatedBalance)}
                   </button>
                 )}
                 <p className={`m-0 mt-2 text-sm font-medium ${isHealthy ? "text-[var(--hero-positive-text)]" : "text-[var(--warning)]"}`}>

@@ -11,6 +11,7 @@
     "mock": "Mock",
     "live": "Jonli",
     "cancel": "Bekor qilish",
+    "offline": "Internet aloqasi yo'q. Ba'zi funksiyalar mavjud bo'lmasligi mumkin.",
     "type": "Turi",
     "amount": "Summa",
     "category": "Kategoriya",
@@ -39,7 +40,11 @@
     "healthy": "Zaxira yaxshi",
     "watch": "Xarajatlarni kuzating",
     "spendableNow": "Hozir sarflash mumkin",
-    "monthlyBudget": "Oy bo'yicha xarajat"
+    "monthlyBudget": "Oy bo'yicha xarajat",
+    "changeTitle": "Balansni o'zgartirish",
+    "changeQuestion": "Balansni o'zgartirmoqchimisiz?",
+    "changeDescription": "Joriy: {{current}}. Yangi balans: {{next}}.",
+    "changeConfirm": "Davom etish"
   },
   "dailyLimit": {
     "caption": "Bir kunga qolgan limit",
@@ -126,21 +131,21 @@
     "themeAuto": "Avto",
     "themeDark": "To'q",
     "themeLight": "Yorug'",
-    "themeAutoResolved": "{{mode}} • {{theme}}",
+    "themeAutoResolved": "{{mode}} вЂў {{theme}}",
     "themeModalTitle": "Mavzuni tanlang",
     "themeModalDescription": "Qurilma mavzusiga ergashing yoki ko'rinishni qo'lda tanlang.",
     "languageModalTitle": "Tilni tanlang",
     "languageModalDescription": "Ilova bo'ylab ishlatiladigan tilni tanlang.",
     "languageEn": "English",
-    "languageKk": "Қазақша",
-    "languageZh": "中文",
-    "languageJa": "日本語",
-    "languageKo": "한국어",
-    "languageTr": "Türkçe",
-    "languageEs": "Español",
-    "languageFr": "Français",
+    "languageKk": "ТљР°Р·Р°Т›С€Р°",
+    "languageZh": "дё­ж–‡",
+    "languageJa": "ж—Ґжњ¬иЄћ",
+    "languageKo": "н•њкµ­м–ґ",
+    "languageTr": "TГјrkГ§e",
+    "languageEs": "EspaГ±ol",
+    "languageFr": "FranГ§ais",
     "languageDe": "Deutsch",
-    "languageRu": "Русский",
+    "languageRu": "Р СѓСЃСЃРєРёР№",
     "languageUz": "O'zbek",
     "languageOther": "Boshqa tillar",
     "languageHideOther": "Boshqa tillarni yashirish",
@@ -156,7 +161,24 @@
     "currencyGbp": "Britaniya funti (GBP)",
     "currencyCny": "Xitoy yuani (CNY)",
     "exchangeRates": "Valyuta kurslari",
-    "refresh": "Yangilash"
+    "refresh": "Yangilash",
+    "categories": "",
+    "categoriesDescription": "",
+    "editCategory": "",
+    "categoryEmoji": "",
+    "categoryName": "",
+    "categoryResetTip": "",
+    "categorySaved": "",
+    "save": "",
+    "dayOfMonth": "Oyning kuni",
+    "autoApply": "Avtomatik qo'llash",
+    "addCategory": "",
+    "customCategories": "",
+    "deleteCategory": "",
+    "deleteCategoryTitle": "",
+    "deleteCategoryQuestion": "",
+    "deleteCategoryDescription": "",
+    "categoryNamePlaceholder": ""
   },
   "admin": {
     "title": "Admin panel",
@@ -177,9 +199,9 @@
     "alreadyAdmin": "Allaqachon admin",
     "prevPage": "Orqaga",
     "nextPage": "Keyingi",
-    "pageInfo": "{{page}} / {{totalPages}} sahifa · {{totalItems}} foydalanuvchi",
-    "userMeta": "Telegram: {{telegramId}} · yaratilgan: {{createdAt}}",
-    "userStats": "Balans: {{balance}} · Jamg'arma: {{savings}} · Xarajat: {{monthlyExp}} · Amallar: {{transactions}}"
+    "pageInfo": "{{page}} / {{totalPages}} sahifa В· {{totalItems}} foydalanuvchi",
+    "userMeta": "Telegram: {{telegramId}} В· yaratilgan: {{createdAt}}",
+    "userStats": "Balans: {{balance}} В· Jamg'arma: {{savings}} В· Xarajat: {{monthlyExp}} В· Amallar: {{transactions}}"
   },
   "expenseCategory": {
     "title": "Kategoriya",
@@ -191,7 +213,9 @@
     "utilities": "Kommunal",
     "health": "Salomatlik",
     "education": "Ta'lim",
-    "other": "Boshqa"
+    "other": "Boshqa",
+    "notePlaceholder": "",
+    "confirm": ""
   },
   "expenseEditor": {
     "title": "Xarajatni tuzatish",
@@ -217,7 +241,9 @@
     "question": "Bu oyda har bir kategoriya uchun qancha sarflash mumkin?",
     "placeholder": "Bo'sh = limitsiz",
     "helperText": "Kategoriya uchun limit bo'lmasligini xohlasangiz, bo'sh qoldiring.",
-    "save": "Limitlarni saqlash"
+    "save": "Limitlarni saqlash",
+    "dayOfMonth": "Oyning kuni",
+    "autoApply": "Avtomatik qo'llash"
   },
   "recurring": {
     "caption": "Shablonlar",
@@ -239,6 +265,8 @@
     "createTitle": "Takrorlanuvchi amal yaratish",
     "editTitle": "Takrorlanuvchi amalni tahrirlash",
     "save": "O'zgarishlarni saqlash",
+    "dayOfMonth": "Oyning kuni",
+    "autoApply": "Avtomatik qo'llash",
     "create": "Shablon yaratish",
     "deleteQuestion": "Bu shablonni o'chirasizmi?",
     "deleteDescription": "{{name}} tezkor ro'yxatdan olib tashlanadi."
@@ -246,8 +274,8 @@
   "transactionType": {
     "income": "Kirim",
     "expense": "Chiqim",
-    "transfer_to_savings": "Balans → jamg'arma",
-    "transfer_from_savings": "Jamg'arma → balans"
+    "transfer_to_savings": "Balans в†’ jamg'arma",
+    "transfer_from_savings": "Jamg'arma в†’ balans"
   },
   "history": {
     "caption": "Barcha operatsiyalar",
@@ -276,10 +304,13 @@
     "note": "Izoh",
     "notePlaceholder": "Amal uchun izoh qo'shing",
     "save": "O'zgarishlarni saqlash",
+    "dayOfMonth": "Oyning kuni",
+    "autoApply": "Avtomatik qo'llash",
     "archiveQuestion": "Bu amal bekor qilinsinmi?",
     "archiveDescription": "Amal bekor qilinadi va balans hamda umumiy natijalar qayta hisoblanadi.",
     "restoreQuestion": "Bu amal qaytarilsinmi?",
-    "restoreDescription": "Amal yana faol bo'ladi va balans hamda natijalarga ta'sir qiladi."
+    "restoreDescription": "Amal yana faol bo'ladi va balans hamda natijalarga ta'sir qiladi.",
+    "loadMore": "Ko'proq yuklash"
   },
   "feedback": {
     "genericError": "Nimadir xato ketdi. Yana urinib ko'ring.",
@@ -299,8 +330,14 @@
     "ratesUpdated": "Valyuta kurslari yangilandi",
     "errors": {
       "micAccess": "Mikrofonga ruxsat berilmadi",
-      "aiFailed": "AI ovozni tani olmadi"
-    }
+      "aiFailed": "AI ovozni tani olmadi",
+      "balanceNegative": "Amaliyot balansni salbiy qiladi",
+      "savingsNegative": "Amaliyot jamg'armani salbiy qiladi",
+      "insufficientBalance": "Balansda mablag' yetarli emas",
+      "insufficientSavings": "Jamg'armada mablag' yetarli emas"
+    },
+    "categoryAdded": "",
+    "categoryDeleted": ""
   },
   "analytics": {
     "title": "Xarajatlar taqsimoti",
@@ -345,7 +382,7 @@
     },
     "templates": {
       "title": "Takrorlanuvchi operatsiyalar",
-      "description": "Doimiy xarajatlar uchun shablonlar yarating — ijara, maosh va hokazo. Bir bosishda qo'llang."
+      "description": "Doimiy xarajatlar uchun shablonlar yarating вЂ” ijara, maosh va hokazo. Bir bosishda qo'llang."
     },
     "report-tabs": {
       "title": "Hisobot rejimlari",

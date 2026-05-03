@@ -28,10 +28,9 @@ import {
 } from "./handlers/finance.js";
 
 
-import { completeOnboardingHandler, getUserStatusHandler, initUserHandler, setLanguageHandler } from "./handlers/user.js";
-import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
-
-type HandlerMap = {
+import { addCustomCategoryHandler, completeOnboardingHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setLanguageHandler } from "./handlers/user.js";
+import { AppError } from "../utils/errors.js";
+import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";type HandlerMap = {
   [Method in RpcMethod]: RpcHandler<Method>;
 };
 
@@ -40,6 +39,9 @@ const handlers: HandlerMap = {
   "user.getStatus": getUserStatusHandler,
   "user.completeOnboarding": completeOnboardingHandler,
   "user.setLanguage": setLanguageHandler,
+  "user.setCategoryCustomization": setCategoryCustomizationHandler,
+  "user.addCustomCategory": addCustomCategoryHandler,
+  "user.deleteCustomCategory": deleteCustomCategoryHandler,
   "admin.listUsers": listAdminUsersHandler,
   "admin.setAdmin": setAdminAccessHandler,
   "finance.addIncome": addIncomeHandler,
@@ -63,8 +65,6 @@ const handlers: HandlerMap = {
   "finance.refreshRates": refreshRatesHandler,
   "finance.processVoice": processVoiceHandler,
 };
-
-
 
 function makeError(id: JsonRpcRequest["id"], code: number, message: string, data?: unknown): JsonRpcFailure {
   return {
@@ -101,8 +101,12 @@ export async function dispatchRpc(
       result,
     };
   } catch (error) {
-    const message = error instanceof Error ? error.message : "Internal server error";
+    if (error instanceof AppError) {
+      return makeError(request.id, error.rpcCode, error.message, { code: error.code });
+    }
 
+    context.log.error({ err: error }, "unhandled rpc error");
+    const message = error instanceof Error ? error.message : "Internal server error";
     return makeError(request.id, -32000, message);
   }
 }

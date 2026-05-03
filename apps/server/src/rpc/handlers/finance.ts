@@ -21,7 +21,6 @@ import {
   refreshRates,
   processVoice,
 } from "../../services/finance.service.js";
-
 import {
   financeAddIncomeSchema,
   financeAddExpenseSchema,
@@ -44,22 +43,7 @@ import {
   financeRefreshRatesSchema,
   financeProcessVoiceSchema,
 } from "../validation.js";
-
-
-
-async function getTelegramId(
-  initData: string,
-  authenticateTelegram: (value: string) => Promise<{ user?: { id?: number } }>,
-): Promise<number> {
-  const telegramAuth = await authenticateTelegram(initData);
-  const telegramId = telegramAuth.user?.id;
-
-  if (!telegramId) {
-    throw new Error("Telegram user ID is missing in initData");
-  }
-
-  return telegramId;
-}
+import { getTelegramId } from "./shared.js";
 
 export const addIncomeHandler: RpcHandler<"finance.addIncome"> = async (params, { app }) => {
   const { initData, amount, savingsAmt, note, occurredAt } = financeAddIncomeSchema.parse(params);
@@ -131,7 +115,6 @@ export const saveRecurringTransactionHandler: RpcHandler<"finance.saveRecurringT
   const { initData, template } = financeSaveRecurringTransactionSchema.parse(params);
   const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
   return saveRecurringTransaction(telegramId, template as any);
-
 };
 
 export const deleteRecurringTransactionHandler: RpcHandler<"finance.deleteRecurringTransaction"> = async (params, { app }) => {
@@ -181,5 +164,4 @@ export const processVoiceHandler: RpcHandler<"finance.processVoice"> = async (pa
   const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
   return processVoice(telegramId, base64Audio);
 };
-
 

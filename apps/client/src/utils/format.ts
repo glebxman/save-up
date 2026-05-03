@@ -1,7 +1,7 @@
 import i18n from "@/i18n";
 
 import type { CurrencyCode } from "@finance-twa/shared-types";
-import { getStoredCurrency } from "@/hooks/useCurrency";
+import { CURRENCY_SYMBOLS, CURRENCY_LOCALES, getStoredCurrency } from "./currency";
 
 const localeMap = {
   de: "de-DE",
@@ -17,32 +17,10 @@ const localeMap = {
   zh: "zh-CN",
 } as const;
 
-const currencySymbols: Record<CurrencyCode, string> = {
-  UZS: "so'm",
-  RUB: "₽",
-  USD: "$",
-  EUR: "€",
-  KZT: "₸",
-  TRY: "₺",
-  GBP: "£",
-  CNY: "¥",
-};
-
-const currencyLocales: Record<CurrencyCode, string> = {
-  UZS: "uz-UZ",
-  RUB: "ru-RU",
-  USD: "en-US",
-  EUR: "de-DE",
-  KZT: "kk-KZ",
-  TRY: "tr-TR",
-  GBP: "en-GB",
-  CNY: "zh-CN",
-};
-
 export function formatMoney(value: number, currency?: CurrencyCode): string {
   const curr = currency ?? getStoredCurrency();
-  const locale = currencyLocales[curr];
-  const symbol = currencySymbols[curr];
+  const locale = CURRENCY_LOCALES[curr];
+  const symbol = CURRENCY_SYMBOLS[curr];
 
   const formatted = new Intl.NumberFormat(locale, {
     minimumFractionDigits: 0,
@@ -54,7 +32,7 @@ export function formatMoney(value: number, currency?: CurrencyCode): string {
 
 export function getCurrencySymbol(currency?: CurrencyCode): string {
   const curr = currency ?? getStoredCurrency();
-  return currencySymbols[curr];
+  return CURRENCY_SYMBOLS[curr];
 }
 
 export function formatDateTime(value: string): string {
@@ -78,7 +56,7 @@ export function toDateInputValue(value: string): string {
   return `${year}-${month}-${day}`;
 }
 
-export function formatInputWithРазделителями(value: string): string {
+export function formatGroupedNumber(value: string): string {
   const digitsOnly = value.replace(/\D/g, "");
   if (!digitsOnly) return "";
 

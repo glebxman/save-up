@@ -2,25 +2,29 @@ import type {
   AdminStats,
   AdminUserListItem,
   AdminUsersPage,
+  CategoryCustomization,
+  CustomCategory,
+  ExpenseCategory,
   RecurringTransaction,
   SavingsPct,
   Status,
   User,
 } from "@finance-twa/shared-types";
+import { MAX_CUSTOM_CATEGORIES } from "@finance-twa/shared-types";
 import type { TelegramUser } from "../utils/telegram.js";
 
 import { and, count, desc, eq, isNull, or, sql } from "drizzle-orm";
 
 import { db } from "../config/database.js";
 import { transactions, users, type UserRow } from "../db/schema/index.js";
+import { escapeIlike } from "../utils/sql.js";
 import { calculateDailyLimit, getMonthKey } from "../utils/daily-limit.js";
-import { invalidateStatusCache, setCachedStatus } from "./cache.service.js";
+import { AppError, ErrorCode } from "../utils/errors.js";
+import { getCachedStatus, invalidateStatusCache, setCachedStatus } from "./cache.service.js";
 import { getExchangeRates } from "./currency.service.js";
 
 
-export const SUPER_ADMIN_TELEGRAM_ID = 8246152069;
-
-function isSuperAdmin(telegramId: number): boolean {
+export const SUPER_ADMIN_TELEGRAM_ID = 8246152069;function isSuperAdmin(telegramId: number): boolean {
   return telegramId === SUPER_ADMIN_TELEGRAM_ID;
 }
 
@@ -90,12 +94,13 @@ export function mapUserRow(row: UserRow): User {
     onboardingCompleted: row.onboardingCompleted,
     language: row.language ?? null,
     voiceDailyUsed,
+    categoryCustomizations: (row.categoryCustomizations ?? {}) as Partial<Record<ExpenseCategory, CategoryCustomization>>,
+    customCategories: Array.isArray(row.customCategories) ? row.customCategories as CustomCategory[] : [],
     createdAt: row.createdAt.toISOString(),
   };
 }
 
-export async function buildStatus(row: UserRow): Promise<Status> {
-  const user = mapUserRow(row);
+export async function buildStatus(row: UserRow): Promise<Status> {  const user = mapUserRow(row);
   const { rates, updatedAt } = await getExchangeRates();
 
   return {
@@ -108,7 +113,7 @@ export async function buildStatus(row: UserRow): Promise<Status> {
 
 
 
-export async function findUserByTelegramId(telegramId: number): Promise<UserRow | null> {
+async function findUserByTelegramId(telegramId: number): Promise<UserRow | null> {
   const result = await db
     .select()
     .from(users)
@@ -184,8 +189,12 @@ async function syncCurrentMonthExpense(row: UserRow): Promise<UserRow> {
   return updated[0] as UserRow;
 }
 
-
 export async function getStatusByTelegramId(telegramId: number, profile?: TelegramUser): Promise<Status> {
+  if (!profile) {
+    const cached = await getCachedStatus(telegramId);
+    if (cached) return cached;
+  }
+
   const user = await syncCurrentMonthExpense(await ensureUser(telegramId, profile));
   const status = await buildStatus(user);
 
@@ -194,12 +203,11 @@ export async function getStatusByTelegramId(telegramId: number, profile?: Telegr
   return status;
 }
 
-
 export async function requireAdminUser(telegramId: number): Promise<UserRow> {
   const user = await ensureUser(telegramId);
 
   if (!user.isAdmin && !isSuperAdmin(user.telegramId)) {
-    throw new Error("Admin access required");
+    throw new AppError(ErrorCode.FORBIDDEN, "Admin access required");
   }
 
   return user;
@@ -214,7 +222,7 @@ export async function listAdminUsers(
   const pageSize = Math.min(Math.max(Math.trunc(params.pageSize ?? 12), 1), 50);
   const page = Math.max(Math.trunc(params.page ?? 1), 1);
   const search = params.search?.trim() ?? "";
-  const searchPattern = `%${search}%`;
+  const searchPattern = `%${escapeIlike(search)}%`;
   const whereClause = search
     ? or(
       sql`${users.id}::text ILIKE ${searchPattern}`,
@@ -322,11 +330,11 @@ export async function setUserAdminAccess(
   const target = existing[0];
 
   if (!target) {
-    throw new Error("User not found");
+    throw new AppError(ErrorCode.NOT_FOUND, "User not found");
   }
 
   if (isSuperAdmin(target.telegramId) && !isAdmin) {
-    throw new Error("Super admin access cannot be removed");
+    throw new AppError(ErrorCode.FORBIDDEN, "Super admin access cannot be removed");
   }
 
   const updated = await db
@@ -345,4 +353,80 @@ export async function setUserAdminAccess(
     isAdmin: row.isAdmin || isSuperAdmin(row.telegramId),
     createdAt: row.createdAt.toISOString(),
   };
+}
+
+export async function setCategoryCustomization(
+  telegramId: number,
+  category: ExpenseCategory,
+  name: string,
+  emoji: string,
+): Promise<{ ok: true }> {
+  const user = await ensureUser(telegramId);
+  const current = (user.categoryCustomizations ?? {}) as Record<string, { name?: string; emoji?: string }>;
+  const trimmedName = name.trim();
+  const trimmedEmoji = emoji.trim();
+
+  await db
+    .update(users)
+    .set({
+      categoryCustomizations: {
+        ...current,
+        [category]: {
+          name: trimmedName || undefined,
+          emoji: trimmedEmoji || undefined,
+        },
+      },
+    })
+    .where(eq(users.id, user.id));
+
+  await invalidateStatusCache(telegramId);
+  return { ok: true };
+}
+
+export async function addCustomCategory(
+  telegramId: number,
+  name: string,
+  emoji: string,
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  const current = Array.isArray(user.customCategories) ? user.customCategories as CustomCategory[] : [];
+
+  if (current.length >= MAX_CUSTOM_CATEGORIES) {
+    throw new AppError(ErrorCode.LIMIT_REACHED, `Maximum of ${MAX_CUSTOM_CATEGORIES} custom categories reached`);
+  }
+
+  const { randomUUID } = await import("node:crypto");
+  const id = `c_${randomUUID().replace(/-/g, "").slice(0, 10)}`;
+
+  const updated = [
+    ...current,
+    { id, name: name.trim(), emoji: emoji.trim() },
+  ];
+
+  const rows = await db
+    .update(users)
+    .set({ customCategories: updated })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  await invalidateStatusCache(telegramId);
+  return buildStatus(rows[0] as UserRow);
+}
+
+export async function deleteCustomCategory(
+  telegramId: number,
+  id: string,
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  const current = Array.isArray(user.customCategories) ? user.customCategories as CustomCategory[] : [];
+  const updated = current.filter((c) => c.id !== id);
+
+  const rows = await db
+    .update(users)
+    .set({ customCategories: updated })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  await invalidateStatusCache(telegramId);
+  return buildStatus(rows[0] as UserRow);
 }

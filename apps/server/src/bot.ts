@@ -9,6 +9,17 @@ import { env } from "./config/env.js";
 import { users } from "./db/schema/index.js";
 import type { ExpenseCategory } from "@finance-twa/shared-types";
 import { startReminderScheduler } from "./reminder.js";
+import { startRecurringScheduler } from "./recurring.js";
+import { logger } from "./utils/logger.js";
+import {
+  type SupportedLang,
+  SUPPORTED_LANGUAGES,
+  LANGUAGE_LABELS,
+  LANGUAGE_FLAGS,
+  getBotMessage,
+} from "./utils/i18n.js";
+
+import { addExpense, addIncome, processVoice } from "./services/finance.service.js";
 
 interface TelegramUser {
   id: number;
@@ -57,60 +68,6 @@ type BotCommand = {
   command: string;
   description: string;
 };
-
-type SupportedLang = "en" | "ru" | "uz" | "kk" | "zh" | "ja" | "ko" | "tr" | "es" | "fr" | "de";
-
-const SUPPORTED_LANGUAGES: SupportedLang[] = ["en", "ru", "uz", "kk", "zh", "ja", "ko", "tr", "es", "fr", "de"];
-
-const LANGUAGE_LABELS: Record<SupportedLang, string> = {
-  en: "English",
-  ru: "Русский",
-  uz: "O'zbek",
-  kk: "Қазақша",
-  zh: "中文",
-  ja: "日本語",
-  ko: "한국어",
-  tr: "Türkçe",
-  es: "Español",
-  fr: "Français",
-  de: "Deutsch",
-};
-
-const LANGUAGE_FLAGS: Record<SupportedLang, string> = {
-  en: "🇬🇧",
-  ru: "🇷🇺",
-  uz: "🇺🇿",
-  kk: "🇰🇿",
-  zh: "🇨🇳",
-  ja: "🇯🇵",
-  ko: "🇰🇷",
-  tr: "🇹🇷",
-  es: "🇪🇸",
-  fr: "🇫🇷",
-  de: "🇩🇪",
-};
-
-import en from "./locales/en.json" with { type: "json" };
-import ru from "./locales/ru.json" with { type: "json" };
-import uz from "./locales/uz.json" with { type: "json" };
-import kk from "./locales/kk.json" with { type: "json" };
-import zh from "./locales/zh.json" with { type: "json" };
-import ja from "./locales/ja.json" with { type: "json" };
-import ko from "./locales/ko.json" with { type: "json" };
-import tr from "./locales/tr.json" with { type: "json" };
-import es from "./locales/es.json" with { type: "json" };
-import fr from "./locales/fr.json" with { type: "json" };
-import de from "./locales/de.json" with { type: "json" };
-
-import { addExpense, addIncome, processVoice } from "./services/finance.service.js";
-
-const BOT_MESSAGES: Record<SupportedLang, Record<string, string>> = {
-  en, ru, uz, kk, zh, ja, ko, tr, es, fr, de,
-};
-
-function getBotMessage(key: string, lang: SupportedLang): string {
-  return BOT_MESSAGES[lang]?.[key] ?? BOT_MESSAGES["en"]?.[key] ?? "";
-}
 
 const apiBaseUrl = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}`;
 const webAppUrl = env.WEBAPP_URL?.trim();
@@ -166,7 +123,7 @@ function acquireBotLock(): boolean {
   const existingLock = readBotLock();
 
   if (existingLock?.pid && existingLock.pid !== process.pid && isActiveProcess(existingLock.pid)) {
-    console.log(`Telegram bot is already running in process ${existingLock.pid}. Skipping this duplicate instance.`);
+    logger.info({ pid: existingLock.pid }, "Telegram bot is already running. Skipping this instance.");
     return false;
   }
 
@@ -174,7 +131,7 @@ function acquireBotLock(): boolean {
     fs.writeFileSync(botLockPath, JSON.stringify({ pid: process.pid }), "utf8");
     return true;
   } catch (error) {
-    console.error("Failed to create Telegram bot lock file:", error);
+    logger.error({ err: error }, "Failed to create Telegram bot lock file");
     return false;
   }
 }
@@ -414,7 +371,7 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
 
   } catch (err) {
     const isLimitError = err instanceof Error && err.message === "Voice daily limit reached";
-    console.error("Voice processing error:", err);
+    logger.error({ err }, "Voice processing error");
     await telegramRequest("editMessageText", {
       chat_id: chatId,
       message_id: processingMsg.message_id,
@@ -476,19 +433,19 @@ async function pollUpdates(): Promise<void> {
             try {
               await handleUpdate(update);
             } catch (err) {
-              console.error(`Error processing update ${update.update_id}: `, err);
+              logger.error({ err, updateId: update.update_id }, "Error processing Telegram update");
             }
           })
         );
       }
     } catch (error) {
       if (isPollingConflict(error)) {
-        console.log("Another Telegram bot instance is already polling updates. Skipping this duplicate instance.");
+        logger.info("Another Telegram bot instance is already polling. Skipping this instance.");
         cleanupBotLock();
         process.exit(0);
       }
 
-      console.error("Telegram bot polling error:", error);
+      logger.error({ err: error }, "Telegram bot polling error");
       await sleep(3_000);
     }
   }
@@ -511,12 +468,13 @@ async function startBot(): Promise<void> {
 
   await configureBot();
   startReminderScheduler(env.TELEGRAM_BOT_TOKEN);
-  console.log("Telegram bot polling started.");
+  startRecurringScheduler();
+  logger.info("Telegram bot polling started.");
   await pollUpdates();
 }
 
 startBot().catch((error) => {
   cleanupBotLock();
-  console.error("Telegram bot failed to start:", error);
+  logger.error({ err: error }, "Telegram bot failed to start");
   process.exit(1);
 });

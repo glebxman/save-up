@@ -1,24 +1,15 @@
-import type { ComponentType, CSSProperties, SVGProps } from "react";
+import type { CSSProperties } from "react";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 
-import { categoryMeta } from "@/components/features/shared/categoryMeta";
+import { getCategoryDisplay, isBuiltinCategory } from "@/components/features/shared/categoryMeta";
 import { Card, CardContent, Chip } from "@/components/ui";
+import { useFinance } from "@/hooks/useFinance";
 import type { CategoryBreakdown } from "@/types/finance";
 import { formatMoney } from "@/utils/format";
 
 interface CategoryBreakdownViewProps {
   breakdown: CategoryBreakdown;
-}
-
-interface ChartItem {
-  category: CategoryBreakdown["items"][number]["category"];
-  total: number;
-  count: number;
-  percent: number;
-  label: string;
-  color: string;
-  Icon: ComponentType<SVGProps<SVGSVGElement>>;
 }
 
 function getPercent(value: number, total: number): number {
@@ -35,24 +26,34 @@ function formatPercent(value: number): string {
 
 export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps) {
   const { t } = useTranslation();
+  const { status } = useFinance();
+  const customCategories = status?.user.customCategories ?? [];
+  const customizations = status?.user.categoryCustomizations ?? {};
 
-  const chartItems = useMemo<ChartItem[]>(
+  const chartItems = useMemo(
     () =>
       [...breakdown.items]
         .sort((a, b) => b.total - a.total)
         .map((item) => {
-          const meta = categoryMeta[item.category];
+          const display = getCategoryDisplay(item.category, {
+            customCategories,
+            customizations,
+            t,
+          });
 
           return {
             ...item,
-            color: meta.chartColor,
-            Icon: meta.icon,
-            label: t(`expenseCategory.${item.category}`),
+            color: display.chartColor,
+            Icon: display.Icon,
+            emoji: display.emoji,
+            label: display.name,
             percent: getPercent(item.total, breakdown.expenseTotal),
           };
         }),
-    [breakdown.expenseTotal, breakdown.items, t],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [breakdown.expenseTotal, breakdown.items, customCategories, customizations, t],
   );
+
   const transactionCount = chartItems.reduce((sum, item) => sum + item.count, 0);
   const topItem = chartItems[0];
 
@@ -84,7 +85,13 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
             <p className="m-0 text-xs text-[var(--muted)]">{t("analytics.topCategory")}</p>
             <div className="mt-3 flex items-center gap-2">
               <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)]" style={{ color: topItem.color }}>
-                <TopIcon className="h-5 w-5" />
+                {topItem.emoji && !isBuiltinCategory(topItem.category) ? (
+                  <span className="text-xl leading-none">{topItem.emoji}</span>
+                ) : TopIcon ? (
+                  <TopIcon className="h-5 w-5" />
+                ) : (
+                  <span className="text-xl leading-none">{topItem.emoji}</span>
+                )}
               </span>
               <div className="min-w-0">
                 <p className="m-0 truncate text-sm font-semibold text-[var(--foreground)]">{topItem.label}</p>
@@ -112,12 +119,19 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
           <div className="mt-4 space-y-3">
             {chartItems.map((item) => {
               const Icon = item.Icon;
+              const showEmoji = item.emoji && !isBuiltinCategory(item.category);
 
               return (
                 <div key={item.category} className="finance-analytics-category">
                   <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
                     <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)]" style={{ color: item.color }}>
-                      <Icon className="h-5 w-5" />
+                      {showEmoji ? (
+                        <span className="text-xl leading-none">{item.emoji}</span>
+                      ) : Icon ? (
+                        <Icon className="h-5 w-5" />
+                      ) : (
+                        <span className="text-xl leading-none">{item.emoji}</span>
+                      )}
                     </span>
 
                     <div className="min-w-0">

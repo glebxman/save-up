@@ -32,6 +32,8 @@ export type JsonRpcResponse<M extends RpcMethod = RpcMethod> = JsonRpcSuccess<M>
 
 export interface RpcContext {
   app: FastifyInstance;
+  reqId: string;
+  log: FastifyInstance["log"];
 }
 
 export type RpcHandler<M extends RpcMethod> = (

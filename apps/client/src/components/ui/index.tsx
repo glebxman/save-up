@@ -10,6 +10,7 @@ import {
   type ReactNode,
 } from "react";
 import { createPortal } from "react-dom";
+import { hapticImpact } from "@/utils/haptic";
 
 export function cn(...values: Array<string | false | null | undefined>) {
   return values.filter(Boolean).join(" ");
@@ -53,6 +54,16 @@ export function Button({
   variant = "secondary",
   ...props
 }: ButtonProps) {
+  function handleClick(e: React.MouseEvent<HTMLButtonElement>) {
+    if (!isDisabled) {
+      hapticImpact("light");
+    }
+    onClick?.(e);
+    if (!isDisabled) {
+      onPress?.();
+    }
+  }
+
   return (
     <button
       {...props}
@@ -64,12 +75,7 @@ export function Button({
         className,
       )}
       disabled={isDisabled}
-      onClick={(event) => {
-        onClick?.(event);
-        if (!event.defaultPrevented && !isDisabled) {
-          onPress?.();
-        }
-      }}
+      onClick={handleClick}
       type={type}
     >
       {children}

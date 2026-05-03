@@ -10,11 +10,11 @@ import { useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
-import { EXPENSE_CATEGORIES } from "@/components/features/shared/categoryMeta";
+import { EXPENSE_CATEGORIES, getCategoryDisplay } from "@/components/features/shared/categoryMeta";
 import { Button, Card, CardContent, Chip, Input, Select, Spinner } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
-import type { ExpenseCategory, Transaction, TransactionFilters, TransactionType } from "@/types/finance";
+import type { Transaction, TransactionFilters, TransactionType } from "@/types/finance";
 import { formatDateTime, formatMoney } from "@/utils/format";
 import { TransactionEditModal } from "./TransactionEditModal";
 
@@ -56,16 +56,22 @@ export function TransactionHistoryView({
     updateTransactionMutation,
     archiveTransactionMutation,
     restoreTransactionMutation,
+    status,
   } = useFinance();
+  const customCategories = status?.user.customCategories ?? [];
+  const customizations = status?.user.categoryCustomizations ?? {};
   const [editingTransaction, setEditingTransaction] = useState<Transaction | null>(null);
   const [confirmingTransaction, setConfirmingTransaction] = useState<Transaction | null>(null);
   const [showFilters, setShowFilters] = useState(false);
+  const PAGE_SIZE = 50;
   const [internalFilters, setInternalFilters] = useState<TransactionFilters>({
     monthKey: getCurrentMonthKey(),
     type: "all",
     category: "all",
     search: "",
     includeDeleted: false,
+    limit: PAGE_SIZE,
+    offset: 0,
   });
   const filters = controlledFilters ?? internalFilters;
   const setFilters = onFiltersChange ?? setInternalFilters;
@@ -215,14 +221,16 @@ export function TransactionHistoryView({
                       onChange={(event) =>
                         setFilters((current) => ({
                           ...current,
-                          category: event.target.value === ALL_CATEGORY_KEY ? "all" : (event.target.value as ExpenseCategory),
+                          category: event.target.value === ALL_CATEGORY_KEY ? "all" : event.target.value,
                         }))}
                         value={categorySelectKey}
                         variant="secondary"
                       >
-                        {[ALL_CATEGORY_KEY, ...EXPENSE_CATEGORIES].map((category) => (
+                        {[ALL_CATEGORY_KEY, ...EXPENSE_CATEGORIES, ...customCategories.map((c) => c.id)].map((category) => (
                           <option key={category} value={category}>
-                            {category === ALL_CATEGORY_KEY ? t("history.allCategories") : t(`expenseCategory.${category}`)}
+                            {category === ALL_CATEGORY_KEY
+                              ? t("history.allCategories")
+                              : getCategoryDisplay(category, { customCategories, customizations, t }).name}
                           </option>
                         ))}
                       </Select>
@@ -264,9 +272,10 @@ export function TransactionHistoryView({
                 </CardContent>
               </Card>
             ) : items.length ? (
-              <div className="space-y-2">
-                {items.map((transaction) => {
-                  const isActive = activeTransactionId === transaction.id;
+              <>
+                <div className="space-y-2">
+                  {items.map((transaction) => {
+                    const isActive = activeTransactionId === transaction.id;
 
                   return (
                     <Card key={transaction.id} variant="secondary">
@@ -286,7 +295,9 @@ export function TransactionHistoryView({
 
                             <p className="m-0 mt-1 text-xs text-[var(--muted)]">{formatDateTime(transaction.occurredAt)}</p>
                             {transaction.category ? (
-                              <p className="m-0 mt-0.5 text-xs text-[var(--muted)]">{t(`expenseCategory.${transaction.category}`)}</p>
+                              <p className="m-0 mt-0.5 text-xs text-[var(--muted)]">
+                                {getCategoryDisplay(transaction.category, { customCategories, customizations, t }).name}
+                              </p>
                             ) : null}
                             {transaction.note ? (
                               <p className="m-0 mt-1.5 text-sm text-[var(--foreground)]">{transaction.note}</p>
@@ -338,6 +349,23 @@ export function TransactionHistoryView({
                   );
                 })}
               </div>
+
+              {items.length >= (filters.limit ?? PAGE_SIZE) && (
+                <Button
+                  className="mt-3 w-full"
+                  onPress={() =>
+                    setFilters((current) => ({
+                      ...current,
+                      limit: (current.limit ?? PAGE_SIZE) + PAGE_SIZE,
+                    }))
+                  }
+                  size="sm"
+                  variant="secondary"
+                >
+                  {t("history.loadMore")}
+                </Button>
+              )}
+              </>
             ) : (
               <Card variant="secondary">
                 <CardContent>

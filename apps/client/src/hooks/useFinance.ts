@@ -179,7 +179,7 @@ export function useFinance(options: UseFinanceOptions = {}) {
   });
 
   const addExpenseMutation = useMutation({
-    mutationFn: (variables: { amount: number; category: ExpenseCategory; note?: string | null; occurredAt?: string }) =>
+    mutationFn: (variables: { amount: number; category: string; note?: string | null; occurredAt?: string }) =>
       api.addExpense(initData, variables.amount, variables.category, variables.note, variables.occurredAt),
     onMutate: async ({ amount }) => {
       const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
@@ -459,6 +459,75 @@ export function useFinance(options: UseFinanceOptions = {}) {
     },
   });
 
+  const setCategoryCustomizationMutation = useMutation({
+    mutationFn: ({ category, name, emoji }: { category: ExpenseCategory; name: string; emoji: string }) =>
+      api.setCategoryCustomization(initData, category, name, emoji),
+    onMutate: async ({ category, name, emoji }) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+
+      if (!current) {
+        return { previous: null };
+      }
+
+      setOptimisticStatus({
+        ...current,
+        user: {
+          ...current.user,
+          categoryCustomizations: {
+            ...current.user.categoryCustomizations,
+            [category]: { name: name.trim() || undefined, emoji: emoji.trim() || undefined },
+          },
+        },
+      });
+
+      return { previous: current };
+    },
+    onError: (error, _variables, context) => {
+      setOptimisticStatus(context?.previous ?? null);
+      notifyError(error);
+    },
+    onSuccess: (_result, { category, name, emoji }) => {
+      const current = queryClient.getQueryData<Status>(statusKey) ?? liveStatus;
+      if (current) {
+        syncStatus({
+          ...current,
+          user: {
+            ...current.user,
+            categoryCustomizations: {
+              ...current.user.categoryCustomizations,
+              [category]: { name: name.trim() || undefined, emoji: emoji.trim() || undefined },
+            },
+          },
+        });
+      }
+      notifySuccess(t("settings.categorySaved"));
+    },
+  });
+
+  const addCustomCategoryMutation = useMutation({
+    mutationFn: ({ name, emoji }: { name: string; emoji: string }) =>
+      api.addCustomCategory(initData, name, emoji),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.categoryAdded"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
+  const deleteCustomCategoryMutation = useMutation({
+    mutationFn: ({ id }: { id: string }) =>
+      api.deleteCustomCategory(initData, id),
+    onSuccess: (status) => {
+      syncStatus(status);
+      notifySuccess(t("feedback.categoryDeleted"));
+    },
+    onError: (error) => {
+      notifyError(error);
+    },
+  });
+
   return {
     telegramId,
     status: liveStatus,
@@ -484,6 +553,9 @@ export function useFinance(options: UseFinanceOptions = {}) {
     convertCurrencyMutation,
     refreshRatesMutation,
     processVoiceMutation,
+    setCategoryCustomizationMutation,
+    addCustomCategoryMutation,
+    deleteCustomCategoryMutation,
   };
 
 }

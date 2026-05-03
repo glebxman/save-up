@@ -50,7 +50,7 @@ export function addIncome(
 export function addExpense(
   initData: string,
   amount: number,
-  category: ExpenseCategory,
+  category: string,
   note?: string | null,
   occurredAt?: string,
 ): Promise<Status> {
@@ -133,10 +133,33 @@ export function processVoice(
 ): Promise<{
   type: "expense" | "income";
   amount: number;
-  category: ExpenseCategory;
+  category: string;
   note?: string;
 } | null> {
   return rpcRequest("finance.processVoice", { initData, base64Audio });
 }
 
+export function setCategoryCustomization(
+  initData: string,
+  category: ExpenseCategory,
+  name: string,
+  emoji: string,
+): Promise<{ ok: true }> {
+  return rpcRequest("user.setCategoryCustomization", { initData, category, name, emoji });
+}
+
+export function addCustomCategory(
+  initData: string,
+  name: string,
+  emoji: string,
+): Promise<Status> {
+  return rpcRequest("user.addCustomCategory", { initData, name, emoji });
+}
+
+export function deleteCustomCategory(
+  initData: string,
+  id: string,
+): Promise<Status> {
+  return rpcRequest("user.deleteCustomCategory", { initData, id });
+}
 

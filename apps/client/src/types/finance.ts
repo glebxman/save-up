@@ -4,6 +4,8 @@ export type {
   AdminUsersPage,
   CategoryBreakdown,
   CategoryBreakdownItem,
+  CategoryCustomization,
+  CustomCategory,
   DailyLimit,
   ExpenseCategory,
   ExpenseTransaction,
@@ -19,3 +21,4 @@ export type {
   TransactionType,
   User,
 } from "@finance-twa/shared-types";
+export { MAX_CUSTOM_CATEGORIES } from "@finance-twa/shared-types";
