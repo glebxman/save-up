@@ -49,7 +49,8 @@
   "dailyLimit": {
     "caption": "Left to spend",
     "days": "{{count}} days",
-    "description": "Your daily budget to stay on track until the end of the month."
+    "description": "Your daily budget to stay on track until the end of the month.",
+    "budgetCaption": "Daily budget"
   },
   "savings": {
     "caption": "Savings pocket",
@@ -150,6 +151,13 @@
     "languageOther": "Other languages",
     "languageHideOther": "Hide other languages",
     "currency": "Currency",
+    "notifications": "Notifications",
+    "notificationsOn": "On",
+    "notificationsOff": "Off",
+    "security": "Security",
+    "securityOn": "PIN on",
+    "securityOff": "Off",
+    "securityPinAndBio": "PIN + biometrics",
     "currencyModalTitle": "Choose currency",
     "currencyModalDescription": "Select the currency used to display all amounts in the app.",
     "currencyUzs": "Uzbek som (UZS)",
@@ -176,7 +184,12 @@
     "deleteCategoryTitle": "Delete category",
     "deleteCategoryQuestion": "Delete this category?",
     "deleteCategoryDescription": "Past expenses in this category will keep their data.",
-    "categoryNamePlaceholder": "e.g. Gym, Pets, Car..."
+    "categoryNamePlaceholder": "e.g. Gym, Pets, Car...",
+    "sectionAppearance": "Appearance",
+    "sectionPrivacy": "Privacy & notifications",
+    "sectionContent": "App content",
+    "sectionHelp": "Help",
+    "sectionAccount": "Account"
   },
   "admin": {
     "title": "Admin panel",
@@ -331,7 +344,11 @@
     },
     "categoryAdded": "Category added",
     "categoryDeleted": "Category deleted",
-    "ratesUpdated": "Exchange rates updated"
+    "ratesUpdated": "Exchange rates updated",
+    "accountCreated": "Account created successfully",
+    "accountUpdated": "Account updated successfully",
+    "accountDeleted": "Account deleted successfully",
+    "transferSuccess": "Transfer completed successfully"
   },
   "analytics": {
     "title": "Expense breakdown",
@@ -417,6 +434,30 @@
     "done": {
       "title": "You're all set!",
       "description": "You can now add your first transaction. The bottom menu will always take you back to the section you need."
+    },
+    "voice-input": {
+      "title": "Voice input",
+      "description": "Tap the microphone to add a transaction by voice. AI will detect the amount and category."
+    },
+    "report-heatmap": {
+      "title": "Activity heatmap",
+      "description": "Each cell is a day. The brighter the color, the more you spent. Tap a cell to see details."
+    },
+    "report-export": {
+      "title": "Export to Excel",
+      "description": "Download all transactions for the selected month as an Excel file."
+    },
+    "settings-categories": {
+      "title": "Categories & limits",
+      "description": "Rename categories, add custom ones, and set spending limits."
+    },
+    "settings-notifications": {
+      "title": "Reminders",
+      "description": "Choose how often the bot reminds you to log your spending."
+    },
+    "settings-security": {
+      "title": "PIN & biometrics",
+      "description": "Lock the app with a PIN code. Add Face ID or fingerprint for quick access."
     }
   },
   "notFound": {
@@ -432,5 +473,132 @@
     "resultTitle": "Detected Transaction",
     "creditsRemaining": "Daily requests left: {{count}}",
     "creditsExhausted": "Daily AI limit reached"
+  },
+  "export": {
+    "action": "Export to Excel",
+    "exporting": "Exporting...",
+    "done": "Export ready",
+    "empty": "No transactions to export",
+    "summarySheet": "Summary",
+    "transactionsSheet": "Transactions"
+  },
+  "trend": {
+    "title": "Daily dynamics",
+    "description": "Spending by day of the selected month.",
+    "expense": "Spending",
+    "income": "Income",
+    "empty": "No data for this month yet."
+  },
+  "welcome": {
+    "title": "Hi! This is Save Up",
+    "subtitle": "Track your money right inside Telegram. Log spending, save up, stay on budget.",
+    "continue": "Continue",
+    "highlights": {
+      "balance": {
+        "emoji": "💳",
+        "title": "Your balance, front and center",
+        "description": "Daily limit, savings, and monthly spend — all on one screen."
+      },
+      "limits": {
+        "emoji": "🎯",
+        "title": "Caps by category",
+        "description": "Set a limit for food, taxis, anything. We'll warn you if you go over."
+      },
+      "reports": {
+        "emoji": "📊",
+        "title": "See where money goes",
+        "description": "Daily and monthly breakdown by category. Export to Excel any time."
+      },
+      "reminders": {
+        "emoji": "🔔",
+        "title": "Reminders, your way",
+        "description": "Pick how often the bot pings you to log your spending."
+      }
+    }
+  },
+  "notifications": {
+    "eyebrow": "Reminders",
+    "title": "When should we remind you?",
+    "description": "Pick a rhythm that works for you. You can change it any time.",
+    "modes": {
+      "off": {
+        "title": "Don't remind me",
+        "description": "No reminders at all."
+      },
+      "per_day": {
+        "title": "A few times a day",
+        "description": "Choose how many times and when."
+      },
+      "every_n_days": {
+        "title": "Every few days",
+        "description": "One reminder every N days."
+      }
+    },
+    "howManyTimes": "Times per day",
+    "times": "When",
+    "timeLabel": "Time {{index}}",
+    "everyN": "How often",
+    "daysShort_one": "{{count}} day",
+    "daysShort_other": "{{count}} days",
+    "atTime": "At",
+    "offHint": "You can turn reminders back on in Settings → Reminders.",
+    "save": "Save and continue",
+    "saving": "Saving…"
+  },
+  "security": {
+    "title": "Security",
+    "description": "Set a PIN so no one else can open the app. You can add Face ID or Touch ID too.",
+    "lockTitle": "Enter your PIN",
+    "lockSubtitle": "To open Save Up.",
+    "lockWrong": "Wrong PIN. Try again.",
+    "useBiometric": "Use biometrics",
+    "useTouchId": "Touch ID",
+    "useFaceId": "Face ID",
+    "biometricReason": "Open Save Up",
+    "biometricEnabled": "Biometric unlock is on",
+    "biometricDisabled": "Biometric unlock is off",
+    "biometricDenied": "Biometric access wasn't granted",
+    "biometricUnavailable": "Biometrics aren't available on this device",
+    "setPinFirst": "Set a PIN first",
+    "setPin": "Set PIN",
+    "changePin": "Change PIN",
+    "removePin": "Remove PIN",
+    "pinHint": "{{count}} digits.",
+    "pinTooShort": "PIN is too short.",
+    "pinMismatch": "PINs don't match. Try again.",
+    "pinSaved": "PIN saved",
+    "pinRemoved": "PIN removed",
+    "verifyTitle": "Enter your current PIN",
+    "createTitle": "Pick a new PIN",
+    "confirmTitle": "Repeat your new PIN",
+    "continue": "Next",
+    "on": "On",
+    "off": "Off",
+    "lockHint": "Enter your {{count}}-digit PIN"
+  },
+  "accounts": {
+    "title": "Accounts",
+    "manage": "Manage",
+    "newAccount": "New Account",
+    "editAccount": "Edit Account",
+    "transferBetween": "Transfer Funds",
+    "type": {
+      "cash": "Cash",
+      "card": "Card",
+      "crypto": "Crypto"
+    },
+    "addBtn": "Create Account",
+    "transferBtn": "Transfer",
+    "fieldName": "Account Name",
+    "namePlaceholder": "My Wallet, Savings Card, etc.",
+    "fieldType": "Type",
+    "fieldCurrency": "Currency",
+    "fieldInitialBalance": "Initial Balance",
+    "transferFrom": "From Account",
+    "transferTo": "To Account",
+    "transferAmount": "Send Amount",
+    "transferToAmount": "Receive Amount (Optional)",
+    "transferErrorSame": "Cannot transfer to the same account",
+    "executeTransfer": "Transfer"
   }
 }

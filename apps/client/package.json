@@ -6,6 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build": "pnpm exec tsc -p tsconfig.json --noEmit && vite build",
+    "check:locales": "node scripts/check-locales.mjs",
+    "prebuild": "node scripts/check-locales.mjs",
     "typecheck": "pnpm exec tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
@@ -20,6 +22,7 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.5.3",
     "react-router-dom": "^6.28.0",
+    "xlsx": "0.18.5",
     "zustand": "^4.5.5"
   },
   "devDependencies": {

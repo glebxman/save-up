@@ -13,9 +13,9 @@ export interface CustomCategory {
 
 export const MAX_CUSTOM_CATEGORIES = 8;
 
-export type TransactionType = "income" | "expense" | "transfer_to_savings" | "transfer_from_savings";
+export type TransactionType = "income" | "expense" | "transfer_to_savings" | "transfer_from_savings" | "transfer_between_accounts";
 export type SavingsTransferDirection = "to_savings" | "from_savings";
-export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY";
+export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY" | "BTC" | "ETH" | "TON" | "USDT";
 export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
 export const VOICE_CREDITS_DAILY_LIMIT = 5;
 
@@ -29,6 +29,16 @@ export type ExpenseCategory =
   | "education"
   | "other";
 
+export interface Account {
+  id: string;
+  userId: string;
+  name: string;
+  type: "cash" | "card" | "crypto";
+  currency: CurrencyCode;
+  balance: number;
+  createdAt: string;
+}
+
 export interface RecurringTransaction {
   id: string;
   title: string;
@@ -39,6 +49,18 @@ export interface RecurringTransaction {
   note: string | null;
   dayOfMonth?: number | null;
   autoApply?: boolean;
+  accountId: string | null;
+}
+
+export type NotificationFrequency =
+  | { mode: "per_day"; times: string[] }
+  | { mode: "every_n_days"; days: number; time: string };
+
+export interface NotificationSettings {
+  enabled: boolean;
+  frequency: NotificationFrequency;
+  /** Minutes east of UTC, e.g. +300 for UTC+5. Matches `-new Date().getTimezoneOffset()`. */
+  timezoneOffset: number;
 }
 
 export interface User {
@@ -60,7 +82,15 @@ export interface User {
   voiceDailyUsed: number;
   categoryCustomizations: Partial<Record<ExpenseCategory, CategoryCustomization>>;
   customCategories: CustomCategory[];
+  categoryLimits: Record<string, number>;
+  notificationsConfigured: boolean;
+  notificationsEnabled: boolean;
+  notificationFrequency: NotificationFrequency;
+  notificationTimezoneOffset: number;
+  hasPinConfigured: boolean;
   createdAt: string;
+  accounts: Account[];
+  currency: CurrencyCode;
 }
 
 export interface Transaction {
@@ -75,6 +105,10 @@ export interface Transaction {
   occurredAt: string;
   createdAt: string;
   deletedAt: string | null;
+  accountId: string | null;
+  accountName?: string;
+  toAccountId?: string | null;
+  toAccountName?: string;
 }
 
 export interface ExpenseTransaction extends Transaction {
@@ -145,6 +179,17 @@ export interface CategoryBreakdown {
   expenseTotal: number;
 }
 
+export interface DailyTrendPoint {
+  day: number;
+  expense: number;
+  income: number;
+}
+
+export interface DailyTrend {
+  monthKey: string;
+  points: DailyTrendPoint[];
+}
+
 export interface TransactionFilters {
   monthKey?: string;
   type?: TransactionType | "all";
@@ -158,7 +203,7 @@ export interface TransactionFilters {
 export interface TransactionUpdatePayload {
   transactionId: string;
   amount: number;
-  savingsAmt?: number;
+  savingsAmt?: number | null;
   category?: string | null;
   note?: string | null;
   occurredAt?: string;
@@ -174,6 +219,7 @@ export interface RecurringTransactionPayload {
   note?: string | null;
   dayOfMonth?: number | null;
   autoApply?: boolean;
+  accountId?: string | null;
 }
 
 export interface RpcMethodMap {
@@ -196,6 +242,7 @@ export interface RpcMethodMap {
       savingsAmt?: number;
       note?: string | null;
       occurredAt?: string;
+      accountId?: string;
     };
     result: Status;
   };
@@ -206,6 +253,7 @@ export interface RpcMethodMap {
       category: string;
       note?: string | null;
       occurredAt?: string;
+      accountId?: string;
     };
     result: Status;
   };
@@ -216,6 +264,7 @@ export interface RpcMethodMap {
       direction: SavingsTransferDirection;
       note?: string | null;
       occurredAt?: string;
+      accountId?: string;
     };
     result: Status;
   };
@@ -309,6 +358,13 @@ export interface RpcMethodMap {
     };
     result: CategoryBreakdown;
   };
+  "finance.getDailyTrend": {
+    params: {
+      initData: string;
+      monthKey?: string;
+    };
+    result: DailyTrend;
+  };
   "finance.newMonth": {
     params: {
       initData: string;
@@ -393,6 +449,78 @@ export interface RpcMethodMap {
       id: string;
     };
     result: Status;
+  };
+  "user.setCategoryLimits": {
+    params: {
+      initData: string;
+      limits: Record<string, number>;
+    };
+    result: Status;
+  };
+  "user.setNotificationSettings": {
+    params: {
+      initData: string;
+      enabled: boolean;
+      frequency: NotificationFrequency;
+      timezoneOffset: number;
+    };
+    result: Status;
+  };
+  "user.createAccount": {
+    params: {
+      initData: string;
+      name: string;
+      type: "cash" | "card" | "crypto";
+      currency: CurrencyCode;
+      initialBalance: number;
+    };
+    result: Status;
+  };
+  "user.updateAccount": {
+    params: {
+      initData: string;
+      accountId: string;
+      name: string;
+    };
+    result: Status;
+  };
+  "user.deleteAccount": {
+    params: {
+      initData: string;
+      accountId: string;
+    };
+    result: Status;
+  };
+  "finance.transferBetweenAccounts": {
+    params: {
+      initData: string;
+      fromAccountId: string;
+      toAccountId: string;
+      amount: number;
+      toAmount?: number;
+    };
+    result: Status;
+  };
+  "user.setPin": {
+    params: {
+      initData: string;
+      pin: string;
+    };
+    result: { ok: true };
+  };
+  "user.verifyPin": {
+    params: {
+      initData: string;
+      pin: string;
+    };
+    result: { ok: boolean };
+  };
+  "user.removePin": {
+    params: {
+      initData: string;
+      pin: string;
+    };
+    result: { ok: true };
   };
 }
 

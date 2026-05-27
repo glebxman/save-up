@@ -1,12 +1,11 @@
 import { useState } from "react";
-
 import { useTranslation } from "react-i18next";
 
 import { BalanceCard } from "@/components/features/dashboard/BalanceCard";
-import { DailyLimitCard } from "@/components/features/dashboard/DailyLimitCard";
+import { DailyLimitTile } from "@/components/features/dashboard/DailyLimitTile";
+import { RecurringStrip } from "@/components/features/dashboard/RecurringStrip";
 import { RecurringTemplateModal } from "@/components/features/dashboard/RecurringTemplateModal";
-import { RecurringTemplatesCard } from "@/components/features/dashboard/RecurringTemplatesCard";
-import { SavingsCard } from "@/components/features/dashboard/SavingsCard";
+import { SavingsTile } from "@/components/features/dashboard/SavingsTile";
 import { ExpenseCategoryModal } from "@/components/features/input/ExpenseCategoryModal";
 import { AmountInput } from "@/components/features/input/AmountInput";
 import { SavingsModal } from "@/components/features/input/SavingsModal";
@@ -71,106 +70,54 @@ export function Dashboard() {
   const isActionBusy = addExpenseMutation.isPending || addIncomeMutation.isPending;
 
   async function handleExpense(category: string, note?: string): Promise<void> {
-    if (!hasValidAmount) {
-      return;
-    }
-
+    if (!hasValidAmount) return;
     const rate = getConversionRate(inputCurrency, baseCurrency);
-    const convertedAmount = parsedAmount * rate;
-
-    await addExpenseMutation.mutateAsync({ amount: convertedAmount, category, note });
+    await addExpenseMutation.mutateAsync({
+      amount: parsedAmount * rate,
+      category,
+      note,
+    });
     setAmount("");
     setIsExpenseModalOpen(false);
   }
 
   async function handleIncome(savingsAmt: number): Promise<void> {
-    if (!hasValidAmount) {
-      return;
-    }
-
+    if (!hasValidAmount) return;
     const rate = getConversionRate(inputCurrency, baseCurrency);
-    const convertedAmount = parsedAmount * rate;
-
-    await addIncomeMutation.mutateAsync({ amount: convertedAmount, savingsAmt });
+    await addIncomeMutation.mutateAsync({
+      amount: parsedAmount * rate,
+      savingsAmt,
+    });
     setAmount("");
     setIsIncomeModalOpen(false);
   }
 
-
   if (statusQuery.isPending && !status) {
     return (
-      <div className="space-y-4 lg:space-y-5">
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.9fr)]">
-          {/* Balance Card Skeleton */}
-          <Card className="finance-hero-card overflow-hidden" variant="default">
-            <CardContent>
-              <div className="space-y-6">
-                <div className="flex items-start justify-between gap-4">
-                  <div className="w-full space-y-2">
-                    <Skeleton className="h-4 w-20" />
-                    <Skeleton className="h-10 w-40" />
-                    <Skeleton className="h-4 w-32" />
-                  </div>
-                  <Skeleton className="h-12 w-12 rounded-full" />
-                </div>
-                <div className="grid grid-cols-2 gap-3">
-                  <Skeleton className="h-[72px] rounded-[24px]" />
-                  <Skeleton className="h-[72px] rounded-[24px]" />
-                </div>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* Amount Input Skeleton */}
-          <Card variant="default">
-            <CardContent className="space-y-4">
-              <Skeleton className="h-12 w-full rounded-[22px]" />
-              <div className="grid grid-cols-2 gap-3">
-                <Skeleton className="h-12 rounded-[22px]" />
-                <Skeleton className="h-12 rounded-[22px]" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          {/* Daily Limit Skeleton */}
-          <Card variant="default">
-            <CardContent className="space-y-4">
-              <Skeleton className="h-5 w-32" />
-              <Skeleton className="h-10 w-48" />
-              <Skeleton className="h-2.5 w-full rounded-full" />
-            </CardContent>
-          </Card>
-
-          {/* Savings Skeleton */}
-          <Card variant="default">
-            <CardContent className="space-y-4">
-              <div className="flex justify-between">
-                <div className="space-y-2">
-                  <Skeleton className="h-5 w-24" />
-                  <Skeleton className="h-8 w-32" />
-                </div>
-                <Skeleton className="h-12 w-12 rounded-full" />
-              </div>
-              <div className="flex gap-2">
-                <Skeleton className="h-8 w-20 rounded-full" />
-                <Skeleton className="h-8 w-20 rounded-full" />
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recurring Templates Skeleton */}
+      <div className="space-y-3">
         <Card variant="default">
-          <CardHeader>
-            <Skeleton className="h-6 w-40" />
-          </CardHeader>
-          <CardContent className="space-y-3">
-            <Skeleton className="h-16 w-full rounded-[24px]" />
-            <Skeleton className="h-16 w-full rounded-[24px]" />
+          <CardContent className="!p-4 space-y-3">
+            <Skeleton className="h-3 w-20" />
+            <Skeleton className="h-9 w-44" />
+            <div className="grid grid-cols-2 gap-2">
+              <Skeleton className="h-16 rounded-[18px]" />
+              <Skeleton className="h-16 rounded-[18px]" />
+            </div>
           </CardContent>
         </Card>
+        <Card variant="default">
+          <CardContent className="!p-4 space-y-3">
+            <Skeleton className="h-12 w-full rounded-[20px]" />
+            <div className="grid grid-cols-2 gap-2">
+              <Skeleton className="h-10 rounded-[18px]" />
+              <Skeleton className="h-10 rounded-[18px]" />
+            </div>
+          </CardContent>
+        </Card>
+        <div className="grid grid-cols-2 gap-2">
+          <Skeleton className="h-32 rounded-[24px]" />
+          <Skeleton className="h-32 rounded-[24px]" />
+        </div>
       </div>
     );
   }
@@ -196,36 +143,35 @@ export function Dashboard() {
 
   return (
     <PullToRefresh onRefresh={async () => { await statusQuery.refetch(); }}>
-      <div className="space-y-4 lg:space-y-5">
+      <div className="space-y-3 pb-2 lg:space-y-4">
+        {/* Balance hero — always full width, the most prominent block. */}
+        <BalanceCard
+          balance={status.user.balance}
+          isBalanceSaving={updateBalanceMutation.isPending}
+          monthlyExp={status.user.monthlyExp}
+          onBalanceChange={(balance) => updateBalanceMutation.mutateAsync({ balance })}
+        />
 
-        <div className="grid gap-4 xl:grid-cols-[minmax(0,1.2fr)_minmax(340px,0.9fr)]">
-          <BalanceCard
-            balance={status.user.balance}
-            isBalanceSaving={updateBalanceMutation.isPending}
-            monthlyExp={status.user.monthlyExp}
-            onBalanceChange={(balance) => updateBalanceMutation.mutateAsync({ balance })}
-          />
+        {/* Quick entry: amount + income/expense buttons in one card. */}
+        <AmountInput
+          currency={inputCurrency}
+          helperText={amountHelperText}
+          isExpenseDisabled={!hasValidAmount || isActionBusy}
+          isIncomeDisabled={!hasValidAmount || isActionBusy}
+          onChange={setAmount}
+          onCurrencyChange={setInputCurrency}
+          onExpense={() => setIsExpenseModalOpen(true)}
+          onIncome={() => setIsIncomeModalOpen(true)}
+          value={amount}
+        />
 
-          <AmountInput
-            helperText={amountHelperText}
-            isExpenseDisabled={!hasValidAmount || isActionBusy}
-            isIncomeDisabled={!hasValidAmount || isActionBusy}
-            onChange={setAmount}
-            onExpense={() => setIsExpenseModalOpen(true)}
-            onIncome={() => setIsIncomeModalOpen(true)}
-            value={amount}
-            currency={inputCurrency}
-            onCurrencyChange={setInputCurrency}
-          />
-
-        </div>
-
-        <div className="grid gap-4 md:grid-cols-2">
-          <DailyLimitCard
+        {/* Daily limit & savings sit side-by-side and don't dominate. */}
+        <div className="grid grid-cols-2 gap-2">
+          <DailyLimitTile
             dailyLimit={status.dailyLimit.dailyLimit}
             daysRemaining={status.dailyLimit.daysRemaining}
           />
-          <SavingsCard
+          <SavingsTile
             goal={status.user.savingsGoal}
             onDeposit={() => setIsDepositModalOpen(true)}
             onSetGoal={() => setIsGoalModalOpen(true)}
@@ -234,7 +180,8 @@ export function Dashboard() {
           />
         </div>
 
-        <RecurringTemplatesCard
+        {/* Recurring templates: horizontal strip instead of stacked cards. */}
+        <RecurringStrip
           busyTemplateId={busyTemplateId}
           onAdd={() => {
             setEditingTemplate(null);
@@ -243,7 +190,6 @@ export function Dashboard() {
           onApply={(template) => {
             void applyRecurringTransactionMutation.mutateAsync({ templateId: template.id });
           }}
-          onDelete={(template) => setDeletingTemplate(template)}
           onEdit={(template) => {
             setEditingTemplate(template);
             setIsRecurringModalOpen(true);
@@ -280,7 +226,9 @@ export function Dashboard() {
           isPending={updateSavingsGoalMutation.isPending}
           onClose={() => setIsGoalModalOpen(false)}
           onSubmit={(goal) => {
-            void updateSavingsGoalMutation.mutateAsync({ goal }).then(() => setIsGoalModalOpen(false));
+            void updateSavingsGoalMutation
+              .mutateAsync({ goal })
+              .then(() => setIsGoalModalOpen(false));
           }}
           placeholder={t("savings.goalPlaceholder")}
           question={t("savings.goalQuestion")}
@@ -350,10 +298,7 @@ export function Dashboard() {
           isPending={deleteRecurringTransactionMutation.isPending}
           onClose={() => setDeletingTemplate(null)}
           onConfirm={() => {
-            if (!deletingTemplate) {
-              return;
-            }
-
+            if (!deletingTemplate) return;
             void deleteRecurringTransactionMutation
               .mutateAsync({ templateId: deletingTemplate.id })
               .then(() => setDeletingTemplate(null));
@@ -365,4 +310,3 @@ export function Dashboard() {
     </PullToRefresh>
   );
 }
-

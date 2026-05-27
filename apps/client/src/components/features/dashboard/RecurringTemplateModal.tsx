@@ -69,7 +69,7 @@ export function RecurringTemplateModal({
   return (
     <Modal>
       <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <ModalContainer placement="center" size="md">
+        <ModalContainer size="md">
           <ModalDialog>
             <ModalCloseTrigger />
 

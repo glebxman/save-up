@@ -9,6 +9,10 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   TRY: "₺",
   GBP: "£",
   CNY: "¥",
+  BTC: "BTC",
+  ETH: "ETH",
+  TON: "TON",
+  USDT: "USDT",
 };
 
 export const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
@@ -20,6 +24,10 @@ export const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
   TRY: "tr-TR",
   GBP: "en-GB",
   CNY: "zh-CN",
+  BTC: "en-US",
+  ETH: "en-US",
+  TON: "en-US",
+  USDT: "en-US",
 };
 
 export const SUPPORTED_CURRENCIES: CurrencyCode[] = [

@@ -9,6 +9,10 @@ const DEFAULT_RATES: Record<CurrencyCode, number> = {
   TRY: 32,
   GBP: 0.79,
   CNY: 7.23,
+  BTC: 0.000015,
+  ETH: 0.0003,
+  TON: 0.15,
+  USDT: 1.0,
 };
 
 export const EXCHANGE_RATES: Record<CurrencyCode, number> = { ...DEFAULT_RATES };

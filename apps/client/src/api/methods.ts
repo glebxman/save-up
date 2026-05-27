@@ -43,8 +43,9 @@ export function addIncome(
   savingsAmt?: number,
   note?: string | null,
   occurredAt?: string,
+  accountId?: string,
 ): Promise<Status> {
-  return rpcRequest("finance.addIncome", { initData, amount, savingsAmt, note, occurredAt });
+  return rpcRequest("finance.addIncome", { initData, amount, savingsAmt, note, occurredAt, accountId });
 }
 
 export function addExpense(
@@ -53,8 +54,9 @@ export function addExpense(
   category: string,
   note?: string | null,
   occurredAt?: string,
+  accountId?: string,
 ): Promise<Status> {
-  return rpcRequest("finance.addExpense", { initData, amount, category, note, occurredAt });
+  return rpcRequest("finance.addExpense", { initData, amount, category, note, occurredAt, accountId });
 }
 
 export function transferSavings(
@@ -63,8 +65,9 @@ export function transferSavings(
   direction: SavingsTransferDirection,
   note?: string | null,
   occurredAt?: string,
+  accountId?: string,
 ): Promise<Status> {
-  return rpcRequest("finance.transferSavings", { initData, amount, direction, note, occurredAt });
+  return rpcRequest("finance.transferSavings", { initData, amount, direction, note, occurredAt, accountId });
 }
 
 export function getTransactions(initData: string, filters?: TransactionFilters): Promise<Transaction[]> {
@@ -163,3 +166,78 @@ export function deleteCustomCategory(
   return rpcRequest("user.deleteCustomCategory", { initData, id });
 }
 
+
+export function setCategoryLimits(
+  initData: string,
+  limits: Record<string, number>,
+): Promise<Status> {
+  return rpcRequest("user.setCategoryLimits", { initData, limits });
+}
+
+export function getDailyTrend(initData: string, monthKey?: string): Promise<import("@finance-twa/shared-types").DailyTrend> {
+  return rpcRequest("finance.getDailyTrend", { initData, monthKey });
+}
+
+export function setNotificationSettings(
+  initData: string,
+  enabled: boolean,
+  frequency: import("@finance-twa/shared-types").NotificationFrequency,
+  timezoneOffset: number,
+): Promise<Status> {
+  return rpcRequest("user.setNotificationSettings", {
+    initData,
+    enabled,
+    frequency,
+    timezoneOffset,
+  });
+}
+
+export function createAccount(
+  initData: string,
+  name: string,
+  type: "cash" | "card" | "crypto",
+  currency: string,
+  initialBalance: number,
+): Promise<Status> {
+  return rpcRequest("user.createAccount", {
+    initData,
+    name,
+    type,
+    currency: currency as import("@finance-twa/shared-types").CurrencyCode,
+    initialBalance,
+  });
+}
+
+export function updateAccount(
+  initData: string,
+  accountId: string,
+  name: string,
+): Promise<Status> {
+  return rpcRequest("user.updateAccount", { initData, accountId, name });
+}
+
+export function deleteAccount(
+  initData: string,
+  accountId: string,
+): Promise<Status> {
+  return rpcRequest("user.deleteAccount", { initData, accountId });
+}
+
+export function transferBetweenAccounts(
+  initData: string,
+  params: { fromAccountId: string; toAccountId: string; amount: number; toAmount?: number },
+): Promise<Status> {
+  return rpcRequest("finance.transferBetweenAccounts", { initData, ...params });
+}
+
+export function setPin(initData: string, pin: string): Promise<{ ok: true }> {
+  return rpcRequest("user.setPin", { initData, pin });
+}
+
+export function verifyPin(initData: string, pin: string): Promise<{ ok: boolean }> {
+  return rpcRequest("user.verifyPin", { initData, pin });
+}
+
+export function removePin(initData: string, pin: string): Promise<{ ok: true }> {
+  return rpcRequest("user.removePin", { initData, pin });
+}

@@ -1,16 +1,18 @@
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
-import { ArrowDownLeftIcon, ArrowUpRightIcon, XMarkIcon } from "@/components/layout/icons";
-import { Button, Card, CardContent, CardFooter, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
+import { ArrowDownLeftIcon, ArrowUpRightIcon, XMarkIcon, BanknotesIcon, CreditCardIcon, CircleStackIcon } from "@/components/layout/icons";
+import { Button, Card, CardContent, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 
-import { formatGroupedNumber, parseFormattedInput, getCurrencySymbol, formatMoney } from "@/utils/format";
+import { formatGroupedNumber, parseFormattedInput, formatMoney } from "@/utils/format";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getConversionRate } from "@/utils/exchange-rates";
 import { MAX_FINANCE_AMOUNT, type CurrencyCode } from "@finance-twa/shared-types";
 import { VoiceAssistant } from "@/components/features/ai/VoiceAssistant";
 
 
+
+import type { Account } from "@finance-twa/shared-types";
 
 interface AmountInputProps {
   value: string;
@@ -22,6 +24,9 @@ interface AmountInputProps {
   helperText?: string;
   currency: CurrencyCode;
   onCurrencyChange: (currency: CurrencyCode) => void;
+  accounts?: Account[];
+  activeAccountId?: string | null;
+  onActiveAccountChange?: (accountId: string) => void;
 }
 
 export function AmountInput({
@@ -34,6 +39,9 @@ export function AmountInput({
   helperText,
   currency,
   onCurrencyChange,
+  accounts = [],
+  activeAccountId,
+  onActiveAccountChange,
 }: AmountInputProps) {
   const { t } = useTranslation();
   const { currency: baseCurrency } = useCurrency();
@@ -52,8 +60,6 @@ export function AmountInput({
 
   const handleVoiceResult = (result: { type: "expense" | "income"; amount: number; category: string; note?: string }) => {
     handleInputChange(String(result.amount));
-    // We can't easily trigger the parent's onIncome/onExpense modals here without exposing them or using a timeout
-    // Actually they are passed as props, so we can call them.
     if (result.type === "income") {      onIncome?.();
     } else {
       onExpense?.();
@@ -62,27 +68,26 @@ export function AmountInput({
 
   return (
     <Card className="overflow-hidden" data-onboarding="amount-input" variant="default">
-      <CardContent className="pb-4">
-        <div className="mb-4 flex items-center justify-between gap-3">
-          <div>
-            <p className="m-0 text-sm text-[var(--muted)]">{t("amountInput.caption")}</p>
-            <p className="m-0 mt-1 text-xl font-semibold tracking-[-0.04em] text-[var(--foreground)]">
-              {value ? `${Number(value).toLocaleString("ru-RU")} ${getCurrencySymbol(currency as CurrencyCode)}` : t("amountInput.title")}
-              {value && isDifferentCurrency && (
-                <span className="ml-2 text-sm font-normal text-[var(--muted)]">
-                  ≈ {formatMoney(convertedValue, baseCurrency)}
-                </span>
-              )}
-            </p>
-
-          </div>
-          <VoiceAssistant onResult={handleVoiceResult} />
+      <CardContent className="!p-4">
+        <div className="mb-3 flex items-center justify-between gap-3">
+          <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
+            {t("amountInput.caption")}
+          </p>
+          <span data-onboarding="voice-input">
+            <VoiceAssistant onResult={handleVoiceResult} />
+          </span>
         </div>
+
+        {value && isDifferentCurrency ? (
+          <p className="m-0 mb-2 text-xs text-[var(--muted)]">
+            ≈ {formatMoney(convertedValue, baseCurrency)}
+          </p>
+        ) : null}
 
         <div className="relative">
           <Input
-            className="rounded-[24px] text-lg font-semibold tracking-[-0.03em]"
-            style={{ paddingRight: "2.5rem" }}
+            className="rounded-[20px] text-2xl font-semibold tracking-[-0.04em]"
+            style={{ paddingRight: "5.5rem" }}
             fullWidth
             max={String(MAX_FINANCE_AMOUNT)}
             min="0"
@@ -93,9 +98,10 @@ export function AmountInput({
             value={displayValue}
             variant="secondary"
           />
-          <div className="absolute right-3 top-1/2 -translate-y-1/2 flex items-center gap-1">
+          <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1">
             {displayValue && (
               <button
+                aria-label={t("common.cancel")}
                 className="finance-input-clear flex h-8 w-8 items-center justify-center rounded-full text-[var(--muted)] transition-colors hover:bg-[var(--surface-tertiary)] hover:text-[var(--foreground)]"
                 onClick={() => handleInputChange("")}
                 type="button"
@@ -106,12 +112,41 @@ export function AmountInput({
             <button
               onClick={() => setShowCurrencyModal(true)}
               type="button"
-              className="flex items-center gap-1 px-2 py-1 bg-[var(--surface-tertiary)] rounded-full text-xs font-bold text-[var(--foreground)] hover:bg-[var(--surface-hover)] transition-colors"
+              className="flex items-center gap-1 px-2.5 py-1 bg-[var(--surface-tertiary)] rounded-full text-xs font-bold text-[var(--foreground)] transition active:opacity-80"
             >
               {currency}
             </button>
           </div>
         </div>
+
+        {accounts.length > 0 && onActiveAccountChange && (
+          <div className="mt-3 flex flex-wrap gap-1.5">
+            {accounts.map((acc) => {
+              const isActive = acc.id === activeAccountId;
+              return (
+                <button
+                  key={acc.id}
+                  onClick={() => {
+                    onActiveAccountChange(acc.id);
+                    onCurrencyChange(acc.currency);
+                  }}
+                  type="button"
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border outline-none cursor-pointer ${
+                    isActive
+                      ? "bg-[var(--focus)] border-[var(--focus)] text-[var(--accent-foreground)] shadow-sm"
+                      : "bg-[var(--surface-secondary)] border-[var(--field-border)] text-[var(--foreground)] hover:bg-[var(--surface-hover)]"
+                  }`}
+                >
+                  {acc.type === "cash" && <BanknotesIcon className="h-3.5 w-3.5" />}
+                  {acc.type === "card" && <CreditCardIcon className="h-3.5 w-3.5" />}
+                  {acc.type === "crypto" && <CircleStackIcon className="h-3.5 w-3.5" />}
+                  <span>{acc.name}</span>
+                  <span className="opacity-75">({acc.currency})</span>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         <Modal>
           <ModalBackdrop
@@ -150,22 +185,18 @@ export function AmountInput({
         {helperText ? (
           <p className="mt-2 text-xs text-[var(--danger)]">{helperText}</p>
         ) : null}
-      </CardContent>
 
-      <CardFooter>
-        <div className="flex w-full flex-col gap-3">
-          <div className="grid w-full grid-cols-2 gap-2">
-            <Button className="w-full justify-start px-5" isDisabled={isIncomeDisabled} onPress={onIncome} variant="primary">
-              <ArrowUpRightIcon className="h-4 w-4" />
-              {t("dashboard.shortcuts.income")}
-            </Button>
-            <Button className="w-full justify-start px-5" isDisabled={isExpenseDisabled} onPress={onExpense} variant="secondary">
-              <ArrowDownLeftIcon className="h-4 w-4" />
-              {t("dashboard.shortcuts.expense")}
-            </Button>
-          </div>
+        <div className="mt-3 grid w-full grid-cols-2 gap-2">
+          <Button className="w-full justify-center" isDisabled={isIncomeDisabled} onPress={onIncome} size="sm" variant="primary">
+            <ArrowUpRightIcon className="h-4 w-4" />
+            {t("dashboard.shortcuts.income")}
+          </Button>
+          <Button className="w-full justify-center" isDisabled={isExpenseDisabled} onPress={onExpense} size="sm" variant="secondary">
+            <ArrowDownLeftIcon className="h-4 w-4" />
+            {t("dashboard.shortcuts.expense")}
+          </Button>
         </div>
-      </CardFooter>
+      </CardContent>
     </Card>
   );
 }

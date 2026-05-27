@@ -49,7 +49,8 @@
   "dailyLimit": {
     "caption": "Осталось на день",
     "days": "{{count}} дн.",
-    "description": "Такой темп помогает равномерно распределить баланс на оставшиеся дни месяца."
+    "description": "Такой темп помогает равномерно распределить баланс на оставшиеся дни месяца.",
+    "budgetCaption": "Дневной бюджет"
   },
   "savings": {
     "caption": "Копилка",
@@ -150,6 +151,13 @@
     "languageOther": "Другие языки",
     "languageHideOther": "Скрыть другие языки",
     "currency": "Валюта",
+    "notifications": "Уведомления",
+    "notificationsOn": "Вкл.",
+    "notificationsOff": "Выкл.",
+    "security": "Безопасность",
+    "securityOn": "PIN включён",
+    "securityOff": "Выкл.",
+    "securityPinAndBio": "PIN + биометрия",
     "currencyModalTitle": "Выбор валюты",
     "currencyModalDescription": "Выберите валюту для отображения всех сумм в приложении.",
     "currencyUzs": "Узбекский сум (UZS)",
@@ -176,7 +184,12 @@
     "deleteCategoryTitle": "Удалить категорию",
     "deleteCategoryQuestion": "Удалить эту категорию?",
     "deleteCategoryDescription": "Прошлые расходы в этой категории сохранятся.",
-    "categoryNamePlaceholder": "Например: Спортзал, Питомец, Авто..."
+    "categoryNamePlaceholder": "Например: Спортзал, Питомец, Авто...",
+    "sectionAppearance": "Внешний вид",
+    "sectionPrivacy": "Приватность и уведомления",
+    "sectionContent": "Содержимое",
+    "sectionHelp": "Помощь",
+    "sectionAccount": "Аккаунт"
   },
   "admin": {
     "title": "Админ панель",
@@ -326,12 +339,16 @@
       "savingsNegative": "Операция уведёт копилку в минус",
       "insufficientBalance": "Недостаточно денег на балансе",
       "insufficientSavings": "Недостаточно денег в копилке",
-      "micAccess": "Доступ к микрофону отклонен",
-      "aiFailed": "AI не смог распознать голос"
+      "micAccess": "Доступ к микрофону запрещён",
+      "aiFailed": "ИИ не смог обработать этот аудиофайл"
     },
     "ratesUpdated": "Курсы валют обновлены",
     "categoryAdded": "Категория добавлена",
-    "categoryDeleted": "Категория удалена"
+    "categoryDeleted": "Категория удалена",
+    "accountCreated": "Счет создан",
+    "accountUpdated": "Счет обновлен",
+    "accountDeleted": "Счет удален",
+    "transferSuccess": "Перевод успешно выполнен"
   },
   "analytics": {
     "title": "Расходы по категориям",
@@ -417,6 +434,30 @@
     "done": {
       "title": "Всё готово!",
       "description": "Теперь можно вводить первую операцию. Если что-то понадобится позже, нижнее меню быстро вернёт вас в нужный раздел."
+    },
+    "voice-input": {
+      "title": "Голосовой ввод",
+      "description": "Нажмите на микрофон, чтобы добавить операцию голосом. ИИ определит сумму и категорию."
+    },
+    "report-heatmap": {
+      "title": "Карта активности",
+      "description": "Каждая ячейка — день. Чем ярче цвет, тем больше потрачено. Нажмите на ячейку для деталей."
+    },
+    "report-export": {
+      "title": "Экспорт в Excel",
+      "description": "Скачайте все операции за выбранный месяц в Excel-файл."
+    },
+    "settings-categories": {
+      "title": "Категории и лимиты",
+      "description": "Переименуйте категории, добавьте свои и задайте лимиты трат."
+    },
+    "settings-notifications": {
+      "title": "Напоминания",
+      "description": "Настройте как часто бот будет напоминать записать траты."
+    },
+    "settings-security": {
+      "title": "PIN и биометрия",
+      "description": "Закройте приложение PIN-кодом. Добавьте Face ID или отпечаток для быстрого входа."
     }
   },
   "notFound": {
@@ -432,5 +473,134 @@
     "resultTitle": "Распознанная операция",
     "creditsRemaining": "Осталось запросов: {{count}}",
     "creditsExhausted": "Дневной лимит ИИ исчерпан"
+  },
+  "export": {
+    "action": "Экспорт в Excel",
+    "exporting": "Экспорт...",
+    "done": "Файл готов",
+    "empty": "Нет операций для экспорта",
+    "summarySheet": "Сводка",
+    "transactionsSheet": "Операции"
+  },
+  "trend": {
+    "title": "Динамика по дням",
+    "description": "Расходы и доходы по дням выбранного месяца.",
+    "expense": "Расход",
+    "income": "Доход",
+    "empty": "Данных за этот месяц пока нет."
+  },
+  "welcome": {
+    "title": "Привет! Это Save Up",
+    "subtitle": "Простой учёт денег прямо в Telegram. Записывайте траты, копите и будьте в плюсе.",
+    "continue": "Продолжить",
+    "highlights": {
+      "balance": {
+        "emoji": "💳",
+        "title": "Баланс на главной",
+        "description": "Сколько на счету, в копилке и сколько ушло за месяц — сразу видно."
+      },
+      "limits": {
+        "emoji": "🎯",
+        "title": "Лимиты по категориям",
+        "description": "Поставьте потолок на еду, такси и что угодно — приложение подскажет, если переборщили."
+      },
+      "reports": {
+        "emoji": "📊",
+        "title": "Отчёты по тратам",
+        "description": "Куда уходят деньги по дням и категориям. Можно выгрузить в Excel."
+      },
+      "reminders": {
+        "emoji": "🔔",
+        "title": "Напоминания",
+        "description": "Бот напомнит записать траты так часто, как вам удобно."
+      }
+    }
+  },
+  "notifications": {
+    "eyebrow": "Уведомления",
+    "title": "Когда напоминать?",
+    "description": "Выберите ритм, который подходит. В настройках всегда можно изменить.",
+    "modes": {
+      "off": {
+        "title": "Не напоминать",
+        "description": "Никаких уведомлений."
+      },
+      "per_day": {
+        "title": "Несколько раз в день",
+        "description": "Выберите сколько раз и в какое время."
+      },
+      "every_n_days": {
+        "title": "Раз в несколько дней",
+        "description": "Одно напоминание раз в N дней."
+      }
+    },
+    "howManyTimes": "Сколько раз в день",
+    "times": "Время",
+    "timeLabel": "Время {{index}}",
+    "everyN": "Как часто",
+    "daysShort_one": "{{count}} день",
+    "daysShort_few": "{{count}} дня",
+    "daysShort_many": "{{count}} дней",
+    "daysShort_other": "{{count}} дней",
+    "atTime": "Во сколько",
+    "offHint": "Включить напоминания обратно можно в Настройках → Уведомления.",
+    "save": "Сохранить и продолжить",
+    "saving": "Сохраняем…"
+  },
+  "security": {
+    "title": "Безопасность",
+    "description": "Поставьте PIN-код, чтобы никто посторонний не зашёл. Можно добавить Face ID или Touch ID.",
+    "lockTitle": "Введите PIN",
+    "lockSubtitle": "Чтобы открыть Save Up.",
+    "lockWrong": "Неверный PIN. Попробуйте ещё раз.",
+    "useBiometric": "По биометрии",
+    "useTouchId": "Touch ID",
+    "useFaceId": "Face ID",
+    "biometricReason": "Открыть Save Up",
+    "biometricEnabled": "Вход по биометрии включён",
+    "biometricDisabled": "Вход по биометрии выключен",
+    "biometricDenied": "Не дали доступ к биометрии",
+    "biometricUnavailable": "На этом устройстве биометрия недоступна",
+    "setPinFirst": "Сначала задайте PIN",
+    "setPin": "Поставить PIN",
+    "changePin": "Сменить PIN",
+    "removePin": "Убрать PIN",
+    "pinHint": "{{count}} цифр.",
+    "pinTooShort": "Слишком короткий PIN.",
+    "pinMismatch": "PIN-коды не совпадают. Попробуйте ещё раз.",
+    "pinSaved": "PIN сохранён",
+    "pinRemoved": "PIN убран",
+    "verifyTitle": "Введите текущий PIN",
+    "createTitle": "Придумайте новый PIN",
+    "confirmTitle": "Повторите новый PIN",
+    "continue": "Дальше",
+    "on": "Вкл.",
+    "off": "Выкл.",
+    "lockHint": "Введите {{count}}-значный PIN"
+  },
+  "accounts": {
+    "title": "Счета",
+    "manage": "Управление",
+    "newAccount": "Новый счет",
+    "editAccount": "Редактировать счет",
+    "transferBetween": "Перевод средств",
+    "type": {
+      "cash": "Наличные",
+      "card": "Карта",
+      "crypto": "Крипта"
+    },
+    "addBtn": "Создать счет",
+    "transferBtn": "Перевод",
+    "fieldName": "Название счета",
+    "namePlaceholder": "Мой кошелек, Карта сбережений...",
+    "fieldType": "Тип",
+    "fieldCurrency": "Валюта",
+    "fieldInitialBalance": "Начальный баланс",
+    "transferFrom": "Со счета",
+    "transferTo": "На счет",
+    "transferAmount": "Сумма списания",
+    "transferToAmount": "Сумма зачисления (необязательно)",
+    "transferErrorSame": "Нельзя переводить на тот же счет",
+    "executeTransfer": "Перевести"
   }
 }

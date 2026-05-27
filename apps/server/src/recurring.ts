@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import { db } from "./config/database.js";
 import { users } from "./db/schema/index.js";
 import { logger } from "./utils/logger.js";
-import { applyRecurringTransaction } from "./services/finance.service.js";
+import { applyRecurringTransaction } from "./services/finance/index.js";
 import { mapUserRow } from "./services/user.service.js";
 import type { RecurringTransaction } from "@finance-twa/shared-types";
 

@@ -12,6 +12,7 @@ import {
   convertCurrencyHandler,
   deleteRecurringTransactionHandler,
   getCategoryBreakdownHandler,
+  getDailyTrendHandler,
   getRecentExpensesHandler,
   getReportHandler,
   getTransactionsHandler,
@@ -25,10 +26,11 @@ import {
   updateSavingsGoalHandler,
   updateTransactionHandler,
   processVoiceHandler,
+  transferBetweenAccountsHandler,
 } from "./handlers/finance.js";
 
 
-import { addCustomCategoryHandler, completeOnboardingHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setLanguageHandler } from "./handlers/user.js";
+import { addCustomCategoryHandler, completeOnboardingHandler, createAccountHandler, deleteAccountHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setCategoryLimitsHandler, setLanguageHandler, setNotificationSettingsHandler, setPinHandler, verifyPinHandler, removePinHandler, updateAccountHandler } from "./handlers/user.js";
 import { AppError } from "../utils/errors.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";type HandlerMap = {
   [Method in RpcMethod]: RpcHandler<Method>;
@@ -42,6 +44,11 @@ const handlers: HandlerMap = {
   "user.setCategoryCustomization": setCategoryCustomizationHandler,
   "user.addCustomCategory": addCustomCategoryHandler,
   "user.deleteCustomCategory": deleteCustomCategoryHandler,
+  "user.setCategoryLimits": setCategoryLimitsHandler,
+  "user.setNotificationSettings": setNotificationSettingsHandler,
+  "user.setPin": setPinHandler,
+  "user.verifyPin": verifyPinHandler,
+  "user.removePin": removePinHandler,
   "admin.listUsers": listAdminUsersHandler,
   "admin.setAdmin": setAdminAccessHandler,
   "finance.addIncome": addIncomeHandler,
@@ -60,10 +67,15 @@ const handlers: HandlerMap = {
   "finance.applyRecurringTransaction": applyRecurringTransactionHandler,
   "finance.getReport": getReportHandler,
   "finance.getCategoryBreakdown": getCategoryBreakdownHandler,
+  "finance.getDailyTrend": getDailyTrendHandler,
   "finance.newMonth": newMonthHandler,
   "finance.convertCurrency": convertCurrencyHandler,
   "finance.refreshRates": refreshRatesHandler,
   "finance.processVoice": processVoiceHandler,
+  "user.createAccount": createAccountHandler,
+  "user.updateAccount": updateAccountHandler,
+  "user.deleteAccount": deleteAccountHandler,
+  "finance.transferBetweenAccounts": transferBetweenAccountsHandler,
 };
 
 function makeError(id: JsonRpcRequest["id"], code: number, message: string, data?: unknown): JsonRpcFailure {

@@ -2,18 +2,22 @@ import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
-import { WalletIcon } from "@/components/layout/icons";
+import { WalletIcon, BanknotesIcon, CreditCardIcon, CircleStackIcon, SettingsIcon } from "@/components/layout/icons";
 import { Card, CardContent } from "@/components/ui";
 import { useCountUp } from "@/hooks/useCountUp";
 import { hapticNotification } from "@/utils/haptic";
 import { formatMoney } from "@/utils/format";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
+import type { Account } from "@finance-twa/shared-types";
+
 interface BalanceCardProps {
   balance: number;
   monthlyExp: number;
   isBalanceSaving?: boolean;
   onBalanceChange?: (balance: number) => Promise<unknown> | unknown;
+  accounts?: Account[];
+  onManageAccounts?: () => void;
 }
 
 function parseAmount(value: string): number {
@@ -29,6 +33,8 @@ export function BalanceCard({
   monthlyExp,
   isBalanceSaving,
   onBalanceChange,
+  accounts = [],
+  onManageAccounts,
 }: BalanceCardProps) {
   const { t } = useTranslation();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -203,6 +209,49 @@ export function BalanceCard({
                 <p className="m-0 mt-1 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-on-strong)]">{formatMoney(monthlyExp)}</p>
               </div>
             </div>
+
+            {accounts.length > 0 && (
+              <div className="border-t border-[color-mix(in_srgb,var(--divider)_30%,transparent)] pt-4 space-y-3">
+                <div className="flex items-center justify-between">
+                  <p className="m-0 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary-text)] font-semibold">
+                    {t("accounts.title", { defaultValue: "Accounts" })}
+                  </p>
+                  {onManageAccounts && (
+                    <button
+                      onClick={onManageAccounts}
+                      className="text-xs font-semibold text-[var(--foreground)] hover:opacity-75 transition outline-none cursor-pointer flex items-center gap-1"
+                      type="button"
+                    >
+                      <SettingsIcon className="h-3.5 w-3.5 text-[var(--muted)]" />
+                      <span>{t("accounts.manage", { defaultValue: "Manage" })}</span>
+                    </button>
+                  )}
+                </div>
+                <div className="grid gap-2 max-h-[160px] overflow-y-auto pr-1">
+                  {accounts.map((acc) => {
+                    const IconComponent = acc.type === "cash" 
+                      ? BanknotesIcon 
+                      : acc.type === "card" 
+                      ? CreditCardIcon 
+                      : CircleStackIcon;
+                    return (
+                      <div
+                        key={acc.id}
+                        className="flex items-center justify-between px-3 py-2 rounded-[16px] bg-[var(--hero-soft-surface)] hover:bg-[color-mix(in_srgb,var(--hero-soft-surface)_90%,var(--foreground))] transition-colors"
+                      >
+                        <div className="flex items-center gap-2">
+                          <IconComponent className="h-4 w-4 text-[var(--muted)]" />
+                          <span className="text-xs font-medium text-[var(--foreground)]">{acc.name}</span>
+                        </div>
+                        <span className="text-xs font-bold text-[var(--foreground)]">
+                          {formatMoney(acc.balance, acc.currency)}
+                        </span>
+                      </div>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
         </CardContent>
       </Card>

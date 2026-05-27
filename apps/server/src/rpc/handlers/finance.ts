@@ -1,4 +1,3 @@
-import type { RpcHandler } from "../types.js";
 import {
   addExpense,
   addIncome,
@@ -7,6 +6,7 @@ import {
   convertCurrency,
   deleteRecurringTransaction,
   getCategoryBreakdown,
+  getDailyTrend,
   getRecentExpenses,
   getReport,
   getTransactions,
@@ -20,7 +20,8 @@ import {
   updateTransaction,
   refreshRates,
   processVoice,
-} from "../../services/finance.service.js";
+  transferBetweenAccounts,
+} from "../../services/finance/index.js";
 import {
   financeAddIncomeSchema,
   financeAddExpenseSchema,
@@ -38,130 +39,147 @@ import {
   financeApplyRecurringTransactionSchema,
   financeGetReportSchema,
   financeGetCategoryBreakdownSchema,
+  financeGetDailyTrendSchema,
   financeNewMonthSchema,
   financeConvertCurrencySchema,
   financeRefreshRatesSchema,
   financeProcessVoiceSchema,
+  financeTransferBetweenAccountsSchema,
 } from "../validation.js";
-import { getTelegramId } from "./shared.js";
+import { defineAuthenticatedRpc } from "./shared.js";
 
-export const addIncomeHandler: RpcHandler<"finance.addIncome"> = async (params, { app }) => {
-  const { initData, amount, savingsAmt, note, occurredAt } = financeAddIncomeSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return addIncome(telegramId, amount, savingsAmt === null ? undefined : savingsAmt, note, occurredAt);
-};
+export const addIncomeHandler = defineAuthenticatedRpc(
+  "finance.addIncome",
+  financeAddIncomeSchema,
+  ({ telegramId, amount, savingsAmt, note, occurredAt, accountId }) =>
+    addIncome(telegramId, amount, savingsAmt ?? undefined, note, occurredAt, accountId),
+);
 
-export const addExpenseHandler: RpcHandler<"finance.addExpense"> = async (params, { app }) => {
-  const { initData, amount, category, note, occurredAt } = financeAddExpenseSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return addExpense(telegramId, amount, category as any, note, occurredAt);
-};
+export const addExpenseHandler = defineAuthenticatedRpc(
+  "finance.addExpense",
+  financeAddExpenseSchema,
+  ({ telegramId, amount, category, note, occurredAt, accountId }) =>
+    addExpense(telegramId, amount, category, note, occurredAt, accountId),
+);
 
-export const transferSavingsHandler: RpcHandler<"finance.transferSavings"> = async (params, { app }) => {
-  const { initData, amount, direction, note, occurredAt } = financeTransferSavingsSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return transferSavings(telegramId, amount, direction, note, occurredAt);
-};
+export const transferSavingsHandler = defineAuthenticatedRpc(
+  "finance.transferSavings",
+  financeTransferSavingsSchema,
+  ({ telegramId, amount, direction, note, occurredAt, accountId }) =>
+    transferSavings(telegramId, amount, direction, note, occurredAt, accountId),
+);
 
-export const getRecentExpensesHandler: RpcHandler<"finance.getRecentExpenses"> = async (params, { app }) => {
-  const { initData, limit } = financeGetRecentExpensesSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return getRecentExpenses(telegramId, limit);
-};
+export const getRecentExpensesHandler = defineAuthenticatedRpc(
+  "finance.getRecentExpenses",
+  financeGetRecentExpensesSchema,
+  ({ telegramId, limit }) => getRecentExpenses(telegramId, limit),
+);
 
-export const getTransactionsHandler: RpcHandler<"finance.getTransactions"> = async (params, { app }) => {
-  const { initData, filters } = financeGetTransactionsSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return getTransactions(telegramId, filters as any);
-};
+export const getTransactionsHandler = defineAuthenticatedRpc(
+  "finance.getTransactions",
+  financeGetTransactionsSchema,
+  ({ telegramId, filters }) => getTransactions(telegramId, filters),
+);
 
-export const updateTransactionHandler: RpcHandler<"finance.updateTransaction"> = async (params, { app }) => {
-  const { initData, payload } = financeUpdateTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return updateTransaction(telegramId, payload as any);
-};
+export const updateTransactionHandler = defineAuthenticatedRpc(
+  "finance.updateTransaction",
+  financeUpdateTransactionSchema,
+  ({ telegramId, payload }) => updateTransaction(telegramId, payload),
+);
 
-export const archiveTransactionHandler: RpcHandler<"finance.archiveTransaction"> = async (params, { app }) => {
-  const { initData, transactionId } = financeArchiveTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return archiveTransaction(telegramId, transactionId);
-};
+export const archiveTransactionHandler = defineAuthenticatedRpc(
+  "finance.archiveTransaction",
+  financeArchiveTransactionSchema,
+  ({ telegramId, transactionId }) => archiveTransaction(telegramId, transactionId),
+);
 
-export const restoreTransactionHandler: RpcHandler<"finance.restoreTransaction"> = async (params, { app }) => {
-  const { initData, transactionId } = financeRestoreTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return restoreTransaction(telegramId, transactionId);
-};
+export const restoreTransactionHandler = defineAuthenticatedRpc(
+  "finance.restoreTransaction",
+  financeRestoreTransactionSchema,
+  ({ telegramId, transactionId }) => restoreTransaction(telegramId, transactionId),
+);
 
-export const updateSavingsGoalHandler: RpcHandler<"finance.updateSavingsGoal"> = async (params, { app }) => {
-  const { initData, goal } = financeUpdateSavingsGoalSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return updateSavingsGoal(telegramId, goal);
-};
+export const updateSavingsGoalHandler = defineAuthenticatedRpc(
+  "finance.updateSavingsGoal",
+  financeUpdateSavingsGoalSchema,
+  ({ telegramId, goal }) => updateSavingsGoal(telegramId, goal),
+);
 
-export const updateBalanceHandler: RpcHandler<"finance.updateBalance"> = async (params, { app }) => {
-  const { initData, balance } = financeUpdateBalanceSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return updateBalance(telegramId, balance);
-};
+export const updateBalanceHandler = defineAuthenticatedRpc(
+  "finance.updateBalance",
+  financeUpdateBalanceSchema,
+  ({ telegramId, balance }) => updateBalance(telegramId, balance),
+);
 
-export const resetAccountDataHandler: RpcHandler<"finance.resetAccountData"> = async (params, { app }) => {
-  const { initData } = financeResetAccountDataSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return resetAccountData(telegramId);
-};
+export const resetAccountDataHandler = defineAuthenticatedRpc(
+  "finance.resetAccountData",
+  financeResetAccountDataSchema,
+  ({ telegramId }) => resetAccountData(telegramId),
+);
 
-export const saveRecurringTransactionHandler: RpcHandler<"finance.saveRecurringTransaction"> = async (params, { app }) => {
-  const { initData, template } = financeSaveRecurringTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return saveRecurringTransaction(telegramId, template as any);
-};
+export const saveRecurringTransactionHandler = defineAuthenticatedRpc(
+  "finance.saveRecurringTransaction",
+  financeSaveRecurringTransactionSchema,
+  ({ telegramId, template }) => saveRecurringTransaction(telegramId, template),
+);
 
-export const deleteRecurringTransactionHandler: RpcHandler<"finance.deleteRecurringTransaction"> = async (params, { app }) => {
-  const { initData, templateId } = financeDeleteRecurringTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return deleteRecurringTransaction(telegramId, templateId);
-};
+export const deleteRecurringTransactionHandler = defineAuthenticatedRpc(
+  "finance.deleteRecurringTransaction",
+  financeDeleteRecurringTransactionSchema,
+  ({ telegramId, templateId }) => deleteRecurringTransaction(telegramId, templateId),
+);
 
-export const applyRecurringTransactionHandler: RpcHandler<"finance.applyRecurringTransaction"> = async (params, { app }) => {
-  const { initData, templateId } = financeApplyRecurringTransactionSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return applyRecurringTransaction(telegramId, templateId);
-};
+export const applyRecurringTransactionHandler = defineAuthenticatedRpc(
+  "finance.applyRecurringTransaction",
+  financeApplyRecurringTransactionSchema,
+  ({ telegramId, templateId }) => applyRecurringTransaction(telegramId, templateId),
+);
 
-export const getReportHandler: RpcHandler<"finance.getReport"> = async (params, { app }) => {
-  const { initData, monthKey } = financeGetReportSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return getReport(telegramId, monthKey);
-};
+export const getReportHandler = defineAuthenticatedRpc(
+  "finance.getReport",
+  financeGetReportSchema,
+  ({ telegramId, monthKey }) => getReport(telegramId, monthKey),
+);
 
-export const getCategoryBreakdownHandler: RpcHandler<"finance.getCategoryBreakdown"> = async (params, { app }) => {
-  const { initData, monthKey } = financeGetCategoryBreakdownSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return getCategoryBreakdown(telegramId, monthKey);
-};
+export const getCategoryBreakdownHandler = defineAuthenticatedRpc(
+  "finance.getCategoryBreakdown",
+  financeGetCategoryBreakdownSchema,
+  ({ telegramId, monthKey }) => getCategoryBreakdown(telegramId, monthKey),
+);
 
-export const newMonthHandler: RpcHandler<"finance.newMonth"> = async (params, { app }) => {
-  const { initData } = financeNewMonthSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return newMonth(telegramId);
-};
+export const getDailyTrendHandler = defineAuthenticatedRpc(
+  "finance.getDailyTrend",
+  financeGetDailyTrendSchema,
+  ({ telegramId, monthKey }) => getDailyTrend(telegramId, monthKey),
+);
 
-export const convertCurrencyHandler: RpcHandler<"finance.convertCurrency"> = async (params, { app }) => {
-  const { initData, rate } = financeConvertCurrencySchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return convertCurrency(telegramId, rate);
-};
+export const newMonthHandler = defineAuthenticatedRpc(
+  "finance.newMonth",
+  financeNewMonthSchema,
+  ({ telegramId }) => newMonth(telegramId),
+);
 
-export const refreshRatesHandler: RpcHandler<"finance.refreshRates"> = async (params, { app }) => {
-  const { initData } = financeRefreshRatesSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return refreshRates(telegramId);
-};
+export const convertCurrencyHandler = defineAuthenticatedRpc(
+  "finance.convertCurrency",
+  financeConvertCurrencySchema,
+  ({ telegramId, rate }) => convertCurrency(telegramId, rate),
+);
 
-export const processVoiceHandler: RpcHandler<"finance.processVoice"> = async (params, { app }) => {
-  const { initData, base64Audio } = financeProcessVoiceSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return processVoice(telegramId, base64Audio);
-};
+export const refreshRatesHandler = defineAuthenticatedRpc(
+  "finance.refreshRates",
+  financeRefreshRatesSchema,
+  ({ telegramId }) => refreshRates(telegramId),
+);
 
+export const processVoiceHandler = defineAuthenticatedRpc(
+  "finance.processVoice",
+  financeProcessVoiceSchema,
+  ({ telegramId, base64Audio }) => processVoice(telegramId, base64Audio),
+);
+
+export const transferBetweenAccountsHandler = defineAuthenticatedRpc(
+  "finance.transferBetweenAccounts",
+  financeTransferBetweenAccountsSchema,
+  ({ telegramId, fromAccountId, toAccountId, amount, toAmount }) =>
+    transferBetweenAccounts(telegramId, { fromAccountId, toAccountId, amount, toAmount }),
+);

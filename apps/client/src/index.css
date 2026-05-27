@@ -1,7 +1,7 @@
 @import "tailwindcss";
 
 :root {
-  font-family: "Manrope", "Segoe UI", sans-serif;
+  font-family: "Manrope", "Noto Sans", "Noto Sans JP", "Noto Sans KR", "Noto Sans SC", "Noto Sans TC", "Segoe UI", sans-serif;
   --telegram-safe-top: env(safe-area-inset-top, 0px);
   --telegram-safe-bottom: env(safe-area-inset-bottom, 0px);
   --device-top-extra: 1rem;
@@ -508,4 +508,23 @@ input[type="number"]::-webkit-outer-spin-button {
   );
   background-size: 800px 100%;
   animation: shimmer 1.6s ease-in-out infinite;
+}
+
+
+/* Visually hide scrollbars across the entire app.
+   The scroll itself stays — only the visible track / thumb are gone. */
+html,
+body,
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+html::-webkit-scrollbar,
+body::-webkit-scrollbar,
+*::-webkit-scrollbar,
+.no-scrollbar::-webkit-scrollbar {
+  width: 0;
+  height: 0;
+  display: none;
 }

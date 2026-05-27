@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, type PropsWithChildren } from "react";
 import { motion, useAnimation } from "framer-motion";
 import { Spinner } from "@/components/ui";
+import { hapticImpact } from "@/utils/haptic";
 
 interface PullToRefreshProps extends PropsWithChildren {
   onRefresh: () => Promise<void>;
@@ -69,6 +70,7 @@ export function PullToRefresh({ children, onRefresh, isRefreshing: externalRefre
 
     if (pullDistance >= PULL_THRESHOLD) {
       setIsRefreshing(true);
+      hapticImpact("medium");
       void controls.start({ y: 60 });
       try {
         await onRefresh();
@@ -109,7 +111,7 @@ export function PullToRefresh({ children, onRefresh, isRefreshing: externalRefre
             <Spinner size="sm" />
           ) : (
             <svg
-              className="w-5 h-5 text-[var(--accent)]"
+              className="w-5 h-5 text-[var(--accent-text)]"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"

@@ -25,6 +25,7 @@ export const financeAddIncomeSchema = z.object({
   savingsAmt: z.number().min(0).nullable().optional(),
   note: z.string().max(240).nullable().optional(),
   occurredAt: z.string().datetime().optional(),
+  accountId: z.string().uuid().optional(),
 });
 
 export const financeAddExpenseSchema = z.object({
@@ -33,6 +34,7 @@ export const financeAddExpenseSchema = z.object({
   category: z.string().min(1),
   note: z.string().max(240).nullable().optional(),
   occurredAt: z.string().datetime().optional(),
+  accountId: z.string().uuid().optional(),
 });
 
 export const financeTransferSavingsSchema = z.object({
@@ -41,6 +43,7 @@ export const financeTransferSavingsSchema = z.object({
   direction: z.enum(["to_savings", "from_savings"]),
   note: z.string().max(240).nullable().optional(),
   occurredAt: z.string().datetime().optional(),
+  accountId: z.string().uuid().optional(),
 });
 
 export const financeGetRecentExpensesSchema = z.object({
@@ -141,6 +144,11 @@ export const financeGetCategoryBreakdownSchema = z.object({
   monthKey: z.string().regex(/^\d{4}-\d{2}$/).optional(),
 });
 
+export const financeGetDailyTrendSchema = z.object({
+  initData: initDataSchema,
+  monthKey: z.string().regex(/^\d{4}-\d{2}$/).optional(),
+});
+
 export const financeNewMonthSchema = z.object({
   initData: initDataSchema,
 });
@@ -177,6 +185,32 @@ export const userDeleteCustomCategorySchema = z.object({
   id: z.string().min(1).max(20),
 });
 
+export const userSetCategoryLimitsSchema = z.object({
+  initData: initDataSchema,
+  limits: z.record(z.string().min(1).max(64), z.number().nonnegative().max(9_999_999_999_999.99)),
+});
+
+const timeOfDaySchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Time must be HH:MM");
+
+const notificationFrequencySchema = z.discriminatedUnion("mode", [
+  z.object({
+    mode: z.literal("per_day"),
+    times: z.array(timeOfDaySchema).min(1).max(6),
+  }),
+  z.object({
+    mode: z.literal("every_n_days"),
+    days: z.number().int().min(1).max(30),
+    time: timeOfDaySchema,
+  }),
+]);
+
+export const userSetNotificationSettingsSchema = z.object({
+  initData: initDataSchema,
+  enabled: z.boolean(),
+  frequency: notificationFrequencySchema,
+  timezoneOffset: z.number().int().min(-720).max(840),
+});
+
 export const adminListUsersSchema = z.object({
   initData: initDataSchema,
   page: z.number().int().min(1).optional(),
@@ -188,4 +222,46 @@ export const adminSetAdminSchema = z.object({
   initData: initDataSchema,
   userId: z.string().min(1),
   isAdmin: z.boolean(),
+});
+
+export const userCreateAccountSchema = z.object({
+  initData: initDataSchema,
+  name: z.string().min(1).max(64),
+  type: z.enum(["cash", "card", "crypto"]),
+  currency: z.string().min(1).max(10),
+  initialBalance: z.number().nonnegative(),
+});
+
+export const userUpdateAccountSchema = z.object({
+  initData: initDataSchema,
+  accountId: z.string().uuid(),
+  name: z.string().min(1).max(64),
+});
+
+export const userDeleteAccountSchema = z.object({
+  initData: initDataSchema,
+  accountId: z.string().uuid(),
+});
+
+export const financeTransferBetweenAccountsSchema = z.object({
+  initData: initDataSchema,
+  fromAccountId: z.string().uuid(),
+  toAccountId: z.string().uuid(),
+  amount: z.number().positive(),
+  toAmount: z.number().positive().optional(),
+});
+
+export const userSetPinSchema = z.object({
+  initData: initDataSchema,
+  pin: z.string().regex(/^\d{4,6}$/),
+});
+
+export const userVerifyPinSchema = z.object({
+  initData: initDataSchema,
+  pin: z.string().min(4).max(6),
+});
+
+export const userRemovePinSchema = z.object({
+  initData: initDataSchema,
+  pin: z.string().min(4).max(6),
 });

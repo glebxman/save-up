@@ -5,6 +5,7 @@ import type {
   CategoryCustomization,
   CustomCategory,
   ExpenseCategory,
+  NotificationFrequency,
   RecurringTransaction,
   SavingsPct,
   Status,
@@ -16,7 +17,7 @@ import type { TelegramUser } from "../utils/telegram.js";
 import { and, count, desc, eq, isNull, or, sql } from "drizzle-orm";
 
 import { db } from "../config/database.js";
-import { transactions, users, type UserRow } from "../db/schema/index.js";
+import { transactions, users, accounts, type UserRow, type AccountRow } from "../db/schema/index.js";
 import { escapeIlike } from "../utils/sql.js";
 import { calculateDailyLimit, getMonthKey } from "../utils/daily-limit.js";
 import { AppError, ErrorCode } from "../utils/errors.js";
@@ -68,7 +69,7 @@ function buildAdminLabel(row: UserRow): string {
   return `User ${row.id.slice(0, 8)}`;
 }
 
-export function mapUserRow(row: UserRow): User {
+export function mapUserRow(row: UserRow, accountsList: AccountRow[] = []): User {
   const recurringTransactions = Array.isArray(row.recurringTemplates)
     ? row.recurringTemplates as RecurringTransaction[]
     : [];
@@ -76,6 +77,16 @@ export function mapUserRow(row: UserRow): User {
   // Reset the daily counter if the stored date is not today.
   const today = new Date().toISOString().slice(0, 10);
   const voiceDailyUsed = row.voiceDailyDate === today ? row.voiceDailyUsed : 0;
+
+  const mappedAccounts = accountsList.map((acc) => ({
+    id: acc.id,
+    userId: acc.userId,
+    name: acc.name,
+    type: acc.type as "cash" | "card" | "crypto",
+    currency: acc.currency as any,
+    balance: Number(acc.balance),
+    createdAt: acc.createdAt.toISOString(),
+  }));
 
   return {
     id: row.id,
@@ -85,22 +96,37 @@ export function mapUserRow(row: UserRow): User {
     lastName: row.lastName,
     username: row.username,
     photoUrl: row.photoUrl,
-    balance: row.balance,
-    savings: row.savings,
+    balance: Number(row.balance),
+    savings: Number(row.savings),
     savingsPct: row.savingsPct as SavingsPct,
-    savingsGoal: row.savingsGoal,
+    savingsGoal: Number(row.savingsGoal),
     recurringTransactions,
-    monthlyExp: row.monthlyExp,
+    monthlyExp: Number(row.monthlyExp),
     onboardingCompleted: row.onboardingCompleted,
     language: row.language ?? null,
     voiceDailyUsed,
     categoryCustomizations: (row.categoryCustomizations ?? {}) as Partial<Record<ExpenseCategory, CategoryCustomization>>,
     customCategories: Array.isArray(row.customCategories) ? row.customCategories as CustomCategory[] : [],
+    categoryLimits: (row.categoryLimits ?? {}) as Record<string, number>,
+    notificationsConfigured: row.notificationsConfigured,
+    notificationsEnabled: row.notificationsEnabled,
+    notificationFrequency: (row.notificationFrequency ?? { mode: "every_n_days", days: 3, time: "09:00" }) as NotificationFrequency,
+    notificationTimezoneOffset: row.notificationTimezoneOffset ?? 0,
+    hasPinConfigured: !!(row.pinHash && row.pinSalt),
     createdAt: row.createdAt.toISOString(),
+    accounts: mappedAccounts,
+    currency: row.currency as any,
   };
 }
 
-export async function buildStatus(row: UserRow): Promise<Status> {  const user = mapUserRow(row);
+export async function buildStatus(row: UserRow): Promise<Status> {
+  const activeAccounts = await db
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.userId, row.id), isNull(accounts.deletedAt)))
+    .orderBy(accounts.createdAt);
+
+  const user = mapUserRow(row, activeAccounts);
   const { rates, updatedAt } = await getExchangeRates();
 
   return {
@@ -153,7 +179,18 @@ export async function ensureUser(telegramId: number, profile?: TelegramUser): Pr
     })
     .returning();
 
-  return inserted[0] as UserRow;
+  const userRow = inserted[0] as UserRow;
+
+  // Create default account for this new user
+  await db.insert(accounts).values({
+    userId: userRow.id,
+    name: userRow.language === "ru" ? "Основной" : "Main",
+    type: "cash",
+    currency: "UZS",
+    balance: 0,
+  });
+
+  return userRow;
 }
 
 async function syncCurrentMonthExpense(row: UserRow): Promise<UserRow> {
@@ -429,4 +466,202 @@ export async function deleteCustomCategory(
 
   await invalidateStatusCache(telegramId);
   return buildStatus(rows[0] as UserRow);
+}
+
+export async function setCategoryLimits(
+  telegramId: number,
+  limits: Record<string, number>,
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+  const sanitized: Record<string, number> = {};
+
+  for (const [key, raw] of Object.entries(limits)) {
+    if (typeof key !== "string" || key.length === 0 || key.length > 64) continue;
+    const value = Number(raw);
+    if (!Number.isFinite(value) || value <= 0) continue;
+    sanitized[key] = Number(value.toFixed(2));
+  }
+
+  const rows = await db
+    .update(users)
+    .set({ categoryLimits: sanitized })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  await invalidateStatusCache(telegramId);
+  return buildStatus(rows[0] as UserRow);
+}
+
+export async function setNotificationSettings(
+  telegramId: number,
+  enabled: boolean,
+  frequency: NotificationFrequency,
+  timezoneOffset: number,
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+
+  const rows = await db
+    .update(users)
+    .set({
+      notificationsConfigured: true,
+      notificationsEnabled: enabled,
+      notificationFrequency: frequency,
+      notificationTimezoneOffset: Math.max(-720, Math.min(840, Math.trunc(timezoneOffset))),
+      // Reset slot key so the next eligible slot triggers a reminder.
+      lastReminderSlotKey: null,
+    })
+    .where(eq(users.id, user.id))
+    .returning();
+
+  await invalidateStatusCache(telegramId);
+  return buildStatus(rows[0] as UserRow);
+}
+
+export async function createAccount(
+  telegramId: number,
+  params: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number }
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+
+  await db.transaction(async (tx) => {
+    const [acc] = await tx
+      .insert(accounts)
+      .values({
+        userId: user.id,
+        name: params.name.trim(),
+        type: params.type,
+        currency: params.currency,
+        balance: params.initialBalance,
+      })
+      .returning();
+
+    if (!acc) {
+      throw new Error("Failed to create account");
+    }
+
+    if (params.initialBalance > 0) {
+      await tx.insert(transactions).values({
+        userId: user.id,
+        accountId: acc.id,
+        type: "income",
+        amount: params.initialBalance,
+        note: "Initial balance",
+        monthKey: getMonthKey(),
+        occurredAt: new Date(),
+      });
+    }
+
+    const { syncUserSnapshot } = await import("./finance/_shared.js");
+    await syncUserSnapshot(tx, user);
+  });
+
+  await invalidateStatusCache(telegramId);
+  return getStatusByTelegramId(telegramId);
+}
+
+export async function updateAccount(
+  telegramId: number,
+  params: { accountId: string; name: string }
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+
+  await db
+    .update(accounts)
+    .set({ name: params.name.trim() })
+    .where(and(eq(accounts.id, params.accountId), eq(accounts.userId, user.id)));
+
+  await invalidateStatusCache(telegramId);
+  return getStatusByTelegramId(telegramId);
+}
+
+export async function deleteAccount(
+  telegramId: number,
+  accountIdVal: string
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+
+  const activeAccounts = await db
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
+
+  if (activeAccounts.length <= 1) {
+    throw new AppError(ErrorCode.VALIDATION, "Cannot delete the last remaining account");
+  }
+
+  await db.transaction(async (tx) => {
+    await tx
+      .update(accounts)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(accounts.id, accountIdVal), eq(accounts.userId, user.id)));
+
+    await tx
+      .update(transactions)
+      .set({ deletedAt: new Date() })
+      .where(and(eq(transactions.accountId, accountIdVal), eq(transactions.userId, user.id)));
+
+    const { syncUserSnapshot } = await import("./finance/_shared.js");
+    await syncUserSnapshot(tx, user);
+  });
+
+  await invalidateStatusCache(telegramId);
+  return getStatusByTelegramId(telegramId);
+}
+
+// ─── PIN management ─────────────────────────────────────────────────────────
+
+import { createHash, randomBytes } from "node:crypto";
+
+function hashPinServer(pin: string, salt: string): string {
+  return createHash("sha256").update(`${salt}|${pin}`).digest("hex");
+}
+
+export async function setUserPin(telegramId: number, pin: string): Promise<{ ok: true }> {
+  if (!/^\d{4,6}$/.test(pin)) {
+    throw new AppError(ErrorCode.VALIDATION, "PIN must be 4-6 digits");
+  }
+
+  const user = await ensureUser(telegramId);
+  const salt = randomBytes(16).toString("hex");
+  const hash = hashPinServer(pin, salt);
+
+  await db
+    .update(users)
+    .set({ pinHash: hash, pinSalt: salt })
+    .where(eq(users.id, user.id));
+
+  await invalidateStatusCache(telegramId);
+  return { ok: true };
+}
+
+export async function verifyUserPin(telegramId: number, pin: string): Promise<{ ok: boolean }> {
+  const user = await ensureUser(telegramId);
+
+  if (!user.pinHash || !user.pinSalt) {
+    return { ok: false };
+  }
+
+  const hash = hashPinServer(pin, user.pinSalt);
+  return { ok: hash === user.pinHash };
+}
+
+export async function removeUserPin(telegramId: number, pin: string): Promise<{ ok: true }> {
+  const user = await ensureUser(telegramId);
+
+  if (!user.pinHash || !user.pinSalt) {
+    throw new AppError(ErrorCode.NOT_FOUND, "No PIN configured");
+  }
+
+  const hash = hashPinServer(pin, user.pinSalt);
+  if (hash !== user.pinHash) {
+    throw new AppError(ErrorCode.UNAUTHORIZED, "Wrong PIN");
+  }
+
+  await db
+    .update(users)
+    .set({ pinHash: null, pinSalt: null })
+    .where(eq(users.id, user.id));
+
+  await invalidateStatusCache(telegramId);
+  return { ok: true };
 }

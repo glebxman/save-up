@@ -12,6 +12,10 @@ const FALLBACK_RATES: Record<CurrencyCode, number> = {
   TRY: 32,
   GBP: 0.79,
   CNY: 7.23,
+  BTC: 0.000015,
+  ETH: 0.0003,
+  TON: 0.15,
+  USDT: 1.0,
 };
 
 let cachedRates: Record<CurrencyCode, number> | null = null;
@@ -43,7 +47,7 @@ export async function getExchangeRates(force = false): Promise<{ rates: Record<C
 
       if (data && data.data && data.data.rates) {
         const rates: Partial<Record<CurrencyCode, number>> = {};
-        const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY"];
+        const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY", "BTC", "ETH", "TON", "USDT"];
 
         for (const code of codes) {
           const value = data.data.rates[code];

@@ -12,6 +12,9 @@
       content="yes"
     />
     <title>Save up</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;600;700&family=Noto+Sans+KR:wght@400;500;600;700&family=Noto+Sans+SC:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <script src="https://telegram.org/js/telegram-web-app.js"></script>
   </head>
   <body>
@@ -73,6 +76,10 @@
             const version = Number.parseFloat(tg.version || "0");
             if (Number.isFinite(version) && version >= 8 && typeof tg.requestFullscreen === "function") {
               tg.requestFullscreen();
+            }
+
+            if (Number.isFinite(version) && version >= 7.7 && typeof tg.disableVerticalSwipes === "function") {
+              tg.disableVerticalSwipes();
             }
 
             if (Number.isFinite(version) && version >= 8 && typeof tg.lockOrientation === "function") {

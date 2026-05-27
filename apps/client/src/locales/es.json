@@ -12,11 +12,11 @@
     "live": "En vivo",
     "cancel": "Cancelar",
     "offline": "Sin conexión a internet. Algunas funciones pueden no estar disponibles.",
-    "type": "Type",
-    "amount": "Amount",
-    "category": "Category",
-    "note": "Note",
-    "confirm": "Confirm"
+    "type": "Tipo",
+    "amount": "Monto",
+    "category": "Categoría",
+    "note": "Nota",
+    "confirm": "Confirmar"
   },
   "shell": {
     "greeting": "Hola, {{name}}",
@@ -27,7 +27,7 @@
     "loading": "Cargando tu estado financiero...",
     "errorCaption": "Error de carga",
     "errorTitle": "No se pudieron obtener tus datos",
-    "errorDescription": "Revisa el endpoint RPC del backend, Telegram initData y la conexiГіn del servidor.",
+    "errorDescription": "Revisa el endpoint RPC del backend, Telegram initData y la conexión del servidor.",
     "shortcuts": {
       "income": "Ingreso",
       "expense": "Gasto",
@@ -38,24 +38,25 @@
   "balance": {
     "caption": "Mi saldo",
     "healthy": "En buen camino",
-    "watch": "Gasto rГЎpido",
+    "watch": "Gasto rápido",
     "spendableNow": "Disponible ahora",
     "monthlyBudget": "Gastado este mes",
     "changeTitle": "Cambiar saldo",
-    "changeQuestion": "Desea cambiar el saldo?",
+    "changeQuestion": "¿Desea cambiar el saldo?",
     "changeDescription": "Actual: {{current}}. Nuevo saldo: {{next}}.",
     "changeConfirm": "Continuar"
   },
   "dailyLimit": {
     "caption": "Queda por gastar",
-    "days": "{{count}} dГ­as",
-    "description": "Tu presupuesto diario para mantenerte en buen camino hasta fin de mes."
+    "days": "{{count}} días",
+    "description": "Tu presupuesto diario para mantenerte en buen camino hasta fin de mes.",
+    "budgetCaption": "Presupuesto diario"
   },
   "savings": {
     "caption": "Bolsillo de ahorro",
-    "description": "Define cuГЎnto de cada ingreso va al ahorro.",
+    "description": "Define cuánto de cada ingreso va al ahorro.",
     "setup": "Transferencia a ahorro",
-    "question": "ВїCuГЎnto de este ingreso deberГ­a ir al ahorro?",
+    "question": "¿Cuánto de este ingreso debería ir al ahorro?",
     "incomeAmount": "Ingreso: {{amount}}",
     "customPlaceholder": "Ingresa el monto de ahorro",
     "saveNothing": "Conservar todo",
@@ -72,27 +73,27 @@
     "saveGoal": "Guardar meta",
     "goalHelper": "Define un monto objetivo para tu bolsillo de ahorro.",
     "goalPlaceholder": "Ingresa el monto de la meta",
-    "goalQuestion": "ВїCuГЎl es tu meta de ahorro?",
+    "goalQuestion": "¿Cuál es tu meta de ahorro?",
     "depositHelper": "Puedes mover hasta {{amount}} del saldo al ahorro.",
-    "depositQuestion": "ВїCuГЎnto se debe mover del saldo al ahorro?",
+    "depositQuestion": "¿Cuánto se debe mover del saldo al ahorro?",
     "withdrawHelper": "Puedes devolver hasta {{amount}} del ahorro al saldo.",
-    "withdrawQuestion": "ВїCuГЎnto se debe mover del ahorro al saldo?",
+    "withdrawQuestion": "¿Cuánto se debe mover del ahorro al saldo?",
     "transferPlaceholder": "Ingresa el monto de transferencia"
   },
   "amountInput": {
-    "caption": "Nueva transacciГіn",
+    "caption": "Nueva transacción",
     "title": "Ingresa un monto",
-    "maxAmount": "Monto mГЎximo: {{amount}}"
+    "maxAmount": "Monto máximo: {{amount}}"
   },
   "report": {
     "loading": "Generando tu reporte mensual...",
     "errorCaption": "Error del reporte",
     "errorTitle": "No se pudo cargar el resumen",
-    "errorDescription": "Revisa el endpoint RPC del backend y la conexiГіn de la base de datos.",
-    "statistics": "EstadГ­sticas",
+    "errorDescription": "Revisa el endpoint RPC del backend y la conexión de la base de datos.",
+    "statistics": "Estadísticas",
     "modeIncome": "Ingresos",
     "modeSpending": "Gastos",
-    "modeAnalytics": "AnalГ­tica",
+    "modeAnalytics": "Analítica",
     "modeHistory": "Historial",
     "totalIncome": "Ingreso total",
     "totalSpending": "Gasto total",
@@ -116,36 +117,36 @@
   "settings": {
     "title": "Ajustes",
     "description": "Personaliza la app.",
-    "adminPanel": "Panel de administraciГіn",
-    "adminPanelDescription": "Usuarios, estadГ­sticas y gestiГіn de acceso de administrador.",
+    "adminPanel": "Panel de administración",
+    "adminPanelDescription": "Usuarios, estadísticas y gestión de acceso de administrador.",
     "theme": "Apariencia",
     "language": "Idioma",
     "resetData": "Restablecer datos de la cuenta",
     "resetDataDescription": "Eliminar todos los ingresos, gastos, progreso de ahorro y plantillas recurrentes.",
     "resetDataModalTitle": "Zona de riesgo",
-    "resetDataModalQuestion": "ВїRestablecer todos los datos de la cuenta?",
-    "resetDataModalDescription": "Esto eliminarГЎ permanentemente todas las transacciones y el progreso de ahorro, y devolverГЎ la cuenta a un estado limpio.",
+    "resetDataModalQuestion": "¿Restablecer todos los datos de la cuenta?",
+    "resetDataModalDescription": "Esto eliminará permanentemente todas las transacciones y el progreso de ahorro, y devolverá la cuenta a un estado limpio.",
     "resetDataConfirm": "Restablecer datos",
     "restartTutorial": "Reiniciar tutorial",
-    "restartTutorialDescription": "Recorre la guГ­a de la app desde el principio.",
+    "restartTutorialDescription": "Recorre la guía de la app desde el principio.",
     "themeAuto": "Auto",
     "themeDark": "Oscuro",
     "themeLight": "Claro",
-    "themeAutoResolved": "{{mode}} вЂў {{theme}}",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
     "themeModalTitle": "Elegir tema",
     "themeModalDescription": "Usa la apariencia del sistema o cambia la app manualmente.",
     "languageModalTitle": "Elegir idioma",
     "languageModalDescription": "Selecciona el idioma usado en toda la app.",
     "languageEn": "English",
-    "languageKk": "ТљР°Р·Р°Т›С€Р°",
-    "languageZh": "дё­ж–‡",
-    "languageJa": "ж—Ґжњ¬иЄћ",
-    "languageKo": "н•њкµ­м–ґ",
-    "languageTr": "TГјrkГ§e",
-    "languageEs": "EspaГ±ol",
-    "languageFr": "FranГ§ais",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
     "languageDe": "Deutsch",
-    "languageRu": "Р СѓСЃСЃРєРёР№",
+    "languageRu": "Русский",
     "languageUz": "O'zbek",
     "languageOther": "Otros idiomas",
     "languageHideOther": "Ocultar otros idiomas",
@@ -154,7 +155,7 @@
     "currencyModalDescription": "Selecciona la moneda usada para mostrar todos los montos en la app.",
     "currencyUzs": "Som uzbeko (UZS)",
     "currencyRub": "Rublo ruso (RUB)",
-    "currencyUsd": "DГіlar estadounidense (USD)",
+    "currencyUsd": "Dólar estadounidense (USD)",
     "currencyEur": "Euro (EUR)",
     "currencyKzt": "Tenge kazajo (KZT)",
     "currencyTry": "Lira turca (TRY)",
@@ -178,14 +179,26 @@
     "deleteCategoryTitle": "",
     "deleteCategoryQuestion": "",
     "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": ""
+    "categoryNamePlaceholder": "",
+    "notifications": "Notificaciones",
+    "notificationsOn": "Activado",
+    "notificationsOff": "Desactivado",
+    "security": "Seguridad",
+    "securityOn": "PIN activo",
+    "securityOff": "Desactivado",
+    "securityPinAndBio": "PIN + biometría",
+    "sectionAppearance": "Apariencia",
+    "sectionPrivacy": "Privacidad y notificaciones",
+    "sectionContent": "Contenido de la app",
+    "sectionHelp": "Ayuda",
+    "sectionAccount": "Cuenta"
   },
   "admin": {
-    "title": "Panel de administraciГіn",
-    "description": "Consulta la lista anonimizada de usuarios, estadГ­sticas y administra el acceso de administrador.",
-    "loading": "Cargando datos de administraciГіn...",
+    "title": "Panel de administración",
+    "description": "Consulta la lista anonimizada de usuarios, estadísticas y administra el acceso de administrador.",
+    "loading": "Cargando datos de administración...",
     "accessCaption": "Acceso restringido",
-    "accessDenied": "No tienes acceso al panel de administraciГіn",
+    "accessDenied": "No tienes acceso al panel de administración",
     "searchPlaceholder": "Buscar por ID de usuario o Telegram ID",
     "empty": "No se encontraron usuarios.",
     "totalUsers": "Usuarios totales",
@@ -199,49 +212,49 @@
     "alreadyAdmin": "Ya es admin",
     "prevPage": "Anterior",
     "nextPage": "Siguiente",
-    "pageInfo": "PГЎgina {{page}} de {{totalPages}} В· {{totalItems}} usuarios",
-    "userMeta": "Telegram: {{telegramId}} В· creado: {{createdAt}}",
-    "userStats": "Saldo: {{balance}} В· Ahorro: {{savings}} В· Gasto mensual: {{monthlyExp}} В· Transacciones: {{transactions}}"
+    "pageInfo": "Página {{page}} de {{totalPages}} · {{totalItems}} usuarios",
+    "userMeta": "Telegram: {{telegramId}} · creado: {{createdAt}}",
+    "userStats": "Saldo: {{balance}} · Ahorro: {{savings}} · Gasto mensual: {{monthlyExp}} · Transacciones: {{transactions}}"
   },
   "expenseCategory": {
-    "title": "CategorГ­a",
-    "question": "ВїPara quГ© es este gasto?",
+    "title": "Categoría",
+    "question": "¿Para qué es este gasto?",
     "food": "Comida",
     "taxi": "Taxi",
     "entertainment": "Entretenimiento",
     "shopping": "Compras",
     "utilities": "Servicios",
     "health": "Salud",
-    "education": "EducaciГіn",
+    "education": "Educación",
     "other": "Otro",
     "notePlaceholder": "",
     "confirm": ""
   },
   "expenseEditor": {
     "title": "Corregir gasto",
-    "question": "Elige la categorГ­a correcta para {{amount}}"
+    "question": "Elige la categoría correcta para {{amount}}"
   },
   "recentExpenses": {
     "caption": "Reciente",
     "title": "Gastos recientes",
     "loading": "Cargando gastos recientes...",
-    "empty": "AГєn no hay gastos recientes.",
-    "changeCategory": "Cambiar categorГ­a",
+    "empty": "Aún no hay gastos recientes.",
+    "changeCategory": "Cambiar categoría",
     "undo": "Cancelar",
-    "undoQuestion": "ВїCancelar este gasto reciente?",
-    "undoDescription": "{{amount}} volverГЎ al saldo y la transacciГіn se marcarГЎ como cancelada."
+    "undoQuestion": "¿Cancelar este gasto reciente?",
+    "undoDescription": "{{amount}} volverá al saldo y la transacción se marcará como cancelada."
   },
   "limits": {
     "caption": "Control de presupuesto",
-    "title": "LГ­mites por categorГ­a",
+    "title": "Límites por categoría",
     "manage": "Gestionar",
-    "empty": "AГєn no hay lГ­mites. AgrГ©galos para recibir avisos de gasto.",
-    "over": "Sobre el lГ­mite",
-    "ok": "Dentro del lГ­mite",
-    "question": "ВїCuГЎnto puedes gastar por categorГ­a este mes?",
-    "placeholder": "VacГ­o = sin lГ­mite",
-    "helperText": "Deja vacГ­o si no quieres un lГ­mite para esta categorГ­a.",
-    "save": "Guardar lГ­mites",
+    "empty": "Aún no hay límites. Agrégalos para recibir avisos de gasto.",
+    "over": "Sobre el límite",
+    "ok": "Dentro del límite",
+    "question": "¿Cuánto puedes gastar por categoría este mes?",
+    "placeholder": "Vacío = sin límite",
+    "helperText": "Deja vacío si no quieres un límite para esta categoría.",
+    "save": "Guardar límites",
     "dayOfMonth": "Día del mes",
     "autoApply": "Aplicar automáticamente"
   },
@@ -249,8 +262,8 @@
     "caption": "Plantillas",
     "title": "Acciones recurrentes",
     "add": "Agregar",
-    "empty": "AГєn no hay plantillas recurrentes.",
-    "quick": "EjecuciГіn rГЎpida",
+    "empty": "Aún no hay plantillas recurrentes.",
+    "quick": "Ejecución rápida",
     "run": "Ejecutar",
     "edit": "Editar",
     "delete": "Eliminar",
@@ -258,24 +271,24 @@
     "namePlaceholder": "Alquiler, salario, internet...",
     "type": "Tipo",
     "amount": "Monto",
-    "category": "CategorГ­a",
+    "category": "Categoría",
     "savingsPart": "Parte de ahorro",
     "note": "Nota",
     "notePlaceholder": "Nota opcional para esta plantilla",
-    "createTitle": "Crear acciГіn recurrente",
-    "editTitle": "Editar acciГіn recurrente",
+    "createTitle": "Crear acción recurrente",
+    "editTitle": "Editar acción recurrente",
     "save": "Guardar cambios",
     "dayOfMonth": "Día del mes",
     "autoApply": "Aplicar automáticamente",
     "create": "Crear plantilla",
-    "deleteQuestion": "ВїEliminar esta plantilla recurrente?",
-    "deleteDescription": "{{name}} se quitarГЎ de la lista rГЎpida."
+    "deleteQuestion": "¿Eliminar esta plantilla recurrente?",
+    "deleteDescription": "{{name}} se quitará de la lista rápida."
   },
   "transactionType": {
     "income": "Ingreso",
     "expense": "Gasto",
-    "transfer_to_savings": "Saldo в†’ ahorro",
-    "transfer_from_savings": "Ahorro в†’ saldo"
+    "transfer_to_savings": "Saldo → ahorro",
+    "transfer_from_savings": "Ahorro → saldo"
   },
   "history": {
     "caption": "Todas las transacciones",
@@ -286,10 +299,10 @@
     "searchPlaceholder": "Buscar por nota o tipo",
     "type": "Tipo",
     "allTypes": "Todos los tipos",
-    "category": "CategorГ­a",
-    "allCategories": "Todas las categorГ­as",
+    "category": "Categoría",
+    "allCategories": "Todas las categorías",
     "showArchived": "Mostrar canceladas",
-    "showFilters": "MГЎs filtros",
+    "showFilters": "Más filtros",
     "hideFilters": "Menos filtros",
     "loading": "Cargando transacciones...",
     "archived": "Cancelada",
@@ -297,55 +310,59 @@
     "archive": "Cancelar",
     "empty": "No hay transacciones con estos filtros.",
     "edit": "Editar",
-    "editQuestion": "Actualiza los detalles de esta transacciГіn",
+    "editQuestion": "Actualiza los detalles de esta transacción",
     "amount": "Monto",
     "date": "Fecha",
     "savingsPart": "Parte de ahorro",
     "note": "Nota",
-    "notePlaceholder": "Agrega una nota para esta transacciГіn",
+    "notePlaceholder": "Agrega una nota para esta transacción",
     "save": "Guardar cambios",
     "dayOfMonth": "Día del mes",
     "autoApply": "Aplicar automáticamente",
-    "archiveQuestion": "ВїCancelar esta transacciГіn?",
-    "archiveDescription": "La transacciГіn se revertirГЎ y se recalcularГЎn tu saldo y totales.",
-    "restoreQuestion": "ВїRestaurar esta transacciГіn?",
-    "restoreDescription": "La transacciГіn volverГЎ a estar activa y afectarГЎ tu saldo y totales.",
+    "archiveQuestion": "¿Cancelar esta transacción?",
+    "archiveDescription": "La transacción se revertirá y se recalcularán tu saldo y totales.",
+    "restoreQuestion": "¿Restaurar esta transacción?",
+    "restoreDescription": "La transacción volverá a estar activa y afectará tu saldo y totales.",
     "loadMore": "Cargar mas"
   },
   "feedback": {
-    "genericError": "Algo saliГі mal. IntГ©ntalo de nuevo.",
+    "genericError": "Algo salió mal. Inténtalo de nuevo.",
     "incomeAdded": "Ingreso agregado",
     "expenseAdded": "Gasto agregado",
     "savingsDeposited": "Movido a ahorro",
     "savingsWithdrawn": "Devuelto al saldo",
     "accountDataReset": "Datos de la cuenta restablecidos",
-    "transactionUpdated": "TransacciГіn actualizada",
-    "transactionArchived": "TransacciГіn cancelada",
-    "transactionRestored": "TransacciГіn restaurada",
+    "transactionUpdated": "Transacción actualizada",
+    "transactionArchived": "Transacción cancelada",
+    "transactionRestored": "Transacción restaurada",
     "goalUpdated": "Meta de ahorro actualizada",
-    "recurringSaved": "AcciГіn recurrente guardada",
-    "recurringDeleted": "AcciГіn recurrente eliminada",
-    "recurringApplied": "AcciГіn recurrente aplicada",
-    "currencyConverted": "Montos convertidos con Г©xito",
+    "recurringSaved": "Acción recurrente guardada",
+    "recurringDeleted": "Acción recurrente eliminada",
+    "recurringApplied": "Acción recurrente aplicada",
+    "currencyConverted": "Montos convertidos con éxito",
     "ratesUpdated": "Tipos de cambio actualizados",
     "errors": {
-      "micAccess": "Microphone access denied",
-      "aiFailed": "AI could not process this audio",
-      "balanceNegative": "La operacion dejaria el saldo negativo",
-      "savingsNegative": "La operacion dejaria los ahorros negativos",
+      "micAccess": "Acceso al micrófono denegado",
+      "aiFailed": "La IA no pudo procesar este audio",
+      "balanceNegative": "La operación dejaría el saldo negativo",
+      "savingsNegative": "La operación dejaría los ahorros negativos",
       "insufficientBalance": "Saldo insuficiente",
       "insufficientSavings": "Ahorros insuficientes"
     },
     "categoryAdded": "",
-    "categoryDeleted": ""
+    "categoryDeleted": "",
+    "accountCreated": "Cuenta creada con éxito",
+    "accountUpdated": "Cuenta actualizada con éxito",
+    "accountDeleted": "Cuenta eliminada con éxito",
+    "transferSuccess": "Transferencia completada con éxito"
   },
   "analytics": {
     "title": "Desglose de gastos",
-    "description": "Ve a dГіnde va tu dinero por categorГ­a.",
+    "description": "Ve a dónde va tu dinero por categoría.",
     "totalExpenses": "Gastos totales",
     "transactions": "{{count}} elementos",
     "ofTotal": "{{pct}}% del total",
-    "noData": "AГєn no hay datos de gastos este mes.",
+    "noData": "Aún no hay datos de gastos este mes.",
     "chartTitle": "Desglose por categorias",
     "topCategory": "Categoria principal",
     "howToReadTitle": "Cuanto mas larga la barra, mayor es la parte del gasto.",
@@ -353,36 +370,36 @@
   },
   "onboarding": {
     "skip": "Saltar",
-    "back": "AtrГЎs",
+    "back": "Atrás",
     "next": "Siguiente",
-    "start": "ВЎVamos!",
+    "start": "¡Vamos!",
     "welcome": {
-      "title": "ВЎBienvenido a Save Up!",
-      "description": "Veamos rГЎpidamente cГіmo funciona la app. Solo toma un minuto."
+      "title": "¡Bienvenido a Save Up!",
+      "description": "Veamos rápidamente cómo funciona la app. Solo toma un minuto."
     },
     "navigation": {
-      "title": "MenГє inferior",
-      "description": "Usa estos botones para volver al panel, abrir el informe o ir a la configuraciГіn en cualquier momento."
+      "title": "Menú inferior",
+      "description": "Usa estos botones para volver al panel, abrir el informe o ir a la configuración en cualquier momento."
     },
     "balance": {
       "title": "Tu saldo",
-      "description": "Este es tu saldo actual. Toca el nГєmero para editarlo directamente."
+      "description": "Este es tu saldo actual. Toca el número para editarlo directamente."
     },
     "amount-input": {
       "title": "Ingresos y gastos",
-      "description": "Ingrese un monto, elija la moneda de la transacciГіn (si es necesario) y toque Ingreso o Gasto. La aplicaciГіn lo convertirГЎ automГЎticamente a su moneda base."
+      "description": "Ingrese un monto, elija la moneda de la transacción (si es necesario) y toque Ingreso o Gasto. La aplicación lo convertirá automáticamente a su moneda base."
     },
     "daily-limit": {
       "title": "Presupuesto diario",
-      "description": "Muestra cuГЎnto puedes gastar hoy para mantenerte en buen camino hasta fin de mes."
+      "description": "Muestra cuánto puedes gastar hoy para mantenerte en buen camino hasta fin de mes."
     },
     "savings": {
       "title": "Bolsillo de ahorro",
-      "description": "Define una meta de ahorro y mueve dinero dentro o fuera. TambiГ©n puedes ahorrar parte de cada ingreso."
+      "description": "Define una meta de ahorro y mueve dinero dentro o fuera. También puedes ahorrar parte de cada ingreso."
     },
     "templates": {
       "title": "Acciones recurrentes",
-      "description": "Crea plantillas para transacciones regulares como alquiler o salario. AplГ­calas con un toque."
+      "description": "Crea plantillas para transacciones regulares como alquiler o salario. Aplícalas con un toque."
     },
     "report-tabs": {
       "title": "Modos de reporte",
@@ -402,41 +419,188 @@
     },
     "report-new-month": {
       "title": "Nuevo mes",
-      "description": "Cuando termina el mes, haga clic aquГ­ para restablecer sus estadГ­sticas de gastos manteniendo intactos su saldo y sus ahorros."
+      "description": "Cuando termina el mes, haga clic aquí para restablecer sus estadísticas de gastos manteniendo intactos su saldo y sus ahorros."
     },
     "settings-theme": {
       "title": "Apariencia",
-      "description": "Cambia entre tema claro, oscuro o automГЎtico."
+      "description": "Cambia entre tema claro, oscuro o automático."
     },
     "settings-language": {
       "title": "Idioma",
-      "description": "Elige entre inglГ©s, ruso y uzbeko."
+      "description": "Elige entre inglés, ruso y uzbeko."
     },
     "settings-currency": {
       "title": "Moneda",
-      "description": "Elija la moneda para todos los saldos e informes. Cambiarla recalcularГЎ automГЎticamente todos sus datos histГіricos."
+      "description": "Elija la moneda para todos los saldos e informes. Cambiarla recalculará automáticamente todos sus datos históricos."
     },
     "settings-reset": {
       "title": "Restablecer datos",
       "description": "Elimina permanentemente todas las transacciones, ahorros y plantillas para empezar de nuevo."
     },
     "done": {
-      "title": "ВЎTodo listo!",
-      "description": "Empieza a seguir tus finanzas. Siempre puedes volver a cualquier secciГіn desde el menГє inferior."
+      "title": "¡Todo listo!",
+      "description": "Empieza a seguir tus finanzas. Siempre puedes volver a cualquier sección desde el menú inferior."
+    },
+    "voice-input": {
+      "title": "Entrada por voz",
+      "description": "Toca el micrófono para añadir una operación por voz. La IA detecta el monto y la categoría."
+    },
+    "report-heatmap": {
+      "title": "Mapa de actividad",
+      "description": "Cada celda es un día. Cuanto más brillante el color, más gastaste. Toca para ver detalles."
+    },
+    "report-export": {
+      "title": "Exportar a Excel",
+      "description": "Descarga todas las operaciones del mes seleccionado como archivo Excel."
+    },
+    "settings-categories": {
+      "title": "Categorías y límites",
+      "description": "Renombra categorías, añade nuevas y fija límites de gasto."
+    },
+    "settings-notifications": {
+      "title": "Recordatorios",
+      "description": "Elige con qué frecuencia el bot te recuerda anotar tus gastos."
+    },
+    "settings-security": {
+      "title": "PIN y biometría",
+      "description": "Bloquea la app con PIN. Añade Face ID o huella para acceso rápido."
     }
   },
   "notFound": {
-    "caption": "PГЎgina no encontrada",
+    "caption": "Página no encontrada",
     "title": "Esta ruta no existe",
     "description": "Vuelve al panel para seguir controlando tu presupuesto.",
     "action": "Volver al panel"
   },
   "ai": {
-    "startRecording": "Iniciar grabaciГіn",
+    "startRecording": "Iniciar grabación",
     "stopRecording": "Detener",
     "recording": "Grabando",
-    "resultTitle": "TransacciГіn detectada",
+    "resultTitle": "Transacción detectada",
     "creditsRemaining": "Solicitudes diarias restantes: {{count}}",
-    "creditsExhausted": "LГ­mite diario de IA alcanzado"
+    "creditsExhausted": "Límite diario de IA alcanzado"
+  },
+  "welcome": {
+    "title": "¡Hola! Esto es Save Up",
+    "subtitle": "Lleva tus finanzas dentro de Telegram. Apunta gastos, ahorra y mantente en presupuesto.",
+    "continue": "Continuar",
+    "highlights": {
+      "balance": {
+        "title": "Tu saldo de un vistazo",
+        "description": "Límite diario, ahorros y gasto del mes en una sola pantalla."
+      },
+      "limits": {
+        "title": "Topes por categoría",
+        "description": "Pon un tope a la comida, al taxi, a lo que quieras. Te avisamos si te pasas."
+      },
+      "reports": {
+        "title": "A dónde se va el dinero",
+        "description": "Análisis por día y por mes. Exporta a Excel cuando quieras."
+      },
+      "reminders": {
+        "title": "Recordatorios a tu medida",
+        "description": "Tú decides cada cuánto te avisa el bot."
+      }
+    }
+  },
+  "notifications": {
+    "eyebrow": "Recordatorios",
+    "title": "¿Cuándo te recordamos?",
+    "description": "Elige el ritmo que te vaya bien. Lo puedes cambiar cuando quieras.",
+    "modes": {
+      "off": {
+        "title": "No recordar",
+        "description": "Sin notificaciones."
+      },
+      "per_day": {
+        "title": "Varias veces al día",
+        "description": "Tú decides cuántas veces y a qué hora."
+      },
+      "every_n_days": {
+        "title": "Cada varios días",
+        "description": "Un aviso cada N días."
+      }
+    },
+    "howManyTimes": "Veces al día",
+    "times": "Horas",
+    "timeLabel": "Hora {{index}}",
+    "everyN": "Cada cuánto",
+    "daysShort_one": "{{count}} día",
+    "daysShort_other": "{{count}} días",
+    "atTime": "A las",
+    "offHint": "Puedes volver a activar los avisos en Ajustes → Notificaciones.",
+    "save": "Guardar y continuar",
+    "saving": "Guardando…"
+  },
+  "security": {
+    "title": "Seguridad",
+    "description": "Pon un PIN para que nadie más abra la app. También puedes añadir Face ID o Touch ID.",
+    "lockTitle": "Introduce tu PIN",
+    "lockSubtitle": "Para abrir Save Up.",
+    "lockWrong": "PIN incorrecto. Vuelve a intentarlo.",
+    "useBiometric": "Con biometría",
+    "useTouchId": "Touch ID",
+    "useFaceId": "Face ID",
+    "biometricReason": "Abrir Save Up",
+    "biometricEnabled": "Desbloqueo biométrico activado",
+    "biometricDisabled": "Desbloqueo biométrico desactivado",
+    "biometricDenied": "No se concedió permiso a la biometría",
+    "biometricUnavailable": "La biometría no está disponible en este dispositivo",
+    "setPinFirst": "Pon primero un PIN",
+    "setPin": "Poner PIN",
+    "changePin": "Cambiar PIN",
+    "removePin": "Quitar PIN",
+    "pinHint": "{{count}} dígitos.",
+    "pinTooShort": "PIN demasiado corto.",
+    "pinMismatch": "Los PIN no coinciden. Inténtalo de nuevo.",
+    "pinSaved": "PIN guardado",
+    "pinRemoved": "PIN eliminado",
+    "verifyTitle": "Introduce tu PIN actual",
+    "createTitle": "Elige un PIN nuevo",
+    "confirmTitle": "Repite el PIN nuevo",
+    "continue": "Siguiente",
+    "on": "Activado",
+    "off": "Desactivado",
+    "lockHint": "Introduce tu PIN de {{count}} dígitos"
+  },
+  "export": {
+    "action": "Exportar a Excel",
+    "exporting": "Exportando…",
+    "done": "Archivo listo",
+    "empty": "No hay movimientos para exportar",
+    "summarySheet": "Resumen",
+    "transactionsSheet": "Movimientos"
+  },
+  "trend": {
+    "title": "Movimiento por día",
+    "description": "Gastos e ingresos por día del mes elegido.",
+    "expense": "Gasto",
+    "income": "Ingreso",
+    "empty": "Aún no hay datos este mes."
+  },
+  "accounts": {
+    "title": "Cuentas",
+    "manage": "Gestionar",
+    "newAccount": "Nueva Cuenta",
+    "editAccount": "Editar Cuenta",
+    "transferBetween": "Transferir Fondos",
+    "type": {
+      "cash": "Efectivo",
+      "card": "Tarjeta",
+      "crypto": "Cripto"
+    },
+    "addBtn": "Crear Cuenta",
+    "transferBtn": "Transferir",
+    "fieldName": "Nombre de Cuenta",
+    "namePlaceholder": "Mi billetera, Tarjeta de ahorros, etc.",
+    "fieldType": "Tipo",
+    "fieldCurrency": "Moneda",
+    "fieldInitialBalance": "Saldo Inicial",
+    "transferFrom": "Desde Cuenta",
+    "transferTo": "A Cuenta",
+    "transferAmount": "Monto a Enviar",
+    "transferToAmount": "Monto a Recibir (Opcional)",
+    "transferErrorSame": "No se puede transferir a la misma cuenta",
+    "executeTransfer": "Transferir"
   }
 }

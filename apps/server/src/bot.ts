@@ -19,7 +19,7 @@ import {
   getBotMessage,
 } from "./utils/i18n.js";
 
-import { addExpense, addIncome, processVoice } from "./services/finance.service.js";
+import { addExpense, addIncome, processVoice } from "./services/finance/index.js";
 
 interface TelegramUser {
   id: number;

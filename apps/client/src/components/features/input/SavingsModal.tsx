@@ -47,7 +47,7 @@ export function SavingsModal({ amount, isOpen, isPending, onClose, onSelect }: S
   return (
     <Modal>
       <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
-        <ModalContainer placement="center" size="sm">
+        <ModalContainer size="sm">
           <ModalDialog>
             <ModalCloseTrigger />
 

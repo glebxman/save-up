@@ -49,7 +49,8 @@
   "dailyLimit": {
     "caption": "Bir kunga qolgan limit",
     "days": "{{count}} kun",
-    "description": "Bu temp balansni oy oxirigacha teng taqsimlashga yordam beradi."
+    "description": "Bu temp balansni oy oxirigacha teng taqsimlashga yordam beradi.",
+    "budgetCaption": "Kunlik byudjet"
   },
   "savings": {
     "caption": "Jamg'arma",
@@ -131,21 +132,21 @@
     "themeAuto": "Avto",
     "themeDark": "To'q",
     "themeLight": "Yorug'",
-    "themeAutoResolved": "{{mode}} вЂў {{theme}}",
+    "themeAutoResolved": "{{mode}} • {{theme}}",
     "themeModalTitle": "Mavzuni tanlang",
     "themeModalDescription": "Qurilma mavzusiga ergashing yoki ko'rinishni qo'lda tanlang.",
     "languageModalTitle": "Tilni tanlang",
     "languageModalDescription": "Ilova bo'ylab ishlatiladigan tilni tanlang.",
     "languageEn": "English",
-    "languageKk": "ТљР°Р·Р°Т›С€Р°",
-    "languageZh": "дё­ж–‡",
-    "languageJa": "ж—Ґжњ¬иЄћ",
-    "languageKo": "н•њкµ­м–ґ",
-    "languageTr": "TГјrkГ§e",
-    "languageEs": "EspaГ±ol",
-    "languageFr": "FranГ§ais",
+    "languageKk": "Қазақша",
+    "languageZh": "中文",
+    "languageJa": "日本語",
+    "languageKo": "한국어",
+    "languageTr": "Türkçe",
+    "languageEs": "Español",
+    "languageFr": "Français",
     "languageDe": "Deutsch",
-    "languageRu": "Р СѓСЃСЃРєРёР№",
+    "languageRu": "Русский",
     "languageUz": "O'zbek",
     "languageOther": "Boshqa tillar",
     "languageHideOther": "Boshqa tillarni yashirish",
@@ -178,7 +179,19 @@
     "deleteCategoryTitle": "",
     "deleteCategoryQuestion": "",
     "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": ""
+    "categoryNamePlaceholder": "",
+    "notifications": "Eslatmalar",
+    "notificationsOn": "Yoniq",
+    "notificationsOff": "O‘chiq",
+    "security": "Xavfsizlik",
+    "securityOn": "PIN yoniq",
+    "securityOff": "O‘chiq",
+    "securityPinAndBio": "PIN + biometriya",
+    "sectionAppearance": "Ko'rinish",
+    "sectionPrivacy": "Maxfiylik va eslatmalar",
+    "sectionContent": "Ilova mazmuni",
+    "sectionHelp": "Yordam",
+    "sectionAccount": "Hisob"
   },
   "admin": {
     "title": "Admin panel",
@@ -329,15 +342,19 @@
     "currencyConverted": "Summalar muvaffaqiyatli konvertatsiya qilindi",
     "ratesUpdated": "Valyuta kurslari yangilandi",
     "errors": {
-      "micAccess": "Mikrofonga ruxsat berilmadi",
-      "aiFailed": "AI ovozni tani olmadi",
+      "micAccess": "Mikrofonga kirish rad etildi",
+      "aiFailed": "AI bu audioni qayta ishlay olmadi",
       "balanceNegative": "Amaliyot balansni salbiy qiladi",
       "savingsNegative": "Amaliyot jamg'armani salbiy qiladi",
       "insufficientBalance": "Balansda mablag' yetarli emas",
       "insufficientSavings": "Jamg'armada mablag' yetarli emas"
     },
     "categoryAdded": "",
-    "categoryDeleted": ""
+    "categoryDeleted": "",
+    "accountCreated": "Hisob muvaffaqiyatli yaratildi",
+    "accountUpdated": "Hisob muvaffaqiyatli yangilandi",
+    "accountDeleted": "Hisob muvaffaqiyatli o'chirildi",
+    "transferSuccess": "O'tkazma muvaffaqiyatli yakunlandi"
   },
   "analytics": {
     "title": "Xarajatlar taqsimoti",
@@ -382,7 +399,7 @@
     },
     "templates": {
       "title": "Takrorlanuvchi operatsiyalar",
-      "description": "Doimiy xarajatlar uchun shablonlar yarating вЂ” ijara, maosh va hokazo. Bir bosishda qo'llang."
+      "description": "Doimiy xarajatlar uchun shablonlar yarating — ijara, maosh va hokazo. Bir bosishda qo'llang."
     },
     "report-tabs": {
       "title": "Hisobot rejimlari",
@@ -423,6 +440,30 @@
     "done": {
       "title": "Hammasi tayyor!",
       "description": "Moliyangizni boshqarishni boshlang. Har qanday bo'limga pastki menyu orqali o'tish mumkin."
+    },
+    "voice-input": {
+      "title": "Ovozli kiritish",
+      "description": "Mikrofonga bosib, ovoz bilan operatsiya qo'shing. AI summani va kategoriyani aniqlaydi."
+    },
+    "report-heatmap": {
+      "title": "Faollik xaritasi",
+      "description": "Har bir katak — bir kun. Rang yorqinroq bo'lsa, ko'proq sarflangan. Tafsilot uchun bosing."
+    },
+    "report-export": {
+      "title": "Excelga eksport",
+      "description": "Tanlangan oy uchun barcha operatsiyalarni Excel faylga yuklab oling."
+    },
+    "settings-categories": {
+      "title": "Kategoriyalar va limitlar",
+      "description": "Kategoriyalarni o'zgartiring, yangilarini qo'shing va sarflash limitlarini belgilang."
+    },
+    "settings-notifications": {
+      "title": "Eslatmalar",
+      "description": "Bot qanchalik tez-tez eslatsin — o'zingiz tanlang."
+    },
+    "settings-security": {
+      "title": "PIN va biometriya",
+      "description": "Ilovani PIN bilan yoping. Tez kirish uchun Face ID yoki barmoq izi qo'shing."
     }
   },
   "notFound": {
@@ -438,5 +479,128 @@
     "resultTitle": "Aniqlangan operatsiya",
     "creditsRemaining": "Kunlik qolgan so'rovlar: {{count}}",
     "creditsExhausted": "Kunlik AI limiti tugadi"
+  },
+  "welcome": {
+    "title": "Salom! Bu Save Up",
+    "subtitle": "Pulingizni Telegram ichida hisoblang. Xarajatlarni yozing, jamg‘aring, byudjetda qoling.",
+    "continue": "Davom etish",
+    "highlights": {
+      "balance": {
+        "title": "Balans bir ko‘zda",
+        "description": "Kunlik limit, jamg‘arma va oylik xarajat — bir ekranda."
+      },
+      "limits": {
+        "title": "Kategoriyalar bo‘yicha cheklov",
+        "description": "Ovqat, taksi yoki boshqasiga limit qo‘ying. Limit oshsa, ogohlantiramiz."
+      },
+      "reports": {
+        "title": "Pul qayerga ketganini ko‘ring",
+        "description": "Kunlik va oylik tahlil. Excelga yuklab olsa bo‘ladi."
+      },
+      "reminders": {
+        "title": "Eslatmalar siz xohlagandek",
+        "description": "Bot xarajatlarni yozishni qancha tez-tez eslatsin — siz tanlaysiz."
+      }
+    }
+  },
+  "notifications": {
+    "eyebrow": "Eslatmalar",
+    "title": "Qachon eslatamiz?",
+    "description": "O‘zingizga qulay ritmni tanlang. Sozlamalardan istalgan vaqt o‘zgartirsa bo‘ladi.",
+    "modes": {
+      "off": {
+        "title": "Eslatmasin",
+        "description": "Hech qanday bildirishnoma kelmaydi."
+      },
+      "per_day": {
+        "title": "Kuniga bir necha marta",
+        "description": "Necha marta va qaysi vaqtda — siz tanlaysiz."
+      },
+      "every_n_days": {
+        "title": "Bir necha kunda bir",
+        "description": "N kunda bir marta eslatma."
+      }
+    },
+    "howManyTimes": "Kuniga necha marta",
+    "times": "Vaqt",
+    "timeLabel": "Vaqt {{index}}",
+    "everyN": "Qanchalik tez-tez",
+    "daysShort_one": "{{count}} kun",
+    "daysShort_other": "{{count}} kun",
+    "atTime": "Soat",
+    "offHint": "Eslatmalarni Sozlamalar → Eslatmalar bo‘limidan qayta yoqsa bo‘ladi.",
+    "save": "Saqlash va davom etish",
+    "saving": "Saqlanmoqda…"
+  },
+  "security": {
+    "title": "Xavfsizlik",
+    "description": "Begona kishi kirmasligi uchun PIN qo‘ying. Yana Face ID yoki Touch ID qo‘shsa bo‘ladi.",
+    "lockTitle": "PIN’ni kiriting",
+    "lockSubtitle": "Save Up’ni ochish uchun.",
+    "lockWrong": "PIN noto‘g‘ri. Qayta urinib ko‘ring.",
+    "useBiometric": "Biometriya bilan",
+    "useTouchId": "Touch ID",
+    "useFaceId": "Face ID",
+    "biometricReason": "Save Up’ni ochish",
+    "biometricEnabled": "Biometriya bo‘yicha kirish yoqildi",
+    "biometricDisabled": "Biometriya bo‘yicha kirish o‘chirildi",
+    "biometricDenied": "Biometriyaga ruxsat berilmadi",
+    "biometricUnavailable": "Bu qurilmada biometriya yo‘q",
+    "setPinFirst": "Avval PIN qo‘ying",
+    "setPin": "PIN qo‘yish",
+    "changePin": "PIN’ni o‘zgartirish",
+    "removePin": "PIN’ni o‘chirish",
+    "pinHint": "{{count}} ta raqam.",
+    "pinTooShort": "PIN juda qisqa.",
+    "pinMismatch": "PIN’lar mos kelmayapti. Qayta urinib ko‘ring.",
+    "pinSaved": "PIN saqlandi",
+    "pinRemoved": "PIN o‘chirildi",
+    "verifyTitle": "Joriy PIN’ni kiriting",
+    "createTitle": "Yangi PIN o‘ylab toping",
+    "confirmTitle": "Yangi PIN’ni takrorlang",
+    "continue": "Davom etish",
+    "on": "Yoniq",
+    "off": "O‘chiq",
+    "lockHint": "{{count}} xonali PIN kiriting"
+  },
+  "export": {
+    "action": "Excel’ga eksport",
+    "exporting": "Eksport qilinmoqda…",
+    "done": "Fayl tayyor",
+    "empty": "Eksport qilish uchun operatsiya yo‘q",
+    "summarySheet": "Xulosa",
+    "transactionsSheet": "Operatsiyalar"
+  },
+  "trend": {
+    "title": "Kun bo‘yicha dinamika",
+    "description": "Tanlangan oyning kunlari bo‘yicha xarajat va daromad.",
+    "expense": "Xarajat",
+    "income": "Daromad",
+    "empty": "Bu oy uchun ma’lumot yo‘q."
+  },
+  "accounts": {
+    "title": "Hisoblar",
+    "manage": "Boshqarish",
+    "newAccount": "Yangi hisob",
+    "editAccount": "Hisobni tahrirlash",
+    "transferBetween": "Mablag'larni o'tkazish",
+    "type": {
+      "cash": "Naqd pul",
+      "card": "Karta",
+      "crypto": "Kripto"
+    },
+    "addBtn": "Hisob yaratish",
+    "transferBtn": "O'tkazma",
+    "fieldName": "Hisob nomi",
+    "namePlaceholder": "Mening hamyonim, Jamg'arma kartasi...",
+    "fieldType": "Turi",
+    "fieldCurrency": "Valyuta",
+    "fieldInitialBalance": "Boshlang'ich balans",
+    "transferFrom": "Hisobdan",
+    "transferTo": "Hisobga",
+    "transferAmount": "Yuborish summasi",
+    "transferToAmount": "Qabul qilish summasi (ixtiyoriy)",
+    "transferErrorSame": "Bir xil hisobga o'tkazib bo'lmaydi",
+    "executeTransfer": "O'tkazish"
   }
 }

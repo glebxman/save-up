@@ -1,7 +1,38 @@
+import {
+  addCustomCategory,
+  completeOnboarding,
+  deleteCustomCategory,
+  getStatusByTelegramId,
+  setCategoryCustomization,
+  setCategoryLimits,
+  setNotificationSettings,
+  setUserLanguage,
+  setUserPin,
+  verifyUserPin,
+  removeUserPin,
+  createAccount,
+  updateAccount,
+  deleteAccount,
+} from "../../services/user.service.js";
+import {
+  userInitSchema,
+  userGetStatusSchema,
+  userCompleteOnboardingSchema,
+  userSetLanguageSchema,
+  userSetCategoryCustomizationSchema,
+  userAddCustomCategorySchema,
+  userDeleteCustomCategorySchema,
+  userSetCategoryLimitsSchema,
+  userSetNotificationSettingsSchema,
+  userSetPinSchema,
+  userVerifyPinSchema,
+  userRemovePinSchema,
+  userCreateAccountSchema,
+  userUpdateAccountSchema,
+  userDeleteAccountSchema,
+} from "../validation.js";
 import type { RpcHandler } from "../types.js";
-import { addCustomCategory, completeOnboarding, deleteCustomCategory, getStatusByTelegramId, setCategoryCustomization, setUserLanguage } from "../../services/user.service.js";
-import { userInitSchema, userGetStatusSchema, userCompleteOnboardingSchema, userSetLanguageSchema, userSetCategoryCustomizationSchema, userAddCustomCategorySchema, userDeleteCustomCategorySchema } from "../validation.js";
-import { getTelegramId } from "./shared.js";
+import { defineAuthenticatedRpc } from "./shared.js";
 
 async function authenticateAndGetStatus(
   initData: string,
@@ -27,32 +58,83 @@ export const getUserStatusHandler: RpcHandler<"user.getStatus"> = async (params,
   return authenticateAndGetStatus(initData, app);
 };
 
-export const completeOnboardingHandler: RpcHandler<"user.completeOnboarding"> = async (params, { app }) => {
-  const { initData } = userCompleteOnboardingSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return completeOnboarding(telegramId);
-};
+export const completeOnboardingHandler = defineAuthenticatedRpc(
+  "user.completeOnboarding",
+  userCompleteOnboardingSchema,
+  ({ telegramId }) => completeOnboarding(telegramId),
+);
 
-export const setLanguageHandler: RpcHandler<"user.setLanguage"> = async (params, { app }) => {
-  const { initData, language } = userSetLanguageSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return setUserLanguage(telegramId, language);
-};
+export const setLanguageHandler = defineAuthenticatedRpc(
+  "user.setLanguage",
+  userSetLanguageSchema,
+  ({ telegramId, language }) => setUserLanguage(telegramId, language),
+);
 
-export const setCategoryCustomizationHandler: RpcHandler<"user.setCategoryCustomization"> = async (params, { app }) => {
-  const { initData, category, name, emoji } = userSetCategoryCustomizationSchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return setCategoryCustomization(telegramId, category, name, emoji);
-};
+export const setCategoryCustomizationHandler = defineAuthenticatedRpc(
+  "user.setCategoryCustomization",
+  userSetCategoryCustomizationSchema,
+  ({ telegramId, category, name, emoji }) =>
+    setCategoryCustomization(telegramId, category, name, emoji),
+);
 
-export const addCustomCategoryHandler: RpcHandler<"user.addCustomCategory"> = async (params, { app }) => {
-  const { initData, name, emoji } = userAddCustomCategorySchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return addCustomCategory(telegramId, name, emoji);
-};
+export const addCustomCategoryHandler = defineAuthenticatedRpc(
+  "user.addCustomCategory",
+  userAddCustomCategorySchema,
+  ({ telegramId, name, emoji }) => addCustomCategory(telegramId, name, emoji),
+);
 
-export const deleteCustomCategoryHandler: RpcHandler<"user.deleteCustomCategory"> = async (params, { app }) => {
-  const { initData, id } = userDeleteCustomCategorySchema.parse(params);
-  const telegramId = await getTelegramId(initData, app.authenticateTelegram.bind(app));
-  return deleteCustomCategory(telegramId, id);
-};
+export const deleteCustomCategoryHandler = defineAuthenticatedRpc(
+  "user.deleteCustomCategory",
+  userDeleteCustomCategorySchema,
+  ({ telegramId, id }) => deleteCustomCategory(telegramId, id),
+);
+
+export const setCategoryLimitsHandler = defineAuthenticatedRpc(
+  "user.setCategoryLimits",
+  userSetCategoryLimitsSchema,
+  ({ telegramId, limits }) => setCategoryLimits(telegramId, limits),
+);
+
+export const setNotificationSettingsHandler = defineAuthenticatedRpc(
+  "user.setNotificationSettings",
+  userSetNotificationSettingsSchema,
+  ({ telegramId, enabled, frequency, timezoneOffset }) =>
+    setNotificationSettings(telegramId, enabled, frequency, timezoneOffset),
+);
+
+export const createAccountHandler = defineAuthenticatedRpc(
+  "user.createAccount",
+  userCreateAccountSchema,
+  ({ telegramId, name, type, currency, initialBalance }) =>
+    createAccount(telegramId, { name, type, currency, initialBalance }),
+);
+
+export const updateAccountHandler = defineAuthenticatedRpc(
+  "user.updateAccount",
+  userUpdateAccountSchema,
+  ({ telegramId, accountId, name }) => updateAccount(telegramId, { accountId, name }),
+);
+
+export const deleteAccountHandler = defineAuthenticatedRpc(
+  "user.deleteAccount",
+  userDeleteAccountSchema,
+  ({ telegramId, accountId }) => deleteAccount(telegramId, accountId),
+);
+
+export const setPinHandler = defineAuthenticatedRpc(
+  "user.setPin",
+  userSetPinSchema,
+  ({ telegramId, pin }) => setUserPin(telegramId, pin),
+);
+
+export const verifyPinHandler = defineAuthenticatedRpc(
+  "user.verifyPin",
+  userVerifyPinSchema,
+  ({ telegramId, pin }) => verifyUserPin(telegramId, pin),
+);
+
+export const removePinHandler = defineAuthenticatedRpc(
+  "user.removePin",
+  userRemovePinSchema,
+  ({ telegramId, pin }) => removeUserPin(telegramId, pin),
+);

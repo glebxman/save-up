@@ -17,6 +17,15 @@ export {
   InboxIcon as EmptyIcon,
   MicrophoneIcon,
   StopIcon,
+  BellIcon,
+  LockClosedIcon,
+  TagIcon,
+  PlusIcon,
+  ArrowPathIcon,
+  PencilIcon,
+  TrashIcon,
+  CreditCardIcon,
+  CircleStackIcon,
 } from "@heroicons/react/24/solid";
 
 

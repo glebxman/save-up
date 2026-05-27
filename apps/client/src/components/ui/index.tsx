@@ -307,6 +307,7 @@ export function ModalBackdrop({ children, isOpen, onOpenChange, variant: _varian
   useEffect(() => {
     if (isOpen) {
       setShouldRender(true);
+      hapticImpact("light");
       return undefined;
     }
 
@@ -346,7 +347,7 @@ export function ModalBackdrop({ children, isOpen, onOpenChange, variant: _varian
   return createPortal(
     <ModalContext.Provider value={{ onClose: () => onOpenChange?.(false) }}>
       <div
-        className="finance-modal-backdrop fixed inset-0 z-50 flex items-end justify-center bg-[var(--backdrop)] px-4 pb-4 pt-10 backdrop-blur-md"
+        className="finance-modal-backdrop fixed inset-0 z-50 flex items-end justify-center bg-black/50 px-4 pb-4 pt-10"
         data-state={isOpen ? "open" : "closed"}
         onClick={() => onOpenChange?.(false)}
       >
@@ -359,10 +360,9 @@ export function ModalBackdrop({ children, isOpen, onOpenChange, variant: _varian
 
 interface ModalContainerProps extends PropsWithChildren {
   size?: "sm" | "md";
-  placement?: "center";
 }
 
-export function ModalContainer({ children, size = "sm", placement: _placement }: ModalContainerProps) {
+export function ModalContainer({ children, size = "sm" }: ModalContainerProps) {
 
   return (
     <div className={cn("w-full self-end", size === "sm" ? "max-w-sm" : "max-w-md")}>

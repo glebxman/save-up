@@ -2,13 +2,18 @@ import { useEffect, useMemo, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { CategoryBreakdownView } from "@/components/features/report/CategoryBreakdownView";
+import { DailyTrendChart } from "@/components/features/report/DailyTrendChart";
 import { MonthReport } from "@/components/features/report/MonthReport";
 import { TransactionHistoryView } from "@/components/features/report/TransactionHistoryView";
 import { getCategoryDisplay, isBuiltinCategory } from "@/components/features/shared/categoryMeta";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Skeleton } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import type { TransactionFilters } from "@/types/finance";
+import { exportTransactionsToExcel } from "@/utils/export";
 import { formatMoney } from "@/utils/format";
+import * as api from "@/api/methods";
+import { useTelegram } from "@/hooks/useTelegram";
+import { useToastStore } from "@/stores/ui.store";
 
 function getCurrentMonthKey(date = new Date()): string {
   return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
@@ -48,8 +53,11 @@ type ReportMode = "income" | "spending" | "analytics" | "history";
 
 export function Report() {
   const { t } = useTranslation();
+  const { initData } = useTelegram();
+  const pushToast = useToastStore((s) => s.pushToast);
   const [selectedMonthKey, setSelectedMonthKey] = useState(getCurrentMonthKey());
-  const { report, breakdown, reportQuery, breakdownQuery, newMonthMutation, status } = useFinance({
+  const [isExporting, setIsExporting] = useState(false);
+  const { report, breakdown, dailyTrend, reportQuery, breakdownQuery, newMonthMutation, status } = useFinance({
     reportMonthKey: selectedMonthKey,
   });
   const customCategories = status?.user.customCategories ?? [];
@@ -376,7 +384,10 @@ export function Report() {
         {mode === "history" ? (
           <TransactionHistoryView filters={historyFilters} hideMonthFilter onFiltersChange={setHistoryFilters} />
         ) : mode === "analytics" && breakdown && breakdown.items.length > 0 ? (
-          <CategoryBreakdownView breakdown={breakdown} />
+          <div className="space-y-4">
+            <CategoryBreakdownView breakdown={breakdown} />
+            {dailyTrend ? <div data-onboarding="report-heatmap"><DailyTrendChart trend={dailyTrend} /></div> : null}
+          </div>
         ) : mode === "analytics" && !breakdownQuery.isPending ? (
           <Card variant="secondary">
             <CardContent>
@@ -392,16 +403,54 @@ export function Report() {
         <Card variant="default">
           <CardContent>
             <p className="m-0 mb-2 text-sm text-[var(--muted)]">{t("report.newMonthCaption")}</p>
-            <Button
-              fullWidth
-              isDisabled={newMonthMutation.isPending}
-              onPress={() => {
-                void newMonthMutation.mutateAsync();
-              }}
-              variant="danger-soft"
-            >
-              {t("report.newMonthAction")}
-            </Button>
+            <div className="grid gap-2 sm:grid-cols-2">
+              <Button
+                fullWidth
+                isDisabled={isExporting || !initData || activeReport.transactionCount === 0}
+                onPress={async () => {
+                  if (!initData) return;
+                  setIsExporting(true);
+                  try {
+                    const items = await api.getTransactions(initData, {
+                      monthKey: selectedMonthKey,
+                      includeDeleted: false,
+                      limit: 200,
+                    });
+                    if (items.length === 0) {
+                      pushToast({ tone: "info", message: t("export.empty", { defaultValue: "No transactions to export" }) });
+                      return;
+                    }
+                    await exportTransactionsToExcel({
+                      monthKey: selectedMonthKey,
+                      transactions: items,
+                      customCategories,
+                      customizations,
+                      t,
+                    });
+                    pushToast({ tone: "success", message: t("export.done", { defaultValue: "Export ready" }) });
+                  } catch {
+                    pushToast({ tone: "error", message: t("feedback.genericError") });
+                  } finally {
+                    setIsExporting(false);
+                  }
+                }}
+                variant="secondary"
+              >
+                {isExporting
+                  ? t("export.exporting", { defaultValue: "Exporting..." })
+                  : t("export.action", { defaultValue: "Export to Excel" })}
+              </Button>
+              <Button
+                fullWidth
+                isDisabled={newMonthMutation.isPending}
+                onPress={() => {
+                  void newMonthMutation.mutateAsync();
+                }}
+                variant="danger-soft"
+              >
+                {t("report.newMonthAction")}
+              </Button>
+            </div>
           </CardContent>
         </Card>
       </div>

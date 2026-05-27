@@ -40,6 +40,9 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
             customizations,
             t,
           });
+          const limit = status?.user.categoryLimits?.[item.category] ?? 0;
+          const limitPercent = limit > 0 ? Math.round((item.total / limit) * 100) : 0;
+          const overLimit = limit > 0 && item.total > limit;
 
           return {
             ...item,
@@ -48,14 +51,18 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
             emoji: display.emoji,
             label: display.name,
             percent: getPercent(item.total, breakdown.expenseTotal),
+            limit,
+            limitPercent,
+            overLimit,
           };
         }),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [breakdown.expenseTotal, breakdown.items, customCategories, customizations, t],
+    [breakdown.expenseTotal, breakdown.items, customCategories, customizations, status?.user.categoryLimits, t],
   );
 
   const transactionCount = chartItems.reduce((sum, item) => sum + item.count, 0);
   const topItem = chartItems[0];
+  const hasOverLimit = chartItems.some((item) => item.overLimit);
 
   if (chartItems.length === 0 || !topItem) {
     return (
@@ -72,6 +79,12 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
   return (
     <Card className="overflow-hidden" variant="default">
       <CardContent className="space-y-4">
+        {hasOverLimit ? (
+          <div className="flex items-center gap-2 rounded-[18px] bg-[color-mix(in_srgb,var(--danger)_14%,var(--surface-secondary))] px-3 py-2 text-sm text-[var(--danger)]">
+            <span aria-hidden="true">⚠️</span>
+            <span className="font-medium">{t("limits.warningTitle", { defaultValue: "One or more categories are over their limit" })}</span>
+          </div>
+        ) : null}
         <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
           <div className="min-w-0 rounded-[24px] bg-[var(--surface-secondary)] p-4">
             <p className="m-0 text-sm text-[var(--muted)]">{t("analytics.totalExpenses")}</p>
@@ -137,6 +150,18 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
                     <div className="min-w-0">
                       <p className="m-0 truncate text-sm font-semibold text-[var(--foreground)]">{item.label}</p>
                       <p className="m-0 mt-1 text-xs text-[var(--muted)]">{t("analytics.transactions", { count: item.count })}</p>
+                      {item.limit > 0 ? (
+                        <p
+                          className={`m-0 mt-1 text-xs font-medium ${
+                            item.overLimit ? "text-[var(--danger)]" : "text-[var(--muted)]"
+                          }`}
+                        >
+                          {item.overLimit
+                            ? t("limits.over") + " · "
+                            : null}
+                          {formatMoney(item.total)} / {formatMoney(item.limit)} ({item.limitPercent}%)
+                        </p>
+                      ) : null}
                     </div>
 
                     <div className="min-w-0 text-right">

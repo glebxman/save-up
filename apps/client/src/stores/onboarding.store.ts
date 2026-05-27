@@ -15,6 +15,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "navigation", target: "bottom-nav", route: "/" },
   { id: "balance", target: "balance", route: "/" },
   { id: "amount-input", target: "amount-input", route: "/" },
+  { id: "voice-input", target: "voice-input", route: "/" },
   { id: "daily-limit", target: "daily-limit", route: "/" },
   { id: "savings", target: "savings", route: "/" },
   { id: "templates", target: "templates", route: "/" },
@@ -22,10 +23,14 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "report-month", target: "report-month", route: "/report" },
   { id: "report-summary", target: "report-summary", route: "/report" },
   { id: "report-details", target: "report-details", route: "/report" },
-  { id: "report-new-month", target: "report-new-month", route: "/report" },
+  { id: "report-heatmap", target: "report-heatmap", route: "/report" },
+  { id: "report-export", target: "report-new-month", route: "/report" },
   { id: "settings-theme", target: "settings-theme", route: "/settings" },
   { id: "settings-language", target: "settings-language", route: "/settings" },
   { id: "settings-currency", target: "settings-currency", route: "/settings" },
+  { id: "settings-categories", target: "settings-categories", route: "/settings" },
+  { id: "settings-notifications", target: "settings-notifications", route: "/settings" },
+  { id: "settings-security", target: "settings-security", route: "/settings" },
   { id: "done", target: null, route: "/" },
 ];
 
@@ -54,7 +59,7 @@ interface OnboardingState {
   totalSteps: number;
   initData: string | null;
   setInitData: (initData: string) => void;
-  syncFromServer: (completed: boolean) => void;
+  syncFromServer: (completed: boolean, notificationsConfigured: boolean) => void;
   start: () => void;
   restart: () => void;
   forceRestarted: boolean;
@@ -83,7 +88,7 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
     set({ initData });
   },
 
-  syncFromServer: (completed: boolean) => {
+  syncFromServer: (completed: boolean, notificationsConfigured: boolean) => {
     const { isCompleted, isActive, forceRestarted } = get();
 
     if (completed) {
@@ -91,7 +96,8 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
       if (!forceRestarted) {
         set({ isCompleted: true, isActive: false });
       }
-    } else if (!isCompleted && !isActive) {
+    } else if (!isCompleted && !isActive && notificationsConfigured) {
+      // Defer the tour until the user has finished the welcome+notifications flow.
       set({ isCompleted: false });
       setTimeout(() => useOnboardingStore.getState().start(), 0);
     }

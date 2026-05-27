@@ -34,7 +34,7 @@ function getCurrentMonthKey(date = new Date()): string {
 
 function getAmountTone(type: TransactionType): string {
   if (type === "income" || type === "transfer_from_savings") {
-    return "text-[var(--accent)]";
+    return "text-[var(--accent-text)]";
   }
 
   return "text-[var(--danger)]";
@@ -127,7 +127,7 @@ export function TransactionHistoryView({
                         {formatMoney(visibleIncome)}
                       </p>
                     </div>
-                    <span className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--accent)]">
+                    <span className="absolute right-0 top-0 flex h-8 w-8 items-center justify-center rounded-full bg-[var(--surface)] text-[var(--accent-text)]">
                       <ArrowTrendingUpIcon className="h-4 w-4" />
                     </span>
                   </div>
