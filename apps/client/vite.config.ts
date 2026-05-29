@@ -65,5 +65,19 @@ export default defineConfig(({ mode }) => {
         },
       },
     },
+    build: {
+      rollupOptions: {
+        output: {
+          // Split large, rarely-changing vendor libraries into their own chunks
+          // so the main app bundle stays small and caches well between deploys.
+          manualChunks: {
+            "react-vendor": ["react", "react-dom", "react-router-dom"],
+            "motion-vendor": ["framer-motion"],
+            "query-vendor": ["@tanstack/react-query"],
+            "i18n-vendor": ["i18next", "react-i18next"],
+          },
+        },
+      },
+    },
   };
 });

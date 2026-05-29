@@ -8,11 +8,11 @@ import { users } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
 import { extractTransactionFromVoice } from "../ai.service.js";
-import { ensureUser, SUPER_ADMIN_TELEGRAM_ID } from "../user.service.js";
+import { ensureUser, isSuperAdmin } from "../user/index.js";
 
 export async function processVoice(telegramId: number, base64Audio: string) {
   const user = await ensureUser(telegramId);
-  const isAdmin = user.isAdmin || telegramId === SUPER_ADMIN_TELEGRAM_ID;
+  const isAdmin = user.isAdmin || isSuperAdmin(telegramId);
   const today = new Date().toISOString().slice(0, 10);
 
   if (!isAdmin) {

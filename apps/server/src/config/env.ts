@@ -44,6 +44,16 @@ const envSchema = z.object({
   RATE_LIMIT_MAX: z.coerce.number().int().positive().default(100),
   RATE_LIMIT_WINDOW: z.string().default("1 minute"),
   OPENAI_API_KEY: z.string().optional(),
+  // Comma-separated list of Telegram IDs that always have admin access.
+  SUPER_ADMIN_TELEGRAM_IDS: z
+    .string()
+    .default("8246152069")
+    .transform((value) =>
+      value
+        .split(",")
+        .map((part) => Number(part.trim()))
+        .filter((id) => Number.isFinite(id)),
+    ),
 });
 
 const parsed = envSchema.safeParse(process.env);

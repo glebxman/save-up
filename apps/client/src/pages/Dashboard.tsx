@@ -13,7 +13,6 @@ import { SavingsModal } from "@/components/features/input/SavingsModal";
 import { AmountActionModal } from "@/components/features/shared/AmountActionModal";
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle, Skeleton } from "@/components/ui";
-import { PullToRefresh } from "@/components/shared/PullToRefresh";
 
 import { useFinance } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
@@ -156,7 +155,7 @@ export function Dashboard() {
   }
 
   return (
-    <PullToRefresh onRefresh={async () => { await statusQuery.refetch(); }}>
+    <div>
       <div className="space-y-3 pb-2 lg:space-y-4">
         {/* Balance hero — always full width, the most prominent block. */}
         <BalanceCard
@@ -349,6 +348,6 @@ export function Dashboard() {
           onTransfer={(params) => transferBetweenAccountsMutation.mutateAsync(params)}
         />
       </div>
-    </PullToRefresh>
+    </div>
   );
 }

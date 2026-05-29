@@ -11,7 +11,7 @@ import { db } from "../../config/database.js";
 import { users, type UserRow } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
-import { ensureUser } from "../user.service.js";
+import { ensureUser } from "../user/index.js";
 import {
   createTransaction,
   mapRecurringTemplates,

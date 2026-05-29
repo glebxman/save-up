@@ -15,7 +15,7 @@ import {
   deleteAccount,
   setCryptoHolding,
   sendExportToTelegram,
-} from "../../services/user.service.js";
+} from "../../services/user/index.js";
 import {
   userInitSchema,
   userGetStatusSchema,

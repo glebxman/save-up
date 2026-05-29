@@ -1,7 +1,7 @@
 import type { Status } from "@finance-twa/shared-types";
 
 import { invalidateStatusCache } from "../cache.service.js";
-import { ensureUser } from "../user.service.js";
+import { ensureUser } from "../user/index.js";
 import { getExchangeRates } from "../currency.service.js";
 import { persistStatus } from "./_shared.js";
 

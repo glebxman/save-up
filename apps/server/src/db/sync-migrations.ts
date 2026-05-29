@@ -22,25 +22,31 @@ async function run() {
     const journal = JSON.parse(fs.readFileSync(journalPath, "utf-8"));
     const entries = journal.entries;
 
-    // Ensure drizzle migrations table exists
+    // Ensure the new drizzle schema and migrations table exist
+    console.log("Creating/verifying 'drizzle' schema and migrations table...");
+    await pool.query('CREATE SCHEMA IF NOT EXISTS "drizzle"');
     await pool.query(`
-      CREATE TABLE IF NOT EXISTS "__drizzle_migrations" (
+      CREATE TABLE IF NOT EXISTS "drizzle"."__drizzle_migrations" (
         "id" SERIAL PRIMARY KEY,
         "hash" text NOT NULL,
         "created_at" bigint
       )
     `);
 
-    // Reset drizzle migrations log
-    console.log("Cleaning up __drizzle_migrations table...");
-    await pool.query('TRUNCATE TABLE "__drizzle_migrations" RESTART IDENTITY');
+    // Clean up public.__drizzle_migrations to avoid confusion
+    console.log("Dropping old public.__drizzle_migrations table if it exists...");
+    await pool.query('DROP TABLE IF EXISTS "public"."__drizzle_migrations"');
+
+    // Reset drizzle migrations log in drizzle schema
+    console.log("Cleaning up drizzle.__drizzle_migrations table...");
+    await pool.query('TRUNCATE TABLE "drizzle"."__drizzle_migrations" RESTART IDENTITY');
 
     // Check if holdings column exists in accounts table
     const checkColumnRes = await pool.query(`
       SELECT 1 FROM information_schema.columns 
       WHERE table_schema = 'public' AND table_name = 'accounts' AND column_name = 'holdings'
     `);
-    const holdingsExists = checkColumnRes.rowCount > 0;
+    const holdingsExists = (checkColumnRes.rowCount ?? 0) > 0;
     console.log(`Does 'holdings' column exist in 'accounts' table? ${holdingsExists ? "Yes" : "No"}`);
 
     for (const entry of entries) {
@@ -58,13 +64,13 @@ async function run() {
         continue;
       }
 
-      console.log(`Hashing and registering migration: ${entry.tag}`);
+      console.log(`` + `Hashing and registering migration: ${entry.tag}`);
       const sqlContent = fs.readFileSync(sqlPath, "utf-8");
       const hash = crypto.createHash("sha256").update(sqlContent).digest("hex");
       const when = entry.when;
 
       await pool.query(
-        'INSERT INTO "__drizzle_migrations" (hash, created_at) VALUES ($1, $2)',
+        'INSERT INTO "drizzle"."__drizzle_migrations" (hash, created_at) VALUES ($1, $2)',
         [hash, when]
       );
     }

@@ -21,7 +21,7 @@ import { transactions, users, accounts, type TransactionRow, type UserRow } from
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { getMonthKey } from "../../utils/daily-limit.js";
 import { setCachedStatus } from "../cache.service.js";
-import { buildStatus } from "../user.service.js";
+import { buildStatus } from "../user/index.js";
 
 export type DbTransaction = Parameters<Parameters<typeof db.transaction>[0]>[0];
 
@@ -290,7 +290,17 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
     .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
 
   if (activeAccounts.length === 0) {
-    return user;
+    // No accounts at all — reset totals to zero
+    const updated = await tx
+      .update(users)
+      .set({
+        balance: "0" as any,
+        savings: "0" as any,
+        monthlyExp: "0" as any,
+      })
+      .where(eq(users.id, user.id))
+      .returning();
+    return updated[0] as UserRow;
   }
 
   const { getExchangeRates } = await import("../currency.service.js");
@@ -304,6 +314,11 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
     accountBalances[acc.id] = 0;
     accountMap[acc.id] = acc;
   }
+
+  // The first account (oldest by created_at) is the "main" account.
+  // Orphan transactions (account_id IS NULL) are attributed to it so that
+  // users who existed before the multi-account feature keep their balance.
+  const mainAccountId = activeAccounts[0]!.id;
 
   let totalSavings = 0;
   let monthlyExp = 0;
@@ -326,8 +341,10 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
   };
 
   for (const row of rows) {
-    const accId = row.accountId;
-    if (!accId || !(accId in accountBalances)) continue;
+    // Route orphan transactions (no account_id or unknown account) to the main account
+    const accId = (row.accountId && row.accountId in accountBalances)
+      ? row.accountId
+      : mainAccountId;
 
     const acc = accountMap[accId]!;
     const accCurrency = acc.currency;
@@ -359,7 +376,7 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
 
     else if (row.type === "transfer_between_accounts") {
       accountBalances[accId] = roundAcc(currentBalance - row.amount);
-      
+
       const toAccId = row.toAccountId;
       if (toAccId && toAccId in accountBalances) {
         const toAmount = row.savingsAmt ?? row.amount;
@@ -517,9 +534,23 @@ export async function createTransaction(
       .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
       .orderBy(accounts.createdAt)
       .limit(1);
-    
+
     if (active.length > 0) {
       targetAccountId = active[0]!.id;
+    } else {
+      // No accounts exist yet — create a default "Main" account on the fly
+      const accountName = user.language === "ru" ? "Основной" : "Main";
+      const [newAcc] = await tx
+        .insert(accounts)
+        .values({
+          userId: user.id,
+          name: accountName,
+          type: "cash",
+          currency: user.currency || "UZS",
+          balance: 0,
+        })
+        .returning();
+      targetAccountId = newAcc!.id;
     }
   }
 

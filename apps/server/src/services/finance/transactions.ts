@@ -16,7 +16,7 @@ import { AppError, ErrorCode } from "../../utils/errors.js";
 import { escapeIlike } from "../../utils/sql.js";
 import { getMonthKey } from "../../utils/daily-limit.js";
 import { invalidateStatusCache } from "../cache.service.js";
-import { ensureUser } from "../user.service.js";
+import { ensureUser } from "../user/index.js";
 import {
   assertPositiveAmount,
   createTransaction,

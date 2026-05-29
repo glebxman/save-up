@@ -1,4 +1,4 @@
-import { listAdminUsers, setUserAdminAccess, resetUserPin } from "../../services/user.service.js";
+import { listAdminUsers, setUserAdminAccess, resetUserPin } from "../../services/user/index.js";
 import { adminListUsersSchema, adminSetAdminSchema, adminResetPinSchema } from "../validation.js";
 import { defineAuthenticatedRpc } from "./shared.js";
 

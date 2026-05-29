@@ -6,7 +6,7 @@ import { db } from "../../config/database.js";
 import { transactions, users, type UserRow } from "../../db/schema/index.js";
 import { getMonthKey } from "../../utils/daily-limit.js";
 import { invalidateStatusCache } from "../cache.service.js";
-import { ensureUser } from "../user.service.js";
+import { ensureUser } from "../user/index.js";
 import {
   assertPositiveAmount,
   buildSnapshot,
