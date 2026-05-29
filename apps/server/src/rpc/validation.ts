@@ -19,6 +19,12 @@ export const userSetLanguageSchema = z.object({
   language: z.enum(["en", "ru", "uz", "kk", "zh", "ja", "ko", "tr", "es", "fr", "de"]),
 });
 
+export const userSendExportToTelegramSchema = z.object({
+  initData: initDataSchema,
+  base64Data: z.string().min(1),
+  filename: z.string().min(1),
+});
+
 export const financeAddIncomeSchema = z.object({
   initData: initDataSchema,
   amount: z.number().positive(),
@@ -195,7 +201,7 @@ const timeOfDaySchema = z.string().regex(/^([01]\d|2[0-3]):[0-5]\d$/, "Time must
 const notificationFrequencySchema = z.discriminatedUnion("mode", [
   z.object({
     mode: z.literal("per_day"),
-    times: z.array(timeOfDaySchema).min(1).max(6),
+    times: z.array(timeOfDaySchema).min(1).max(9),
   }),
   z.object({
     mode: z.literal("every_n_days"),
@@ -222,6 +228,11 @@ export const adminSetAdminSchema = z.object({
   initData: initDataSchema,
   userId: z.string().min(1),
   isAdmin: z.boolean(),
+});
+
+export const adminResetPinSchema = z.object({
+  initData: initDataSchema,
+  userId: z.string().min(1),
 });
 
 export const userCreateAccountSchema = z.object({

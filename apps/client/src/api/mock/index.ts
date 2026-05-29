@@ -13,6 +13,7 @@ import type { RpcMethod, RpcMethodMap } from "@finance-twa/shared-types";
 import {
   adminListUsers,
   adminSetAdmin,
+  adminResetPin,
 } from "./admin";
 import {
   financeConvertCurrency,
@@ -59,6 +60,7 @@ import {
   userCreateAccount,
   userUpdateAccount,
   userDeleteAccount,
+  userSendExportToTelegram,
 } from "./user";
 import { financeProcessVoice } from "./voice";
 import type { MockHandlerMap } from "./_types";
@@ -79,8 +81,10 @@ const handlers: MockHandlerMap = {
   "user.createAccount": userCreateAccount,
   "user.updateAccount": userUpdateAccount,
   "user.deleteAccount": userDeleteAccount,
+  "user.sendExportToTelegram": userSendExportToTelegram,
   "admin.listUsers": adminListUsers,
   "admin.setAdmin": adminSetAdmin,
+  "admin.resetPin": adminResetPin,
   "finance.addIncome": financeAddIncome,
   "finance.addExpense": financeAddExpense,
   "finance.transferSavings": financeTransferSavings,

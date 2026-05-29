@@ -38,7 +38,7 @@ export function Welcome() {
       initial={{ opacity: 0 }}
       transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
     >
-      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-12">
+      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-6 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-[var(--app-top-padding)]">
         <motion.div
           animate={{ scale: 1, opacity: 1 }}
           className="mx-auto mb-8 flex h-32 w-32 shrink-0 items-center justify-center rounded-full bg-[var(--accent)] text-[var(--accent-foreground)]"

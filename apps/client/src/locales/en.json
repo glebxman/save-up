@@ -212,7 +212,12 @@
     "nextPage": "Next",
     "pageInfo": "Page {{page}} of {{totalPages}} · {{totalItems}} users",
     "userMeta": "Telegram: {{telegramId}} · created: {{createdAt}}",
-    "userStats": "Balance: {{balance}} · Savings: {{savings}} · Monthly spend: {{monthlyExp}} · Transactions: {{transactions}}"
+    "userStats": "Balance: {{balance}} · Savings: {{savings}} · Monthly spend: {{monthlyExp}} · Transactions: {{transactions}}",
+    "hasPin": "PIN set",
+    "noPin": "No PIN",
+    "resetPin": "Reset PIN",
+    "resetPinConfirm": "Are you sure you want to reset this user's PIN?",
+    "resetPinSuccess": "User's PIN has been reset"
   },
   "expenseCategory": {
     "title": "Category",

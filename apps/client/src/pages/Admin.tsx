@@ -42,6 +42,14 @@ export function Admin() {
     },
   });
 
+  const resetPinMutation = useMutation({
+    mutationFn: (userId: string) => api.resetUserPin(initData, userId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminUsers"] }).catch(() => undefined);
+      queryClient.invalidateQueries({ queryKey: ["status"] }).catch(() => undefined);
+    },
+  });
+
   if (statusQuery.isPending && !status) {
     return (
       <Card variant="default">
@@ -116,8 +124,14 @@ export function Admin() {
                     key={item.id}
                     item={item}
                     isPending={setAdminMutation.isPending && setAdminMutation.variables?.userId === item.id}
+                    isResetPending={resetPinMutation.isPending && resetPinMutation.variables === item.id}
                     onSetAdmin={(userId, isAdmin) => {
                       void setAdminMutation.mutateAsync({ userId, isAdmin });
+                    }}
+                    onResetPin={(userId) => {
+                      if (window.confirm(t("admin.resetPinConfirm"))) {
+                        void resetPinMutation.mutateAsync(userId);
+                      }
                     }}
                   />
                 ))}
@@ -177,11 +191,15 @@ function StatCard({ label, value }: { label: string; value: string }) {
 function AdminUserCard({
   item,
   isPending,
+  isResetPending,
   onSetAdmin,
+  onResetPin,
 }: {
   item: AdminUserListItem;
   isPending?: boolean;
+  isResetPending?: boolean;
   onSetAdmin: (userId: string, isAdmin: boolean) => void;
+  onResetPin: (userId: string) => void;
 }) {
   const { t } = useTranslation();
   const avatarFallback = item.displayName.trim().charAt(0).toUpperCase() || "U";
@@ -203,11 +221,16 @@ function AdminUserCard({
           <div className="grid min-w-0 gap-1">
             <div className="flex flex-wrap items-center gap-2">
               <p className="m-0 truncate text-sm font-semibold text-[var(--foreground)]">{item.displayName}</p>
-            {item.isAdmin ? (
-              <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_22%,var(--surface))] px-2.5 py-1 text-[11px] font-semibold text-[var(--accent-foreground)]">
-                {t("admin.adminBadge")}
-              </span>
-            ) : null}
+              {item.isAdmin ? (
+                <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_22%,var(--surface))] px-2.5 py-1 text-[11px] font-semibold text-[var(--accent-foreground)]">
+                  {t("admin.adminBadge")}
+                </span>
+              ) : null}
+              {item.hasPinConfigured ? (
+                <span className="rounded-full bg-[color-mix(in_srgb,var(--danger)_16%,var(--surface))] px-2.5 py-1 text-[11px] font-semibold text-[var(--danger)]">
+                  🔒 {t("admin.hasPin")}
+                </span>
+              ) : null}
             </div>
             {usernameLine ? (
               <p className="m-0 truncate text-xs text-[var(--foreground)] opacity-80">{usernameLine}</p>
@@ -221,14 +244,26 @@ function AdminUserCard({
           </div>
         </div>
 
-        <Button
-          isDisabled={isPending}
-          onPress={() => onSetAdmin(item.id, nextAdminState)}
-          size="sm"
-          variant={item.isAdmin ? "danger-soft" : "primary"}
-        >
-          {item.isAdmin ? t("admin.revokeAdmin") : t("admin.grantAdmin")}
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          {item.hasPinConfigured ? (
+            <Button
+              isDisabled={isPending || isResetPending}
+              onPress={() => onResetPin(item.id)}
+              size="sm"
+              variant="danger-soft"
+            >
+              {t("admin.resetPin")}
+            </Button>
+          ) : null}
+          <Button
+            isDisabled={isPending || isResetPending}
+            onPress={() => onSetAdmin(item.id, nextAdminState)}
+            size="sm"
+            variant={item.isAdmin ? "danger-soft" : "primary"}
+          >
+            {item.isAdmin ? t("admin.revokeAdmin") : t("admin.grantAdmin")}
+          </Button>
+        </div>
       </div>
     </div>
   );

@@ -23,6 +23,7 @@ import { calculateDailyLimit, getMonthKey } from "../utils/daily-limit.js";
 import { AppError, ErrorCode } from "../utils/errors.js";
 import { getCachedStatus, invalidateStatusCache, setCachedStatus } from "./cache.service.js";
 import { getExchangeRates } from "./currency.service.js";
+import { env } from "../config/env.js";
 
 
 export const SUPER_ADMIN_TELEGRAM_ID = 8246152069;function isSuperAdmin(telegramId: number): boolean {
@@ -304,6 +305,7 @@ export async function listAdminUsers(
     photoUrl: row.photoUrl ?? null,
     telegramIdMasked: maskTelegramId(row.telegramId),
     isAdmin: row.isAdmin || isSuperAdmin(row.telegramId),
+    hasPinConfigured: !!(row.pinHash && row.pinSalt),
     createdAt: row.createdAt.toISOString(),
   }));
 
@@ -388,6 +390,7 @@ export async function setUserAdminAccess(
     photoUrl: row.photoUrl ?? null,
     telegramIdMasked: maskTelegramId(row.telegramId),
     isAdmin: row.isAdmin || isSuperAdmin(row.telegramId),
+    hasPinConfigured: !!(row.pinHash && row.pinSalt),
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -663,5 +666,67 @@ export async function removeUserPin(telegramId: number, pin: string): Promise<{ 
     .where(eq(users.id, user.id));
 
   await invalidateStatusCache(telegramId);
+  return { ok: true };
+}
+
+export async function resetUserPin(
+  telegramId: number,
+  userId: string,
+): Promise<AdminUserListItem> {
+  await requireAdminUser(telegramId);
+
+  const existing = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const target = existing[0];
+
+  if (!target) {
+    throw new AppError(ErrorCode.NOT_FOUND, "User not found");
+  }
+
+  const updated = await db
+    .update(users)
+    .set({ pinHash: null, pinSalt: null })
+    .where(eq(users.id, target.id))
+    .returning();
+  const row = updated[0] as UserRow;
+
+  await invalidateStatusCache(target.telegramId);
+
+  return {
+    id: row.id,
+    displayName: buildAdminLabel(row),
+    username: row.username ?? null,
+    photoUrl: row.photoUrl ?? null,
+    telegramIdMasked: maskTelegramId(row.telegramId),
+    isAdmin: row.isAdmin || isSuperAdmin(row.telegramId),
+    hasPinConfigured: !!(row.pinHash && row.pinSalt),
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
+export async function sendExportToTelegram(
+  telegramId: number,
+  base64Data: string,
+  filename: string,
+): Promise<{ ok: boolean }> {
+  const buffer = Buffer.from(base64Data, "base64");
+
+  const formData = new FormData();
+  formData.append("chat_id", String(telegramId));
+  formData.append("document", new Blob([buffer]), filename);
+
+  const res = await fetch(`https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}/sendDocument`, {
+    method: "POST",
+    body: formData,
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Failed to send Telegram document: ${res.statusText} - ${err}`);
+  }
+
   return { ok: true };
 }

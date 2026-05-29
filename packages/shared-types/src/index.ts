@@ -137,6 +137,7 @@ export interface AdminUserListItem {
   photoUrl: string | null;
   telegramIdMasked: string;
   isAdmin: boolean;
+  hasPinConfigured: boolean;
   createdAt: string;
 }
 
@@ -384,6 +385,14 @@ export interface RpcMethodMap {
     };
     result: { ok: true };
   };
+  "user.sendExportToTelegram": {
+    params: {
+      initData: string;
+      base64Data: string;
+      filename: string;
+    };
+    result: { ok: boolean };
+  };
   "admin.listUsers": {
     params: {
       initData: string;
@@ -398,6 +407,13 @@ export interface RpcMethodMap {
       initData: string;
       userId: string;
       isAdmin: boolean;
+    };
+    result: AdminUserListItem;
+  };
+  "admin.resetPin": {
+    params: {
+      initData: string;
+      userId: string;
     };
     result: AdminUserListItem;
   };

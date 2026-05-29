@@ -13,6 +13,7 @@ import {
   createAccount,
   updateAccount,
   deleteAccount,
+  sendExportToTelegram,
 } from "../../services/user.service.js";
 import {
   userInitSchema,
@@ -30,6 +31,7 @@ import {
   userCreateAccountSchema,
   userUpdateAccountSchema,
   userDeleteAccountSchema,
+  userSendExportToTelegramSchema,
 } from "../validation.js";
 import type { RpcHandler } from "../types.js";
 import { defineAuthenticatedRpc } from "./shared.js";
@@ -137,4 +139,10 @@ export const removePinHandler = defineAuthenticatedRpc(
   "user.removePin",
   userRemovePinSchema,
   ({ telegramId, pin }) => removeUserPin(telegramId, pin),
+);
+
+export const sendExportToTelegramHandler = defineAuthenticatedRpc(
+  "user.sendExportToTelegram",
+  userSendExportToTelegramSchema,
+  ({ telegramId, base64Data, filename }) => sendExportToTelegram(telegramId, base64Data, filename),
 );

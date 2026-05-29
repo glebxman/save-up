@@ -214,7 +214,12 @@
     "nextPage": "Sonraki",
     "pageInfo": "{{page}} / {{totalPages}} sayfa · {{totalItems}} kullanıcı",
     "userMeta": "Telegram: {{telegramId}} · oluşturulma: {{createdAt}}",
-    "userStats": "Bakiye: {{balance}} · Birikim: {{savings}} · Aylık harcama: {{monthlyExp}} · İşlemler: {{transactions}}"
+    "userStats": "Bakiye: {{balance}} · Birikim: {{savings}} · Aylık harcama: {{monthlyExp}} · İşlemler: {{transactions}}",
+    "hasPin": "PIN ayarlandı",
+    "noPin": "PIN ayarlanmadı",
+    "resetPin": "PIN Sıfırla",
+    "resetPinConfirm": "Bu kullanıcının PIN kodunu sıfırlamak istediğinizden emin misiniz?",
+    "resetPinSuccess": "Kullanıcının PIN kodu sıfırlandı"
   },
   "expenseCategory": {
     "title": "Kategori",

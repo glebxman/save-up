@@ -158,3 +158,7 @@ export const userRemovePin: MockHandler<"user.removePin"> = (params) => {
   saveUser(user);
   return { ok: true as const };
 };
+
+export const userSendExportToTelegram: MockHandler<"user.sendExportToTelegram"> = (params) => {
+  return { ok: true };
+};

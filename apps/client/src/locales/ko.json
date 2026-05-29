@@ -213,8 +213,13 @@
     "prevPage": "이전",
     "nextPage": "다음",
     "pageInfo": "{{page}} / {{totalPages}} 페이지 · 사용자 {{totalItems}}명",
-    "userMeta": "Telegram: {{telegramId}} · 생성일: {{createdAt}}",
-    "userStats": "잔액: {{balance}} · 저축: {{savings}} · 월 지출: {{monthlyExp}} · 거래: {{transactions}}"
+    "userMeta": "Telegram: {{telegramId}} · 가입일: {{createdAt}}",
+    "userStats": "잔액: {{balance}} · 저축: {{savings}} · 월 지출: {{monthlyExp}} · 거래: {{transactions}}",
+    "hasPin": "PIN 설정됨",
+    "noPin": "PIN 설정 안 됨",
+    "resetPin": "PIN 초기화",
+    "resetPinConfirm": "이 사용자의 PIN을 초기화하시겠습니까?",
+    "resetPinSuccess": "사용자 PIN이 초기화되었습니다"
   },
   "expenseCategory": {
     "title": "카테고리",

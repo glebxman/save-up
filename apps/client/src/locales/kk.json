@@ -214,7 +214,12 @@
     "nextPage": "Келесі",
     "pageInfo": "{{page}} / {{totalPages}} бет · {{totalItems}} пайдаланушы",
     "userMeta": "Telegram: {{telegramId}} · құрылған: {{createdAt}}",
-    "userStats": "Баланс: {{balance}} · Жинақ: {{savings}} · Айлық шығыс: {{monthlyExp}} · Операциялар: {{transactions}}"
+    "userStats": "Баланс: {{balance}} · Жинақ: {{savings}} · Айлық шығыс: {{monthlyExp}} · Операциялар: {{transactions}}",
+    "hasPin": "PIN орнатылған",
+    "noPin": "PIN орнатылмаған",
+    "resetPin": "PIN-кодты қайта орнату",
+    "resetPinConfirm": "Бұл пайдаланушының PIN-кодын қайта орнатқыңыз келетініне сенімдісіз бе?",
+    "resetPinSuccess": "Пайдаланушының PIN-коды қайта орнатылды"
   },
   "expenseCategory": {
     "title": "Санат",

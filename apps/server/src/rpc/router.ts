@@ -3,6 +3,7 @@ import type { RpcMethod } from "@finance-twa/shared-types";
 import {
   listAdminUsersHandler,
   setAdminAccessHandler,
+  resetUserPinHandler,
 } from "./handlers/admin.js";
 import {
   addExpenseHandler,
@@ -30,7 +31,7 @@ import {
 } from "./handlers/finance.js";
 
 
-import { addCustomCategoryHandler, completeOnboardingHandler, createAccountHandler, deleteAccountHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setCategoryLimitsHandler, setLanguageHandler, setNotificationSettingsHandler, setPinHandler, verifyPinHandler, removePinHandler, updateAccountHandler } from "./handlers/user.js";
+import { addCustomCategoryHandler, completeOnboardingHandler, createAccountHandler, deleteAccountHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setCategoryLimitsHandler, setLanguageHandler, setNotificationSettingsHandler, setPinHandler, verifyPinHandler, removePinHandler, updateAccountHandler, sendExportToTelegramHandler } from "./handlers/user.js";
 import { AppError } from "../utils/errors.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";type HandlerMap = {
   [Method in RpcMethod]: RpcHandler<Method>;
@@ -42,6 +43,7 @@ const handlers: HandlerMap = {
   "user.completeOnboarding": completeOnboardingHandler,
   "user.setLanguage": setLanguageHandler,
   "user.setCategoryCustomization": setCategoryCustomizationHandler,
+  "user.sendExportToTelegram": sendExportToTelegramHandler,
   "user.addCustomCategory": addCustomCategoryHandler,
   "user.deleteCustomCategory": deleteCustomCategoryHandler,
   "user.setCategoryLimits": setCategoryLimitsHandler,
@@ -51,6 +53,7 @@ const handlers: HandlerMap = {
   "user.removePin": removePinHandler,
   "admin.listUsers": listAdminUsersHandler,
   "admin.setAdmin": setAdminAccessHandler,
+  "admin.resetPin": resetUserPinHandler,
   "finance.addIncome": addIncomeHandler,
   "finance.addExpense": addExpenseHandler,
   "finance.transferSavings": transferSavingsHandler,

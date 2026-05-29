@@ -37,6 +37,10 @@ export function setAdminAccess(initData: string, userId: string, isAdmin: boolea
   return rpcRequest("admin.setAdmin", { initData, userId, isAdmin });
 }
 
+export function resetUserPin(initData: string, userId: string): Promise<AdminUserListItem> {
+  return rpcRequest("admin.resetPin", { initData, userId });
+}
+
 export function addIncome(
   initData: string,
   amount: number,

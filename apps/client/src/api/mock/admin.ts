@@ -18,6 +18,7 @@ export function mapAdminUser(user: User): AdminUserListItem {
     photoUrl: user.photoUrl ?? null,
     telegramIdMasked: maskTelegramId(user.telegramId),
     isAdmin: !!user.isAdmin,
+    hasPinConfigured: !!user.hasPinConfigured,
     createdAt: user.createdAt,
   };
 }
@@ -66,6 +67,15 @@ export const adminSetAdmin: MockHandler<"admin.setAdmin"> = (params) => {
     throw new Error("Super admin access cannot be removed");
   }
   user.isAdmin = params.isAdmin;
+  saveDatabase(database);
+  return mapAdminUser(user);
+};
+
+export const adminResetPin: MockHandler<"admin.resetPin"> = (params) => {
+  const database = loadDatabase();
+  const user = Object.values(database.users).find((item) => item.id === params.userId);
+  if (!user) throw new Error("User not found");
+  user.hasPinConfigured = false;
   saveDatabase(database);
   return mapAdminUser(user);
 };

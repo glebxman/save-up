@@ -214,7 +214,12 @@
     "nextPage": "Siguiente",
     "pageInfo": "Página {{page}} de {{totalPages}} · {{totalItems}} usuarios",
     "userMeta": "Telegram: {{telegramId}} · creado: {{createdAt}}",
-    "userStats": "Saldo: {{balance}} · Ahorro: {{savings}} · Gasto mensual: {{monthlyExp}} · Transacciones: {{transactions}}"
+    "userStats": "Saldo: {{balance}} · Ahorro: {{savings}} · Gasto mensual: {{monthlyExp}} · Transacciones: {{transactions}}",
+    "hasPin": "PIN establecido",
+    "noPin": "Sin PIN",
+    "resetPin": "Restablecer PIN",
+    "resetPinConfirm": "¿Está seguro de que desea restablecer el PIN de este usuario?",
+    "resetPinSuccess": "El PIN del usuario ha sido restablecido"
   },
   "expenseCategory": {
     "title": "Categoría",

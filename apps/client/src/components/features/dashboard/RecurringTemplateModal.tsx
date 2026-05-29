@@ -13,6 +13,7 @@ interface RecurringTemplateModalProps {
   suggestedAmount?: number;
   onClose: () => void;
   onSubmit: (template: RecurringTransactionPayload) => void;
+  onDelete?: (template: RecurringTransaction) => void;
 }
 
 const transactionTypes: TransactionType[] = ["income", "expense", "transfer_to_savings", "transfer_from_savings"];
@@ -24,6 +25,7 @@ export function RecurringTemplateModal({
   suggestedAmount,
   onClose,
   onSubmit,
+  onDelete,
 }: RecurringTemplateModalProps) {
   const { t } = useTranslation();
   const { status } = useFinance();
@@ -189,16 +191,31 @@ export function RecurringTemplateModal({
                       variant="secondary"
                     />
                   </label>
-                  <label className="flex cursor-pointer items-center gap-2 self-end pb-2 text-sm text-[var(--muted)]">
-                    <input
-                      checked={autoApply}
-                      className="h-4 w-4 accent-[var(--accent)]"
-                      disabled={!dayOfMonth}
-                      onChange={(event) => setAutoApply(event.target.checked)}
-                      type="checkbox"
-                    />
-                    {t("recurring.autoApply")}
-                  </label>
+                  <div className="flex flex-col justify-end">
+                    <label className={`flex cursor-pointer items-center justify-between gap-2 rounded-[22px] bg-[var(--surface-secondary)] px-4 py-3 min-h-12 transition-all ${
+                      !dayOfMonth ? "opacity-40 cursor-not-allowed" : "active:scale-[0.98]"
+                    }`}>
+                      <span className="text-xs font-semibold text-[var(--foreground)]">
+                        {t("recurring.autoApply")}
+                      </span>
+                      <div className="relative shrink-0">
+                        <input
+                          checked={autoApply}
+                          className="sr-only"
+                          disabled={!dayOfMonth}
+                          onChange={(event) => setAutoApply(event.target.checked)}
+                          type="checkbox"
+                        />
+                        <div className={`h-5 w-9 rounded-full transition-colors duration-200 ${
+                          autoApply ? "bg-[var(--accent)]" : "bg-[var(--surface-tertiary)]"
+                        }`}>
+                          <div className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full transition-transform duration-200 ${
+                            autoApply ? "translate-x-4 bg-[var(--accent-foreground)]" : "bg-[var(--muted)]"
+                          }`} />
+                        </div>
+                      </div>
+                    </label>
+                  </div>
                 </div>
 
                 <Button
@@ -222,6 +239,17 @@ export function RecurringTemplateModal({
                 >
                   {initialTemplate ? t("recurring.save") : t("recurring.create")}
                 </Button>
+
+                {initialTemplate && onDelete ? (
+                  <Button
+                    fullWidth
+                    isDisabled={isPending}
+                    onPress={() => onDelete(initialTemplate)}
+                    variant="danger-soft"
+                  >
+                    {t("recurring.delete")}
+                  </Button>
+                ) : null}
               </div>
             </ModalBody>
           </ModalDialog>

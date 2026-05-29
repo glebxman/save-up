@@ -212,7 +212,12 @@
     "nextPage": "Дальше",
     "pageInfo": "Страница {{page}} из {{totalPages}} · {{totalItems}} пользователей",
     "userMeta": "Telegram: {{telegramId}} · создан: {{createdAt}}",
-    "userStats": "Баланс: {{balance}} · Копилка: {{savings}} · Расходы: {{monthlyExp}} · Операций: {{transactions}}"
+    "userStats": "Баланс: {{balance}} · Копилка: {{savings}} · Расходы: {{monthlyExp}} · Операций: {{transactions}}",
+    "hasPin": "PIN задан",
+    "noPin": "PIN не задан",
+    "resetPin": "Сбросить PIN",
+    "resetPinConfirm": "Вы уверены, что хотите сбросить PIN-код этого пользователя?",
+    "resetPinSuccess": "PIN-код пользователя сброшен"
   },
   "expenseCategory": {
     "title": "Категория",

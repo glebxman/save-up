@@ -9,7 +9,7 @@ import type { NotificationFrequency } from "@/types/finance";
 
 type Mode = "off" | "per_day" | "every_n_days";
 
-const TIMES_LABELS = [1, 2, 3, 4, 5, 6] as const;
+const TIMES_LABELS = [1, 2, 3, 4, 5, 6, 7, 8, 9] as const;
 const DAYS_OPTIONS = [1, 2, 3, 4, 7, 14, 30] as const;
 
 function defaultPerDayTimes(count: number): string[] {
@@ -103,7 +103,7 @@ export function NotificationsSetup() {
       initial={{ opacity: 0, x: 16 }}
       transition={{ duration: 0.3, ease: [0.2, 0, 0, 1] }}
     >
-      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-5 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-10">
+      <div className="no-scrollbar flex flex-1 flex-col overflow-y-auto px-5 pb-[max(env(safe-area-inset-bottom),1.25rem)] pt-[var(--app-top-padding)]">
         <motion.div
           animate={{ y: 0, opacity: 1 }}
           initial={{ y: 12, opacity: 0 }}

@@ -283,6 +283,11 @@ export function Dashboard() {
               setIsRecurringModalOpen(false);
             });
           }}
+          onDelete={(template) => {
+            setEditingTemplate(null);
+            setIsRecurringModalOpen(false);
+            setDeletingTemplate(template);
+          }}
           suggestedAmount={hasValidAmount ? parsedAmount : undefined}
         />
 
