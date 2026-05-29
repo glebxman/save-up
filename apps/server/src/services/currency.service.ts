@@ -16,6 +16,7 @@ const FALLBACK_RATES: Record<CurrencyCode, number> = {
   ETH: 0.0003,
   TON: 0.15,
   USDT: 1.0,
+  NOTCOIN: 625,
 };
 
 let cachedRates: Record<CurrencyCode, number> | null = null;
@@ -46,7 +47,7 @@ export async function getExchangeRates(force = false): Promise<{ rates: Record<C
       const data = await response.json();
 
       if (data && data.data && data.data.rates) {
-        const rates: Partial<Record<CurrencyCode, number>> = {};
+        const rates: Partial<Record<CurrencyCode, number>> = { ...FALLBACK_RATES };
         const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY", "BTC", "ETH", "TON", "USDT"];
 
         for (const code of codes) {

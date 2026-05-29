@@ -16,12 +16,21 @@
     "amount": "Tutar",
     "category": "Kategori",
     "note": "Not",
-    "confirm": "Onayla"
+    "confirm": "Onayla",
+    "save": "Kaydet",
+    "delete": "Sil",
+    "create": "Oluştur",
+    "back": "Geri"
   },
   "shell": {
     "greeting": "Merhaba, {{name}}",
     "welcomeBack": "Tekrar hoş geldiniz",
-    "notifications": "Bildirimler"
+    "notifications": "Bildirimler",
+    "nav": {
+      "dashboard": "Ana sayfa",
+      "report": "Rapor",
+      "settings": "Ayarlar"
+    }
   },
   "dashboard": {
     "loading": "Finans durumunuz yükleniyor...",
@@ -33,7 +42,8 @@
       "expense": "Gider",
       "report": "Rapor",
       "setting": "Ayar"
-    }
+    },
+    "openInTelegram": "Telegram initData'yı iletebilmesi için bu mini uygulamayı Telegram içinde aç."
   },
   "balance": {
     "caption": "Bakiyem",
@@ -44,7 +54,9 @@
     "changeTitle": "Bakiyeyi değiştir",
     "changeQuestion": "Bakiyeyi değiştirmek ister misiniz?",
     "changeDescription": "Mevcut: {{current}}. Yeni bakiye: {{next}}.",
-    "changeConfirm": "Devam et"
+    "changeConfirm": "Devam et",
+    "walletLabel": "Cüzdan",
+    "totalBalance": "Toplam bakiye"
   },
   "dailyLimit": {
     "caption": "Harcanabilir kalan",
@@ -78,7 +90,8 @@
     "depositQuestion": "Bakiyeden birikime ne kadar aktarılsın?",
     "withdrawHelper": "Birikimden bakiyeye en fazla {{amount}} geri alabilirsiniz.",
     "withdrawQuestion": "Birikimden bakiyeye ne kadar geri alınsın?",
-    "transferPlaceholder": "Aktarım tutarını girin"
+    "transferPlaceholder": "Aktarım tutarını girin",
+    "savingsPart": "Birikim payı"
   },
   "amountInput": {
     "caption": "Yeni işlem",
@@ -163,23 +176,23 @@
     "currencyCny": "Çin yuanı (CNY)",
     "exchangeRates": "Döviz kurları",
     "refresh": "Yenile",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Kategoriler",
+    "categoriesDescription": "Kategorileri yeniden adlandır ve simgesini seç.",
+    "editCategory": "Kategoriyi düzenle",
+    "categoryEmoji": "Simge (emoji)",
+    "categoryName": "Ad",
+    "categoryResetTip": "Varsayılana döndürmek için boş bırak.",
+    "categorySaved": "Kategori kaydedildi",
+    "save": "Kaydet",
     "dayOfMonth": "Ayın günü",
     "autoApply": "Otomatik uygula",
-    "addCategory": "",
+    "addCategory": "Kategori ekle",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "Sil",
+    "deleteCategoryTitle": "Kategoriyi sil",
+    "deleteCategoryQuestion": "Bu kategori silinsin mi?",
+    "deleteCategoryDescription": "Bu kategorideki geçmiş harcamalar verilerini korur.",
+    "categoryNamePlaceholder": "örn. Spor salonu, Evcil hayvan, Araba...",
     "notifications": "Bildirimler",
     "notificationsOn": "Açık",
     "notificationsOff": "Kapalı",
@@ -232,8 +245,8 @@
     "health": "Sağlık",
     "education": "Eğitim",
     "other": "Diğer",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Yorum (isteğe bağlı)",
+    "confirm": "Gider ekle"
   },
   "expenseEditor": {
     "title": "Gideri düzelt",
@@ -261,7 +274,8 @@
     "helperText": "Bu kategori için limit istemiyorsanız boş bırakın.",
     "save": "Limitleri kaydet",
     "dayOfMonth": "Ayın günü",
-    "autoApply": "Otomatik uygula"
+    "autoApply": "Otomatik uygula",
+    "warningTitle": "Bir veya daha fazla kategori limitini aştı"
   },
   "recurring": {
     "caption": "Şablonlar",
@@ -293,7 +307,8 @@
     "income": "Gelir",
     "expense": "Gider",
     "transfer_to_savings": "Bakiye → birikim",
-    "transfer_from_savings": "Birikim → bakiye"
+    "transfer_from_savings": "Birikim → bakiye",
+    "transfer_between_accounts": "Hesaplar arası"
   },
   "history": {
     "caption": "Tüm işlemler",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Bakiyede yeterli para yok",
       "insufficientSavings": "Tasarruflarda yeterli para yok"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Kategori eklendi",
+    "categoryDeleted": "Kategori silindi",
     "accountCreated": "Hesap başarıyla oluşturuldu",
     "accountUpdated": "Hesap başarıyla güncellendi",
     "accountDeleted": "Hesap başarıyla silindi",
-    "transferSuccess": "Transfer başarıyla tamamlandı"
+    "transferSuccess": "Transfer başarıyla tamamlandı",
+    "limitsSaved": "Limitler kaydedildi",
+    "notificationsSaved": "Bildirimler kaydedildi"
   },
   "analytics": {
     "title": "Gider dağılımı",
@@ -535,7 +552,8 @@
     "atTime": "Saat",
     "offHint": "Hatırlatmaları Ayarlar → Bildirimler’den tekrar açabilirsin.",
     "save": "Kaydet ve devam et",
-    "saving": "Kaydediliyor…"
+    "saving": "Kaydediliyor…",
+    "daysShort": "Her {{count}} günde bir"
   },
   "security": {
     "title": "Güvenlik",
@@ -574,14 +592,17 @@
     "done": "Dosya hazır",
     "empty": "Aktarılacak işlem yok",
     "summarySheet": "Özet",
-    "transactionsSheet": "İşlemler"
+    "transactionsSheet": "İşlemler",
+    "telegramSent": "Rapor Telegram sohbetine gönderildi"
   },
   "trend": {
     "title": "Günlük dinamik",
     "description": "Seçili ayın günlerine göre harcama ve gelir.",
     "expense": "Harcama",
     "income": "Gelir",
-    "empty": "Bu ay için henüz veri yok."
+    "empty": "Bu ay için henüz veri yok.",
+    "less": "Daha az",
+    "more": "Daha çok"
   },
   "accounts": {
     "title": "Hesaplar",
@@ -606,6 +627,13 @@
     "transferAmount": "Gönderilecek Tutar",
     "transferToAmount": "Alınacak Tutar (İsteğe bağlı)",
     "transferErrorSame": "Aynı hesaba transfer yapılamaz",
-    "executeTransfer": "Transfer Et"
+    "executeTransfer": "Transfer Et",
+    "swipeHint": "Hesabı değiştirmek için bakiyeyi kaydırın",
+    "manageHoldings": "Kripto Varlıklar",
+    "coin": "Coin",
+    "coinAmount": "Miktar",
+    "saveHolding": "Coini Kaydet",
+    "cryptoCreateHint": "Önce cüzdanı oluşturun, ardından varlık düzenleyiciden coin (BTC, TON, USDT, NOTCOIN) ekleyin.",
+    "transferAutoPlaceholder": "Otomatik"
   }
 }

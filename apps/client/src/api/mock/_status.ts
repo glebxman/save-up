@@ -2,6 +2,7 @@ import type { CurrencyCode, Status, User } from "@finance-twa/shared-types";
 
 import { calculateDailyLimit, getMonthKey, roundAmount } from "./_helpers";
 import { getTransactionsForUser } from "./_db";
+import { cryptoHoldingsTotalUsd } from "@/utils/exchange-rates";
 
 const FALLBACK_RATES: Record<CurrencyCode, number> = {
   USD: 1,
@@ -16,6 +17,7 @@ const FALLBACK_RATES: Record<CurrencyCode, number> = {
   ETH: 0.0003,
   TON: 0.15,
   USDT: 1.0,
+  NOTCOIN: 625,
 };
 
 export async function getMockExchangeRates(): Promise<Record<CurrencyCode, number>> {
@@ -23,7 +25,7 @@ export async function getMockExchangeRates(): Promise<Record<CurrencyCode, numbe
     const response = await fetch("https://api.coinbase.com/v2/exchange-rates?currency=USD");
     const data = await response.json();
     if (data && data.data && data.data.rates) {
-      const rates: Partial<Record<CurrencyCode, number>> = {};
+      const rates: Partial<Record<CurrencyCode, number>> = { ...FALLBACK_RATES };
       const codes: CurrencyCode[] = ["USD", "UZS", "RUB", "EUR", "KZT", "TRY", "GBP", "CNY", "BTC", "ETH", "TON", "USDT"];
       for (const code of codes) {
         const value = data.data.rates[code];
@@ -42,8 +44,17 @@ export async function buildStatus(user: User): Promise<Status> {
     .filter((tx) => !tx.deletedAt && tx.type === "expense" && tx.monthKey === getMonthKey())
     .reduce((sum, tx) => roundAmount(sum + tx.amount), 0);
 
-  const nextUser: User = { ...user, monthlyExp };
   const rates = await getMockExchangeRates();
+
+  // Crypto accounts derive their balance (in USD) from their holdings, valued
+  // at the latest rates. Cash/card accounts keep their stored balance.
+  const accounts = (user.accounts ?? []).map((acc) =>
+    acc.type === "crypto"
+      ? { ...acc, balance: roundAmount(cryptoHoldingsTotalUsd(acc.holdings, rates)) }
+      : acc,
+  );
+
+  const nextUser: User = { ...user, monthlyExp, accounts };
 
   return {
     user: nextUser,

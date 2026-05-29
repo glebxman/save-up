@@ -1,4 +1,4 @@
-import type { CategoryCustomization, CustomCategory, ExpenseCategory, RecurringTransaction } from "@finance-twa/shared-types";
+import type { CategoryCustomization, CryptoHolding, CustomCategory, ExpenseCategory, RecurringTransaction } from "@finance-twa/shared-types";
 
 import { bigint, boolean, jsonb, numeric, pgTable, smallint, text, timestamp, uniqueIndex, uuid, varchar, index } from "drizzle-orm/pg-core";
 
@@ -67,6 +67,7 @@ export const accounts = pgTable(
     type: varchar("type", { length: 30 }).notNull(),
     currency: varchar("currency", { length: 10 }).notNull(),
     balance: numeric("balance", { precision: 24, scale: 8, mode: "number" }).notNull().default(0),
+    holdings: jsonb("holdings").$type<CryptoHolding[]>().notNull().default([]),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
     deletedAt: timestamp("deleted_at", { withTimezone: true }),
   },

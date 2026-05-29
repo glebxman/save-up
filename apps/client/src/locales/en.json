@@ -16,12 +16,21 @@
     "amount": "Amount",
     "category": "Category",
     "note": "Note",
-    "confirm": "Confirm"
+    "confirm": "Confirm",
+    "save": "Save",
+    "delete": "Delete",
+    "create": "Create",
+    "back": "Back"
   },
   "shell": {
     "greeting": "Hello, {{name}}",
     "welcomeBack": "Welcome back",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "nav": {
+      "dashboard": "Home",
+      "report": "Report",
+      "settings": "Settings"
+    }
   },
   "dashboard": {
     "loading": "Loading your finance status...",
@@ -33,7 +42,8 @@
       "expense": "Expense",
       "report": "Report",
       "setting": "Setting"
-    }
+    },
+    "openInTelegram": "Open this mini app inside Telegram so it can pass Telegram initData."
   },
   "balance": {
     "caption": "My balance",
@@ -44,7 +54,9 @@
     "changeTitle": "Balance change",
     "changeQuestion": "Are you sure you want to change the balance?",
     "changeDescription": "Current: {{current}}. New balance: {{next}}.",
-    "changeConfirm": "Continue"
+    "changeConfirm": "Continue",
+    "walletLabel": "Wallet",
+    "totalBalance": "Total Balance"
   },
   "dailyLimit": {
     "caption": "Left to spend",
@@ -78,7 +90,8 @@
     "depositQuestion": "How much should move from balance into savings?",
     "withdrawHelper": "You can bring back up to {{amount}} from savings.",
     "withdrawQuestion": "How much should move from savings back to balance?",
-    "transferPlaceholder": "Enter transfer amount"
+    "transferPlaceholder": "Enter transfer amount",
+    "savingsPart": "Savings part"
   },
   "amountInput": {
     "caption": "New transaction",
@@ -257,7 +270,8 @@
     "question": "How much can you spend per category this month?",
     "placeholder": "Empty = no limit",
     "helperText": "Leave blank if you don't want a limit for this category.",
-    "save": "Save limits"
+    "save": "Save limits",
+    "warningTitle": "One or more categories are over their limit"
   },
   "recurring": {
     "caption": "Templates",
@@ -289,7 +303,8 @@
     "income": "Income",
     "expense": "Expense",
     "transfer_to_savings": "Balance → savings",
-    "transfer_from_savings": "Savings → balance"
+    "transfer_from_savings": "Savings → balance",
+    "transfer_between_accounts": "Between accounts"
   },
   "history": {
     "caption": "All transactions",
@@ -353,7 +368,9 @@
     "accountCreated": "Account created successfully",
     "accountUpdated": "Account updated successfully",
     "accountDeleted": "Account deleted successfully",
-    "transferSuccess": "Transfer completed successfully"
+    "transferSuccess": "Transfer completed successfully",
+    "limitsSaved": "Limits saved",
+    "notificationsSaved": "Notifications saved"
   },
   "analytics": {
     "title": "Expense breakdown",
@@ -485,14 +502,17 @@
     "done": "Export ready",
     "empty": "No transactions to export",
     "summarySheet": "Summary",
-    "transactionsSheet": "Transactions"
+    "transactionsSheet": "Transactions",
+    "telegramSent": "Report sent to your Telegram chat"
   },
   "trend": {
     "title": "Daily dynamics",
     "description": "Spending by day of the selected month.",
     "expense": "Spending",
     "income": "Income",
-    "empty": "No data for this month yet."
+    "empty": "No data for this month yet.",
+    "less": "Less",
+    "more": "More"
   },
   "welcome": {
     "title": "Hi! This is Save Up",
@@ -548,7 +568,8 @@
     "atTime": "At",
     "offHint": "You can turn reminders back on in Settings → Reminders.",
     "save": "Save and continue",
-    "saving": "Saving…"
+    "saving": "Saving…",
+    "daysShort": "Every {{count}} days"
   },
   "security": {
     "title": "Security",
@@ -604,6 +625,13 @@
     "transferAmount": "Send Amount",
     "transferToAmount": "Receive Amount (Optional)",
     "transferErrorSame": "Cannot transfer to the same account",
-    "executeTransfer": "Transfer"
+    "executeTransfer": "Transfer",
+    "swipeHint": "Swipe the balance to switch accounts",
+    "manageHoldings": "Crypto Holdings",
+    "coin": "Coin",
+    "coinAmount": "Amount",
+    "saveHolding": "Save Coin",
+    "cryptoCreateHint": "Create the wallet first, then add coins (BTC, TON, USDT, NOTCOIN) from the holdings editor.",
+    "transferAutoPlaceholder": "Automatic"
   }
 }

@@ -202,6 +202,7 @@ export function createAccount(
   type: "cash" | "card" | "crypto",
   currency: string,
   initialBalance: number,
+  holdings?: import("@finance-twa/shared-types").CryptoHolding[],
 ): Promise<Status> {
   return rpcRequest("user.createAccount", {
     initData,
@@ -209,7 +210,17 @@ export function createAccount(
     type,
     currency: currency as import("@finance-twa/shared-types").CurrencyCode,
     initialBalance,
+    holdings,
   });
+}
+
+export function setCryptoHolding(
+  initData: string,
+  accountId: string,
+  symbol: import("@finance-twa/shared-types").CryptoCode,
+  amount: number,
+): Promise<Status> {
+  return rpcRequest("user.setCryptoHolding", { initData, accountId, symbol, amount });
 }
 
 export function updateAccount(
@@ -244,4 +255,12 @@ export function verifyPin(initData: string, pin: string): Promise<{ ok: boolean 
 
 export function removePin(initData: string, pin: string): Promise<{ ok: true }> {
   return rpcRequest("user.removePin", { initData, pin });
+}
+
+export function sendExportToTelegram(
+  initData: string,
+  base64Data: string,
+  filename: string,
+): Promise<{ ok: boolean }> {
+  return rpcRequest("user.sendExportToTelegram", { initData, base64Data, filename });
 }

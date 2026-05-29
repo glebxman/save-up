@@ -26,14 +26,16 @@ export const financeAddIncome: MockHandler<"finance.addIncome"> = async (params)
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
   const savingsAmt = normalizeSavingsAmount(params.amount, params.savingsAmt);
+  const targetAccountId = params.accountId || user.accounts?.[0]?.id || null;
   const transaction = buildTransaction(user.id, {
     type: "income",
     amount: params.amount,
     savingsAmt,
     note: params.note,
     occurredAt: params.occurredAt,
+    accountId: targetAccountId,
   });
-  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1, targetAccountId);
 
   ensureNonNegative(nextUser);
   saveUser(nextUser);
@@ -47,14 +49,16 @@ export const financeAddExpense: MockHandler<"finance.addExpense"> = async (param
   ensureAmountWithinLimit(params.amount);
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
+  const targetAccountId = params.accountId || user.accounts?.[0]?.id || null;
   const transaction = buildTransaction(user.id, {
     type: "expense",
     amount: params.amount,
     category: params.category,
     note: params.note,
     occurredAt: params.occurredAt,
+    accountId: targetAccountId,
   });
-  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1, targetAccountId);
 
   ensureNonNegative(nextUser);
   saveUser(nextUser);
@@ -68,14 +72,16 @@ export const financeTransferSavings: MockHandler<"finance.transferSavings"> = as
   ensureAmountWithinLimit(params.amount);
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
+  const targetAccountId = params.accountId || user.accounts?.[0]?.id || null;
   const type = params.direction === "to_savings" ? "transfer_to_savings" : "transfer_from_savings";
   const transaction = buildTransaction(user.id, {
     type,
     amount: params.amount,
     note: params.note,
     occurredAt: params.occurredAt,
+    accountId: targetAccountId,
   });
-  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1);
+  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1, targetAccountId);
 
   ensureNonNegative(nextUser);
   saveUser(nextUser);
@@ -146,8 +152,8 @@ export const financeUpdateTransaction: MockHandler<"finance.updateTransaction"> 
     });
   }
 
-  const revertedUser = applyImpact(user, getTransactionImpact(current), -1);
-  const nextUser = applyImpact(revertedUser, getTransactionImpact(nextTransaction), 1);
+  const revertedUser = applyImpact(user, getTransactionImpact(current), -1, current.accountId);
+  const nextUser = applyImpact(revertedUser, getTransactionImpact(nextTransaction), 1, nextTransaction.accountId);
 
   ensureNonNegative(nextUser);
   saveUser(nextUser);
@@ -160,18 +166,28 @@ export const financeArchiveTransaction: MockHandler<"finance.archiveTransaction"
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
   const transaction = getTransactionById(telegramId, params.transactionId);
+  if (transaction.deletedAt) return await buildStatus(user);
+
   transaction.deletedAt = new Date().toISOString();
   updateTransactionRecord(transaction);
-  return await buildStatus(user);
+
+  const nextUser = applyImpact(user, getTransactionImpact(transaction), -1, transaction.accountId);
+  saveUser(nextUser);
+  return await buildStatus(nextUser);
 };
 
 export const financeRestoreTransaction: MockHandler<"finance.restoreTransaction"> = async (params) => {
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
   const transaction = getTransactionById(telegramId, params.transactionId);
+  if (!transaction.deletedAt) return await buildStatus(user);
+
   transaction.deletedAt = null;
   updateTransactionRecord(transaction);
-  return await buildStatus(user);
+
+  const nextUser = applyImpact(user, getTransactionImpact(transaction), 1, transaction.accountId);
+  saveUser(nextUser);
+  return await buildStatus(nextUser);
 };
 
 // helpers used by the read handlers
@@ -226,7 +242,13 @@ export const financeTransferBetweenAccounts: MockHandler<"finance.transferBetwee
     throw new Error("Account not found");
   }
 
-  if (fromAcc.balance < params.amount && fromAcc.type !== "crypto") {
+  // Crypto account balances are derived from their holdings, so they can't take
+  // part in plain balance transfers. Adjust crypto via the holdings editor.
+  if (fromAcc.type === "crypto" || toAcc.type === "crypto") {
+    throw new Error("Crypto accounts cannot be used in transfers; edit holdings instead");
+  }
+
+  if (fromAcc.balance < params.amount) {
     throw new Error("Insufficient funds in source account");
   }
 

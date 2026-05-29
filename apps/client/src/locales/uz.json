@@ -16,12 +16,21 @@
     "amount": "Summa",
     "category": "Kategoriya",
     "note": "Eslatma",
-    "confirm": "Tasdiqlash"
+    "confirm": "Tasdiqlash",
+    "save": "Saqlash",
+    "delete": "O'chirish",
+    "create": "Yaratish",
+    "back": "Orqaga"
   },
   "shell": {
     "greeting": "Salom, {{name}}",
     "welcomeBack": "Qaytib keldingiz",
-    "notifications": "Bildirishnomalar"
+    "notifications": "Bildirishnomalar",
+    "nav": {
+      "dashboard": "Bosh sahifa",
+      "report": "Hisobot",
+      "settings": "Sozlamalar"
+    }
   },
   "dashboard": {
     "loading": "Moliyaviy holatingiz yuklanmoqda...",
@@ -33,7 +42,8 @@
       "expense": "Chiqim",
       "report": "Hisobot",
       "setting": "Sozlama"
-    }
+    },
+    "openInTelegram": "Telegram initData'ni uzata olishi uchun ushbu mini ilovani Telegram ichida oching."
   },
   "balance": {
     "caption": "Mening balansim",
@@ -44,7 +54,9 @@
     "changeTitle": "Balansni o'zgartirish",
     "changeQuestion": "Balansni o'zgartirmoqchimisiz?",
     "changeDescription": "Joriy: {{current}}. Yangi balans: {{next}}.",
-    "changeConfirm": "Davom etish"
+    "changeConfirm": "Davom etish",
+    "walletLabel": "Hamyon",
+    "totalBalance": "Umumiy balans"
   },
   "dailyLimit": {
     "caption": "Bir kunga qolgan limit",
@@ -78,7 +90,8 @@
     "depositQuestion": "Balansdan jamg'armaga qancha o'tkazilsin?",
     "withdrawHelper": "Jamg'armadan balansga {{amount}} gacha qaytarishingiz mumkin.",
     "withdrawQuestion": "Jamg'armadan balansga qancha qaytarsin?",
-    "transferPlaceholder": "O'tkazma summasini kiriting"
+    "transferPlaceholder": "O'tkazma summasini kiriting",
+    "savingsPart": "Jamg'arma ulushi"
   },
   "amountInput": {
     "caption": "Yangi operatsiya",
@@ -163,23 +176,23 @@
     "currencyCny": "Xitoy yuani (CNY)",
     "exchangeRates": "Valyuta kurslari",
     "refresh": "Yangilash",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Turkumlar",
+    "categoriesDescription": "Turkumlar nomini o'zgartiring va belgisini tanlang.",
+    "editCategory": "Turkumni tahrirlash",
+    "categoryEmoji": "Belgi (emoji)",
+    "categoryName": "Nomi",
+    "categoryResetTip": "Standartni tiklash uchun bo'sh qoldiring.",
+    "categorySaved": "Turkum saqlandi",
+    "save": "Saqlash",
     "dayOfMonth": "Oyning kuni",
     "autoApply": "Avtomatik qo'llash",
-    "addCategory": "",
+    "addCategory": "Turkum qo'shish",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "O'chirish",
+    "deleteCategoryTitle": "Turkumni o'chirish",
+    "deleteCategoryQuestion": "Ushbu turkum o'chirilsinmi?",
+    "deleteCategoryDescription": "Bu turkumdagi o'tgan xarajatlar ma'lumotlarini saqlab qoladi.",
+    "categoryNamePlaceholder": "mas. Sport zali, Uy hayvonlari, Avtomobil...",
     "notifications": "Eslatmalar",
     "notificationsOn": "Yoniq",
     "notificationsOff": "O‘chiq",
@@ -232,8 +245,8 @@
     "health": "Salomatlik",
     "education": "Ta'lim",
     "other": "Boshqa",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Izoh (ixtiyoriy)",
+    "confirm": "Xarajat qo'shish"
   },
   "expenseEditor": {
     "title": "Xarajatni tuzatish",
@@ -261,7 +274,8 @@
     "helperText": "Kategoriya uchun limit bo'lmasligini xohlasangiz, bo'sh qoldiring.",
     "save": "Limitlarni saqlash",
     "dayOfMonth": "Oyning kuni",
-    "autoApply": "Avtomatik qo'llash"
+    "autoApply": "Avtomatik qo'llash",
+    "warningTitle": "Bir yoki bir nechta turkum limitidan oshib ketdi"
   },
   "recurring": {
     "caption": "Shablonlar",
@@ -292,8 +306,9 @@
   "transactionType": {
     "income": "Kirim",
     "expense": "Chiqim",
-    "transfer_to_savings": "Balans в†’ jamg'arma",
-    "transfer_from_savings": "Jamg'arma в†’ balans"
+    "transfer_to_savings": "Balans → jamg'arma",
+    "transfer_from_savings": "Jamg'arma → balans",
+    "transfer_between_accounts": "Hisoblar o'rtasida"
   },
   "history": {
     "caption": "Barcha operatsiyalar",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Balansda mablag' yetarli emas",
       "insufficientSavings": "Jamg'armada mablag' yetarli emas"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Turkum qo'shildi",
+    "categoryDeleted": "Turkum o'chirildi",
     "accountCreated": "Hisob muvaffaqiyatli yaratildi",
     "accountUpdated": "Hisob muvaffaqiyatli yangilandi",
     "accountDeleted": "Hisob muvaffaqiyatli o'chirildi",
-    "transferSuccess": "O'tkazma muvaffaqiyatli yakunlandi"
+    "transferSuccess": "O'tkazma muvaffaqiyatli yakunlandi",
+    "limitsSaved": "Limitlar saqlandi",
+    "notificationsSaved": "Bildirishnomalar saqlandi"
   },
   "analytics": {
     "title": "Xarajatlar taqsimoti",
@@ -535,7 +552,8 @@
     "atTime": "Soat",
     "offHint": "Eslatmalarni Sozlamalar → Eslatmalar bo‘limidan qayta yoqsa bo‘ladi.",
     "save": "Saqlash va davom etish",
-    "saving": "Saqlanmoqda…"
+    "saving": "Saqlanmoqda…",
+    "daysShort": "Har {{count}} kunda"
   },
   "security": {
     "title": "Xavfsizlik",
@@ -574,14 +592,17 @@
     "done": "Fayl tayyor",
     "empty": "Eksport qilish uchun operatsiya yo‘q",
     "summarySheet": "Xulosa",
-    "transactionsSheet": "Operatsiyalar"
+    "transactionsSheet": "Operatsiyalar",
+    "telegramSent": "Hisobot Telegram chatingizga yuborildi"
   },
   "trend": {
     "title": "Kun bo‘yicha dinamika",
     "description": "Tanlangan oyning kunlari bo‘yicha xarajat va daromad.",
     "expense": "Xarajat",
     "income": "Daromad",
-    "empty": "Bu oy uchun ma’lumot yo‘q."
+    "empty": "Bu oy uchun ma’lumot yo‘q.",
+    "less": "Kamroq",
+    "more": "Ko'proq"
   },
   "accounts": {
     "title": "Hisoblar",
@@ -606,6 +627,13 @@
     "transferAmount": "Yuborish summasi",
     "transferToAmount": "Qabul qilish summasi (ixtiyoriy)",
     "transferErrorSame": "Bir xil hisobga o'tkazib bo'lmaydi",
-    "executeTransfer": "O'tkazish"
+    "executeTransfer": "O'tkazish",
+    "swipeHint": "Hisobni almashtirish uchun balansni suring",
+    "manageHoldings": "Kripto aktivlar",
+    "coin": "Tanga",
+    "coinAmount": "Miqdori",
+    "saveHolding": "Tangani saqlash",
+    "cryptoCreateHint": "Avval hamyon yarating, so'ng aktivlar muharririda tangalarni (BTC, TON, USDT, NOTCOIN) qo'shing.",
+    "transferAutoPlaceholder": "Avtomatik"
   }
 }

@@ -173,12 +173,28 @@ export function getTransactionImpact(transaction: Transaction): TransactionImpac
   };
 }
 
-export function applyImpact(user: User, impact: TransactionImpact, direction: 1 | -1): User {
+export function applyImpact(
+  user: User,
+  impact: TransactionImpact,
+  direction: 1 | -1,
+  accountId?: string | null,
+): User {
+  const nextAccounts = (user.accounts ?? []).map((acc) => {
+    if (acc.id === accountId && acc.type !== "crypto") {
+      return {
+        ...acc,
+        balance: roundAmount(acc.balance + impact.balance * direction),
+      };
+    }
+    return acc;
+  });
+
   return {
     ...user,
     balance: roundAmount(user.balance + impact.balance * direction),
     savings: roundAmount(user.savings + impact.savings * direction),
     monthlyExp: roundAmount(Math.max(user.monthlyExp + impact.monthlyExp * direction, 0)),
+    accounts: nextAccounts,
   };
 }
 

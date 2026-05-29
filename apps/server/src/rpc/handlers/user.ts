@@ -13,6 +13,7 @@ import {
   createAccount,
   updateAccount,
   deleteAccount,
+  setCryptoHolding,
   sendExportToTelegram,
 } from "../../services/user.service.js";
 import {
@@ -31,6 +32,7 @@ import {
   userCreateAccountSchema,
   userUpdateAccountSchema,
   userDeleteAccountSchema,
+  userSetCryptoHoldingSchema,
   userSendExportToTelegramSchema,
 } from "../validation.js";
 import type { RpcHandler } from "../types.js";
@@ -107,14 +109,21 @@ export const setNotificationSettingsHandler = defineAuthenticatedRpc(
 export const createAccountHandler = defineAuthenticatedRpc(
   "user.createAccount",
   userCreateAccountSchema,
-  ({ telegramId, name, type, currency, initialBalance }) =>
-    createAccount(telegramId, { name, type, currency, initialBalance }),
+  ({ telegramId, name, type, currency, initialBalance, holdings }) =>
+    createAccount(telegramId, { name, type, currency, initialBalance, holdings }),
 );
 
 export const updateAccountHandler = defineAuthenticatedRpc(
   "user.updateAccount",
   userUpdateAccountSchema,
   ({ telegramId, accountId, name }) => updateAccount(telegramId, { accountId, name }),
+);
+
+export const setCryptoHoldingHandler = defineAuthenticatedRpc(
+  "user.setCryptoHolding",
+  userSetCryptoHoldingSchema,
+  ({ telegramId, accountId, symbol, amount }) =>
+    setCryptoHolding(telegramId, { accountId, symbol, amount }),
 );
 
 export const deleteAccountHandler = defineAuthenticatedRpc(

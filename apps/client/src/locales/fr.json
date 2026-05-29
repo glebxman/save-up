@@ -16,12 +16,21 @@
     "amount": "Montant",
     "category": "Catégorie",
     "note": "Note",
-    "confirm": "Confirmer"
+    "confirm": "Confirmer",
+    "save": "Enregistrer",
+    "delete": "Supprimer",
+    "create": "Créer",
+    "back": "Retour"
   },
   "shell": {
     "greeting": "Bonjour, {{name}}",
     "welcomeBack": "Bon retour",
-    "notifications": "Notifications"
+    "notifications": "Notifications",
+    "nav": {
+      "dashboard": "Accueil",
+      "report": "Rapport",
+      "settings": "Paramètres"
+    }
   },
   "dashboard": {
     "loading": "Chargement de votre situation financière...",
@@ -33,7 +42,8 @@
       "expense": "Dépense",
       "report": "Rapport",
       "setting": "Réglages"
-    }
+    },
+    "openInTelegram": "Ouvre cette mini-application dans Telegram pour qu'elle puisse transmettre les initData de Telegram."
   },
   "balance": {
     "caption": "Mon solde",
@@ -44,7 +54,9 @@
     "changeTitle": "Modifier le solde",
     "changeQuestion": "Voulez-vous vraiment modifier le solde ?",
     "changeDescription": "Actuel : {{current}}. Nouveau solde : {{next}}.",
-    "changeConfirm": "Continuer"
+    "changeConfirm": "Continuer",
+    "walletLabel": "Portefeuille",
+    "totalBalance": "Solde total"
   },
   "dailyLimit": {
     "caption": "Reste à dépenser",
@@ -78,7 +90,8 @@
     "depositQuestion": "Combien déplacer du solde vers l’épargne ?",
     "withdrawHelper": "Vous pouvez ramener jusqu’à {{amount}} de l’épargne vers le solde.",
     "withdrawQuestion": "Combien ramener de l’épargne vers le solde ?",
-    "transferPlaceholder": "Saisir le montant du transfert"
+    "transferPlaceholder": "Saisir le montant du transfert",
+    "savingsPart": "Part épargne"
   },
   "amountInput": {
     "caption": "Nouvelle transaction",
@@ -163,23 +176,23 @@
     "currencyCny": "Yuan chinois (CNY)",
     "exchangeRates": "Taux de change",
     "refresh": "Actualiser",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Catégories",
+    "categoriesDescription": "Renommez les catégories et choisissez leur icône.",
+    "editCategory": "Modifier la catégorie",
+    "categoryEmoji": "Icône (emoji)",
+    "categoryName": "Nom",
+    "categoryResetTip": "Laissez vide pour restaurer la valeur par défaut.",
+    "categorySaved": "Catégorie enregistrée",
+    "save": "Enregistrer",
     "dayOfMonth": "Jour du mois",
     "autoApply": "Application automatique",
-    "addCategory": "",
+    "addCategory": "Ajouter une catégorie",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "Supprimer",
+    "deleteCategoryTitle": "Supprimer la catégorie",
+    "deleteCategoryQuestion": "Supprimer cette catégorie ?",
+    "deleteCategoryDescription": "Les dépenses passées dans cette catégorie conserveront leurs données.",
+    "categoryNamePlaceholder": "ex. Sport, Animaux, Voiture...",
     "notifications": "Notifications",
     "notificationsOn": "Activé",
     "notificationsOff": "Désactivé",
@@ -232,8 +245,8 @@
     "health": "Santé",
     "education": "Éducation",
     "other": "Autre",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Commentaire (facultatif)",
+    "confirm": "Ajouter la dépense"
   },
   "expenseEditor": {
     "title": "Corriger la dépense",
@@ -261,7 +274,8 @@
     "helperText": "Laissez vide si vous ne voulez pas de limite pour cette catégorie.",
     "save": "Enregistrer les limites",
     "dayOfMonth": "Jour du mois",
-    "autoApply": "Application automatique"
+    "autoApply": "Application automatique",
+    "warningTitle": "Une ou plusieurs catégories ont dépassé leur limite"
   },
   "recurring": {
     "caption": "Modèles",
@@ -293,7 +307,8 @@
     "income": "Revenu",
     "expense": "Dépense",
     "transfer_to_savings": "Solde → épargne",
-    "transfer_from_savings": "Épargne → solde"
+    "transfer_from_savings": "Épargne → solde",
+    "transfer_between_accounts": "Entre comptes"
   },
   "history": {
     "caption": "Toutes les transactions",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Solde insuffisant",
       "insufficientSavings": "Épargne insuffisante"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Catégorie ajoutée",
+    "categoryDeleted": "Catégorie supprimée",
     "accountCreated": "Compte créé avec succès",
     "accountUpdated": "Compte mis à jour avec succès",
     "accountDeleted": "Compte supprimé avec succès",
-    "transferSuccess": "Transfert effectué avec succès"
+    "transferSuccess": "Transfert effectué avec succès",
+    "limitsSaved": "Limites enregistrées",
+    "notificationsSaved": "Notifications enregistrées"
   },
   "analytics": {
     "title": "Répartition des dépenses",
@@ -535,7 +552,8 @@
     "atTime": "À",
     "offHint": "Tu peux réactiver les rappels dans Réglages → Notifications.",
     "save": "Enregistrer et continuer",
-    "saving": "Enregistrement…"
+    "saving": "Enregistrement…",
+    "daysShort": "Tous les {{count}} jours"
   },
   "security": {
     "title": "Sécurité",
@@ -574,14 +592,17 @@
     "done": "Fichier prêt",
     "empty": "Aucune transaction à exporter",
     "summarySheet": "Résumé",
-    "transactionsSheet": "Transactions"
+    "transactionsSheet": "Transactions",
+    "telegramSent": "Rapport envoyé dans votre chat Telegram"
   },
   "trend": {
     "title": "Évolution par jour",
     "description": "Dépenses et revenus jour par jour pour le mois choisi.",
     "expense": "Dépenses",
     "income": "Revenus",
-    "empty": "Pas encore de données ce mois-ci."
+    "empty": "Pas encore de données ce mois-ci.",
+    "less": "Moins",
+    "more": "Plus"
   },
   "accounts": {
     "title": "Comptes",
@@ -606,6 +627,13 @@
     "transferAmount": "Montant à Envoyer",
     "transferToAmount": "Montant à Recevoir (Optionnel)",
     "transferErrorSame": "Impossible de transférer vers le même compte",
-    "executeTransfer": "Transférer"
+    "executeTransfer": "Transférer",
+    "swipeHint": "Faites glisser le solde pour changer de compte",
+    "manageHoldings": "Actifs Crypto",
+    "coin": "Pièce",
+    "coinAmount": "Montant",
+    "saveHolding": "Enregistrer la Pièce",
+    "cryptoCreateHint": "Créez d'abord le portefeuille, puis ajoutez des pièces (BTC, TON, USDT, NOTCOIN) depuis l'éditeur d'actifs.",
+    "transferAutoPlaceholder": "Automatique"
   }
 }

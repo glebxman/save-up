@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { BalanceCard } from "@/components/features/dashboard/BalanceCard";
+import { AccountsModal } from "@/components/features/dashboard/AccountsModal";
 import { DailyLimitTile } from "@/components/features/dashboard/DailyLimitTile";
 import { RecurringStrip } from "@/components/features/dashboard/RecurringStrip";
 import { RecurringTemplateModal } from "@/components/features/dashboard/RecurringTemplateModal";
@@ -34,8 +35,10 @@ export function Dashboard() {
   const [editingTemplate, setEditingTemplate] = useState<RecurringTransaction | null>(null);
   const [isRecurringModalOpen, setIsRecurringModalOpen] = useState(false);
   const [deletingTemplate, setDeletingTemplate] = useState<RecurringTransaction | null>(null);
+  const [isAccountsModalOpen, setIsAccountsModalOpen] = useState(false);
   const { currency: baseCurrency } = useCurrency();
   const [inputCurrency, setInputCurrency] = useState<CurrencyCode>(baseCurrency);
+  const [selectedAccountId, setSelectedAccountId] = useState<string | null>(null);
 
   const {
     status,
@@ -48,6 +51,11 @@ export function Dashboard() {
     saveRecurringTransactionMutation,
     deleteRecurringTransactionMutation,
     applyRecurringTransactionMutation,
+    createAccountMutation,
+    updateAccountMutation,
+    deleteAccountMutation,
+    setCryptoHoldingMutation,
+    transferBetweenAccountsMutation,
   } = useFinance();
 
   const parsedAmount = Number(amount);
@@ -69,13 +77,18 @@ export function Dashboard() {
       : null;
   const isActionBusy = addExpenseMutation.isPending || addIncomeMutation.isPending;
 
+  const activeAccountId = selectedAccountId || (status?.user?.accounts?.[0]?.id ?? null);
+  const activeAccount = status?.user?.accounts?.find((acc) => acc.id === activeAccountId);
+  const targetCurrency = activeAccount?.currency || baseCurrency;
+
   async function handleExpense(category: string, note?: string): Promise<void> {
     if (!hasValidAmount) return;
-    const rate = getConversionRate(inputCurrency, baseCurrency);
+    const rate = getConversionRate(inputCurrency, targetCurrency);
     await addExpenseMutation.mutateAsync({
       amount: parsedAmount * rate,
       category,
       note,
+      accountId: activeAccountId || undefined,
     });
     setAmount("");
     setIsExpenseModalOpen(false);
@@ -83,10 +96,11 @@ export function Dashboard() {
 
   async function handleIncome(savingsAmt: number): Promise<void> {
     if (!hasValidAmount) return;
-    const rate = getConversionRate(inputCurrency, baseCurrency);
+    const rate = getConversionRate(inputCurrency, targetCurrency);
     await addIncomeMutation.mutateAsync({
       amount: parsedAmount * rate,
       savingsAmt,
+      accountId: activeAccountId || undefined,
     });
     setAmount("");
     setIsIncomeModalOpen(false);
@@ -150,6 +164,8 @@ export function Dashboard() {
           isBalanceSaving={updateBalanceMutation.isPending}
           monthlyExp={status.user.monthlyExp}
           onBalanceChange={(balance) => updateBalanceMutation.mutateAsync({ balance })}
+          accounts={status.user.accounts}
+          onManageAccounts={() => setIsAccountsModalOpen(true)}
         />
 
         {/* Quick entry: amount + income/expense buttons in one card. */}
@@ -163,6 +179,9 @@ export function Dashboard() {
           onExpense={() => setIsExpenseModalOpen(true)}
           onIncome={() => setIsIncomeModalOpen(true)}
           value={amount}
+          accounts={status.user.accounts}
+          activeAccountId={activeAccountId}
+          onActiveAccountChange={setSelectedAccountId}
         />
 
         {/* Daily limit & savings sit side-by-side and don't dominate. */}
@@ -310,6 +329,24 @@ export function Dashboard() {
           }}
           question={t("recurring.deleteQuestion")}
           title={t("recurring.delete")}
+        />
+
+        <AccountsModal
+          isOpen={isAccountsModalOpen}
+          onClose={() => setIsAccountsModalOpen(false)}
+          accounts={status.user.accounts}
+          rates={status.rates}
+          onCreateAccount={(name, type, currency, initialBalance, holdings) =>
+            createAccountMutation.mutateAsync({ name, type, currency, initialBalance, holdings })
+          }
+          onUpdateAccount={(accountId, name) =>
+            updateAccountMutation.mutateAsync({ accountId, name })
+          }
+          onDeleteAccount={(accountId) => deleteAccountMutation.mutateAsync({ accountId })}
+          onSetCryptoHolding={(accountId, symbol, amount) =>
+            setCryptoHoldingMutation.mutateAsync({ accountId, symbol, amount })
+          }
+          onTransfer={(params) => transferBetweenAccountsMutation.mutateAsync(params)}
         />
       </div>
     </PullToRefresh>

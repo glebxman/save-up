@@ -399,10 +399,6 @@ export async function transferBetweenAccounts(
       throw new AppError(ErrorCode.NOT_FOUND, "Source account not found");
     }
 
-    if (fromAcc.type !== "crypto" && Number(fromAcc.balance) < params.amount) {
-      throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, `Insufficient funds in account "${fromAcc.name}"`);
-    }
-
     const [toAcc] = await tx
       .select()
       .from(accounts)
@@ -411,6 +407,16 @@ export async function transferBetweenAccounts(
 
     if (!toAcc) {
       throw new AppError(ErrorCode.NOT_FOUND, "Destination account not found");
+    }
+
+    // Crypto balances are derived from holdings, so they can't take part in
+    // plain balance transfers. Adjust crypto via the holdings editor instead.
+    if (fromAcc.type === "crypto" || toAcc.type === "crypto") {
+      throw new AppError(ErrorCode.VALIDATION, "Crypto accounts cannot be used in transfers; edit holdings instead");
+    }
+
+    if (Number(fromAcc.balance) < params.amount) {
+      throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, `Insufficient funds in account "${fromAcc.name}"`);
     }
 
     return createTransaction(tx, user, {

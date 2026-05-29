@@ -60,6 +60,7 @@ import {
   userCreateAccount,
   userUpdateAccount,
   userDeleteAccount,
+  userSetCryptoHolding,
   userSendExportToTelegram,
 } from "./user";
 import { financeProcessVoice } from "./voice";
@@ -80,6 +81,7 @@ const handlers: MockHandlerMap = {
   "user.removePin": userRemovePin,
   "user.createAccount": userCreateAccount,
   "user.updateAccount": userUpdateAccount,
+  "user.setCryptoHolding": userSetCryptoHolding,
   "user.deleteAccount": userDeleteAccount,
   "user.sendExportToTelegram": userSendExportToTelegram,
   "admin.listUsers": adminListUsers,

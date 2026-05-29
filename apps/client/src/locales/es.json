@@ -16,12 +16,21 @@
     "amount": "Monto",
     "category": "Categoría",
     "note": "Nota",
-    "confirm": "Confirmar"
+    "confirm": "Confirmar",
+    "save": "Guardar",
+    "delete": "Eliminar",
+    "create": "Crear",
+    "back": "Atrás"
   },
   "shell": {
     "greeting": "Hola, {{name}}",
     "welcomeBack": "Bienvenido de nuevo",
-    "notifications": "Notificaciones"
+    "notifications": "Notificaciones",
+    "nav": {
+      "dashboard": "Inicio",
+      "report": "Informe",
+      "settings": "Ajustes"
+    }
   },
   "dashboard": {
     "loading": "Cargando tu estado financiero...",
@@ -33,7 +42,8 @@
       "expense": "Gasto",
       "report": "Reporte",
       "setting": "Ajustes"
-    }
+    },
+    "openInTelegram": "Abre esta mini app dentro de Telegram para que pueda pasar los initData de Telegram."
   },
   "balance": {
     "caption": "Mi saldo",
@@ -44,7 +54,9 @@
     "changeTitle": "Cambiar saldo",
     "changeQuestion": "¿Desea cambiar el saldo?",
     "changeDescription": "Actual: {{current}}. Nuevo saldo: {{next}}.",
-    "changeConfirm": "Continuar"
+    "changeConfirm": "Continuar",
+    "walletLabel": "Cartera",
+    "totalBalance": "Saldo total"
   },
   "dailyLimit": {
     "caption": "Queda por gastar",
@@ -78,7 +90,8 @@
     "depositQuestion": "¿Cuánto se debe mover del saldo al ahorro?",
     "withdrawHelper": "Puedes devolver hasta {{amount}} del ahorro al saldo.",
     "withdrawQuestion": "¿Cuánto se debe mover del ahorro al saldo?",
-    "transferPlaceholder": "Ingresa el monto de transferencia"
+    "transferPlaceholder": "Ingresa el monto de transferencia",
+    "savingsPart": "Parte de ahorro"
   },
   "amountInput": {
     "caption": "Nueva transacción",
@@ -163,23 +176,23 @@
     "currencyCny": "Yuan chino (CNY)",
     "exchangeRates": "Tipos de cambio",
     "refresh": "Actualizar",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Categorías",
+    "categoriesDescription": "Renombra las categorías y elige su icono.",
+    "editCategory": "Editar categoría",
+    "categoryEmoji": "Icono (emoji)",
+    "categoryName": "Nombre",
+    "categoryResetTip": "Déjalo vacío para restaurar el valor predeterminado.",
+    "categorySaved": "Categoría guardada",
+    "save": "Guardar",
     "dayOfMonth": "Día del mes",
     "autoApply": "Aplicar automáticamente",
-    "addCategory": "",
+    "addCategory": "Añadir categoría",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "Eliminar",
+    "deleteCategoryTitle": "Eliminar categoría",
+    "deleteCategoryQuestion": "¿Eliminar esta categoría?",
+    "deleteCategoryDescription": "Los gastos anteriores de esta categoría conservarán sus datos.",
+    "categoryNamePlaceholder": "p. ej. Gimnasio, Mascotas, Coche...",
     "notifications": "Notificaciones",
     "notificationsOn": "Activado",
     "notificationsOff": "Desactivado",
@@ -232,8 +245,8 @@
     "health": "Salud",
     "education": "Educación",
     "other": "Otro",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Comentario (opcional)",
+    "confirm": "Añadir gasto"
   },
   "expenseEditor": {
     "title": "Corregir gasto",
@@ -261,7 +274,8 @@
     "helperText": "Deja vacío si no quieres un límite para esta categoría.",
     "save": "Guardar límites",
     "dayOfMonth": "Día del mes",
-    "autoApply": "Aplicar automáticamente"
+    "autoApply": "Aplicar automáticamente",
+    "warningTitle": "Una o más categorías superaron su límite"
   },
   "recurring": {
     "caption": "Plantillas",
@@ -293,7 +307,8 @@
     "income": "Ingreso",
     "expense": "Gasto",
     "transfer_to_savings": "Saldo → ahorro",
-    "transfer_from_savings": "Ahorro → saldo"
+    "transfer_from_savings": "Ahorro → saldo",
+    "transfer_between_accounts": "Entre cuentas"
   },
   "history": {
     "caption": "Todas las transacciones",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Saldo insuficiente",
       "insufficientSavings": "Ahorros insuficientes"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Categoría añadida",
+    "categoryDeleted": "Categoría eliminada",
     "accountCreated": "Cuenta creada con éxito",
     "accountUpdated": "Cuenta actualizada con éxito",
     "accountDeleted": "Cuenta eliminada con éxito",
-    "transferSuccess": "Transferencia completada con éxito"
+    "transferSuccess": "Transferencia completada con éxito",
+    "limitsSaved": "Límites guardados",
+    "notificationsSaved": "Notificaciones guardadas"
   },
   "analytics": {
     "title": "Desglose de gastos",
@@ -535,7 +552,8 @@
     "atTime": "A las",
     "offHint": "Puedes volver a activar los avisos en Ajustes → Notificaciones.",
     "save": "Guardar y continuar",
-    "saving": "Guardando…"
+    "saving": "Guardando…",
+    "daysShort": "Cada {{count}} días"
   },
   "security": {
     "title": "Seguridad",
@@ -574,14 +592,17 @@
     "done": "Archivo listo",
     "empty": "No hay movimientos para exportar",
     "summarySheet": "Resumen",
-    "transactionsSheet": "Movimientos"
+    "transactionsSheet": "Movimientos",
+    "telegramSent": "Informe enviado a tu chat de Telegram"
   },
   "trend": {
     "title": "Movimiento por día",
     "description": "Gastos e ingresos por día del mes elegido.",
     "expense": "Gasto",
     "income": "Ingreso",
-    "empty": "Aún no hay datos este mes."
+    "empty": "Aún no hay datos este mes.",
+    "less": "Menos",
+    "more": "Más"
   },
   "accounts": {
     "title": "Cuentas",
@@ -606,6 +627,13 @@
     "transferAmount": "Monto a Enviar",
     "transferToAmount": "Monto a Recibir (Opcional)",
     "transferErrorSame": "No se puede transferir a la misma cuenta",
-    "executeTransfer": "Transferir"
+    "executeTransfer": "Transferir",
+    "swipeHint": "Desliza el saldo para cambiar de cuenta",
+    "manageHoldings": "Activos Cripto",
+    "coin": "Moneda",
+    "coinAmount": "Cantidad",
+    "saveHolding": "Guardar Moneda",
+    "cryptoCreateHint": "Primero crea la billetera, luego añade monedas (BTC, TON, USDT, NOTCOIN) desde el editor de activos.",
+    "transferAutoPlaceholder": "Automático"
   }
 }

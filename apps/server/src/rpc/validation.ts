@@ -241,6 +241,21 @@ export const userCreateAccountSchema = z.object({
   type: z.enum(["cash", "card", "crypto"]),
   currency: z.string().min(1).max(10),
   initialBalance: z.number().nonnegative(),
+  holdings: z
+    .array(
+      z.object({
+        symbol: z.enum(["BTC", "ETH", "TON", "USDT", "NOTCOIN"]),
+        amount: z.number().positive(),
+      }),
+    )
+    .optional(),
+});
+
+export const userSetCryptoHoldingSchema = z.object({
+  initData: initDataSchema,
+  accountId: z.string().uuid(),
+  symbol: z.enum(["BTC", "ETH", "TON", "USDT", "NOTCOIN"]),
+  amount: z.number().nonnegative(),
 });
 
 export const userUpdateAccountSchema = z.object({

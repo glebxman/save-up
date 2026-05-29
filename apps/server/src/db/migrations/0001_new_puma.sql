@@ -1,0 +1,1 @@
+ALTER TABLE "accounts" ADD COLUMN "holdings" jsonb DEFAULT '[]'::jsonb NOT NULL;

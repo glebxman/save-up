@@ -420,15 +420,41 @@ export function Report() {
                       pushToast({ tone: "info", message: t("export.empty", { defaultValue: "No transactions to export" }) });
                       return;
                     }
-                    await exportTransactionsToExcel({
+                    const { base64Data, filename } = await exportTransactionsToExcel({
                       monthKey: selectedMonthKey,
                       transactions: items,
                       customCategories,
                       customizations,
                       t,
                     });
-                    pushToast({ tone: "success", message: t("export.done", { defaultValue: "Export ready" }) });
-                  } catch {
+
+                    // Local browser download
+                    try {
+                      const byteCharacters = atob(base64Data);
+                      const byteNumbers = new Array(byteCharacters.length);
+                      for (let i = 0; i < byteCharacters.length; i++) {
+                        byteNumbers[i] = byteCharacters.charCodeAt(i);
+                      }
+                      const byteArray = new Uint8Array(byteNumbers);
+                      const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+                      const blobUrl = URL.createObjectURL(blob);
+
+                      const link = document.createElement("a");
+                      link.href = blobUrl;
+                      link.download = filename;
+                      document.body.appendChild(link);
+                      link.click();
+                      document.body.removeChild(link);
+                      URL.revokeObjectURL(blobUrl);
+                    } catch (err) {
+                      console.error("Local download failed", err);
+                    }
+
+                    // Send to Telegram chat
+                    await api.sendExportToTelegram(initData, base64Data, filename);
+                    pushToast({ tone: "success", message: t("export.telegramSent", { defaultValue: "Report sent to your Telegram chat" }) });
+                  } catch (error) {
+                    console.error(error);
                     pushToast({ tone: "error", message: t("feedback.genericError") });
                   } finally {
                     setIsExporting(false);

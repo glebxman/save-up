@@ -15,7 +15,14 @@ export const MAX_CUSTOM_CATEGORIES = 8;
 
 export type TransactionType = "income" | "expense" | "transfer_to_savings" | "transfer_from_savings" | "transfer_between_accounts";
 export type SavingsTransferDirection = "to_savings" | "from_savings";
-export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY" | "BTC" | "ETH" | "TON" | "USDT";
+export type CurrencyCode = "UZS" | "RUB" | "USD" | "EUR" | "KZT" | "TRY" | "GBP" | "CNY" | "BTC" | "ETH" | "TON" | "USDT" | "NOTCOIN";
+
+/** Currencies that represent crypto assets rather than fiat money. */
+export type CryptoCode = Extract<CurrencyCode, "BTC" | "ETH" | "TON" | "USDT" | "NOTCOIN">;
+
+/** Coins that a crypto account can hold. The order also drives the UI listing. */
+export const CRYPTO_CODES: CryptoCode[] = ["BTC", "TON", "USDT", "NOTCOIN", "ETH"];
+
 export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
 export const VOICE_CREDITS_DAILY_LIMIT = 5;
 
@@ -29,13 +36,29 @@ export type ExpenseCategory =
   | "education"
   | "other";
 
+export type AccountType = "cash" | "card" | "crypto";
+
+/** A single crypto asset held inside a crypto account. */
+export interface CryptoHolding {
+  symbol: CryptoCode;
+  /** Amount of the coin held, in the coin's own units (e.g. 0.5 BTC). */
+  amount: number;
+}
+
 export interface Account {
   id: string;
   userId: string;
   name: string;
-  type: "cash" | "card" | "crypto";
+  type: AccountType;
   currency: CurrencyCode;
+  /**
+   * For cash/card accounts this is the balance in `currency`.
+   * For crypto accounts this is the total valuation in `currency` (USD),
+   * derived from `holdings` and recomputed on every status build.
+   */
   balance: number;
+  /** Populated only for crypto accounts. */
+  holdings?: CryptoHolding[];
   createdAt: string;
 }
 
@@ -486,9 +509,11 @@ export interface RpcMethodMap {
     params: {
       initData: string;
       name: string;
-      type: "cash" | "card" | "crypto";
+      type: AccountType;
       currency: CurrencyCode;
       initialBalance: number;
+      /** Initial crypto holdings, used only when `type === "crypto"`. */
+      holdings?: CryptoHolding[];
     };
     result: Status;
   };
@@ -497,6 +522,16 @@ export interface RpcMethodMap {
       initData: string;
       accountId: string;
       name: string;
+    };
+    result: Status;
+  };
+  "user.setCryptoHolding": {
+    params: {
+      initData: string;
+      accountId: string;
+      symbol: CryptoCode;
+      /** Absolute amount of the coin to hold. Set to 0 to remove the coin. */
+      amount: number;
     };
     result: Status;
   };

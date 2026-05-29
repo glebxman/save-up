@@ -16,12 +16,21 @@
     "amount": "Сумма",
     "category": "Санат",
     "note": "Ескертпе",
-    "confirm": "Растау"
+    "confirm": "Растау",
+    "save": "Сақтау",
+    "delete": "Жою",
+    "create": "Құру",
+    "back": "Артқа"
   },
   "shell": {
     "greeting": "Сәлем, {{name}}",
     "welcomeBack": "Қайта оралдыңыз",
-    "notifications": "Хабарландырулар"
+    "notifications": "Хабарландырулар",
+    "nav": {
+      "dashboard": "Басты бет",
+      "report": "Есеп",
+      "settings": "Баптаулар"
+    }
   },
   "dashboard": {
     "loading": "Қаржылық күйіңіз жүктелуде...",
@@ -33,7 +42,8 @@
       "expense": "Шығыс",
       "report": "Есеп",
       "setting": "Баптау"
-    }
+    },
+    "openInTelegram": "Telegram initData деректерін бере алуы үшін осы шағын қосымшаны Telegram ішінде ашыңыз."
   },
   "balance": {
     "caption": "Менің балансым",
@@ -44,7 +54,9 @@
     "changeTitle": "Балансты өзгерту",
     "changeQuestion": "Балансты өзгерткіңіз келе ме?",
     "changeDescription": "Ағымдағы: {{current}}. Жаңа баланс: {{next}}.",
-    "changeConfirm": "Жалғастыру"
+    "changeConfirm": "Жалғастыру",
+    "walletLabel": "Әмиян",
+    "totalBalance": "Жалпы баланс"
   },
   "dailyLimit": {
     "caption": "Жұмсауға қалды",
@@ -78,7 +90,8 @@
     "depositQuestion": "Баланстан жинаққа қанша аудару керек?",
     "withdrawHelper": "Жинақтан балансқа {{amount}} дейін қайтара аласыз.",
     "withdrawQuestion": "Жинақтан балансқа қанша қайтару керек?",
-    "transferPlaceholder": "Аударым сомасын енгізіңіз"
+    "transferPlaceholder": "Аударым сомасын енгізіңіз",
+    "savingsPart": "Жинаққа бөлігі"
   },
   "amountInput": {
     "caption": "Жаңа операция",
@@ -163,23 +176,23 @@
     "currencyCny": "Қытай юані (CNY)",
     "exchangeRates": "Валюта курстары",
     "refresh": "Жаңарту",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Санаттар",
+    "categoriesDescription": "Санаттардың атын өзгертіп, белгішесін таңдаңыз.",
+    "editCategory": "Санатты өңдеу",
+    "categoryEmoji": "Белгіше (эмодзи)",
+    "categoryName": "Атауы",
+    "categoryResetTip": "Әдепкі мәнді қайтару үшін бос қалдырыңыз.",
+    "categorySaved": "Санат сақталды",
+    "save": "Сақтау",
     "dayOfMonth": "Айдың күні",
     "autoApply": "Автоматты қолдану",
-    "addCategory": "",
+    "addCategory": "Санат қосу",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "Жою",
+    "deleteCategoryTitle": "Санатты жою",
+    "deleteCategoryQuestion": "Бұл санатты жою керек пе?",
+    "deleteCategoryDescription": "Бұл санаттағы өткен шығындар деректерін сақтайды.",
+    "categoryNamePlaceholder": "мыс. Спортзал, Үй жануарлары, Көлік...",
     "notifications": "Хабарландырулар",
     "notificationsOn": "Қосулы",
     "notificationsOff": "Өшірулі",
@@ -232,8 +245,8 @@
     "health": "Денсаулық",
     "education": "Білім",
     "other": "Басқа",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Түсініктеме (міндетті емес)",
+    "confirm": "Шығынды қосу"
   },
   "expenseEditor": {
     "title": "Шығысты түзету",
@@ -261,7 +274,8 @@
     "helperText": "Бұл санатқа лимит қажет болмаса, бос қалдырыңыз.",
     "save": "Лимиттерді сақтау",
     "dayOfMonth": "Айдың күні",
-    "autoApply": "Автоматты қолдану"
+    "autoApply": "Автоматты қолдану",
+    "warningTitle": "Бір немесе бірнеше санат лимиттен асып кетті"
   },
   "recurring": {
     "caption": "Үлгілер",
@@ -293,7 +307,8 @@
     "income": "Кіріс",
     "expense": "Шығыс",
     "transfer_to_savings": "Баланс → жинақ",
-    "transfer_from_savings": "Жинақ → баланс"
+    "transfer_from_savings": "Жинақ → баланс",
+    "transfer_between_accounts": "Шоттар арасында"
   },
   "history": {
     "caption": "Барлық операциялар",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Балансыңыз жеткіліксіз",
       "insufficientSavings": "Жинақтарыңыз жеткіліксіз"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Санат қосылды",
+    "categoryDeleted": "Санат жойылды",
     "accountCreated": "Шот сәтті ашылды",
     "accountUpdated": "Шот сәтті өзгертілді",
     "accountDeleted": "Шот сәтті өшірілді",
-    "transferSuccess": "Аударым сәтті аяқталды"
+    "transferSuccess": "Аударым сәтті аяқталды",
+    "limitsSaved": "Лимиттер сақталды",
+    "notificationsSaved": "Хабарламалар сақталды"
   },
   "analytics": {
     "title": "Шығыстар бөлінісі",
@@ -535,7 +552,8 @@
     "atTime": "Сағат",
     "offHint": "Еске салуды Параметрлер → Хабарландырулар-дан қайта қосуға болады.",
     "save": "Сақтап, жалғастыру",
-    "saving": "Сақталуда…"
+    "saving": "Сақталуда…",
+    "daysShort": "Әрбір {{count}} күн сайын"
   },
   "security": {
     "title": "Қауіпсіздік",
@@ -574,14 +592,17 @@
     "done": "Файл дайын",
     "empty": "Шығаруға операция жоқ",
     "summarySheet": "Қорытынды",
-    "transactionsSheet": "Операциялар"
+    "transactionsSheet": "Операциялар",
+    "telegramSent": "Есеп Telegram чатыңызға жіберілді"
   },
   "trend": {
     "title": "Күн бойынша динамика",
     "description": "Таңдалған айдың күндері бойынша шығын мен табыс.",
     "expense": "Шығын",
     "income": "Табыс",
-    "empty": "Бұл ай үшін деректер әлі жоқ."
+    "empty": "Бұл ай үшін деректер әлі жоқ.",
+    "less": "Азырақ",
+    "more": "Көбірек"
   },
   "accounts": {
     "title": "Шоттар",
@@ -606,6 +627,13 @@
     "transferAmount": "Жіберілетін сома",
     "transferToAmount": "Қабылданатын сома (міндетті емес)",
     "transferErrorSame": "Бірдей шотқа аудару мүмкін емес",
-    "executeTransfer": "Аудару"
+    "executeTransfer": "Аудару",
+    "swipeHint": "Шотты ауыстыру үшін балансты сипаңыз",
+    "manageHoldings": "Криптоактивтер",
+    "coin": "Монета",
+    "coinAmount": "Саны",
+    "saveHolding": "Монетаны сақтау",
+    "cryptoCreateHint": "Алдымен әмиян жасаңыз, содан кейін активтер өңдегішінде монеталарды (BTC, TON, USDT, NOTCOIN) қосыңыз.",
+    "transferAutoPlaceholder": "Автоматты"
   }
 }

@@ -16,12 +16,21 @@
     "amount": "金额",
     "category": "类别",
     "note": "备注",
-    "confirm": "确认"
+    "confirm": "确认",
+    "save": "保存",
+    "delete": "删除",
+    "create": "创建",
+    "back": "返回"
   },
   "shell": {
     "greeting": "你好，{{name}}",
     "welcomeBack": "欢迎回来",
-    "notifications": "通知"
+    "notifications": "通知",
+    "nav": {
+      "dashboard": "主页",
+      "report": "报告",
+      "settings": "设置"
+    }
   },
   "dashboard": {
     "loading": "正在加载你的财务状态...",
@@ -33,7 +42,8 @@
       "expense": "支出",
       "report": "报表",
       "setting": "设置"
-    }
+    },
+    "openInTelegram": "请在 Telegram 内打开此小程序，以便它能够传递 Telegram initData。"
   },
   "balance": {
     "caption": "我的余额",
@@ -44,7 +54,9 @@
     "changeTitle": "修改余额",
     "changeQuestion": "确定要修改余额吗？",
     "changeDescription": "当前：{{current}}。新余额：{{next}}。",
-    "changeConfirm": "继续"
+    "changeConfirm": "继续",
+    "walletLabel": "钱包",
+    "totalBalance": "总余额"
   },
   "dailyLimit": {
     "caption": "可花余额",
@@ -78,7 +90,8 @@
     "depositQuestion": "要从余额转入多少到储蓄？",
     "withdrawHelper": "你最多可以从储蓄转回 {{amount}} 到余额。",
     "withdrawQuestion": "要从储蓄转回多少到余额？",
-    "transferPlaceholder": "输入转账金额"
+    "transferPlaceholder": "输入转账金额",
+    "savingsPart": "储蓄部分"
   },
   "amountInput": {
     "caption": "新交易",
@@ -163,23 +176,23 @@
     "currencyCny": "人民币 (CNY)",
     "exchangeRates": "汇率",
     "refresh": "刷新",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "类别",
+    "categoriesDescription": "重命名类别并选择其图标。",
+    "editCategory": "编辑类别",
+    "categoryEmoji": "图标（表情）",
+    "categoryName": "名称",
+    "categoryResetTip": "留空以恢复默认值。",
+    "categorySaved": "类别已保存",
+    "save": "保存",
     "dayOfMonth": "月中日期",
     "autoApply": "ꨔ(",
-    "addCategory": "",
+    "addCategory": "添加类别",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "删除",
+    "deleteCategoryTitle": "删除类别",
+    "deleteCategoryQuestion": "删除此类别？",
+    "deleteCategoryDescription": "此类别下过去的支出将保留其数据。",
+    "categoryNamePlaceholder": "如：健身房、宠物、汽车...",
     "notifications": "提醒",
     "notificationsOn": "已开启",
     "notificationsOff": "已关闭",
@@ -232,8 +245,8 @@
     "health": "健康",
     "education": "教育",
     "other": "其他",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "备注（可选）",
+    "confirm": "添加支出"
   },
   "expenseEditor": {
     "title": "修正支出",
@@ -261,7 +274,8 @@
     "helperText": "如果不想为此分类设置限额，请留空。",
     "save": "保存限额",
     "dayOfMonth": "月中日期",
-    "autoApply": "ꨔ("
+    "autoApply": "ꨔ(",
+    "warningTitle": "一个或多个类别已超出限额"
   },
   "recurring": {
     "caption": "模板",
@@ -293,7 +307,8 @@
     "income": "收入",
     "expense": "支出",
     "transfer_to_savings": "余额 → 储蓄",
-    "transfer_from_savings": "储蓄 → 余额"
+    "transfer_from_savings": "储蓄 → 余额",
+    "transfer_between_accounts": "账户之间"
   },
   "history": {
     "caption": "所有交易",
@@ -354,12 +369,14 @@
       "insufficientBalance": "余额不足",
       "insufficientSavings": "储蓄不足"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "类别已添加",
+    "categoryDeleted": "类别已删除",
     "accountCreated": "账户创建成功",
     "accountUpdated": "账户更新成功",
     "accountDeleted": "账户删除成功",
-    "transferSuccess": "转账成功完成"
+    "transferSuccess": "转账成功完成",
+    "limitsSaved": "限额已保存",
+    "notificationsSaved": "通知已保存"
   },
   "analytics": {
     "title": "支出明细",
@@ -535,7 +552,8 @@
     "atTime": "在",
     "offHint": "想再开提醒，到 设置 → 提醒 里打开。",
     "save": "保存并继续",
-    "saving": "保存中…"
+    "saving": "保存中…",
+    "daysShort": "每 {{count}} 天"
   },
   "security": {
     "title": "安全",
@@ -574,14 +592,17 @@
     "done": "文件已就绪",
     "empty": "没有可导出的交易",
     "summarySheet": "汇总",
-    "transactionsSheet": "交易"
+    "transactionsSheet": "交易",
+    "telegramSent": "报告已发送到你的 Telegram 聊天"
   },
   "trend": {
     "title": "按日动态",
     "description": "所选月份每天的支出与收入。",
     "expense": "支出",
     "income": "收入",
-    "empty": "本月还没有数据。"
+    "empty": "本月还没有数据。",
+    "less": "较少",
+    "more": "较多"
   },
   "accounts": {
     "title": "账户",
@@ -606,6 +627,13 @@
     "transferAmount": "转出金额",
     "transferToAmount": "转入金额 (可选)",
     "transferErrorSame": "不能转账到相同账户",
-    "executeTransfer": "转账"
+    "executeTransfer": "转账",
+    "swipeHint": "滑动余额以切换账户",
+    "manageHoldings": "加密资产",
+    "coin": "币种",
+    "coinAmount": "数量",
+    "saveHolding": "保存币种",
+    "cryptoCreateHint": "先创建钱包，然后在资产编辑器中添加币种（BTC、TON、USDT、NOTCOIN）。",
+    "transferAutoPlaceholder": "自动"
   }
 }

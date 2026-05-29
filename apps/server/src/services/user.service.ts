@@ -3,6 +3,9 @@ import type {
   AdminUserListItem,
   AdminUsersPage,
   CategoryCustomization,
+  CryptoCode,
+  CryptoHolding,
+  CurrencyCode,
   CustomCategory,
   ExpenseCategory,
   NotificationFrequency,
@@ -11,7 +14,7 @@ import type {
   Status,
   User,
 } from "@finance-twa/shared-types";
-import { MAX_CUSTOM_CATEGORIES } from "@finance-twa/shared-types";
+import { CRYPTO_CODES, MAX_CUSTOM_CATEGORIES } from "@finance-twa/shared-types";
 import type { TelegramUser } from "../utils/telegram.js";
 
 import { and, count, desc, eq, isNull, or, sql } from "drizzle-orm";
@@ -28,6 +31,40 @@ import { env } from "../config/env.js";
 
 export const SUPER_ADMIN_TELEGRAM_ID = 8246152069;function isSuperAdmin(telegramId: number): boolean {
   return telegramId === SUPER_ADMIN_TELEGRAM_ID;
+}
+
+const CRYPTO_CODE_SET = new Set<CryptoCode>(CRYPTO_CODES);
+
+/** Keep only valid crypto codes with positive amounts, one entry per coin. */
+export function sanitizeHoldings(holdings: unknown): CryptoHolding[] {
+  if (!Array.isArray(holdings)) return [];
+  const bySymbol = new Map<CryptoCode, number>();
+  for (const holding of holdings) {
+    if (!holding || typeof holding !== "object") continue;
+    const symbol = (holding as CryptoHolding).symbol;
+    if (!CRYPTO_CODE_SET.has(symbol)) continue;
+    const amount = Number((holding as CryptoHolding).amount);
+    if (!Number.isFinite(amount) || amount <= 0) continue;
+    bySymbol.set(symbol, Number(((bySymbol.get(symbol) ?? 0) + amount).toFixed(8)));
+  }
+  return [...bySymbol.entries()].map(([symbol, amount]) => ({ symbol, amount }));
+}
+
+/**
+ * Total fiat (USD) valuation of crypto holdings. `rates` are "coins per 1 USD",
+ * so the USD value of an amount is `amount / rate`.
+ */
+export function cryptoHoldingsTotalUsd(
+  holdings: CryptoHolding[] | undefined,
+  rates: Record<CurrencyCode, number>,
+): number {
+  if (!holdings || holdings.length === 0) return 0;
+  const total = holdings.reduce((sum, holding) => {
+    const rate = rates[holding.symbol];
+    if (!rate) return sum;
+    return sum + holding.amount / rate;
+  }, 0);
+  return Number(total.toFixed(2));
 }
 
 function maskTelegramId(telegramId: number): string {
@@ -79,15 +116,20 @@ export function mapUserRow(row: UserRow, accountsList: AccountRow[] = []): User 
   const today = new Date().toISOString().slice(0, 10);
   const voiceDailyUsed = row.voiceDailyDate === today ? row.voiceDailyUsed : 0;
 
-  const mappedAccounts = accountsList.map((acc) => ({
-    id: acc.id,
-    userId: acc.userId,
-    name: acc.name,
-    type: acc.type as "cash" | "card" | "crypto",
-    currency: acc.currency as any,
-    balance: Number(acc.balance),
-    createdAt: acc.createdAt.toISOString(),
-  }));
+  const mappedAccounts = accountsList.map((acc) => {
+    const isCrypto = acc.type === "crypto";
+    const holdings = isCrypto ? sanitizeHoldings(acc.holdings) : undefined;
+    return {
+      id: acc.id,
+      userId: acc.userId,
+      name: acc.name,
+      type: acc.type as "cash" | "card" | "crypto",
+      currency: acc.currency as any,
+      balance: Number(acc.balance),
+      ...(isCrypto ? { holdings } : {}),
+      createdAt: acc.createdAt.toISOString(),
+    };
+  });
 
   return {
     id: row.id,
@@ -129,6 +171,13 @@ export async function buildStatus(row: UserRow): Promise<Status> {
 
   const user = mapUserRow(row, activeAccounts);
   const { rates, updatedAt } = await getExchangeRates();
+
+  // Crypto accounts derive their balance (in USD) from their holdings.
+  user.accounts = user.accounts.map((acc) =>
+    acc.type === "crypto"
+      ? { ...acc, currency: "USD" as CurrencyCode, balance: cryptoHoldingsTotalUsd(acc.holdings, rates) }
+      : acc,
+  );
 
   return {
     user,
@@ -522,9 +571,11 @@ export async function setNotificationSettings(
 
 export async function createAccount(
   telegramId: number,
-  params: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number }
+  params: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number; holdings?: CryptoHolding[] }
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  const isCrypto = params.type === "crypto";
+  const holdings = isCrypto ? sanitizeHoldings(params.holdings) : [];
 
   await db.transaction(async (tx) => {
     const [acc] = await tx
@@ -533,8 +584,9 @@ export async function createAccount(
         userId: user.id,
         name: params.name.trim(),
         type: params.type,
-        currency: params.currency,
-        balance: params.initialBalance,
+        currency: isCrypto ? "USD" : params.currency,
+        balance: 0,
+        holdings,
       })
       .returning();
 
@@ -542,7 +594,8 @@ export async function createAccount(
       throw new Error("Failed to create account");
     }
 
-    if (params.initialBalance > 0) {
+    // Only cash/card initial balances feed the transaction ledger.
+    if (!isCrypto && params.initialBalance > 0) {
       await tx.insert(transactions).values({
         userId: user.id,
         accountId: acc.id,
@@ -557,6 +610,38 @@ export async function createAccount(
     const { syncUserSnapshot } = await import("./finance/_shared.js");
     await syncUserSnapshot(tx, user);
   });
+
+  await invalidateStatusCache(telegramId);
+  return getStatusByTelegramId(telegramId);
+}
+
+export async function setCryptoHolding(
+  telegramId: number,
+  params: { accountId: string; symbol: CryptoCode; amount: number }
+): Promise<Status> {
+  const user = await ensureUser(telegramId);
+
+  const [acc] = await db
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.id, params.accountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+    .limit(1);
+
+  if (!acc) {
+    throw new AppError(ErrorCode.VALIDATION, "Account not found");
+  }
+  if (acc.type !== "crypto") {
+    throw new AppError(ErrorCode.VALIDATION, "Only crypto accounts can hold coins");
+  }
+
+  const amount = Number.isFinite(params.amount) && params.amount > 0 ? Number(params.amount.toFixed(8)) : 0;
+  const current = sanitizeHoldings(acc.holdings).filter((h) => h.symbol !== params.symbol);
+  const nextHoldings = amount > 0 ? [...current, { symbol: params.symbol, amount }] : current;
+
+  await db
+    .update(accounts)
+    .set({ holdings: nextHoldings })
+    .where(and(eq(accounts.id, params.accountId), eq(accounts.userId, user.id)));
 
   await invalidateStatusCache(telegramId);
   return getStatusByTelegramId(telegramId);

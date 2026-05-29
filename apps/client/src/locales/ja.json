@@ -16,12 +16,21 @@
     "amount": "金額",
     "category": "カテゴリ",
     "note": "メモ",
-    "confirm": "確認"
+    "confirm": "確認",
+    "save": "保存",
+    "delete": "削除",
+    "create": "作成",
+    "back": "戻る"
   },
   "shell": {
     "greeting": "こんにちは、{{name}}",
     "welcomeBack": "おかえりなさい",
-    "notifications": "通知"
+    "notifications": "通知",
+    "nav": {
+      "dashboard": "ホーム",
+      "report": "レポート",
+      "settings": "設定"
+    }
   },
   "dashboard": {
     "loading": "財務状況を読み込んでいます...",
@@ -33,7 +42,8 @@
       "expense": "支出",
       "report": "レポート",
       "setting": "設定"
-    }
+    },
+    "openInTelegram": "Telegram の initData を渡せるように、このミニアプリを Telegram 内で開いてください。"
   },
   "balance": {
     "caption": "残高",
@@ -44,7 +54,9 @@
     "changeTitle": "残高変更",
     "changeQuestion": "残高を変更しますか？",
     "changeDescription": "現在：{{current}}。新しい残高：{{next}}。",
-    "changeConfirm": "続ける"
+    "changeConfirm": "続ける",
+    "walletLabel": "ウォレット",
+    "totalBalance": "合計残高"
   },
   "dailyLimit": {
     "caption": "使える残り",
@@ -78,7 +90,8 @@
     "depositQuestion": "残高から貯金へいくら移動しますか？",
     "withdrawHelper": "貯金から残高へ最大 {{amount}} まで戻せます。",
     "withdrawQuestion": "貯金から残高へいくら戻しますか？",
-    "transferPlaceholder": "移動金額を入力"
+    "transferPlaceholder": "移動金額を入力",
+    "savingsPart": "貯金分"
   },
   "amountInput": {
     "caption": "新しい取引",
@@ -163,23 +176,23 @@
     "currencyCny": "中国人民元 (CNY)",
     "exchangeRates": "為替レート",
     "refresh": "更新",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "カテゴリ",
+    "categoriesDescription": "カテゴリ名を変更し、アイコンを選択します。",
+    "editCategory": "カテゴリを編集",
+    "categoryEmoji": "アイコン（絵文字）",
+    "categoryName": "名前",
+    "categoryResetTip": "空欄にするとデフォルトに戻ります。",
+    "categorySaved": "カテゴリを保存しました",
+    "save": "保存",
     "dayOfMonth": "日付（月内）",
     "autoApply": "自動適用",
-    "addCategory": "",
+    "addCategory": "カテゴリを追加",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "削除",
+    "deleteCategoryTitle": "カテゴリを削除",
+    "deleteCategoryQuestion": "このカテゴリを削除しますか？",
+    "deleteCategoryDescription": "このカテゴリの過去の支出データは保持されます。",
+    "categoryNamePlaceholder": "例：ジム、ペット、車...",
     "notifications": "通知",
     "notificationsOn": "オン",
     "notificationsOff": "オフ",
@@ -232,8 +245,8 @@
     "health": "健康",
     "education": "教育",
     "other": "その他",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "コメント（任意）",
+    "confirm": "支出を追加"
   },
   "expenseEditor": {
     "title": "支出を修正",
@@ -261,7 +274,8 @@
     "helperText": "このカテゴリに上限を設定しない場合は空欄のままにしてください。",
     "save": "上限を保存",
     "dayOfMonth": "日付（月内）",
-    "autoApply": "自動適用"
+    "autoApply": "自動適用",
+    "warningTitle": "1つ以上のカテゴリが上限を超えています"
   },
   "recurring": {
     "caption": "テンプレート",
@@ -293,7 +307,8 @@
     "income": "収入",
     "expense": "支出",
     "transfer_to_savings": "残高 → 貯金",
-    "transfer_from_savings": "貯金 → 残高"
+    "transfer_from_savings": "貯金 → 残高",
+    "transfer_between_accounts": "口座間"
   },
   "history": {
     "caption": "すべての取引",
@@ -354,12 +369,14 @@
       "insufficientBalance": "残高が不足しています",
       "insufficientSavings": "貯蓄が不足しています"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "カテゴリを追加しました",
+    "categoryDeleted": "カテゴリを削除しました",
     "accountCreated": "口座が正常に作成されました",
     "accountUpdated": "口座が正常に更新されました",
     "accountDeleted": "口座が正常に削除されました",
-    "transferSuccess": "振替が正常に完了しました"
+    "transferSuccess": "振替が正常に完了しました",
+    "limitsSaved": "上限を保存しました",
+    "notificationsSaved": "通知を保存しました"
   },
   "analytics": {
     "title": "支出の内訳",
@@ -535,7 +552,8 @@
     "atTime": "時刻",
     "offHint": "通知は設定 → 通知から再開できます。",
     "save": "保存して続ける",
-    "saving": "保存中…"
+    "saving": "保存中…",
+    "daysShort": "{{count}}日ごと"
   },
   "security": {
     "title": "セキュリティ",
@@ -574,14 +592,17 @@
     "done": "ファイルできました",
     "empty": "書き出す取引がありません",
     "summarySheet": "サマリー",
-    "transactionsSheet": "取引"
+    "transactionsSheet": "取引",
+    "telegramSent": "レポートを Telegram チャットに送信しました"
   },
   "trend": {
     "title": "日ごとの推移",
     "description": "選んだ月の日ごとの支出と収入。",
     "expense": "支出",
     "income": "収入",
-    "empty": "今月のデータはまだありません。"
+    "empty": "今月のデータはまだありません。",
+    "less": "少ない",
+    "more": "多い"
   },
   "accounts": {
     "title": "口座",
@@ -606,6 +627,13 @@
     "transferAmount": "送金額",
     "transferToAmount": "受取額 (任意)",
     "transferErrorSame": "同一口座への振替はできません",
-    "executeTransfer": "振替を実行"
+    "executeTransfer": "振替を実行",
+    "swipeHint": "残高をスワイプして口座を切り替えます",
+    "manageHoldings": "暗号資産",
+    "coin": "コイン",
+    "coinAmount": "数量",
+    "saveHolding": "コインを保存",
+    "cryptoCreateHint": "先にウォレットを作成し、保有エディタでコイン（BTC、TON、USDT、NOTCOIN）を追加してください。",
+    "transferAutoPlaceholder": "自動"
   }
 }

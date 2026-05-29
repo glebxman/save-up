@@ -1,12 +1,15 @@
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
+import { AnimatePresence, motion, type PanInfo } from "framer-motion";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
-import { WalletIcon, BanknotesIcon, CreditCardIcon, CircleStackIcon, SettingsIcon } from "@/components/layout/icons";
+import { SettingsIcon } from "@/components/layout/icons";
 import { Card, CardContent } from "@/components/ui";
 import { useCountUp } from "@/hooks/useCountUp";
-import { hapticNotification } from "@/utils/haptic";
+import { useTelegram } from "@/hooks/useTelegram";
+import { hapticImpact, hapticNotification } from "@/utils/haptic";
 import { formatMoney } from "@/utils/format";
+import { cryptoHoldingsTotalUsd } from "@/utils/exchange-rates";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
 import type { Account } from "@finance-twa/shared-types";
@@ -28,6 +31,15 @@ function formatWithSpaces(value: number): string {
   return Math.floor(value).toLocaleString("ru-RU");
 }
 
+const SWIPE_THRESHOLD = 7000;
+const swipePower = (offset: number, velocity: number) => Math.abs(offset) * velocity;
+
+const slideVariants = {
+  enter: (direction: number) => ({ x: direction > 0 ? 120 : -120, opacity: 0 }),
+  center: { x: 0, opacity: 1 },
+  exit: (direction: number) => ({ x: direction > 0 ? -120 : 120, opacity: 0 }),
+};
+
 export function BalanceCard({
   balance,
   monthlyExp,
@@ -37,15 +49,30 @@ export function BalanceCard({
   onManageAccounts,
 }: BalanceCardProps) {
   const { t } = useTranslation();
+  const { user } = useTelegram();
   const inputRef = useRef<HTMLInputElement>(null);
   const skipNextBlurRef = useRef(false);
   const pendingModalTimeoutRef = useRef<number | null>(null);
   const [isEditingBalance, setIsEditingBalance] = useState(false);
   const [balanceDraft, setBalanceDraft] = useState(formatWithSpaces(balance));
   const [pendingBalance, setPendingBalance] = useState<number | null>(null);
+
+  const [page, setPage] = useState(0);
+  const [direction, setDirection] = useState(0);
+
   const isHealthy = balance >= monthlyExp;
   const spendableNow = Math.max(balance - monthlyExp, 0);
-  const animatedBalance = useCountUp(balance, !isEditingBalance);
+  const animatedBalance = useCountUp(balance, !isEditingBalance && page === 0);
+
+  const pageCount = accounts.length + 2;
+  const activeAccount = (page > 0 && page < pageCount - 1) ? (accounts[page - 1] ?? null) : null;
+
+  useEffect(() => {
+    if (page >= pageCount) {
+      setPage(0);
+      setDirection(0);
+    }
+  }, [accounts.length, page, pageCount]);
 
   useEffect(() => {
     return () => {
@@ -68,11 +95,28 @@ export function BalanceCard({
     }
   }, [isEditingBalance]);
 
+  function goToPage(next: number): void {
+    const clamped = Math.max(0, Math.min(pageCount - 1, next));
+    if (clamped === page) return;
+    setDirection(clamped > page ? 1 : -1);
+    setPage(clamped);
+    hapticImpact("light");
+  }
+
+  function handleDragEnd(_event: unknown, info: PanInfo): void {
+    if (pageCount <= 1) return;
+    const power = swipePower(info.offset.x, info.velocity.x);
+    if (power < -SWIPE_THRESHOLD || info.offset.x < -60) {
+      goToPage(page + 1);
+    } else if (power > SWIPE_THRESHOLD || info.offset.x > 60) {
+      goToPage(page - 1);
+    }
+  }
+
   function startBalanceEdit(): void {
-    if (!onBalanceChange || isBalanceSaving) {
+    if (!onBalanceChange || isBalanceSaving || page !== 0) {
       return;
     }
-
     setBalanceDraft(formatWithSpaces(balance));
     setIsEditingBalance(true);
   }
@@ -87,7 +131,6 @@ export function BalanceCard({
     if (pendingModalTimeoutRef.current !== null) {
       window.clearTimeout(pendingModalTimeoutRef.current);
     }
-
     pendingModalTimeoutRef.current = window.setTimeout(() => {
       pendingModalTimeoutRef.current = null;
       setPendingBalance(nextBalance);
@@ -117,18 +160,13 @@ export function BalanceCard({
   }
 
   function cancelPendingBalanceChange(): void {
-    if (isBalanceSaving) {
-      return;
-    }
-
+    if (isBalanceSaving) return;
     setPendingBalance(null);
     setBalanceDraft(formatWithSpaces(balance));
   }
 
   function confirmPendingBalanceChange(): void {
-    if (pendingBalance === null || !onBalanceChange || isBalanceSaving) {
-      return;
-    }
+    if (pendingBalance === null || !onBalanceChange || isBalanceSaving) return;
 
     void Promise.resolve(onBalanceChange(pendingBalance))
       .then(() => {
@@ -138,123 +176,244 @@ export function BalanceCard({
       .catch(() => undefined);
   }
 
+  function accountValue(acc: Account): { value: number; currency: Account["currency"] } {
+    if (acc.type === "crypto") {
+      return { value: cryptoHoldingsTotalUsd((acc as any).holdings), currency: "USD" };
+    }
+    return { value: acc.balance, currency: acc.currency };
+  }
+
+  // Returns custom gradients for different cards/account types
+  function getCardBg(pageIndex: number, acc: Account | null): string {
+    if (pageIndex === 0) {
+      // Main Wallet card: deep gold & dark metallic shine
+      return "radial-gradient(circle at 80% 20%, rgba(239, 240, 158, 0.15), transparent 50%), linear-gradient(135deg, #1f2023 0%, #0d0e10 100%)";
+    }
+    if (!acc) return "linear-gradient(135deg, #1c1d24 0%, #0c0d10 100%)";
+
+    switch (acc.type) {
+      case "card":
+        // Card type: midnight blue credit card look
+        return "radial-gradient(circle at 80% 20%, rgba(96, 132, 255, 0.12), transparent 50%), linear-gradient(135deg, #161822 0%, #07080d 100%)";
+      case "crypto":
+        // Crypto type: premium dark purple gradient
+        return "radial-gradient(circle at 80% 20%, rgba(231, 197, 222, 0.12), transparent 50%), linear-gradient(135deg, #20172a 0%, #08050e 100%)";
+      default:
+        // Cash type: deep forest green gradient
+        return "radial-gradient(circle at 80% 20%, rgba(60, 173, 139, 0.12), transparent 50%), linear-gradient(135deg, #111e1a 0%, #050a08 100%)";
+    }
+  }
+
+  // Mastercard logo or type-specific indicator
+  function getCardLogo(pageIndex: number, acc: Account | null) {
+    if (pageIndex === 0 || (acc && acc.type === "card")) {
+      return (
+        <div className="flex items-center -space-x-1.5 opacity-90 select-none">
+          <div className="h-5 w-5 rounded-full bg-[#EB001B]" />
+          <div className="h-5 w-5 rounded-full bg-[#F79E1B]" />
+        </div>
+      );
+    }
+    if (acc && acc.type === "crypto") {
+      return (
+        <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-purple-500 to-indigo-500 flex items-center justify-center select-none">
+          <span className="text-[10px] font-bold text-white font-sans">₿</span>
+        </div>
+      );
+    }
+    // Cash
+    return (
+      <div className="h-5 w-5 rounded-full bg-gradient-to-tr from-emerald-500 to-teal-600 flex items-center justify-center select-none">
+        <span className="text-[10px] font-bold text-white font-sans">$</span>
+      </div>
+    );
+  }
+
+  const displayName = user
+    ? [user.first_name, user.last_name].filter(Boolean).join(" ")
+    : t("common.defaultUser", { defaultValue: "User" });
+
+  const isAddPage = page === pageCount - 1;
+
   return (
     <>
-      <Card className="finance-hero-card overflow-hidden" data-onboarding="balance" variant="default">
-        <CardContent>
-          <div className="space-y-6">
-            <div className="flex items-start justify-between gap-4">
-              <div className="max-w-[70%]">
-                <p className="m-0 text-sm text-[var(--muted)]">{t("balance.caption")}</p>
-                {isEditingBalance ? (
-                  <input
-                    ref={inputRef}
-                    aria-label={t("balance.caption")}
-                    className="m-0 mt-2 block w-full min-w-0 rounded-[14px] border border-[var(--field-border)] bg-[var(--field-background)] px-2 py-1 text-[2.2rem] font-semibold leading-none text-[var(--foreground)] outline-none transition focus:ring-2 focus:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
-                    disabled={isBalanceSaving}
-                    inputMode="numeric"
-                    max={String(MAX_FINANCE_AMOUNT)}
-                    min="0"
-                    onBlur={commitBalanceEdit}
-                    onChange={(event) => {
-                      const rawValue = event.target.value.replace(/\D/g, "");
-                      if (rawValue) {
-                        const numValue = parseInt(rawValue, 10);
-                        setBalanceDraft(formatWithSpaces(numValue));
-                      } else {
-                        setBalanceDraft("");
-                      }
+      <div className="relative w-full space-y-4" data-onboarding="balance">
+        {/* Swipeable credit-card carousel container */}
+        <div className="relative overflow-hidden rounded-[24px]">
+          <AnimatePresence custom={direction} initial={false} mode="popLayout">
+            <motion.div
+              key={page}
+              custom={direction}
+              variants={slideVariants}
+              initial="enter"
+              animate="center"
+              exit="exit"
+              transition={{ x: { type: "spring", stiffness: 300, damping: 30 }, opacity: { duration: 0.15 } }}
+              drag={pageCount > 1 && !isEditingBalance ? "x" : false}
+              dragConstraints={{ left: 0, right: 0 }}
+              dragElastic={0.5}
+              onDragEnd={handleDragEnd}
+              className="w-full cursor-grab active:cursor-grabbing"
+            >
+              <div
+                className={`relative h-48 w-full p-6 flex flex-col justify-between select-none transition-all duration-300 ${
+                  isAddPage 
+                    ? "bg-[var(--surface-secondary)] border-2 border-dashed border-[var(--separator)] text-[var(--foreground)]" 
+                    : "text-white border border-white/5"
+                }`}
+                style={{
+                  borderRadius: "24px",
+                  ...(isAddPage ? {} : { background: getCardBg(page, activeAccount) })
+                }}
+              >
+                {isAddPage ? (
+                  <div
+                    className="flex flex-col items-center justify-center h-full w-full space-y-3 cursor-pointer"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      onManageAccounts?.();
                     }}
-                    onKeyDown={(event) => {
-                      if (event.key === "Enter") {
-                        event.preventDefault();
-                        event.currentTarget.blur();
-                      }
-
-                      if (event.key === "Escape") {
-                        event.preventDefault();
-                        cancelBalanceEdit();
-                      }
-                    }}
-                    type="text"
-                    value={balanceDraft}
-                  />
-                ) : (
-                  <button
-                    className="m-0 mt-2 block max-w-full cursor-text truncate rounded-[14px] px-0 text-left text-[2.2rem] font-semibold leading-none text-[var(--foreground)] outline-none transition focus-visible:ring-2 focus-visible:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
-                    disabled={!onBalanceChange || isBalanceSaving}
-                    onClick={startBalanceEdit}
-                    type="button"
                   >
-                    {formatMoney(animatedBalance)}
-                  </button>
-                )}
-                <p className={`m-0 mt-2 text-sm font-medium ${isHealthy ? "text-[var(--hero-positive-text)]" : "text-[var(--warning)]"}`}>
-                  {isHealthy ? t("balance.healthy") : t("balance.watch")}
-                </p>
-              </div>
+                    <div className="h-14 w-14 rounded-full bg-[var(--surface-tertiary)] flex items-center justify-center border border-[var(--separator)] hover:bg-[var(--surface-secondary)] transition active:scale-95 shadow-md">
+                      <span className="text-3xl font-light text-[var(--foreground)] leading-none">+</span>
+                    </div>
+                    <span className="text-sm text-[var(--muted)] font-semibold tracking-wide">
+                      {t("accounts.newAccount", { defaultValue: "New Account" })}
+                    </span>
+                  </div>
+                ) : (
+                  <>
+                    {/* Header row: Label & Add/Manage Icon */}
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold font-sans">
+                          {page === 0 ? t("balance.walletLabel", { defaultValue: "Wallet" }) : t(`accounts.type.${activeAccount?.type || 'card'}`)}
+                        </span>
+                        <h3 className="text-base font-semibold text-white/90 mt-0.5 tracking-tight truncate max-w-[200px]">
+                          {page === 0 ? displayName : activeAccount?.name}
+                        </h3>
+                      </div>
 
-              <span className="inline-flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-[var(--hero-soft-surface)] text-[var(--foreground)]">
-                <WalletIcon className="h-5 w-5" />
-              </span>
-            </div>
-
-            <div className="grid grid-cols-2 gap-3">
-              <div className="rounded-[24px] bg-[var(--hero-soft-surface)] px-4 py-3">
-                <p className="m-0 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary-text)]">{t("balance.spendableNow")}</p>
-                <p className="m-0 mt-1 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-on-strong)]">{formatMoney(spendableNow)}</p>
-              </div>
-              <div className="rounded-[24px] bg-[var(--hero-soft-surface)] px-4 py-3">
-                <p className="m-0 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary-text)]">{t("balance.monthlyBudget")}</p>
-                <p className="m-0 mt-1 text-xl font-semibold tracking-[-0.04em] text-[var(--hero-on-strong)]">{formatMoney(monthlyExp)}</p>
-              </div>
-            </div>
-
-            {accounts.length > 0 && (
-              <div className="border-t border-[color-mix(in_srgb,var(--divider)_30%,transparent)] pt-4 space-y-3">
-                <div className="flex items-center justify-between">
-                  <p className="m-0 text-[11px] uppercase tracking-[0.18em] text-[var(--hero-secondary-text)] font-semibold">
-                    {t("accounts.title", { defaultValue: "Accounts" })}
-                  </p>
-                  {onManageAccounts && (
-                    <button
-                      onClick={onManageAccounts}
-                      className="text-xs font-semibold text-[var(--foreground)] hover:opacity-75 transition outline-none cursor-pointer flex items-center gap-1"
-                      type="button"
-                    >
-                      <SettingsIcon className="h-3.5 w-3.5 text-[var(--muted)]" />
-                      <span>{t("accounts.manage", { defaultValue: "Manage" })}</span>
-                    </button>
-                  )}
-                </div>
-                <div className="grid gap-2 max-h-[160px] overflow-y-auto pr-1">
-                  {accounts.map((acc) => {
-                    const IconComponent = acc.type === "cash" 
-                      ? BanknotesIcon 
-                      : acc.type === "card" 
-                      ? CreditCardIcon 
-                      : CircleStackIcon;
-                    return (
-                      <div
-                        key={acc.id}
-                        className="flex items-center justify-between px-3 py-2 rounded-[16px] bg-[var(--hero-soft-surface)] hover:bg-[color-mix(in_srgb,var(--hero-soft-surface)_90%,var(--foreground))] transition-colors"
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          onManageAccounts?.();
+                        }}
+                        className="flex items-center justify-center h-8 w-8 rounded-full bg-white/10 hover:bg-white/20 transition active:scale-95 border border-white/5"
+                        aria-label={t("accounts.manage", { defaultValue: "Manage" })}
                       >
-                        <div className="flex items-center gap-2">
-                          <IconComponent className="h-4 w-4 text-[var(--muted)]" />
-                          <span className="text-xs font-medium text-[var(--foreground)]">{acc.name}</span>
-                        </div>
-                        <span className="text-xs font-bold text-[var(--foreground)]">
-                          {formatMoney(acc.balance, acc.currency)}
+                        <SettingsIcon className="h-4 w-4 text-white" />
+                      </button>
+                    </div>
+
+                    {/* Footer row: Balance & Brand details */}
+                    <div className="flex justify-between items-end">
+                      <div className="flex-1 min-w-0 pr-4">
+                        {page === 0 ? (
+                          isEditingBalance ? (
+                            <input
+                              ref={inputRef}
+                              aria-label={t("balance.caption")}
+                              className="m-0 block w-full min-w-0 rounded-[10px] border border-white/20 bg-black/40 px-2 py-0.5 text-[1.8rem] font-bold leading-none text-white outline-none focus:border-white/40"
+                              disabled={isBalanceSaving}
+                              inputMode="numeric"
+                              max={String(MAX_FINANCE_AMOUNT)}
+                              min="0"
+                              onBlur={commitBalanceEdit}
+                              onChange={(event) => {
+                                const rawValue = event.target.value.replace(/\D/g, "");
+                                if (rawValue) {
+                                  setBalanceDraft(formatWithSpaces(parseInt(rawValue, 10)));
+                                } else {
+                                  setBalanceDraft("");
+                                }
+                              }}
+                              onKeyDown={(event) => {
+                                if (event.key === "Enter") {
+                                  event.preventDefault();
+                                  event.currentTarget.blur();
+                                }
+                                if (event.key === "Escape") {
+                                  event.preventDefault();
+                                  cancelBalanceEdit();
+                                }
+                              }}
+                              type="text"
+                              value={balanceDraft}
+                            />
+                          ) : (
+                            <button
+                              className="m-0 block text-[1.95rem] font-bold tracking-tight leading-none text-white outline-none cursor-text truncate text-left w-full"
+                              disabled={!onBalanceChange || isBalanceSaving}
+                              onClick={(e) => {
+                                e.stopPropagation();
+                                startBalanceEdit();
+                              }}
+                              type="button"
+                            >
+                              {formatMoney(animatedBalance)}
+                            </button>
+                          )
+                        ) : activeAccount ? (
+                          <div className="text-[1.95rem] font-bold tracking-tight leading-none text-white truncate">
+                            {formatMoney(accountValue(activeAccount).value, accountValue(activeAccount).currency)}
+                          </div>
+                        ) : null}
+
+                        <span className="text-[10px] text-white/40 font-medium block mt-1">
+                          {page === 0 ? t("balance.totalBalance", { defaultValue: "Total Balance" }) : `Account ** ${activeAccount?.id.slice(-4)}`}
                         </span>
                       </div>
-                    );
-                  })}
-                </div>
+
+                      <div className="flex flex-col items-end shrink-0">
+                        {getCardLogo(page, activeAccount)}
+                        <span className="text-[10px] text-white/40 font-mono tracking-wider mt-1 block">
+                          {page === 0 ? "**** 0000" : `**** ${activeAccount?.id.slice(-4)}`}
+                        </span>
+                      </div>
+                    </div>
+                  </>
+                )}
               </div>
-            )}
+            </motion.div>
+          </AnimatePresence>
+        </div>
+
+        {/* Carousel indicators */}
+        {pageCount > 1 && (
+          <div className="flex items-center justify-center gap-1.5">
+            {Array.from({ length: pageCount }).map((_, index) => (
+              <button
+                key={index}
+                type="button"
+                aria-label={`Page ${index + 1}`}
+                onClick={() => goToPage(index)}
+                className={`h-1.5 rounded-full transition-all ${index === page
+                  ? "w-5 bg-[var(--foreground)]"
+                  : "w-1.5 bg-[color-mix(in_srgb,var(--foreground)_30%,transparent)]"
+                  }`}
+              />
+            ))}
           </div>
-        </CardContent>
-      </Card>
+        )}
+
+        {/* Secondary metrics (Spendable now & monthly budget) */}
+        <div className="grid grid-cols-2 gap-2">
+          <Card variant="default">
+            <CardContent className="!p-4">
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] truncate">{t("balance.spendableNow")}</p>
+              <p className="m-0 mt-2 text-[1.5rem] font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)]">{formatMoney(spendableNow)}</p>
+            </CardContent>
+          </Card>
+          <Card variant="default">
+            <CardContent className="!p-4">
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] truncate">{t("balance.monthlyBudget")}</p>
+              <p className="m-0 mt-2 text-[1.5rem] font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)]">{formatMoney(monthlyExp)}</p>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
 
       <ConfirmActionModal
         cancelLabel={t("common.cancel")}

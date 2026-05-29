@@ -16,12 +16,21 @@
     "amount": "금액",
     "category": "카테고리",
     "note": "메모",
-    "confirm": "확인"
+    "confirm": "확인",
+    "save": "저장",
+    "delete": "삭제",
+    "create": "생성",
+    "back": "뒤로"
   },
   "shell": {
     "greeting": "안녕하세요, {{name}}",
     "welcomeBack": "다시 오신 것을 환영합니다",
-    "notifications": "알림"
+    "notifications": "알림",
+    "nav": {
+      "dashboard": "홈",
+      "report": "리포트",
+      "settings": "설정"
+    }
   },
   "dashboard": {
     "loading": "재정 상태를 불러오는 중...",
@@ -33,7 +42,8 @@
       "expense": "지출",
       "report": "리포트",
       "setting": "설정"
-    }
+    },
+    "openInTelegram": "Telegram initData를 전달할 수 있도록 이 미니 앱을 Telegram 안에서 열어 주세요."
   },
   "balance": {
     "caption": "내 잔액",
@@ -44,7 +54,9 @@
     "changeTitle": "잔액 변경",
     "changeQuestion": "잔액을 변경하시겠습니까?",
     "changeDescription": "현재: {{current}}. 새 잔액: {{next}}.",
-    "changeConfirm": "계속"
+    "changeConfirm": "계속",
+    "walletLabel": "지갑",
+    "totalBalance": "총 잔액"
   },
   "dailyLimit": {
     "caption": "남은 사용 가능 금액",
@@ -78,7 +90,8 @@
     "depositQuestion": "잔액에서 저축으로 얼마를 옮길까요?",
     "withdrawHelper": "저축에서 잔액으로 최대 {{amount}}까지 되돌릴 수 있습니다.",
     "withdrawQuestion": "저축에서 잔액으로 얼마를 되돌릴까요?",
-    "transferPlaceholder": "이체 금액 입력"
+    "transferPlaceholder": "이체 금액 입력",
+    "savingsPart": "저축분"
   },
   "amountInput": {
     "caption": "새 거래",
@@ -163,23 +176,23 @@
     "currencyCny": "중국 위안 (CNY)",
     "exchangeRates": "환율",
     "refresh": "새로고침",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "카테고리",
+    "categoriesDescription": "카테고리 이름을 변경하고 아이콘을 선택하세요.",
+    "editCategory": "카테고리 편집",
+    "categoryEmoji": "아이콘 (이모지)",
+    "categoryName": "이름",
+    "categoryResetTip": "기본값으로 되돌리려면 비워 두세요.",
+    "categorySaved": "카테고리가 저장되었습니다",
+    "save": "저장",
     "dayOfMonth": "월의 일",
     "autoApply": "자동 적용",
-    "addCategory": "",
+    "addCategory": "카테고리 추가",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "삭제",
+    "deleteCategoryTitle": "카테고리 삭제",
+    "deleteCategoryQuestion": "이 카테고리를 삭제할까요?",
+    "deleteCategoryDescription": "이 카테고리의 과거 지출 데이터는 유지됩니다.",
+    "categoryNamePlaceholder": "예: 헬스장, 반려동물, 자동차...",
     "notifications": "알림",
     "notificationsOn": "켜짐",
     "notificationsOff": "꺼짐",
@@ -232,8 +245,8 @@
     "health": "건강",
     "education": "교육",
     "other": "기타",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "메모 (선택사항)",
+    "confirm": "지출 추가"
   },
   "expenseEditor": {
     "title": "지출 수정",
@@ -261,7 +274,8 @@
     "helperText": "이 카테고리에 한도를 두지 않으려면 비워 두세요.",
     "save": "한도 저장",
     "dayOfMonth": "월의 일",
-    "autoApply": "자동 적용"
+    "autoApply": "자동 적용",
+    "warningTitle": "하나 이상의 카테고리가 한도를 초과했습니다"
   },
   "recurring": {
     "caption": "템플릿",
@@ -293,7 +307,8 @@
     "income": "수입",
     "expense": "지출",
     "transfer_to_savings": "잔액 → 저축",
-    "transfer_from_savings": "저축 → 잔액"
+    "transfer_from_savings": "저축 → 잔액",
+    "transfer_between_accounts": "계좌 간"
   },
   "history": {
     "caption": "모든 거래",
@@ -354,12 +369,14 @@
       "insufficientBalance": "잔액 부족",
       "insufficientSavings": "저축 부족"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "카테고리가 추가되었습니다",
+    "categoryDeleted": "카테고리가 삭제되었습니다",
     "accountCreated": "계좌가 성공적으로 생성되었습니다",
     "accountUpdated": "계좌가 성공적으로 수정되었습니다",
     "accountDeleted": "계좌가 성공적으로 삭제되었습니다",
-    "transferSuccess": "이체가 성공적으로 완료되었습니다"
+    "transferSuccess": "이체가 성공적으로 완료되었습니다",
+    "limitsSaved": "한도가 저장되었습니다",
+    "notificationsSaved": "알림이 저장되었습니다"
   },
   "analytics": {
     "title": "지출 분석",
@@ -535,7 +552,8 @@
     "atTime": "시간",
     "offHint": "알림은 설정 → 알림에서 다시 켤 수 있어요.",
     "save": "저장하고 계속",
-    "saving": "저장 중…"
+    "saving": "저장 중…",
+    "daysShort": "{{count}}일마다"
   },
   "security": {
     "title": "보안",
@@ -574,14 +592,17 @@
     "done": "파일이 준비됐어요",
     "empty": "내보낼 거래가 없어요",
     "summarySheet": "요약",
-    "transactionsSheet": "거래"
+    "transactionsSheet": "거래",
+    "telegramSent": "리포트가 Telegram 채팅으로 전송되었습니다"
   },
   "trend": {
     "title": "일별 추이",
     "description": "선택한 달의 일별 지출과 수입.",
     "expense": "지출",
     "income": "수입",
-    "empty": "이번 달 데이터가 아직 없어요."
+    "empty": "이번 달 데이터가 아직 없어요.",
+    "less": "적음",
+    "more": "많음"
   },
   "accounts": {
     "title": "계좌",
@@ -606,6 +627,13 @@
     "transferAmount": "송금 금액",
     "transferToAmount": "수취 금액 (선택사항)",
     "transferErrorSame": "동일한 계좌로 이체할 수 없습니다",
-    "executeTransfer": "이체 실행"
+    "executeTransfer": "이체 실행",
+    "swipeHint": "잔액을 스와이프하여 계좌를 전환하세요",
+    "manageHoldings": "암호화폐 보유",
+    "coin": "코인",
+    "coinAmount": "수량",
+    "saveHolding": "코인 저장",
+    "cryptoCreateHint": "먼저 지갑을 만든 후 보유 편집기에서 코인(BTC, TON, USDT, NOTCOIN)을 추가하세요.",
+    "transferAutoPlaceholder": "자동"
   }
 }

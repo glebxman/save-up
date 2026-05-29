@@ -48,6 +48,14 @@ export function AmountInput({
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [displayValue, setDisplayValue] = useState(formatGroupedNumber(value));
 
+  const activeAccount = accounts.find((acc) => acc.id === activeAccountId);
+  const isCryptoAccount = activeAccount?.type === "crypto";
+  const fiatCurrencies: CurrencyCode[] = ["USD", "EUR", "RUB", "UZS", "KZT", "TRY", "GBP", "CNY"];
+  const cryptoCurrencies: CurrencyCode[] = ["TON", "BTC", "USDT", "NOTCOIN", "ETH"];
+  const availableCurrencies = isCryptoAccount
+    ? [...cryptoCurrencies, "USD" as CurrencyCode]
+    : fiatCurrencies;
+
   const rate = getConversionRate(currency as CurrencyCode, baseCurrency);
   const convertedValue = Number(value) * rate;
   const isDifferentCurrency = currency !== baseCurrency;
@@ -162,7 +170,7 @@ export function AmountInput({
                 </ModalHeader>
                 <ModalBody>
                   <div className="grid grid-cols-2 gap-2">
-                    {(["USD", "EUR", "RUB", "UZS", "KZT", "TRY", "GBP", "CNY"] as CurrencyCode[]).map((curr) => (
+                    {availableCurrencies.map((curr) => (
                       <Button
                         key={curr}
                         variant={currency === curr ? "primary" : "secondary"}

@@ -13,6 +13,7 @@ export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   ETH: "ETH",
   TON: "TON",
   USDT: "USDT",
+  NOTCOIN: "NOT",
 };
 
 export const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
@@ -28,6 +29,7 @@ export const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
   ETH: "en-US",
   TON: "en-US",
   USDT: "en-US",
+  NOTCOIN: "en-US",
 };
 
 export const SUPPORTED_CURRENCIES: CurrencyCode[] = [

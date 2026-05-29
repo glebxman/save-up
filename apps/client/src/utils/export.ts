@@ -24,7 +24,7 @@ export async function exportTransactionsToExcel({
   customCategories = [],
   customizations = {},
   t,
-}: ExportOptions): Promise<void> {
+}: ExportOptions): Promise<{ base64Data: string; filename: string }> {
   const XLSX = await import("xlsx");
 
   const rows = transactions
@@ -96,5 +96,9 @@ export async function exportTransactionsToExcel({
     t("export.transactionsSheet", { defaultValue: "Transactions" }),
   );
 
-  XLSX.writeFile(workbook, `save-up-${monthKey}.xlsx`);
+  const base64Data = XLSX.write(workbook, { bookType: "xlsx", type: "base64" });
+  return {
+    base64Data,
+    filename: `save-up-${monthKey}.xlsx`,
+  };
 }

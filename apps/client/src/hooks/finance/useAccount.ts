@@ -86,12 +86,22 @@ export function useAccountMutations() {
   });
 
   const createAccountMutation = useMutation({
-    mutationFn: ({ name, type, currency, initialBalance }: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number }) =>
-      api.createAccount(initData, name, type, currency, initialBalance),
+    mutationFn: ({ name, type, currency, initialBalance, holdings }: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number; holdings?: import("@finance-twa/shared-types").CryptoHolding[] }) =>
+      api.createAccount(initData, name, type, currency, initialBalance, holdings),
     onSuccess: (status) => {
       syncStatus(status);
       invalidateRelated();
       notifySuccess(t("feedback.accountCreated", { defaultValue: "Account created successfully" }));
+    },
+    onError: (error) => notifyError(error),
+  });
+
+  const setCryptoHoldingMutation = useMutation({
+    mutationFn: ({ accountId, symbol, amount }: { accountId: string; symbol: import("@finance-twa/shared-types").CryptoCode; amount: number }) =>
+      api.setCryptoHolding(initData, accountId, symbol, amount),
+    onSuccess: (status) => {
+      syncStatus(status);
+      invalidateRelated();
     },
     onError: (error) => notifyError(error),
   });
@@ -139,6 +149,7 @@ export function useAccountMutations() {
     createAccountMutation,
     updateAccountMutation,
     deleteAccountMutation,
+    setCryptoHoldingMutation,
     transferBetweenAccountsMutation,
   };
 }

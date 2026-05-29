@@ -16,12 +16,21 @@
     "amount": "Betrag",
     "category": "Kategorie",
     "note": "Notiz",
-    "confirm": "Bestätigen"
+    "confirm": "Bestätigen",
+    "save": "Speichern",
+    "delete": "Löschen",
+    "create": "Erstellen",
+    "back": "Zurück"
   },
   "shell": {
     "greeting": "Hallo, {{name}}",
     "welcomeBack": "Willkommen zurück",
-    "notifications": "Benachrichtigungen"
+    "notifications": "Benachrichtigungen",
+    "nav": {
+      "dashboard": "Start",
+      "report": "Bericht",
+      "settings": "Einstellungen"
+    }
   },
   "dashboard": {
     "loading": "Dein Finanzstatus wird geladen...",
@@ -33,7 +42,8 @@
       "expense": "Ausgabe",
       "report": "Bericht",
       "setting": "Einstellung"
-    }
+    },
+    "openInTelegram": "Öffne diese Mini-App in Telegram, damit sie die Telegram-initData übergeben kann."
   },
   "balance": {
     "caption": "Mein Kontostand",
@@ -44,7 +54,9 @@
     "changeTitle": "Kontostand ändern",
     "changeQuestion": "Möchten Sie den Kontostand wirklich ändern?",
     "changeDescription": "Aktuell: {{current}}. Neuer Kontostand: {{next}}.",
-    "changeConfirm": "Weiter"
+    "changeConfirm": "Weiter",
+    "walletLabel": "Wallet",
+    "totalBalance": "Gesamtsaldo"
   },
   "dailyLimit": {
     "caption": "Noch ausgebbar",
@@ -78,7 +90,8 @@
     "depositQuestion": "Wie viel soll vom Kontostand in Ersparnisse verschoben werden?",
     "withdrawHelper": "Du kannst bis zu {{amount}} aus Ersparnissen zurück zum Kontostand holen.",
     "withdrawQuestion": "Wie viel soll aus Ersparnissen zurück zum Kontostand?",
-    "transferPlaceholder": "Überweisungsbetrag eingeben"
+    "transferPlaceholder": "Überweisungsbetrag eingeben",
+    "savingsPart": "Sparanteil"
   },
   "amountInput": {
     "caption": "Neue Transaktion",
@@ -163,23 +176,23 @@
     "currencyCny": "Chinesischer Yuan (CNY)",
     "exchangeRates": "Wechselkurse",
     "refresh": "Aktualisieren",
-    "categories": "",
-    "categoriesDescription": "",
-    "editCategory": "",
-    "categoryEmoji": "",
-    "categoryName": "",
-    "categoryResetTip": "",
-    "categorySaved": "",
-    "save": "",
+    "categories": "Kategorien",
+    "categoriesDescription": "Kategorien umbenennen und Symbol wählen.",
+    "editCategory": "Kategorie bearbeiten",
+    "categoryEmoji": "Symbol (Emoji)",
+    "categoryName": "Name",
+    "categoryResetTip": "Leer lassen, um den Standard wiederherzustellen.",
+    "categorySaved": "Kategorie gespeichert",
+    "save": "Speichern",
     "dayOfMonth": "Tag des Monats",
     "autoApply": "Automatisch anwenden",
-    "addCategory": "",
+    "addCategory": "Kategorie hinzufügen",
     "customCategories": "",
-    "deleteCategory": "",
-    "deleteCategoryTitle": "",
-    "deleteCategoryQuestion": "",
-    "deleteCategoryDescription": "",
-    "categoryNamePlaceholder": "",
+    "deleteCategory": "Löschen",
+    "deleteCategoryTitle": "Kategorie löschen",
+    "deleteCategoryQuestion": "Diese Kategorie löschen?",
+    "deleteCategoryDescription": "Vergangene Ausgaben in dieser Kategorie behalten ihre Daten.",
+    "categoryNamePlaceholder": "z. B. Fitness, Haustiere, Auto...",
     "notifications": "Erinnerungen",
     "notificationsOn": "An",
     "notificationsOff": "Aus",
@@ -232,8 +245,8 @@
     "health": "Gesundheit",
     "education": "Bildung",
     "other": "Sonstiges",
-    "notePlaceholder": "",
-    "confirm": ""
+    "notePlaceholder": "Kommentar (optional)",
+    "confirm": "Ausgabe hinzufügen"
   },
   "expenseEditor": {
     "title": "Ausgabe korrigieren",
@@ -261,7 +274,8 @@
     "helperText": "Leer lassen, wenn du für diese Kategorie kein Limit möchtest.",
     "save": "Limits speichern",
     "dayOfMonth": "Tag des Monats",
-    "autoApply": "Automatisch anwenden"
+    "autoApply": "Automatisch anwenden",
+    "warningTitle": "Eine oder mehrere Kategorien haben ihr Limit überschritten"
   },
   "recurring": {
     "caption": "Vorlagen",
@@ -293,7 +307,8 @@
     "income": "Einnahme",
     "expense": "Ausgabe",
     "transfer_to_savings": "Kontostand → Ersparnisse",
-    "transfer_from_savings": "Ersparnisse → Kontostand"
+    "transfer_from_savings": "Ersparnisse → Kontostand",
+    "transfer_between_accounts": "Zwischen Konten"
   },
   "history": {
     "caption": "Alle Transaktionen",
@@ -354,12 +369,14 @@
       "insufficientBalance": "Nicht genug Geld auf dem Konto",
       "insufficientSavings": "Nicht genug Geld in den Ersparnissen"
     },
-    "categoryAdded": "",
-    "categoryDeleted": "",
+    "categoryAdded": "Kategorie hinzugefügt",
+    "categoryDeleted": "Kategorie gelöscht",
     "accountCreated": "Konto erfolgreich erstellt",
     "accountUpdated": "Konto erfolgreich aktualisiert",
     "accountDeleted": "Konto erfolgreich gelöscht",
-    "transferSuccess": "Überweisung erfolgreich abgeschlossen"
+    "transferSuccess": "Überweisung erfolgreich abgeschlossen",
+    "limitsSaved": "Limits gespeichert",
+    "notificationsSaved": "Benachrichtigungen gespeichert"
   },
   "analytics": {
     "title": "Ausgabenaufschlüsselung",
@@ -535,7 +552,8 @@
     "atTime": "Um",
     "offHint": "Erinnerungen kannst du in Einstellungen → Erinnerungen wieder anschalten.",
     "save": "Speichern und weiter",
-    "saving": "Speichern…"
+    "saving": "Speichern…",
+    "daysShort": "Alle {{count}} Tage"
   },
   "security": {
     "title": "Sicherheit",
@@ -574,14 +592,17 @@
     "done": "Datei fertig",
     "empty": "Nichts zu exportieren",
     "summarySheet": "Übersicht",
-    "transactionsSheet": "Buchungen"
+    "transactionsSheet": "Buchungen",
+    "telegramSent": "Bericht an deinen Telegram-Chat gesendet"
   },
   "trend": {
     "title": "Tagesverlauf",
     "description": "Ausgaben und Einnahmen pro Tag im gewählten Monat.",
     "expense": "Ausgaben",
     "income": "Einnahmen",
-    "empty": "Für diesen Monat noch keine Daten."
+    "empty": "Für diesen Monat noch keine Daten.",
+    "less": "Weniger",
+    "more": "Mehr"
   },
   "accounts": {
     "title": "Konten",
@@ -606,6 +627,13 @@
     "transferAmount": "Betrag senden",
     "transferToAmount": "Betrag empfangen (optional)",
     "transferErrorSame": "Überweisung auf dasselbe Konto nicht möglich",
-    "executeTransfer": "Überweisen"
+    "executeTransfer": "Überweisen",
+    "swipeHint": "Wische über den Saldo, um das Konto zu wechseln",
+    "manageHoldings": "Krypto-Bestände",
+    "coin": "Münze",
+    "coinAmount": "Betrag",
+    "saveHolding": "Münze speichern",
+    "cryptoCreateHint": "Erstelle zuerst die Wallet und füge dann Münzen (BTC, TON, USDT, NOTCOIN) im Bestands-Editor hinzu.",
+    "transferAutoPlaceholder": "Automatisch"
   }
 }

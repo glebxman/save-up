@@ -1,9 +1,25 @@
-import type { CustomCategory } from "@finance-twa/shared-types";
+import type { CryptoCode, CryptoHolding, CustomCategory } from "@finance-twa/shared-types";
+import { CRYPTO_CODES } from "@finance-twa/shared-types";
 
 import { ensureUser, saveUser } from "./_db";
 import { parseTelegramIdFromInitData, parseTelegramUserFromInitData, roundAmount, createId } from "./_helpers";
 import { buildStatus } from "./_status";
 import type { MockHandler } from "./_types";
+
+const CRYPTO_CODE_SET = new Set<CryptoCode>(CRYPTO_CODES);
+
+/** Keep only valid crypto codes with positive amounts, one entry per coin. */
+function sanitizeHoldings(holdings?: CryptoHolding[]): CryptoHolding[] {
+  if (!Array.isArray(holdings)) return [];
+  const bySymbol = new Map<CryptoCode, number>();
+  for (const holding of holdings) {
+    if (!holding || !CRYPTO_CODE_SET.has(holding.symbol)) continue;
+    const amount = Number(holding.amount);
+    if (!Number.isFinite(amount) || amount <= 0) continue;
+    bySymbol.set(holding.symbol, roundAmount((bySymbol.get(holding.symbol) ?? 0) + amount));
+  }
+  return [...bySymbol.entries()].map(([symbol, amount]) => ({ symbol, amount }));
+}
 
 export const userInit: MockHandler<"user.init"> = async (params) => {
   const telegramId = parseTelegramIdFromInitData(params.initData);
@@ -96,17 +112,41 @@ export const userSetNotificationSettings: MockHandler<"user.setNotificationSetti
 export const userCreateAccount: MockHandler<"user.createAccount"> = async (params) => {
   const telegramId = parseTelegramIdFromInitData(params.initData);
   const user = ensureUser(telegramId);
+  const isCrypto = params.type === "crypto";
+  const holdings = isCrypto ? sanitizeHoldings(params.holdings) : undefined;
   const newAccount = {
     id: createId(),
     userId: user.id,
     name: params.name,
     type: params.type,
-    currency: params.currency,
-    balance: params.initialBalance,
+    currency: isCrypto ? ("USD" as const) : params.currency,
+    // Crypto balance is derived from holdings in buildStatus; store 0 here.
+    balance: isCrypto ? 0 : params.initialBalance,
+    ...(isCrypto ? { holdings } : {}),
     createdAt: new Date().toISOString(),
   };
   user.accounts = [...(user.accounts ?? []), newAccount];
-  user.balance = roundAmount(user.balance + params.initialBalance);
+  // Only cash/card initial balances feed the aggregate ledger balance.
+  if (!isCrypto) {
+    user.balance = roundAmount(user.balance + params.initialBalance);
+  }
+  saveUser(user);
+  return buildStatus(user);
+};
+
+export const userSetCryptoHolding: MockHandler<"user.setCryptoHolding"> = async (params) => {
+  const telegramId = parseTelegramIdFromInitData(params.initData);
+  const user = ensureUser(telegramId);
+  const amount = Number.isFinite(params.amount) && params.amount > 0 ? roundAmount(params.amount) : 0;
+
+  user.accounts = (user.accounts ?? []).map((acc) => {
+    if (acc.id !== params.accountId || acc.type !== "crypto") return acc;
+    const current = acc.holdings ?? [];
+    const without = current.filter((h) => h.symbol !== params.symbol);
+    const next = amount > 0 ? [...without, { symbol: params.symbol, amount }] : without;
+    return { ...acc, holdings: next };
+  });
+
   saveUser(user);
   return buildStatus(user);
 };
