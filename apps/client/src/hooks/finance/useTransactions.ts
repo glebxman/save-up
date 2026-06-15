@@ -195,6 +195,3 @@ export function useTransactionMutations() {
     restoreTransactionMutation,
   };
 }
-
-// kept for future: not used directly now, but exported pattern matches transactions
-export { useOptimisticContext };

@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
 
 import type { CurrencyCode } from "@finance-twa/shared-types";
 import {
@@ -13,13 +13,6 @@ export { getStoredCurrency, SUPPORTED_CURRENCIES };
 
 export function useCurrency() {
   const [currency, setCurrencyState] = useState<CurrencyCode>(getStoredCurrency());
-
-  useEffect(() => {
-    const stored = getStoredCurrency();
-    if (stored !== currency) {
-      setCurrencyState(stored);
-    }
-  }, []);
 
   const setCurrency = (newCurrency: CurrencyCode) => {
     setStoredCurrency(newCurrency);

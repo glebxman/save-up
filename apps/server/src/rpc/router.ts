@@ -30,10 +30,29 @@ import {
   transferBetweenAccountsHandler,
 } from "./handlers/finance.js";
 
-
-import { addCustomCategoryHandler, completeOnboardingHandler, createAccountHandler, deleteAccountHandler, deleteCustomCategoryHandler, getUserStatusHandler, initUserHandler, setCategoryCustomizationHandler, setCategoryLimitsHandler, setLanguageHandler, setNotificationSettingsHandler, setPinHandler, verifyPinHandler, removePinHandler, updateAccountHandler, setCryptoHoldingHandler, sendExportToTelegramHandler } from "./handlers/user.js";
+import {
+  addCustomCategoryHandler,
+  completeOnboardingHandler,
+  createAccountHandler,
+  deleteAccountHandler,
+  deleteCustomCategoryHandler,
+  getUserStatusHandler,
+  initUserHandler,
+  setCategoryCustomizationHandler,
+  setCategoryLimitsHandler,
+  setCryptoHoldingHandler,
+  setLanguageHandler,
+  setNotificationSettingsHandler,
+  setPinHandler,
+  removePinHandler,
+  sendExportToTelegramHandler,
+  updateAccountHandler,
+  verifyPinHandler,
+} from "./handlers/user.js";
 import { AppError } from "../utils/errors.js";
-import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";type HandlerMap = {
+import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
+
+type HandlerMap = {
   [Method in RpcMethod]: RpcHandler<Method>;
 };
 

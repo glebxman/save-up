@@ -5,7 +5,6 @@
  * Import from `@/components/ui` for the full set, or from the specific file
  * (e.g. `@/components/ui/Button`) when you only need one.
  */
-import type { ReactNode } from "react";
 
 export { cn } from "./cn";
 export { Button } from "./Button";
@@ -35,5 +34,3 @@ export {
 } from "./Modal";
 export { Avatar } from "./Avatar";
 export { Skeleton } from "./Skeleton";
-
-export type { ReactNode };

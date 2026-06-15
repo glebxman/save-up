@@ -60,8 +60,10 @@ export function formatGroupedNumber(value: string): string {
   const digitsOnly = value.replace(/\D/g, "");
   if (!digitsOnly) return "";
 
+  const language = (i18n.resolvedLanguage ?? "en").slice(0, 2) as keyof typeof localeMap;
+  const locale = localeMap[language] ?? localeMap.en;
   const number = parseInt(digitsOnly, 10);
-  return number.toLocaleString("ru-RU");
+  return number.toLocaleString(locale);
 }
 
 export function parseFormattedInput(value: string): number {

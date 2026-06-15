@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import * as api from "@/api/methods";
+import type { CryptoCode, CryptoHolding } from "@finance-twa/shared-types";
 import type { Status } from "@/types/finance";
 
 import { computeDailyLimit, useFinanceContext } from "./_internal";
@@ -86,7 +87,7 @@ export function useAccountMutations() {
   });
 
   const createAccountMutation = useMutation({
-    mutationFn: ({ name, type, currency, initialBalance, holdings }: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number; holdings?: import("@finance-twa/shared-types").CryptoHolding[] }) =>
+    mutationFn: ({ name, type, currency, initialBalance, holdings }: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number; holdings?: CryptoHolding[] }) =>
       api.createAccount(initData, name, type, currency, initialBalance, holdings),
     onSuccess: (status) => {
       syncStatus(status);
@@ -97,7 +98,7 @@ export function useAccountMutations() {
   });
 
   const setCryptoHoldingMutation = useMutation({
-    mutationFn: ({ accountId, symbol, amount }: { accountId: string; symbol: import("@finance-twa/shared-types").CryptoCode; amount: number }) =>
+    mutationFn: ({ accountId, symbol, amount }: { accountId: string; symbol: CryptoCode; amount: number }) =>
       api.setCryptoHolding(initData, accountId, symbol, amount),
     onSuccess: (status) => {
       syncStatus(status);

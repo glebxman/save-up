@@ -1,4 +1,8 @@
+import type { RpcMethod, RpcMethodMap } from "@finance-twa/shared-types";
+import type { ZodTypeAny, z } from "zod";
+
 import { AppError, ErrorCode } from "../../utils/errors.js";
+import type { RpcContext, RpcHandler } from "../types.js";
 
 export async function getTelegramId(
   initData: string,
@@ -13,10 +17,6 @@ export async function getTelegramId(
 
   return telegramId;
 }
-
-import type { RpcMethod, RpcMethodMap } from "@finance-twa/shared-types";
-import type { ZodTypeAny, z } from "zod";
-import type { RpcContext, RpcHandler } from "../types.js";
 
 /**
  * Builds a typed RPC handler from a zod schema and a service function.
@@ -45,3 +45,4 @@ export function defineAuthenticatedRpc<
     return service({ telegramId, ...parsed }, context);
   };
 }
+

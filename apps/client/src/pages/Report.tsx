@@ -211,6 +211,60 @@ export function Report() {
     topBreakdownItems,
   ]);
 
+  async function handleExport(): Promise<void> {
+    if (!initData) return;
+    setIsExporting(true);
+    try {
+      const items = await api.getTransactions(initData, {
+        monthKey: selectedMonthKey,
+        includeDeleted: false,
+        limit: 200,
+      });
+      if (items.length === 0) {
+        pushToast({ tone: "info", message: t("export.empty", { defaultValue: "No transactions to export" }) });
+        return;
+      }
+      const { base64Data, filename } = await exportTransactionsToExcel({
+        monthKey: selectedMonthKey,
+        transactions: items,
+        customCategories,
+        customizations,
+        t,
+      });
+
+      // Local browser download
+      try {
+        const byteCharacters = atob(base64Data);
+        const byteNumbers = new Array(byteCharacters.length);
+        for (let i = 0; i < byteCharacters.length; i++) {
+          byteNumbers[i] = byteCharacters.charCodeAt(i);
+        }
+        const byteArray = new Uint8Array(byteNumbers);
+        const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
+        const blobUrl = URL.createObjectURL(blob);
+
+        const link = document.createElement("a");
+        link.href = blobUrl;
+        link.download = filename;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(blobUrl);
+      } catch (err) {
+        console.error("Local download failed", err);
+      }
+
+      // Send to Telegram chat
+      await api.sendExportToTelegram(initData, base64Data, filename);
+      pushToast({ tone: "success", message: t("export.telegramSent", { defaultValue: "Report sent to your Telegram chat" }) });
+    } catch (error) {
+      console.error(error);
+      pushToast({ tone: "error", message: t("feedback.genericError") });
+    } finally {
+      setIsExporting(false);
+    }
+  }
+
   if (reportQuery.isPending && !report) {
     return (
       <div className="space-y-4">
@@ -407,59 +461,7 @@ export function Report() {
               <Button
                 fullWidth
                 isDisabled={isExporting || !initData || activeReport.transactionCount === 0}
-                onPress={async () => {
-                  if (!initData) return;
-                  setIsExporting(true);
-                  try {
-                    const items = await api.getTransactions(initData, {
-                      monthKey: selectedMonthKey,
-                      includeDeleted: false,
-                      limit: 200,
-                    });
-                    if (items.length === 0) {
-                      pushToast({ tone: "info", message: t("export.empty", { defaultValue: "No transactions to export" }) });
-                      return;
-                    }
-                    const { base64Data, filename } = await exportTransactionsToExcel({
-                      monthKey: selectedMonthKey,
-                      transactions: items,
-                      customCategories,
-                      customizations,
-                      t,
-                    });
-
-                    // Local browser download
-                    try {
-                      const byteCharacters = atob(base64Data);
-                      const byteNumbers = new Array(byteCharacters.length);
-                      for (let i = 0; i < byteCharacters.length; i++) {
-                        byteNumbers[i] = byteCharacters.charCodeAt(i);
-                      }
-                      const byteArray = new Uint8Array(byteNumbers);
-                      const blob = new Blob([byteArray], { type: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" });
-                      const blobUrl = URL.createObjectURL(blob);
-
-                      const link = document.createElement("a");
-                      link.href = blobUrl;
-                      link.download = filename;
-                      document.body.appendChild(link);
-                      link.click();
-                      document.body.removeChild(link);
-                      URL.revokeObjectURL(blobUrl);
-                    } catch (err) {
-                      console.error("Local download failed", err);
-                    }
-
-                    // Send to Telegram chat
-                    await api.sendExportToTelegram(initData, base64Data, filename);
-                    pushToast({ tone: "success", message: t("export.telegramSent", { defaultValue: "Report sent to your Telegram chat" }) });
-                  } catch (error) {
-                    console.error(error);
-                    pushToast({ tone: "error", message: t("feedback.genericError") });
-                  } finally {
-                    setIsExporting(false);
-                  }
-                }}
+                onPress={() => void handleExport()}
                 variant="secondary"
               >
                 {isExporting

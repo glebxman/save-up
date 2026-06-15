@@ -152,7 +152,6 @@ export interface Status {
   ratesUpdatedAt: string;
 }
 
-
 export interface AdminUserListItem {
   id: string;
   displayName: string;

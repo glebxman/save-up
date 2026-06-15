@@ -119,7 +119,6 @@ export const recurringPayloadSchema = z.object({
   autoApply: z.boolean().optional(),
 });
 
-
 export const financeUpdateBalanceSchema = z.object({
   initData: initDataSchema,
   balance: z.number(),

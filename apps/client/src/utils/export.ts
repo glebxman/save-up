@@ -36,9 +36,9 @@ class WorksheetBuilder {
   rows: import("xlsx").RowInfo[] = [];
   cols: Record<number, number> = {};
 
-  setCell(r: number, c: number, value: any, type: "s" | "n" | "b" = "s", format?: string, formula?: string) {
+  setCell(r: number, c: number, value: string | number | boolean, type: "s" | "n" | "b" = "s", format?: string, formula?: string) {
     const ref = encodeCell(r, c);
-    const cell: any = { t: type, v: value };
+    const cell: { t: string; v: string | number | boolean; z?: string; f?: string } = { t: type, v: value };
     if (format) cell.z = format;
     if (formula) cell.f = formula;
     this.ws[ref] = cell;

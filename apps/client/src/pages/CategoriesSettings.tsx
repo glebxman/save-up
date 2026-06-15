@@ -14,8 +14,7 @@ import { ChevronRightIcon } from "@/components/layout/icons";
 import { Button, Card, CardContent } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import type { ExpenseCategory } from "@/types/finance";
-
-const MAX_CUSTOM_CATEGORIES = 8;
+import { MAX_CUSTOM_CATEGORIES } from "@/types/finance";
 
 export function CategoriesSettings() {
   const { t } = useTranslation();

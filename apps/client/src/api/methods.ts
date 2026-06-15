@@ -1,9 +1,12 @@
+import type { CryptoCode, CryptoHolding, CurrencyCode } from "@finance-twa/shared-types";
 import type {
   AdminUserListItem,
   AdminUsersPage,
   CategoryBreakdown,
+  DailyTrend,
   ExpenseCategory,
   MonthReport,
+  NotificationFrequency,
   RecurringTransactionPayload,
   SavingsTransferDirection,
   Status,
@@ -170,7 +173,6 @@ export function deleteCustomCategory(
   return rpcRequest("user.deleteCustomCategory", { initData, id });
 }
 
-
 export function setCategoryLimits(
   initData: string,
   limits: Record<string, number>,
@@ -178,14 +180,14 @@ export function setCategoryLimits(
   return rpcRequest("user.setCategoryLimits", { initData, limits });
 }
 
-export function getDailyTrend(initData: string, monthKey?: string): Promise<import("@finance-twa/shared-types").DailyTrend> {
+export function getDailyTrend(initData: string, monthKey?: string): Promise<DailyTrend> {
   return rpcRequest("finance.getDailyTrend", { initData, monthKey });
 }
 
 export function setNotificationSettings(
   initData: string,
   enabled: boolean,
-  frequency: import("@finance-twa/shared-types").NotificationFrequency,
+  frequency: NotificationFrequency,
   timezoneOffset: number,
 ): Promise<Status> {
   return rpcRequest("user.setNotificationSettings", {
@@ -202,13 +204,13 @@ export function createAccount(
   type: "cash" | "card" | "crypto",
   currency: string,
   initialBalance: number,
-  holdings?: import("@finance-twa/shared-types").CryptoHolding[],
+  holdings?: CryptoHolding[],
 ): Promise<Status> {
   return rpcRequest("user.createAccount", {
     initData,
     name,
     type,
-    currency: currency as import("@finance-twa/shared-types").CurrencyCode,
+    currency: currency as CurrencyCode,
     initialBalance,
     holdings,
   });
@@ -217,7 +219,7 @@ export function createAccount(
 export function setCryptoHolding(
   initData: string,
   accountId: string,
-  symbol: import("@finance-twa/shared-types").CryptoCode,
+  symbol: CryptoCode,
   amount: number,
 ): Promise<Status> {
   return rpcRequest("user.setCryptoHolding", { initData, accountId, symbol, amount });
