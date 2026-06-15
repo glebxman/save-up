@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { EXPENSE_CATEGORIES, SUPPORTED_LANGUAGES, CRYPTO_CODES, type SupportedLanguage, type ExpenseCategory, type CryptoCode } from "@finance-twa/shared-types";
 
 export const initDataSchema = z.string();
 
@@ -16,7 +17,7 @@ export const userCompleteOnboardingSchema = z.object({
 
 export const userSetLanguageSchema = z.object({
   initData: initDataSchema,
-  language: z.enum(["en", "ru", "uz", "kk", "zh", "ja", "ko", "tr", "es", "fr", "de"]),
+  language: z.enum(SUPPORTED_LANGUAGES as [SupportedLanguage, ...SupportedLanguage[]]),
 });
 
 export const userSendExportToTelegramSchema = z.object({
@@ -59,7 +60,7 @@ export const financeGetRecentExpensesSchema = z.object({
 
 export const transactionFiltersSchema = z.object({
   monthKey: z.string().regex(/^\d{4}-\d{2}$/).optional(),
-  type: z.enum(["income", "expense", "all", "transfer_to_savings", "transfer_from_savings"]).optional(),
+  type: z.enum(["income", "expense", "all", "transfer_to_savings", "transfer_from_savings", "transfer_between_accounts"]).optional(),
   category: z.string().optional(),
   search: z.string().optional(),
   limit: z.number().int().min(1).max(200).optional(),
@@ -74,7 +75,7 @@ export const financeGetTransactionsSchema = z.object({
 
 export const transactionPayloadSchema = z.object({
   transactionId: z.string().min(1),
-  type: z.enum(["income", "expense", "transfer_to_savings", "transfer_from_savings"]),
+  type: z.enum(["income", "expense", "transfer_to_savings", "transfer_from_savings", "transfer_between_accounts"]),
   amount: z.number().positive(),
   category: z.string().nullable().optional(),
   savingsAmt: z.number().min(0).nullable().optional(),
@@ -117,6 +118,7 @@ export const recurringPayloadSchema = z.object({
   note: z.string().max(240).nullable().optional(),
   dayOfMonth: z.number().int().min(1).max(28).nullable().optional(),
   autoApply: z.boolean().optional(),
+  accountId: z.string().uuid().optional(),
 });
 
 export const financeUpdateBalanceSchema = z.object({
@@ -174,7 +176,7 @@ export const financeProcessVoiceSchema = z.object({
 
 export const userSetCategoryCustomizationSchema = z.object({
   initData: initDataSchema,
-  category: z.enum(["food", "taxi", "entertainment", "shopping", "utilities", "health", "education", "other"]),
+  category: z.enum(EXPENSE_CATEGORIES as [ExpenseCategory, ...ExpenseCategory[]]),
   name: z.string().max(30),
   emoji: z.string().max(8),
 });
@@ -243,7 +245,7 @@ export const userCreateAccountSchema = z.object({
   holdings: z
     .array(
       z.object({
-        symbol: z.enum(["BTC", "ETH", "TON", "USDT", "NOTCOIN"]),
+        symbol: z.enum(CRYPTO_CODES as [CryptoCode, ...CryptoCode[]]),
         amount: z.number().positive(),
       }),
     )
@@ -253,7 +255,7 @@ export const userCreateAccountSchema = z.object({
 export const userSetCryptoHoldingSchema = z.object({
   initData: initDataSchema,
   accountId: z.string().uuid(),
-  symbol: z.enum(["BTC", "ETH", "TON", "USDT", "NOTCOIN"]),
+  symbol: z.enum(CRYPTO_CODES as [CryptoCode, ...CryptoCode[]]),
   amount: z.number().nonnegative(),
 });
 
@@ -289,4 +291,27 @@ export const userVerifyPinSchema = z.object({
 export const userRemovePinSchema = z.object({
   initData: initDataSchema,
   pin: z.string().min(4).max(6),
+});
+
+export const financeAddDebtSchema = z.object({
+  initData: initDataSchema,
+  name: z.string().min(1).max(128),
+  amount: z.number().positive(),
+  direction: z.enum(["owed_to_me", "i_owe"]),
+  note: z.string().max(240).optional(),
+  dueDate: z.string().optional(),
+});
+
+export const financeGetDebtsSchema = z.object({
+  initData: initDataSchema,
+});
+
+export const financeSettleDebtSchema = z.object({
+  initData: initDataSchema,
+  debtId: z.string().min(1),
+});
+
+export const financeDeleteDebtSchema = z.object({
+  initData: initDataSchema,
+  debtId: z.string().min(1),
 });

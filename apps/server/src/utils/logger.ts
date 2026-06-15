@@ -11,7 +11,3 @@ export const logger = pino({
     },
   }),
 });
-
-export function childLogger(context: Record<string, unknown>) {
-  return logger.child(context);
-}

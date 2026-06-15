@@ -1,11 +1,8 @@
+import type { DailyLimit } from "@finance-twa/shared-types";
+
 export interface DailyLimitInput {
   balance: number;
   now?: Date;
-}
-
-export interface DailyLimitResult {
-  daysRemaining: number;
-  dailyLimit: number;
 }
 
 export function getMonthKey(date = new Date()): string {
@@ -18,7 +15,7 @@ export function getMonthKey(date = new Date()): string {
 export function calculateDailyLimit({
   balance,
   now = new Date(),
-}: DailyLimitInput): DailyLimitResult {
+}: DailyLimitInput): DailyLimit {
   const year = now.getFullYear();
   const month = now.getMonth();
   const day = now.getDate();

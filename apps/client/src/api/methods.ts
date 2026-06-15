@@ -266,3 +266,26 @@ export function sendExportToTelegram(
 ): Promise<{ ok: boolean }> {
   return rpcRequest("user.sendExportToTelegram", { initData, base64Data, filename });
 }
+
+export function addDebt(
+  initData: string,
+  name: string,
+  amount: number,
+  direction: "owed_to_me" | "i_owe",
+  note?: string,
+  dueDate?: string,
+): Promise<import("@finance-twa/shared-types").Debt> {
+  return rpcRequest("finance.addDebt", { initData, name, amount, direction, note, dueDate });
+}
+
+export function getDebts(initData: string): Promise<import("@finance-twa/shared-types").Debt[]> {
+  return rpcRequest("finance.getDebts", { initData });
+}
+
+export function settleDebt(initData: string, debtId: string): Promise<{ ok: true }> {
+  return rpcRequest("finance.settleDebt", { initData, debtId });
+}
+
+export function deleteDebt(initData: string, debtId: string): Promise<{ ok: true }> {
+  return rpcRequest("finance.deleteDebt", { initData, debtId });
+}

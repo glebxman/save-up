@@ -1,10 +1,12 @@
-import { eq } from "drizzle-orm";
+import { eq, and, lte, isNull } from "drizzle-orm";
 import type { NotificationFrequency } from "@finance-twa/shared-types";
 
 import { db } from "./config/database.js";
-import { users } from "./db/schema/index.js";
+import { users, debts } from "./db/schema/index.js";
 import { logger } from "./utils/logger.js";
-import { getBotMessage } from "./utils/i18n.js";
+import { getBotMessage, formatAmount } from "./utils/i18n.js";
+import { sendTelegramMessage } from "./utils/telegram-api.js";
+import type { SupportedLang } from "./utils/i18n.js";
 
 const log = logger.child({ module: "reminders" });
 
@@ -38,19 +40,6 @@ interface UserRow {
 
 function pickRandomKey(): string {
   return REMINDER_KEYS[Math.floor(Math.random() * REMINDER_KEYS.length)]!;
-}
-
-async function sendTelegramMessage(botToken: string, chatId: number, text: string): Promise<void> {
-  const res = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ chat_id: chatId, text }),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    log.error({ chatId, status: res.status, err }, "Failed to send reminder");
-  }
 }
 
 function pad2(n: number): string {
@@ -125,7 +114,7 @@ function pickDueSlot(user: UserRow, now: Date): string | null {
   return `${dateKey}#${best.time}`;
 }
 
-async function runReminderBatch(botToken: string): Promise<void> {
+async function runReminderBatch(): Promise<void> {
   const now = new Date();
   log.debug("Running reminder batch");
 
@@ -159,14 +148,17 @@ async function runReminderBatch(botToken: string): Promise<void> {
     const text = getBotMessage(key, user.language ?? "en");
 
     try {
-      await sendTelegramMessage(botToken, user.telegramId, text);
+      await sendTelegramMessage(user.telegramId, text);
       await db
         .update(users)
         .set({ lastReminderSlotKey: slot, lastReminderSentAt: new Date() })
         .where(eq(users.telegramId, user.telegramId));
       sent++;
     } catch (err) {
-      log.error({ err, telegramId: user.telegramId }, "Error sending reminder");
+      const msg = err instanceof Error ? err.message : "";
+      if (!msg.includes("Forbidden")) {
+        log.error({ err, telegramId: user.telegramId }, "Error sending reminder");
+      }
     }
 
     await new Promise((r) => setTimeout(r, 100));
@@ -177,12 +169,84 @@ async function runReminderBatch(botToken: string): Promise<void> {
   }
 }
 
-export function startReminderScheduler(botToken: string): void {
+async function checkDebtReminders(): Promise<void> {
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(23, 59, 59, 999);
+
+  log.debug("Checking debt reminders");
+
+  let dueDebts: { id: string; name: string; amount: number; direction: string; userId: string; dueDate: Date | null }[];
+  try {
+    dueDebts = await db
+      .select({
+        id: debts.id,
+        name: debts.name,
+        amount: debts.amount,
+        direction: debts.direction,
+        userId: debts.userId,
+        dueDate: debts.dueDate,
+      })
+      .from(debts)
+      .where(
+        and(
+          eq(debts.settled, false),
+          lte(debts.dueDate, tomorrow),
+        ),
+      );
+  } catch (err) {
+    log.error({ err }, "Failed to fetch due debts");
+    return;
+  }
+
+  let sent = 0;
+
+  for (const debt of dueDebts) {
+    if (!debt.dueDate) continue;
+
+    // Get user info for this debt
+    const [user] = await db
+      .select({ telegramId: users.telegramId, language: users.language })
+      .from(users)
+      .where(eq(users.id, debt.userId))
+      .limit(1);
+
+    if (!user) continue;
+
+    const lang = (user.language ?? "en") as SupportedLang;
+
+    try {
+      const msg = getBotMessage("debt_reminder", lang)
+        .replace("{name}", debt.name)
+        .replace("{amount}", formatAmount(debt.amount, lang))
+        .replace("{date}", new Date(debt.dueDate).toLocaleDateString());
+
+      await sendTelegramMessage(user.telegramId, msg);
+      sent++;
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "";
+      if (!msg.includes("Forbidden")) {
+        log.error({ err, telegramId: user.telegramId }, "Error sending debt reminder");
+      }
+    }
+
+    await new Promise((r) => setTimeout(r, 100));
+  }
+
+  if (sent > 0) {
+    log.info({ sent }, "Debt reminders sent");
+  }
+}
+
+export function startReminderScheduler(_botToken: string): void {
   log.info("Reminder scheduler started (interval: 5m, per-user schedule)");
 
-  runReminderBatch(botToken).catch((err) => log.error({ err }, "Startup reminder batch error"));
+  runReminderBatch().catch((err) => log.error({ err }, "Startup reminder batch error"));
+  checkDebtReminders().catch((err) => log.error({ err }, "Startup debt reminder error"));
 
   setInterval(() => {
-    runReminderBatch(botToken).catch((err) => log.error({ err }, "Scheduled reminder batch error"));
+    runReminderBatch().catch((err) => log.error({ err }, "Scheduled reminder batch error"));
+    checkDebtReminders().catch((err) => log.error({ err }, "Scheduled debt reminder error"));
   }, CHECK_INTERVAL_MS);
 }

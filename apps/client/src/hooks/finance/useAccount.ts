@@ -5,7 +5,7 @@ import * as api from "@/api/methods";
 import type { CryptoCode, CryptoHolding } from "@finance-twa/shared-types";
 import type { Status } from "@/types/finance";
 
-import { computeDailyLimit, useFinanceContext } from "./_internal";
+import { computeDailyLimit, roundAmount, useFinanceContext } from "./_internal";
 
 export function useAccountMutations() {
   const { initData, statusKey, syncStatus, setOptimisticStatus, invalidateRelated, notifySuccess, notifyError } = useFinanceContext();
@@ -28,7 +28,7 @@ export function useAccountMutations() {
       const current = queryClient.getQueryData<Status>(statusKey);
       if (!current) return { previous: null };
 
-      const nextBalance = Number(balance.toFixed(2));
+      const nextBalance = roundAmount(balance);
       setOptimisticStatus({
         ...current,
         user: { ...current.user, balance: nextBalance },

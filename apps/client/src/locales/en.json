@@ -29,6 +29,7 @@
     "nav": {
       "dashboard": "Home",
       "report": "Report",
+      "debts": "Debts",
       "settings": "Settings"
     }
   },
@@ -633,5 +634,28 @@
     "saveHolding": "Save Coin",
     "cryptoCreateHint": "Create the wallet first, then add coins (BTC, TON, USDT, NOTCOIN) from the holdings editor.",
     "transferAutoPlaceholder": "Automatic"
+  },
+  "debts": {
+    "title": "Debts",
+    "empty": "No active debts",
+    "emptyHint": "Add a debt to start tracking who owes you or who you owe.",
+    "owedToMe": "Owed to me",
+    "iOwe": "I owe",
+    "name": "Name",
+    "amount": "Amount",
+    "direction": "Direction",
+    "dueDate": "Due date",
+    "note": "Note (optional)",
+    "addDebt": "Add Debt",
+    "settle": "Settle",
+    "delete": "Delete",
+    "totalOwedToMe": "Total owed to me",
+    "totalIOwe": "Total I owe",
+    "net": "Net",
+    "settleConfirm": "Mark this debt as settled?",
+    "deleteConfirm": "Delete this debt?",
+    "addSuccess": "Debt added successfully",
+    "settleSuccess": "Debt settled",
+    "deleteSuccess": "Debt deleted"
   }
 }

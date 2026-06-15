@@ -3,6 +3,7 @@ import type { SVGProps } from "react";
 export {
   HomeIcon as DashboardIcon,
   ChartBarIcon as ReportIcon,
+  BanknotesIcon as DebtsIcon,
   Cog6ToothIcon as SettingsIcon,
   ArrowUpRightIcon,
   ArrowDownLeftIcon,

@@ -4,6 +4,7 @@ import type { Account, CryptoCode, CryptoHolding, CurrencyCode } from "@finance-
 import { CRYPTO_CODES } from "@finance-twa/shared-types";
 import { Button, Input, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody, Select } from "@/components/ui";
 import { formatMoney } from "@/utils/format";
+import { SUPPORTED_CURRENCIES } from "@/utils/currency";
 import { cryptoHoldingValueUsd, cryptoHoldingsTotalUsd } from "@/utils/exchange-rates";
 import { BanknotesIcon, CreditCardIcon, CircleStackIcon, PlusIcon, ArrowPathIcon, PencilIcon, TrashIcon } from "@/components/layout/icons";
 
@@ -23,7 +24,7 @@ interface AccountsModalProps {
 
 type ModalView = "list" | "create" | "edit" | "transfer" | "holdings";
 
-const fiatCurrencies: CurrencyCode[] = ["UZS", "RUB", "USD", "EUR", "KZT", "TRY", "GBP", "CNY"];
+const fiatCurrencies: CurrencyCode[] = SUPPORTED_CURRENCIES;
 
 const CRYPTO_LABELS: Record<CryptoCode, string> = {
   BTC: "Bitcoin",

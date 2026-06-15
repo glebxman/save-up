@@ -83,34 +83,16 @@ export async function applyRecurringTransaction(
     throw new AppError(ErrorCode.NOT_FOUND, "Recurring transaction not found");
   }
 
-  const updatedUser = await db.transaction(async (tx) => {
-    if (template.type === "income") {
-      return createTransaction(tx, user, {
-        type: "income",
-        amount: template.amount,
-        savingsAmt: template.savingsAmt,
-        note: template.note ?? template.title,
-        accountId: template.accountId,
-      });
-    }
-
-    if (template.type === "expense") {
-      return createTransaction(tx, user, {
-        type: "expense",
-        amount: template.amount,
-        category: template.category,
-        note: template.note ?? template.title,
-        accountId: template.accountId,
-      });
-    }
-
-    return createTransaction(tx, user, {
+  const updatedUser = await db.transaction(async (tx) =>
+    createTransaction(tx, user, {
       type: template.type,
       amount: template.amount,
+      category: template.category,
+      savingsAmt: template.type === "income" ? template.savingsAmt : undefined,
       note: template.note ?? template.title,
       accountId: template.accountId,
-    });
-  });
+    }),
+  );
 
   await invalidateStatusCache(telegramId);
 

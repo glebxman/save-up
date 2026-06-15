@@ -44,6 +44,8 @@ export const users = pgTable(
      */
     lastReminderSlotKey: varchar("last_reminder_slot_key", { length: 32 }),
     lastReminderSentAt: timestamp("last_reminder_sent_at", { withTimezone: true }),
+    lastCategoryAlerts: jsonb("last_category_alerts").$type<Record<string, number>>(),
+    lastMilestoneSent: smallint("last_milestone_sent"),
     pinHash: varchar("pin_hash", { length: 64 }),
     pinSalt: varchar("pin_salt", { length: 32 }),
     currency: varchar("currency", { length: 10 }).notNull().default("UZS"),

@@ -28,6 +28,10 @@ import {
   updateTransactionHandler,
   processVoiceHandler,
   transferBetweenAccountsHandler,
+  addDebtHandler,
+  getDebtsHandler,
+  settleDebtHandler,
+  deleteDebtHandler,
 } from "./handlers/finance.js";
 
 import {
@@ -99,6 +103,10 @@ const handlers: HandlerMap = {
   "user.setCryptoHolding": setCryptoHoldingHandler,
   "user.deleteAccount": deleteAccountHandler,
   "finance.transferBetweenAccounts": transferBetweenAccountsHandler,
+  "finance.addDebt": addDebtHandler,
+  "finance.getDebts": getDebtsHandler,
+  "finance.settleDebt": settleDebtHandler,
+  "finance.deleteDebt": deleteDebtHandler,
 };
 
 function makeError(id: JsonRpcRequest["id"], code: number, message: string, data?: unknown): JsonRpcFailure {

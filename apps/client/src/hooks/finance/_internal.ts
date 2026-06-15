@@ -127,3 +127,7 @@ export function computeDailyLimit(balance: number): Status["dailyLimit"] {
     dailyLimit: Number((balance / daysRemaining).toFixed(2)),
   };
 }
+
+export function roundAmount(value: number): number {
+  return Number(value.toFixed(2));
+}

@@ -6,7 +6,7 @@ import { ToastViewport } from "@/components/feedback/ToastViewport";
 import { OnboardingOverlay } from "@/components/features/onboarding/OnboardingOverlay";
 import { Avatar, Button } from "@/components/ui";
 import { useTelegram } from "@/hooks/useTelegram";
-import { DashboardIcon, ReportIcon, SettingsIcon } from "./icons";
+import { DashboardIcon, ReportIcon, DebtsIcon, SettingsIcon } from "./icons";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { t } = useTranslation();
@@ -18,6 +18,7 @@ export function AppShell({ children }: PropsWithChildren) {
   const navItems = [
     { icon: DashboardIcon, label: t("shell.nav.dashboard"), href: "/" },
     { icon: ReportIcon, label: t("shell.nav.report"), href: "/report" },
+    { icon: DebtsIcon, label: t("shell.nav.debts"), href: "/debts" },
     { icon: SettingsIcon, label: t("shell.nav.settings"), href: "/settings" },
   ] as const;
 

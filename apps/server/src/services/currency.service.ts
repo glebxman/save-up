@@ -1,23 +1,10 @@
 import type { CurrencyCode } from "@finance-twa/shared-types";
+import { DEFAULT_EXCHANGE_RATES } from "@finance-twa/shared-types";
 import { logger } from "../utils/logger.js";
 
 const log = logger.child({ service: "currency" });
 
-const FALLBACK_RATES: Record<CurrencyCode, number> = {
-  USD: 1,
-  UZS: 12500,
-  RUB: 92,
-  EUR: 0.92,
-  KZT: 450,
-  TRY: 32,
-  GBP: 0.79,
-  CNY: 7.23,
-  BTC: 0.000015,
-  ETH: 0.0003,
-  TON: 0.15,
-  USDT: 1.0,
-  NOTCOIN: 625,
-};
+const FALLBACK_RATES = DEFAULT_EXCHANGE_RATES;
 
 let cachedRates: Record<CurrencyCode, number> | null = null;
 let lastFetchTime = 0;

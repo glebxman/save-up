@@ -12,12 +12,9 @@ interface UiStoreState {
   removeToast: (id: string) => void;
 }
 
+let idCounter = 0;
 function createId(): string {
-  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
-    return crypto.randomUUID();
-  }
-
-  return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  return `toast-${Date.now()}-${++idCounter}`;
 }
 
 export const useToastStore = create<UiStoreState>((set) => ({

@@ -2,29 +2,14 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import * as api from "@/api/methods";
+import type { Account } from "@finance-twa/shared-types";
 import type {
   SavingsTransferDirection,
   Status,
   TransactionUpdatePayload,
 } from "@/types/finance";
 
-import { computeDailyLimit, useFinanceContext } from "./_internal";
-
-/**
- * Optimistic update helper: snapshot the current status, mutate it locally,
- * and roll back on error. All five money-changing mutations share this shape.
- */
-function useOptimisticContext() {
-  const queryClient = useQueryClient();
-  const ctx = useFinanceContext();
-
-  return {
-    ...ctx,
-    snapshot(): Status | null {
-      return queryClient.getQueryData<Status>(ctx.statusKey) ?? ctx.liveStatus;
-    },
-  };
-}
+import { computeDailyLimit, roundAmount, useFinanceContext } from "./_internal";
 
 export function useTransactionMutations() {
   const { initData, statusKey, syncStatus, setOptimisticStatus, invalidateRelated, notifySuccess, notifyError } = useFinanceContext();
@@ -39,8 +24,8 @@ export function useTransactionMutations() {
       const current = queryClient.getQueryData<Status>(statusKey);
       if (!current) return { previous: null };
 
-      const balance = Number((current.user.balance + amount - savingsAmt).toFixed(2));
-      const savings = Number((current.user.savings + savingsAmt).toFixed(2));
+      const balance = roundAmount(current.user.balance + amount - savingsAmt);
+      const savings = roundAmount(current.user.savings + savingsAmt);
 
       const nextAccounts = current.user.accounts?.map((acc) => {
         if (acc.id === accountId) {
@@ -79,8 +64,8 @@ export function useTransactionMutations() {
       const current = queryClient.getQueryData<Status>(statusKey);
       if (!current) return { previous: null };
 
-      const balance = Number((current.user.balance - amount).toFixed(2));
-      const monthlyExp = Number((current.user.monthlyExp + amount).toFixed(2));
+      const balance = roundAmount(current.user.balance - amount);
+      const monthlyExp = roundAmount(current.user.monthlyExp + amount);
 
       const nextAccounts = current.user.accounts?.map((acc) => {
         if (acc.id === accountId) {
@@ -121,8 +106,8 @@ export function useTransactionMutations() {
 
       const balanceDelta = direction === "to_savings" ? -amount : amount;
       const savingsDelta = direction === "to_savings" ? amount : -amount;
-      const balance = Number((current.user.balance + balanceDelta).toFixed(2));
-      const savings = Number((current.user.savings + savingsDelta).toFixed(2));
+      const balance = roundAmount(current.user.balance + balanceDelta);
+      const savings = roundAmount(current.user.savings + savingsDelta);
 
       const nextAccounts = current.user.accounts?.map((acc) => {
         if (acc.id === accountId) {

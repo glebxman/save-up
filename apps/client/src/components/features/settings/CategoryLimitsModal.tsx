@@ -14,6 +14,7 @@ import {
   ModalHeading,
 } from "@/components/ui";
 import { EXPENSE_CATEGORIES, getCategoryDisplay } from "@/components/features/shared/categoryMeta";
+import { parseAmount } from "@/utils/format";
 import type { CategoryCustomization, CustomCategory, ExpenseCategory } from "@/types/finance";
 
 interface CategoryLimitsModalProps {
@@ -24,12 +25,6 @@ interface CategoryLimitsModalProps {
   customizations?: Partial<Record<ExpenseCategory, CategoryCustomization>>;
   onClose: () => void;
   onSubmit: (limits: Record<string, number>) => void;
-}
-
-function parseAmount(value: string): number {
-  const digits = value.replace(/[^\d.,]/g, "").replace(",", ".");
-  const parsed = Number(digits);
-  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
 }
 
 export function CategoryLimitsModal({

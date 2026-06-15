@@ -275,6 +275,3 @@ export function Settings() {
     </div>
   );
 }
-
-// Re-export so legacy callers that imported these from Settings keep working.
-export { LANGUAGE_FLAGS, LANGUAGE_FLAG_URLS };

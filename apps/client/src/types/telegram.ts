@@ -4,6 +4,10 @@
  * for old clients that don't expose BiometricManager.
  */
 
+import type { TelegramUser } from "@finance-twa/shared-types";
+
+export type { TelegramUser } from "@finance-twa/shared-types";
+
 export interface TelegramThemeParams {
   bg_color?: string;
   text_color?: string;
@@ -11,14 +15,6 @@ export interface TelegramThemeParams {
   secondary_bg_color?: string;
   button_color?: string;
   button_text_color?: string;
-}
-
-export interface TelegramUser {
-  id: number;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  photo_url?: string;
 }
 
 export interface TelegramHapticFeedback {

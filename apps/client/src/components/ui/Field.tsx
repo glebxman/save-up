@@ -7,7 +7,7 @@ const fieldClasses =
 
 interface InputProps extends ComponentPropsWithoutRef<"input"> {
   fullWidth?: boolean;
-  variant?: "secondary";
+  variant?: string;
 }
 
 export function Input({ className, fullWidth, variant: _variant, ...props }: InputProps) {
@@ -16,7 +16,7 @@ export function Input({ className, fullWidth, variant: _variant, ...props }: Inp
 
 interface TextAreaProps extends ComponentPropsWithoutRef<"textarea"> {
   fullWidth?: boolean;
-  variant?: "secondary";
+  variant?: string;
 }
 
 export function TextArea({ className, fullWidth, variant: _variant, ...props }: TextAreaProps) {
@@ -25,7 +25,7 @@ export function TextArea({ className, fullWidth, variant: _variant, ...props }: 
 
 interface SelectProps extends ComponentPropsWithoutRef<"select"> {
   fullWidth?: boolean;
-  variant?: "secondary";
+  variant?: string;
 }
 
 export function Select({ children, className, fullWidth, variant: _variant, ...props }: SelectProps) {

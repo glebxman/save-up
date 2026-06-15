@@ -36,7 +36,63 @@ export type ExpenseCategory =
   | "education"
   | "other";
 
+export const EXPENSE_CATEGORIES: ExpenseCategory[] = [
+  "food", "taxi", "entertainment", "shopping", "utilities", "health", "education", "other",
+];
+
 export type AccountType = "cash" | "card" | "crypto";
+
+export type SupportedLanguage = "en" | "ru" | "uz" | "kk" | "zh" | "ja" | "ko" | "tr" | "es" | "fr" | "de";
+
+export const SUPPORTED_LANGUAGES: SupportedLanguage[] = [
+  "en", "ru", "uz", "kk", "zh", "ja", "ko", "tr", "es", "fr", "de",
+];
+
+export const DEFAULT_EXCHANGE_RATES: Record<CurrencyCode, number> = {
+  USD: 1,
+  UZS: 12500,
+  RUB: 92,
+  EUR: 0.92,
+  KZT: 450,
+  TRY: 32,
+  GBP: 0.79,
+  CNY: 7.23,
+  BTC: 0.000015,
+  ETH: 0.0003,
+  TON: 0.15,
+  USDT: 1.0,
+  NOTCOIN: 625,
+};
+
+export interface TelegramUser {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  username?: string;
+  photo_url?: string;
+  language_code?: string;
+  is_premium?: boolean;
+}
+
+export interface TransactionExtraction {
+  type: "expense" | "income";
+  amount: number;
+  category: string;
+  note?: string;
+}
+
+export interface Debt {
+  id: string;
+  userId: string;
+  name: string;
+  amount: number;
+  note: string | null;
+  direction: "owed_to_me" | "i_owe";
+  dueDate: string | null;
+  settled: boolean;
+  settledAt: string | null;
+  createdAt: string;
+}
 
 /** A single crypto asset held inside a crypto account. */
 export interface CryptoHolding {
@@ -569,6 +625,37 @@ export interface RpcMethodMap {
     params: {
       initData: string;
       pin: string;
+    };
+    result: { ok: true };
+  };
+  "finance.addDebt": {
+    params: {
+      initData: string;
+      name: string;
+      amount: number;
+      direction: "owed_to_me" | "i_owe";
+      note?: string;
+      dueDate?: string;
+    };
+    result: Debt;
+  };
+  "finance.getDebts": {
+    params: {
+      initData: string;
+    };
+    result: Debt[];
+  };
+  "finance.settleDebt": {
+    params: {
+      initData: string;
+      debtId: string;
+    };
+    result: { ok: true };
+  };
+  "finance.deleteDebt": {
+    params: {
+      initData: string;
+      debtId: string;
     };
     result: { ok: true };
   };

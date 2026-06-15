@@ -1,5 +1,6 @@
 import i18n from "i18next";
 import { initReactI18next } from "react-i18next";
+import { SUPPORTED_LANGUAGES as SHARED_SUPPORTED_LANGUAGES } from "@finance-twa/shared-types";
 
 import en from "./locales/en.json";
 import de from "./locales/de.json";
@@ -16,9 +17,9 @@ import zh from "./locales/zh.json";
 export const LANGUAGE_STORAGE_KEY = "finance-twa.language";
 export const PRIMARY_LANGUAGES = ["en", "ru", "uz"] as const;
 export const OTHER_LANGUAGES = ["kk", "zh", "ja", "ko", "tr", "es", "fr", "de"] as const;
-export const SUPPORTED_LANGUAGES = [...PRIMARY_LANGUAGES, ...OTHER_LANGUAGES] as const;
+export const SUPPORTED_LANGUAGES = SHARED_SUPPORTED_LANGUAGES;
 
-export type AppLanguage = (typeof SUPPORTED_LANGUAGES)[number];
+export type AppLanguage = (typeof SHARED_SUPPORTED_LANGUAGES)[number];
 
 function getInitialLanguage(): AppLanguage {
   const stored = window.localStorage.getItem(LANGUAGE_STORAGE_KEY);

@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useTelegram } from "@/hooks/useTelegram";
 import { hapticImpact, hapticNotification } from "@/utils/haptic";
-import { formatMoney } from "@/utils/format";
+import { formatMoney, parseAmount } from "@/utils/format";
 import { cryptoHoldingsTotalUsd } from "@/utils/exchange-rates";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
@@ -22,12 +22,8 @@ interface BalanceCardProps {
   onManageAccounts?: () => void;
 }
 
-function parseAmount(value: string): number {
-  return Number(value.replace(/\s/g, "").replace(",", "."));
-}
-
 function formatWithSpaces(value: number): string {
-  return Math.floor(value).toLocaleString("ru-RU");
+  return Math.floor(value).toLocaleString("en-US");
 }
 
 /** Minimum horizontal distance (px) before we commit to a page change. */

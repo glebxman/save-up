@@ -10,6 +10,9 @@ import { users } from "./db/schema/index.js";
 import type { ExpenseCategory } from "@finance-twa/shared-types";
 import { startReminderScheduler } from "./reminder.js";
 import { startRecurringScheduler } from "./recurring.js";
+import { startWeeklyReportScheduler } from "./weekly-report.js";
+import { startCategoryAlertScheduler } from "./category-alerts.js";
+import { startSavingsMilestoneScheduler } from "./savings-milestones.js";
 import { logger } from "./utils/logger.js";
 import {
   type SupportedLang,
@@ -18,13 +21,12 @@ import {
   LANGUAGE_FLAGS,
   getBotMessage,
 } from "./utils/i18n.js";
+import type { TelegramUser } from "./utils/telegram.js";
+import { telegramRequest, initTelegramApi } from "./utils/telegram-api.js";
 
 import { addExpense, addIncome, processVoice } from "./services/finance/index.js";
-
-interface TelegramUser {
-  id: number;
-  first_name?: string;
-}
+import { processReceipt } from "./services/finance/receipt.js";
+import { addDebt, getActiveDebts, settleDebt } from "./services/finance/debts.js";
 
 interface TelegramChat {
   id: number;
@@ -39,6 +41,11 @@ interface TelegramMessage {
     file_id: string;
     duration: number;
   };
+  photo?: Array<{
+    file_id: string;
+    width: number;
+    height: number;
+  }>;
 }
 
 interface CallbackQuery {
@@ -54,12 +61,6 @@ interface TelegramUpdate {
   callback_query?: CallbackQuery;
 }
 
-interface TelegramApiResponse<T> {
-  ok: boolean;
-  result: T;
-  description?: string;
-}
-
 interface BotLock {
   pid: number;
 }
@@ -69,7 +70,6 @@ type BotCommand = {
   description: string;
 };
 
-const apiBaseUrl = `https://api.telegram.org/bot${env.TELEGRAM_BOT_TOKEN}`;
 const webAppUrl = env.WEBAPP_URL?.trim();
 const botLockPath = path.join(os.tmpdir(), "finance-twa-bot.lock.json");
 
@@ -138,24 +138,6 @@ function acquireBotLock(): boolean {
 
 function isPollingConflict(error: unknown): boolean {
   return error instanceof Error && error.message.includes("Conflict: terminated by other getUpdates request");
-}
-
-async function telegramRequest<T>(method: string, payload?: Record<string, unknown>): Promise<T> {
-  const response = await fetch(`${apiBaseUrl}/${method}`, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-    },
-    body: payload ? JSON.stringify(payload) : undefined,
-  });
-
-  const data = (await response.json()) as TelegramApiResponse<T>;
-
-  if (!response.ok || !data.ok) {
-    throw new Error(data.description ?? `Telegram API request failed for ${method}`);
-  }
-
-  return data.result;
 }
 
 function buildLanguageKeyboard(): { inline_keyboard: { text: string; callback_data: string }[][] } {
@@ -309,6 +291,67 @@ async function handleLanguageCallback(callbackQuery: CallbackQuery): Promise<voi
   }
 }
 
+async function handlePhotoMessage(message: TelegramMessage): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId || !message.photo || message.photo.length === 0) return;
+
+  const chatId = message.chat.id;
+  const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
+
+  const processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
+    chat_id: chatId,
+    text: getBotMessage("photo_receipt_processing", lang) || "📸 Processing receipt photo...",
+  });
+
+  try {
+    const largestPhoto = message.photo[message.photo.length - 1];
+    if (!largestPhoto) {
+      throw new Error("No photo found");
+    }
+
+    const file = await telegramRequest<{ file_path: string }>("getFile", { file_id: largestPhoto.file_id });
+
+    if (!file.file_path || !/^[a-zA-Z0-9/_.-]+$/.test(file.file_path)) {
+      throw new Error("Invalid file_path received from Telegram");
+    }
+
+    const fileUrl = `https://api.telegram.org/file/bot${env.TELEGRAM_BOT_TOKEN}/${file.file_path}`;
+    const photoRes = await fetch(fileUrl);
+    if (!photoRes.ok) throw new Error(`Failed to download photo (HTTP ${photoRes.status})`);
+    const arrayBuffer = await photoRes.arrayBuffer();
+    const base64Photo = Buffer.from(arrayBuffer).toString("base64");
+
+    const extraction = await processReceipt(telegramId, base64Photo);
+
+    if (!extraction) {
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: getBotMessage("photo_receipt_error", lang) || "❌ Could not process the receipt photo."
+      });
+      return;
+    }
+
+    await addExpense(telegramId, extraction.amount, extraction.category as ExpenseCategory, extraction.note);
+    const receiptText = getBotMessage("photo_receipt_saved", lang)
+      .replace("{amount}", String(extraction.amount))
+      .replace("{category}", extraction.category)
+      .replace("{note}", extraction.note || "");
+    await telegramRequest("editMessageText", {
+      chat_id: chatId,
+      message_id: processingMsg.message_id,
+      text: receiptText,
+    });
+  } catch (err) {
+    logger.error({ err }, "Photo processing error");
+    await telegramRequest("editMessageText", {
+      chat_id: chatId,
+      message_id: processingMsg.message_id,
+      text: getBotMessage("photo_receipt_error", lang) || "❌ Could not process the receipt photo.",
+    });
+  }
+}
+
 async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
   const telegramId = message.from?.id;
   if (!telegramId || !message.voice) return;
@@ -382,14 +425,164 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
   }
 }
 
+async function handleAddDebt(message: TelegramMessage, args: string): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+  const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
+
+  try {
+    const parts = args.split("|").map((s) => s.trim());
+    if (parts.length < 3) {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "Usage: /debt name | amount | direction\n\nExample: /debt Alice | 50 | owed_to_me\n Directions: owed_to_me, i_owe",
+      });
+      return;
+    }
+
+    const [name, amountStr, direction] = parts;
+    const amount = parseFloat(amountStr ?? "0");
+
+    if (!name || isNaN(amount) || amount <= 0) {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "Invalid debt format. Use: /debt name | amount | direction",
+      });
+      return;
+    }
+
+    if (direction !== "owed_to_me" && direction !== "i_owe") {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "Direction must be either 'owed_to_me' or 'i_owe'",
+      });
+      return;
+    }
+
+    await addDebt(telegramId, { name, amount, direction });
+    const msg = getBotMessage("debt_added", lang)
+      .replace("{name}", name)
+      .replace("{amount}", String(amount))
+      .replace("{date}", "no deadline");
+
+    await telegramRequest("sendMessage", { chat_id: chatId, text: msg });
+  } catch (err) {
+    logger.error({ err }, "Error adding debt");
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: "Error adding debt. Please try again.",
+    });
+  }
+}
+
+async function handleListDebts(message: TelegramMessage): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+  const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
+
+  try {
+    const activeDebts = await getActiveDebts(telegramId);
+
+    if (activeDebts.length === 0) {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: getBotMessage("debt_list_empty", lang),
+      });
+      return;
+    }
+
+    const lines: string[] = [getBotMessage("debt_list_title", lang), ""];
+
+    for (const debt of activeDebts) {
+      const emoji = debt.direction === "owed_to_me" ? "💰" : "💳";
+      const dueText = debt.dueDate
+        ? ` (due: ${new Date(debt.dueDate).toLocaleDateString()})`
+        : "";
+      lines.push(`${emoji} ${debt.name}: ${debt.amount}${dueText}`);
+      lines.push(`   /settle ${debt.id.slice(0, 8)}`);
+    }
+
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: lines.join("\n"),
+    });
+  } catch (err) {
+    logger.error({ err }, "Error listing debts");
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: "Error listing debts. Please try again.",
+    });
+  }
+}
+
+async function handleSettleDebt(message: TelegramMessage, debtIdPrefix: string): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+  const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
+
+  try {
+    const activeDebts = await getActiveDebts(telegramId);
+    const debt = activeDebts.find((d) => d.id.startsWith(debtIdPrefix));
+
+    if (!debt) {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "Debt not found. Use /debts to see active debts.",
+      });
+      return;
+    }
+
+    await settleDebt(telegramId, debt.id);
+    const msg = getBotMessage("debt_settled", lang).replace("{name}", debt.name);
+
+    await telegramRequest("sendMessage", { chat_id: chatId, text: msg });
+  } catch (err) {
+    logger.error({ err }, "Error settling debt");
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: "Error settling debt. Please try again.",
+    });
+  }
+}
+
 async function handleUpdate(update: TelegramUpdate): Promise<void> {
   if (update.message && isStartCommand(update.message.text)) {
     await handleStartCommand(update.message);
     return;
   }
 
+  if (update.message?.text) {
+    const text = update.message.text.trim();
+
+    if (text.startsWith("/debt ")) {
+      await handleAddDebt(update.message, text.slice(6));
+      return;
+    }
+
+    if (text === "/debts") {
+      await handleListDebts(update.message);
+      return;
+    }
+
+    if (text.startsWith("/settle ")) {
+      await handleSettleDebt(update.message, text.slice(8));
+      return;
+    }
+  }
+
   if (update.message?.voice) {
     await handleVoiceMessage(update.message);
+    return;
+  }
+
+  if (update.message?.photo && update.message.photo.length > 0) {
+    await handlePhotoMessage(update.message);
     return;
   }
 
@@ -403,6 +596,18 @@ async function configureBot(): Promise<void> {
     {
       command: "start",
       description: "Open Save Up Mini App",
+    },
+    {
+      command: "debt",
+      description: "Track a debt: /debt name | amount | owed_to_me/i_owe",
+    },
+    {
+      command: "debts",
+      description: "List all active debts",
+    },
+    {
+      command: "settle",
+      description: "Settle a debt: /settle <id>",
     },
   ];
 
@@ -466,9 +671,13 @@ async function startBot(): Promise<void> {
     process.exit(0);
   });
 
+  initTelegramApi(env.TELEGRAM_BOT_TOKEN);
   await configureBot();
   startReminderScheduler(env.TELEGRAM_BOT_TOKEN);
   startRecurringScheduler();
+  startWeeklyReportScheduler();
+  startCategoryAlertScheduler();
+  startSavingsMilestoneScheduler();
   logger.info("Telegram bot polling started.");
   await pollUpdates();
 }

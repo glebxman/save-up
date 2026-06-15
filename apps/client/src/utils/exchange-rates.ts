@@ -1,32 +1,17 @@
 import type { CryptoCode, CryptoHolding, CurrencyCode } from "@finance-twa/shared-types";
+import { DEFAULT_EXCHANGE_RATES } from "@finance-twa/shared-types";
 
-const DEFAULT_RATES: Record<CurrencyCode, number> = {
-  USD: 1,
-  UZS: 12500,
-  RUB: 92,
-  EUR: 0.92,
-  KZT: 450,
-  TRY: 32,
-  GBP: 0.79,
-  CNY: 7.23,
-  BTC: 0.000015,
-  ETH: 0.0003,
-  TON: 0.15,
-  USDT: 1.0,
-  NOTCOIN: 625,
-};
-
-export const EXCHANGE_RATES: Record<CurrencyCode, number> = { ...DEFAULT_RATES };
+export const EXCHANGE_RATES: Record<CurrencyCode, number> = { ...DEFAULT_EXCHANGE_RATES };
 
 export function setGlobalRates(rates: Record<CurrencyCode, number>) {
-  Object.assign(EXCHANGE_RATES, DEFAULT_RATES, rates);
+  Object.assign(EXCHANGE_RATES, DEFAULT_EXCHANGE_RATES, rates);
 }
 
 export function getConversionRate(from: CurrencyCode, to: CurrencyCode): number {
   if (from === to) return 1;
 
-  const fromRate = EXCHANGE_RATES[from] || DEFAULT_RATES[from];
-  const toRate = EXCHANGE_RATES[to] || DEFAULT_RATES[to];
+  const fromRate = EXCHANGE_RATES[from] || DEFAULT_EXCHANGE_RATES[from];
+  const toRate = EXCHANGE_RATES[to] || DEFAULT_EXCHANGE_RATES[to];
 
   return toRate / fromRate;
 }
@@ -42,7 +27,7 @@ export function cryptoHoldingValueUsd(
   amount: number,
   rates: Record<CurrencyCode, number> = EXCHANGE_RATES,
 ): number {
-  const rate = rates[symbol] || DEFAULT_RATES[symbol];
+  const rate = rates[symbol] || DEFAULT_EXCHANGE_RATES[symbol];
   if (!rate) return 0;
   return amount / rate;
 }

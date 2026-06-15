@@ -15,7 +15,7 @@ import { Button, Card, CardContent, Chip, Input, Select, Spinner } from "@/compo
 import { useFinance } from "@/hooks/useFinance";
 import { useTransactionHistory } from "@/hooks/useTransactionHistory";
 import type { Transaction, TransactionFilters, TransactionType } from "@/types/finance";
-import { formatDateTime, formatMoney } from "@/utils/format";
+import { formatDateTime, formatMoney, getMonthKey } from "@/utils/format";
 import { TransactionEditModal } from "./TransactionEditModal";
 
 const ALL_CATEGORY_KEY = "__all_categories__";
@@ -27,10 +27,6 @@ const transactionTypes: Array<TransactionType | "all"> = [
   "transfer_to_savings",
   "transfer_from_savings",
 ];
-
-function getCurrentMonthKey(date = new Date()): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
 
 function getAmountTone(type: TransactionType): string {
   if (type === "income" || type === "transfer_from_savings") {
@@ -65,7 +61,7 @@ export function TransactionHistoryView({
   const [showFilters, setShowFilters] = useState(false);
   const PAGE_SIZE = 50;
   const [internalFilters, setInternalFilters] = useState<TransactionFilters>({
-    monthKey: getCurrentMonthKey(),
+    monthKey: getMonthKey(),
     type: "all",
     category: "all",
     search: "",

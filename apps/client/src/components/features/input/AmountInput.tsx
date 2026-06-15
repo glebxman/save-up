@@ -7,7 +7,8 @@ import { Button, Card, CardContent, Input, Modal, ModalBackdrop, ModalContainer,
 import { formatGroupedNumber, parseFormattedInput, formatMoney } from "@/utils/format";
 import { useCurrency } from "@/hooks/useCurrency";
 import { getConversionRate } from "@/utils/exchange-rates";
-import { MAX_FINANCE_AMOUNT, type CurrencyCode } from "@finance-twa/shared-types";
+import { SUPPORTED_CURRENCIES } from "@/utils/currency";
+import { MAX_FINANCE_AMOUNT, type CurrencyCode, CRYPTO_CODES } from "@finance-twa/shared-types";
 import { VoiceAssistant } from "@/components/features/ai/VoiceAssistant";
 
 
@@ -50,8 +51,8 @@ export function AmountInput({
 
   const activeAccount = accounts.find((acc) => acc.id === activeAccountId);
   const isCryptoAccount = activeAccount?.type === "crypto";
-  const fiatCurrencies: CurrencyCode[] = ["USD", "EUR", "RUB", "UZS", "KZT", "TRY", "GBP", "CNY"];
-  const cryptoCurrencies: CurrencyCode[] = ["TON", "BTC", "USDT", "NOTCOIN", "ETH"];
+  const fiatCurrencies: CurrencyCode[] = SUPPORTED_CURRENCIES;
+  const cryptoCurrencies: CurrencyCode[] = CRYPTO_CODES;
   const availableCurrencies = isCryptoAccount
     ? [...cryptoCurrencies, "USD" as CurrencyCode]
     : fiatCurrencies;

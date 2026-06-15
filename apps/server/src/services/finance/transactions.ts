@@ -29,7 +29,54 @@ import {
   persistStatus,
   roundAmount,
   syncUserSnapshot,
+  type DbTransaction,
 } from "./_shared.js";
+
+async function resolveDefaultAccountId(dbOrTx: typeof db | DbTransaction, userId: string): Promise<string | null> {
+  const active = await dbOrTx
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.userId, userId), isNull(accounts.deletedAt)))
+    .orderBy(accounts.createdAt)
+    .limit(1);
+  return active.length > 0 ? active[0]!.id : null;
+}
+
+async function assertAccountOwnership(dbOrTx: typeof db | DbTransaction, accountId: string, userId: string) {
+  const [acc] = await dbOrTx
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId)))
+    .limit(1);
+  if (!acc) {
+    throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
+  }
+  return acc;
+}
+
+function selectTransactionWithJoins(aliasAcc: ReturnType<typeof alias>, aliasToAcc: ReturnType<typeof alias>) {
+  return db
+    .select({
+      id: transactions.id,
+      userId: transactions.userId,
+      type: transactions.type,
+      amount: transactions.amount,
+      savingsAmt: transactions.savingsAmt,
+      category: transactions.category,
+      note: transactions.note,
+      monthKey: transactions.monthKey,
+      occurredAt: transactions.occurredAt,
+      createdAt: transactions.createdAt,
+      deletedAt: transactions.deletedAt,
+      accountId: transactions.accountId,
+      accountName: aliasAcc.name,
+      toAccountId: transactions.toAccountId,
+      toAccountName: aliasToAcc.name,
+    })
+    .from(transactions)
+    .leftJoin(aliasAcc, eq(transactions.accountId, aliasAcc.id))
+    .leftJoin(aliasToAcc, eq(transactions.toAccountId, aliasToAcc.id));
+}
 
 export async function addIncome(
   telegramId: number,
@@ -71,28 +118,10 @@ export async function addExpense(
 
   const user = await ensureUser(telegramId);
 
-  let targetAccountId = accountId;
-  if (!targetAccountId) {
-    const active = await db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
-      .orderBy(accounts.createdAt)
-      .limit(1);
-    if (active.length > 0) {
-      targetAccountId = active[0]!.id;
-    }
-  }
+  const targetAccountId = accountId || await resolveDefaultAccountId(db, user.id);
 
   if (targetAccountId) {
-    const [acc] = await db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.id, targetAccountId), eq(accounts.userId, user.id)))
-      .limit(1);
-    if (!acc) {
-      throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
-    }
+    const acc = await assertAccountOwnership(db, targetAccountId, user.id);
     if (acc.type !== "crypto" && Number(acc.balance) < amount) {
       throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, `Insufficient balance in account "${acc.name}"`);
     }
@@ -126,28 +155,10 @@ export async function transferSavings(
 
   const user = await ensureUser(telegramId);
 
-  let targetAccountId = accountId;
-  if (!targetAccountId) {
-    const active = await db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
-      .orderBy(accounts.createdAt)
-      .limit(1);
-    if (active.length > 0) {
-      targetAccountId = active[0]!.id;
-    }
-  }
+  const targetAccountId = accountId || await resolveDefaultAccountId(db, user.id);
 
   if (targetAccountId) {
-    const [acc] = await db
-      .select()
-      .from(accounts)
-      .where(and(eq(accounts.id, targetAccountId), eq(accounts.userId, user.id)))
-      .limit(1);
-    if (!acc) {
-      throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
-    }
+    const acc = await assertAccountOwnership(db, targetAccountId, user.id);
 
     if (direction === "to_savings" && Number(acc.balance) < amount) {
       throw new AppError(ErrorCode.INSUFFICIENT_FUNDS, `Insufficient balance in account "${acc.name}" for savings transfer`);
@@ -181,27 +192,7 @@ export async function getRecentExpenses(telegramId: number, limit = 5): Promise<
   const aliasAcc = alias(accounts, "acc");
   const aliasToAcc = alias(accounts, "toAcc");
 
-  const rows = await db
-    .select({
-      id: transactions.id,
-      userId: transactions.userId,
-      type: transactions.type,
-      amount: transactions.amount,
-      savingsAmt: transactions.savingsAmt,
-      category: transactions.category,
-      note: transactions.note,
-      monthKey: transactions.monthKey,
-      occurredAt: transactions.occurredAt,
-      createdAt: transactions.createdAt,
-      deletedAt: transactions.deletedAt,
-      accountId: transactions.accountId,
-      accountName: aliasAcc.name,
-      toAccountId: transactions.toAccountId,
-      toAccountName: aliasToAcc.name,
-    })
-    .from(transactions)
-    .leftJoin(aliasAcc, eq(transactions.accountId, aliasAcc.id))
-    .leftJoin(aliasToAcc, eq(transactions.toAccountId, aliasToAcc.id))
+  const rows = await selectTransactionWithJoins(aliasAcc, aliasToAcc)
     .where(
       and(
         eq(transactions.userId, user.id),
@@ -250,27 +241,7 @@ export async function getTransactions(
   const aliasAcc = alias(accounts, "acc");
   const aliasToAcc = alias(accounts, "toAcc");
 
-  const rows = await db
-    .select({
-      id: transactions.id,
-      userId: transactions.userId,
-      type: transactions.type,
-      amount: transactions.amount,
-      savingsAmt: transactions.savingsAmt,
-      category: transactions.category,
-      note: transactions.note,
-      monthKey: transactions.monthKey,
-      occurredAt: transactions.occurredAt,
-      createdAt: transactions.createdAt,
-      deletedAt: transactions.deletedAt,
-      accountId: transactions.accountId,
-      accountName: aliasAcc.name,
-      toAccountId: transactions.toAccountId,
-      toAccountName: aliasToAcc.name,
-    })
-    .from(transactions)
-    .leftJoin(aliasAcc, eq(transactions.accountId, aliasAcc.id))
-    .leftJoin(aliasToAcc, eq(transactions.toAccountId, aliasToAcc.id))
+  const rows = await selectTransactionWithJoins(aliasAcc, aliasToAcc)
     .where(and(...whereClauses))
     .orderBy(desc(transactions.occurredAt), desc(transactions.createdAt))
     .limit(limit)

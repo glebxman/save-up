@@ -1,5 +1,6 @@
 import {
   MAX_FINANCE_AMOUNT,
+  EXPENSE_CATEGORIES,
 } from "@finance-twa/shared-types";
 import type {
   ExpenseCategory,
@@ -40,16 +41,7 @@ export interface UserSnapshot {
   monthlyExp: number;
 }
 
-export const expenseCategories = new Set<ExpenseCategory>([
-  "food",
-  "taxi",
-  "entertainment",
-  "shopping",
-  "utilities",
-  "health",
-  "education",
-  "other",
-]);
+export const expenseCategories = new Set<ExpenseCategory>(EXPENSE_CATEGORIES);
 
 export function roundAmount(value: number): number {
   return Number(value.toFixed(2));
@@ -87,7 +79,7 @@ export function parseOccurredAt(value?: string): Date {
   const parsed = new Date(value);
 
   if (Number.isNaN(parsed.getTime())) {
-    throw new Error("Transaction date is invalid");
+    throw new AppError(ErrorCode.VALIDATION, "Transaction date is invalid");
   }
 
   return parsed;
@@ -99,38 +91,34 @@ export function normalizeSavingsAmount(amount: number, savingsAmt?: number | nul
   }
 
   if (!Number.isFinite(savingsAmt) || savingsAmt < 0) {
-    throw new Error("Savings amount must be zero or a positive number");
+    throw new AppError(ErrorCode.VALIDATION, "Savings amount must be zero or a positive number");
   }
 
   if (savingsAmt > amount) {
-    throw new Error("Savings amount cannot exceed income amount");
+    throw new AppError(ErrorCode.VALIDATION, "Savings amount cannot exceed income amount");
   }
 
   return roundAmount(savingsAmt);
 }
 
+function normalizeNonNegativeAmount(value: number, fieldName: string): number {
+  if (!Number.isFinite(value) || value < 0) {
+    throw new AppError(ErrorCode.VALIDATION, `${fieldName} must be zero or a positive number`);
+  }
+
+  if (value > MAX_FINANCE_AMOUNT) {
+    throw new AppError(ErrorCode.VALIDATION, `${fieldName} is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
+  }
+
+  return roundAmount(value);
+}
+
 export function normalizeGoal(goal: number): number {
-  if (!Number.isFinite(goal) || goal < 0) {
-    throw new Error("Savings goal must be zero or a positive number");
-  }
-
-  if (goal > MAX_FINANCE_AMOUNT) {
-    throw new Error(`Savings goal is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
-  }
-
-  return roundAmount(goal);
+  return normalizeNonNegativeAmount(goal, "Savings goal");
 }
 
 export function normalizeBalance(balance: number): number {
-  if (!Number.isFinite(balance) || balance < 0) {
-    throw new Error("Balance must be zero or a positive number");
-  }
-
-  if (balance > MAX_FINANCE_AMOUNT) {
-    throw new Error(`Balance is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
-  }
-
-  return roundAmount(balance);
+  return normalizeNonNegativeAmount(balance, "Balance");
 }
 
 export function normalizeExpenseCategory(category: unknown): ExpenseCategory | null {
@@ -161,23 +149,24 @@ export function mapRecurringTemplates(row: UserRow): RecurringTransaction[] {
     .filter((item) => Number.isFinite(item.amount) && item.amount > 0);
 }
 
-export function mapTransactionRow(row: any): Transaction {
+export function mapTransactionRow(row: TransactionRow | Record<string, unknown>): Transaction {
+  const r = row as Record<string, unknown>;
   return {
-    id: row.id,
-    userId: row.userId,
-    type: row.type as TransactionType,
-    amount: Number(row.amount),
-    savingsAmt: row.savingsAmt ? Number(row.savingsAmt) : null,
-    category: normalizeExpenseCategory(row.category),
-    note: row.note,
-    monthKey: row.monthKey,
-    occurredAt: row.occurredAt instanceof Date ? row.occurredAt.toISOString() : row.occurredAt,
-    createdAt: row.createdAt instanceof Date ? row.createdAt.toISOString() : row.createdAt,
-    deletedAt: row.deletedAt ? (row.deletedAt instanceof Date ? row.deletedAt.toISOString() : row.deletedAt) : null,
-    accountId: row.accountId,
-    accountName: row.accountName ?? undefined,
-    toAccountId: row.toAccountId,
-    toAccountName: row.toAccountName ?? undefined,
+    id: r.id as string,
+    userId: r.userId as string,
+    type: r.type as TransactionType,
+    amount: Number(r.amount),
+    savingsAmt: r.savingsAmt ? Number(r.savingsAmt) : null,
+    category: normalizeExpenseCategory(r.category),
+    note: r.note as string | null,
+    monthKey: r.monthKey as string,
+    occurredAt: r.occurredAt instanceof Date ? r.occurredAt.toISOString() : r.occurredAt as string,
+    createdAt: r.createdAt instanceof Date ? r.createdAt.toISOString() : r.createdAt as string,
+    deletedAt: r.deletedAt ? (r.deletedAt instanceof Date ? r.deletedAt.toISOString() : r.deletedAt as string) : null,
+    accountId: r.accountId as string | null,
+    accountName: (r.accountName as string) ?? undefined,
+    toAccountId: r.toAccountId as string | null | undefined,
+    toAccountName: (r.toAccountName as string) ?? undefined,
   };
 }
 

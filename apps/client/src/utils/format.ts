@@ -70,3 +70,13 @@ export function parseFormattedInput(value: string): number {
   const digitsOnly = value.replace(/\D/g, "");
   return digitsOnly ? parseInt(digitsOnly, 10) : 0;
 }
+
+export function getMonthKey(date = new Date()): string {
+  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
+}
+
+export function parseAmount(value: string): number {
+  const digits = value.replace(/[^\d.,]/g, "").replace(",", ".");
+  const parsed = Number(digits);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : 0;
+}

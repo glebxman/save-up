@@ -13,6 +13,7 @@ import { Spinner } from "@/components/ui";
 // Lazy-loaded pages — not needed on initial render.
 const Admin = lazy(() => import("@/pages/Admin").then((m) => ({ default: m.Admin })));
 const CategoriesSettings = lazy(() => import("@/pages/CategoriesSettings").then((m) => ({ default: m.CategoriesSettings })));
+const Debts = lazy(() => import("@/pages/Debts").then((m) => ({ default: m.Debts })));
 const NotFound = lazy(() => import("@/pages/NotFound").then((m) => ({ default: m.NotFound })));
 const NotificationsSetup = lazy(() => import("@/pages/NotificationsSetup").then((m) => ({ default: m.NotificationsSetup })));
 const Report = lazy(() => import("@/pages/Report").then((m) => ({ default: m.Report })));
@@ -124,6 +125,14 @@ function App() {
             element={
               <PageTransition>
                 <Report />
+              </PageTransition>
+            }
+          />
+          <Route
+            path="/debts"
+            element={
+              <PageTransition>
+                <Debts />
               </PageTransition>
             }
           />

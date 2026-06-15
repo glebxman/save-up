@@ -64,6 +64,7 @@ import {
   userSendExportToTelegram,
 } from "./user";
 import { financeProcessVoice } from "./voice";
+import { financeAddDebt, financeGetDebts, financeSettleDebt, financeDeleteDebt } from "./debts";
 import type { MockHandlerMap } from "./_types";
 
 const handlers: MockHandlerMap = {
@@ -109,6 +110,10 @@ const handlers: MockHandlerMap = {
   "finance.refreshRates": financeRefreshRates,
   "finance.processVoice": financeProcessVoice,
   "finance.transferBetweenAccounts": financeTransferBetweenAccounts,
+  "finance.addDebt": financeAddDebt,
+  "finance.getDebts": financeGetDebts,
+  "finance.settleDebt": financeSettleDebt,
+  "finance.deleteDebt": financeDeleteDebt,
 };
 
 export async function mockRpcRequest<Method extends RpcMethod>(

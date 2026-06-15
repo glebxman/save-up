@@ -10,14 +10,10 @@ import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip
 import { useFinance } from "@/hooks/useFinance";
 import type { TransactionFilters } from "@/types/finance";
 import { exportTransactionsToExcel } from "@/utils/export";
-import { formatMoney } from "@/utils/format";
+import { formatMoney, getMonthKey } from "@/utils/format";
 import * as api from "@/api/methods";
 import { useTelegram } from "@/hooks/useTelegram";
 import { useToastStore } from "@/stores/ui.store";
-
-function getCurrentMonthKey(date = new Date()): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
 
 interface SummaryMetric {
   label: string;
@@ -55,7 +51,7 @@ export function Report() {
   const { t } = useTranslation();
   const { initData } = useTelegram();
   const pushToast = useToastStore((s) => s.pushToast);
-  const [selectedMonthKey, setSelectedMonthKey] = useState(getCurrentMonthKey());
+  const [selectedMonthKey, setSelectedMonthKey] = useState(getMonthKey());
   const [isExporting, setIsExporting] = useState(false);
   const { report, breakdown, dailyTrend, reportQuery, breakdownQuery, newMonthMutation, status } = useFinance({
     reportMonthKey: selectedMonthKey,
@@ -338,7 +334,7 @@ export function Report() {
             <span>{t("report.monthSelector")}</span>
             <input
               className="min-h-10 rounded-[16px] border border-[var(--field-border)] bg-[var(--field-background)] px-3 text-sm font-semibold text-[var(--field-foreground)] outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
-              max={getCurrentMonthKey()}
+              max={getMonthKey()}
               onChange={(event) => {
                 if (event.target.value) {
                   setSelectedMonthKey(event.target.value);

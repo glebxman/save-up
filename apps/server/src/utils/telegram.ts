@@ -1,14 +1,7 @@
 import { createHmac, timingSafeEqual } from "node:crypto";
+import type { TelegramUser } from "@finance-twa/shared-types";
 
-export interface TelegramUser {
-  id: number;
-  first_name?: string;
-  last_name?: string;
-  username?: string;
-  photo_url?: string;
-  language_code?: string;
-  is_premium?: boolean;
-}
+export type { TelegramUser } from "@finance-twa/shared-types";
 
 export interface TelegramInitData {
   authDate: number;
