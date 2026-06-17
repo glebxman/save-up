@@ -1,5 +1,4 @@
 import type {
-  ExpenseTransaction,
   Transaction,
   TransactionFilters,
 } from "@finance-twa/shared-types";
@@ -11,7 +10,6 @@ import {
   buildTransaction,
   ensureAmountWithinLimit,
   ensureNonNegative,
-  getMonthKey,
   getTransactionImpact,
   normalizeSavingsAmount,
   parseTelegramIdFromInitData,
@@ -88,11 +86,6 @@ export const financeTransferSavings: MockHandler<"finance.transferSavings"> = as
   appendTransaction(transaction);
 
   return await buildStatus(nextUser);
-};
-
-export const financeGetRecentExpenses: MockHandler<"finance.getRecentExpenses"> = (params) => {
-  const telegramId = parseTelegramIdFromInitData(params.initData);
-  return getRecentExpensesForUser(telegramId, params.limit);
 };
 
 export const financeGetTransactions: MockHandler<"finance.getTransactions"> = (params) => {
@@ -191,20 +184,6 @@ export const financeRestoreTransaction: MockHandler<"finance.restoreTransaction"
 };
 
 // helpers used by the read handlers
-function getRecentExpensesForUser(telegramId: number, limit = 5): ExpenseTransaction[] {
-  const safeLimit = Math.min(Math.max(Math.trunc(limit) || 5, 1), 10);
-  return getTransactionsForUser(telegramId)
-    .filter(
-      (transaction): transaction is ExpenseTransaction =>
-        !transaction.deletedAt
-        && transaction.monthKey === getMonthKey()
-        && transaction.type === "expense"
-        && transaction.category !== null,
-    )
-    .sort((left, right) => new Date(right.occurredAt).getTime() - new Date(left.occurredAt).getTime())
-    .slice(0, safeLimit);
-}
-
 function getFilteredTransactions(telegramId: number, filters: TransactionFilters = {}): Transaction[] {
   let items = getTransactionsForUser(telegramId);
 

@@ -10,7 +10,6 @@ export type {
   DailyTrend,
   DailyTrendPoint,
   ExpenseCategory,
-  ExpenseTransaction,
   MonthReport,
   NotificationFrequency,
   NotificationSettings,
