@@ -87,10 +87,20 @@ export function useBiometric(): UseBiometricResult {
 
     if (!bm) return;
 
+    let cancelled = false;
+
     // Init must be called before any other method.
     bm.init(() => {
-      setState(snapshot(bm));
+      if (!cancelled) setState(snapshot(bm));
     });
+
+    // If the manager was already initialised the callback may have fired
+    // synchronously — snapshot once more here so React always sees the
+    // up-to-date state even if the callback was skipped.
+    const s = snapshot(bm);
+    if (!cancelled) setState(s);
+
+    return () => { cancelled = true; };
   }, []);
 
   const requestAccess = useCallback(

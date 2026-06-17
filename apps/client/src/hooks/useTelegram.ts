@@ -24,7 +24,9 @@ interface UseTelegramResult {
 }
 
 export function useTelegram(): UseTelegramResult {
-  const [webApp, setWebApp] = useState<TelegramWebApp | null>(null);
+  const [webApp, setWebApp] = useState<TelegramWebApp | null>(
+    () => (window as TelegramWindow).Telegram?.WebApp ?? null,
+  );
 
   useEffect(() => {
     const tg = (window as TelegramWindow).Telegram?.WebApp;

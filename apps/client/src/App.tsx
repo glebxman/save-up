@@ -89,7 +89,7 @@ function App() {
     // Render setup pages without AppShell so they're truly full-screen.
     return (
       <Suspense fallback={<PageFallback />}>
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           <Routes key={location.pathname} location={location}>
             <Route path="/welcome" element={<Welcome />} />
             <Route path="/notifications-setup" element={<NotificationsSetup />} />
@@ -102,7 +102,7 @@ function App() {
   return (
     <AppShell>
       <Suspense fallback={<PageFallback />}>
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           <Routes location={location} key={location.pathname}>
           <Route
             path="/"

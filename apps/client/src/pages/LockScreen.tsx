@@ -21,6 +21,7 @@ export function LockScreen() {
   const [pin, setPin] = useState("");
   const [shake, setShake] = useState(false);
   const biometricTriedRef = useRef(false);
+  const verifyingRef = useRef(false);
 
   const biometricAvailable =
     isBiometricsEnabled() &&
@@ -54,6 +55,9 @@ export function LockScreen() {
   }, [biometricAvailable, biometric.isInited, handleBiometric]);
 
   const handleSubmit = async (value: string) => {
+    if (verifyingRef.current) return;
+    if (!initData) return;
+    verifyingRef.current = true;
     try {
       const ok = await verifyPin(initData, value);
       if (ok) {
@@ -63,6 +67,8 @@ export function LockScreen() {
       }
     } catch {
       // Network error — treat as wrong PIN.
+    } finally {
+      verifyingRef.current = false;
     }
     hapticNotification("error");
     setShake(true);
