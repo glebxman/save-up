@@ -79,6 +79,7 @@ function snapshot(bm: BiometricManagerRaw): BiometricState {
  */
 export function useBiometric(): UseBiometricResult {
   const [state, setState] = useState<BiometricState>(EMPTY_STATE);
+  const [supported, setSupported] = useState(false);
   const managerRef = useRef<BiometricManagerRaw | null>(null);
 
   useEffect(() => {
@@ -86,6 +87,8 @@ export function useBiometric(): UseBiometricResult {
     managerRef.current = bm;
 
     if (!bm) return;
+
+    setSupported(true);
 
     let cancelled = false;
 
@@ -152,7 +155,7 @@ export function useBiometric(): UseBiometricResult {
 
   return {
     ...state,
-    isSupported: !!managerRef.current,
+    isSupported: supported,
     requestAccess,
     authenticate,
     saveToken,

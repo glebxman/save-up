@@ -1,3 +1,5 @@
+import { useTranslation } from "react-i18next";
+
 import { Button, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
 
 interface ConfirmActionModalProps {
@@ -18,11 +20,14 @@ export function ConfirmActionModal({
   title,
   question,
   description,
-  cancelLabel = "Cancel",
+  cancelLabel,
   confirmLabel,
   onClose,
   onConfirm,
 }: ConfirmActionModalProps) {
+  const { t } = useTranslation();
+  const resolvedCancelLabel = cancelLabel ?? t("common.cancel");
+
   return (
     <Modal>
       <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
@@ -43,7 +48,7 @@ export function ConfirmActionModal({
 
                 <div className="grid grid-cols-2 gap-2">
                   <Button className="w-full" isDisabled={isPending} onPress={onClose} variant="secondary">
-                    {cancelLabel}
+                    {resolvedCancelLabel}
                   </Button>
                   <Button className="w-full" isDisabled={isPending} onPress={onConfirm} variant="danger-soft">
                     {confirmLabel}

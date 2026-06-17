@@ -7,7 +7,6 @@ import {
   deleteRecurringTransaction,
   getCategoryBreakdown,
   getDailyTrend,
-  getRecentExpenses,
   getReport,
   getTransactions,
   newMonth,
@@ -27,7 +26,6 @@ import {
   financeAddIncomeSchema,
   financeAddExpenseSchema,
   financeTransferSavingsSchema,
-  financeGetRecentExpensesSchema,
   financeGetTransactionsSchema,
   financeUpdateTransactionSchema,
   financeArchiveTransactionSchema,
@@ -72,12 +70,6 @@ export const transferSavingsHandler = defineAuthenticatedRpc(
   financeTransferSavingsSchema,
   ({ telegramId, amount, direction, note, occurredAt, accountId }) =>
     transferSavings(telegramId, amount, direction, note, occurredAt, accountId),
-);
-
-export const getRecentExpensesHandler = defineAuthenticatedRpc(
-  "finance.getRecentExpenses",
-  financeGetRecentExpensesSchema,
-  ({ telegramId, limit }) => getRecentExpenses(telegramId, limit),
 );
 
 export const getTransactionsHandler = defineAuthenticatedRpc(

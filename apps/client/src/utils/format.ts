@@ -17,15 +17,27 @@ const localeMap = {
   zh: "zh-CN",
 } as const;
 
+const formatterCache = new Map<string, Intl.NumberFormat>();
+
+function getFormatter(locale: string, currency: CurrencyCode): Intl.NumberFormat {
+  const key = `${locale}:${currency}`;
+  let fmt = formatterCache.get(key);
+  if (!fmt) {
+    fmt = new Intl.NumberFormat(locale, {
+      minimumFractionDigits: 0,
+      maximumFractionDigits: currency === "UZS" ? 0 : 2,
+    });
+    formatterCache.set(key, fmt);
+  }
+  return fmt;
+}
+
 export function formatMoney(value: number, currency?: CurrencyCode): string {
   const curr = currency ?? getStoredCurrency();
   const locale = CURRENCY_LOCALES[curr];
   const symbol = CURRENCY_SYMBOLS[curr];
 
-  const formatted = new Intl.NumberFormat(locale, {
-    minimumFractionDigits: 0,
-    maximumFractionDigits: curr === "UZS" ? 0 : 2,
-  }).format(value);
+  const formatted = getFormatter(locale, curr).format(value);
 
   return `${formatted} ${symbol}`;
 }

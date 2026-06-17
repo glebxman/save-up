@@ -12,6 +12,7 @@ interface MemoryCacheEntry {
 }
 
 const memoryCache = new Map<number, MemoryCacheEntry>();
+const MEMORY_CACHE_MAX = 500;
 let redisDisabled = false;
 let redisWarningShown = false;
 
@@ -35,6 +36,11 @@ function getMemoryStatus(telegramId: number): Status | null {
 }
 
 function setMemoryStatus(telegramId: number, status: Status): void {
+  if (memoryCache.size >= MEMORY_CACHE_MAX) {
+    const oldestKey = memoryCache.keys().next().value;
+    if (oldestKey !== undefined) memoryCache.delete(oldestKey);
+  }
+
   memoryCache.set(telegramId, {
     status,
     expiresAt: Date.now() + env.CACHE_TTL_SECONDS * 1000,

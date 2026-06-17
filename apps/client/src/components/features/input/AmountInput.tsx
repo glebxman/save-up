@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useTranslation } from "react-i18next";
 
 import { ArrowDownLeftIcon, ArrowUpRightIcon, XMarkIcon, BanknotesIcon, CreditCardIcon, CircleStackIcon } from "@/components/layout/icons";
@@ -48,6 +48,10 @@ export function AmountInput({
   const { currency: baseCurrency } = useCurrency();
   const [showCurrencyModal, setShowCurrencyModal] = useState(false);
   const [displayValue, setDisplayValue] = useState(formatGroupedNumber(value));
+
+  useEffect(() => {
+    setDisplayValue(formatGroupedNumber(value));
+  }, [value]);
 
   const activeAccount = accounts.find((acc) => acc.id === activeAccountId);
   const isCryptoAccount = activeAccount?.type === "crypto";

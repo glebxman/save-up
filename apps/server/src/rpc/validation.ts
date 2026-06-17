@@ -53,11 +53,6 @@ export const financeTransferSavingsSchema = z.object({
   accountId: z.string().uuid().optional(),
 });
 
-export const financeGetRecentExpensesSchema = z.object({
-  initData: initDataSchema,
-  limit: z.number().int().min(1).max(10).optional(),
-});
-
 export const transactionFiltersSchema = z.object({
   monthKey: z.string().regex(/^\d{4}-\d{2}$/).optional(),
   type: z.enum(["income", "expense", "all", "transfer_to_savings", "transfer_from_savings", "transfer_between_accounts"]).optional(),

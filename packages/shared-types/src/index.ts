@@ -347,13 +347,6 @@ export interface RpcMethodMap {
     };
     result: Status;
   };
-  "finance.getRecentExpenses": {
-    params: {
-      initData: string;
-      limit?: number;
-    };
-    result: ExpenseTransaction[];
-  };
   "finance.getTransactions": {
     params: {
       initData: string;

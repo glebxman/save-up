@@ -5,6 +5,7 @@ export enum ErrorCode {
   NOT_FOUND = "NOT_FOUND",
   CONFLICT = "CONFLICT",
   LIMIT_REACHED = "LIMIT_REACHED",
+  TOO_MANY_REQUESTS = "TOO_MANY_REQUESTS",
   INSUFFICIENT_FUNDS = "INSUFFICIENT_FUNDS",
   INTERNAL = "INTERNAL",
 }
@@ -16,6 +17,7 @@ const RPC_CODE_MAP: Record<ErrorCode, number> = {
   [ErrorCode.NOT_FOUND]: -32004,
   [ErrorCode.CONFLICT]: -32005,
   [ErrorCode.LIMIT_REACHED]: -32006,
+  [ErrorCode.TOO_MANY_REQUESTS]: -32008,
   [ErrorCode.INSUFFICIENT_FUNDS]: -32007,
   [ErrorCode.INTERNAL]: -32000,
 };
