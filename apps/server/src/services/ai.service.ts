@@ -72,7 +72,8 @@ async function fetchWithRetry(url: string, init: RequestInit): Promise<Response>
       lastError = error;
     }
     if (attempt < MAX_RETRIES) {
-      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS * (attempt + 1)));
+      const jitter = Math.random() * 500;
+      await new Promise((r) => setTimeout(r, RETRY_DELAY_MS * (attempt + 1) + jitter));
     }
   }
   throw lastError;
@@ -213,7 +214,6 @@ export async function extractTransactionFromReceipt(
 
   try {
     const photoBuffer = Buffer.from(base64Photo, "base64");
-    const blob = new Blob([photoBuffer], { type: "image/jpeg" });
     const dataUrl = `data:image/jpeg;base64,${base64Photo}`;
 
     const chatPayload = {

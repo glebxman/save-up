@@ -149,7 +149,6 @@ export async function dispatchRpc(
     }
 
     context.log.error({ err: error }, "unhandled rpc error");
-    const message = error instanceof Error ? error.message : "Internal server error";
-    return makeError(request.id, -32000, message);
+    return makeError(request.id, -32000, "Internal server error");
   }
 }

@@ -16,7 +16,11 @@ function parseUser(value: string | null): TelegramUser | undefined {
     return undefined;
   }
 
-  return JSON.parse(value) as TelegramUser;
+  try {
+    return JSON.parse(value) as TelegramUser;
+  } catch {
+    return undefined;
+  }
 }
 
 export function verifyTelegramInitData(

@@ -319,6 +319,9 @@ async function handlePhotoMessage(message: TelegramMessage): Promise<void> {
     const photoRes = await fetch(fileUrl);
     if (!photoRes.ok) throw new Error(`Failed to download photo (HTTP ${photoRes.status})`);
     const arrayBuffer = await photoRes.arrayBuffer();
+    if (arrayBuffer.byteLength > 10 * 1024 * 1024) {
+      throw new Error("Photo file too large (max 10MB)");
+    }
     const base64Photo = Buffer.from(arrayBuffer).toString("base64");
 
     const extraction = await processReceipt(telegramId, base64Photo);
@@ -375,6 +378,9 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
     const audioRes = await fetch(fileUrl);
     if (!audioRes.ok) throw new Error(`Failed to download voice file (HTTP ${audioRes.status})`);
     const arrayBuffer = await audioRes.arrayBuffer();
+    if (arrayBuffer.byteLength > 10 * 1024 * 1024) {
+      throw new Error("Voice file too large (max 10MB)");
+    }
     const base64Audio = Buffer.from(arrayBuffer).toString("base64");
 
     // processVoice handles daily limit check and counter increment.

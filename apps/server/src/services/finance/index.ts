@@ -33,3 +33,4 @@ export {
 export { refreshRates } from "./rates.js";
 
 export { processVoice } from "./voice.js";
+export { processReceipt } from "./receipt.js";
