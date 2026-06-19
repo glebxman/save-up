@@ -1,5 +1,5 @@
-import { listAdminUsers, setUserAdminAccess, resetUserPin } from "../../services/user/index.js";
-import { adminListUsersSchema, adminSetAdminSchema, adminResetPinSchema } from "../validation.js";
+import { listAdminUsers, setUserAdminAccess, resetUserPin, setUserSubscription } from "../../services/user/index.js";
+import { adminListUsersSchema, adminSetAdminSchema, adminResetPinSchema, adminSetSubscriptionSchema } from "../validation.js";
 import { defineAuthenticatedRpc } from "./shared.js";
 
 export const listAdminUsersHandler = defineAuthenticatedRpc(
@@ -19,4 +19,11 @@ export const resetUserPinHandler = defineAuthenticatedRpc(
   "admin.resetPin",
   adminResetPinSchema,
   ({ telegramId, userId }) => resetUserPin(telegramId, userId),
+);
+
+export const setUserSubscriptionHandler = defineAuthenticatedRpc(
+  "admin.setSubscription",
+  adminSetSubscriptionSchema,
+  ({ telegramId, userId, planId, durationMonths }) =>
+    setUserSubscription(telegramId, userId, planId, durationMonths),
 );

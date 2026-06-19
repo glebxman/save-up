@@ -13,15 +13,19 @@ export type {
   MonthReport,
   NotificationFrequency,
   NotificationSettings,
+  PaymentProvider,
   RecurringTransaction,
   RecurringTransactionPayload,
   SavingsTransferDirection,
   SavingsPct,
   Status,
+  SubscriptionPaymentLink,
+  SubscriptionPlanId,
+  SubscriptionState,
   Transaction,
   TransactionFilters,
   TransactionUpdatePayload,
   TransactionType,
   User,
 } from "@finance-twa/shared-types";
-export { MAX_CUSTOM_CATEGORIES } from "@finance-twa/shared-types";
+export { AI_FREE_DAILY_LIMIT, FREE_TRIAL_DAYS, MAX_CUSTOM_CATEGORIES, SUBSCRIPTION_PLANS } from "@finance-twa/shared-types";

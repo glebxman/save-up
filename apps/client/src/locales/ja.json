@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "ホーム",
       "report": "レポート",
-      "settings": "設定"
+      "settings": "設定",
+      "debts": "負債"
     }
   },
   "dashboard": {
@@ -76,7 +77,7 @@
     "saveAll": "すべて貯金",
     "confirm": "追加",
     "helperText": "{{amount}} までの任意の金額を貯金できます。",
-    "manualMode": "60959\"",
+    "manualMode": "手動",
     "goalBadge": "{{value}} の目標",
     "goalText": "目標: {{goal}}。残り: {{remaining}}。",
     "setGoal": "目標を設定",
@@ -142,6 +143,8 @@
     "resetDataConfirm": "データをリセット",
     "restartTutorial": "チュートリアルを再開",
     "restartTutorialDescription": "アプリのガイドを最初からもう一度確認できます。",
+    "support": "サポート",
+    "supportDescription": "Telegramで @saveup_support を開きます。",
     "themeAuto": "自動",
     "themeDark": "ダーク",
     "themeLight": "ライト",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "プライバシーと通知",
     "sectionContent": "アプリの内容",
     "sectionHelp": "ヘルプ",
-    "sectionAccount": "アカウント"
+    "sectionAccount": "アカウント",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "管理パネル",
@@ -232,7 +237,19 @@
     "noPin": "PIN未設定",
     "resetPin": "PINリセット",
     "resetPinConfirm": "このユーザーのPINをリセットしてもよろしいですか？",
-    "resetPinSuccess": "ユーザーのPINがリセットされました"
+    "resetPinDescription": "{{name}} は次回起動時に新しいPINを設定できます。",
+    "resetPinSuccess": "ユーザーのPINがリセットされました",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "カテゴリ",
@@ -273,8 +290,6 @@
     "placeholder": "空欄 = 上限なし",
     "helperText": "このカテゴリに上限を設定しない場合は空欄のままにしてください。",
     "save": "上限を保存",
-    "dayOfMonth": "日付（月内）",
-    "autoApply": "自動適用",
     "warningTitle": "1つ以上のカテゴリが上限を超えています"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "メモ",
     "notePlaceholder": "この取引にメモを追加",
     "save": "変更を保存",
-    "dayOfMonth": "日付（月内）",
-    "autoApply": "自動適用",
     "archiveQuestion": "この取引をキャンセルしますか？",
     "archiveDescription": "取引はロールバックされ、残高と合計が再計算されます。",
     "restoreQuestion": "この取引を復元しますか？",
@@ -635,5 +648,67 @@
     "saveHolding": "コインを保存",
     "cryptoCreateHint": "先にウォレットを作成し、保有エディタでコイン（BTC、TON、USDT、NOTCOIN）を追加してください。",
     "transferAutoPlaceholder": "自動"
+  },
+  "debts": {
+    "title": "負債",
+    "empty": "アクティブな負債はありません",
+    "emptyHint": "誰があなたに借りているか、あなたが誰に借りているかを追跡するには負債を追加してください。",
+    "owedToMe": "借りられている",
+    "iOwe": "借りている",
+    "name": "名前",
+    "amount": "金額",
+    "direction": "方向",
+    "dueDate": "期限",
+    "note": "メモ（任意）",
+    "addDebt": "負債を追加",
+    "settle": "精算",
+    "delete": "削除",
+    "totalOwedToMe": "借りられている合計",
+    "totalIOwe": "借りている合計",
+    "net": "差引",
+    "settleConfirm": "この負債を精算済みにしますか？",
+    "deleteConfirm": "この負債を削除しますか？",
+    "addSuccess": "負債を追加しました",
+    "settleSuccess": "負債を精算しました",
+    "deleteSuccess": "負債を削除しました"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

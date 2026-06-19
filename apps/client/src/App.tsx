@@ -1,11 +1,13 @@
 import { useLocation, Navigate, Route, Routes } from "react-router-dom";
-import { AnimatePresence, motion } from "framer-motion";
-import { lazy, Suspense, useEffect, useState, type PropsWithChildren } from "react";
+import { lazy, Suspense, useEffect, useState, type ReactNode } from "react";
 import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Dashboard } from "@/pages/Dashboard";
+import { Debts } from "@/pages/Debts";
 import { LockScreen } from "@/pages/LockScreen";
+import { Report } from "@/pages/Report";
+import { Settings } from "@/pages/Settings";
 import { useStatus } from "@/hooks/useFinance";
 import { useLockStore } from "@/stores/lock.store";
 import { Spinner } from "@/components/ui";
@@ -13,11 +15,9 @@ import { Spinner } from "@/components/ui";
 // Lazy-loaded pages — not needed on initial render.
 const Admin = lazy(() => import("@/pages/Admin").then((m) => ({ default: m.Admin })));
 const CategoriesSettings = lazy(() => import("@/pages/CategoriesSettings").then((m) => ({ default: m.CategoriesSettings })));
-const Debts = lazy(() => import("@/pages/Debts").then((m) => ({ default: m.Debts })));
 const NotFound = lazy(() => import("@/pages/NotFound").then((m) => ({ default: m.NotFound })));
 const NotificationsSetup = lazy(() => import("@/pages/NotificationsSetup").then((m) => ({ default: m.NotificationsSetup })));
-const Report = lazy(() => import("@/pages/Report").then((m) => ({ default: m.Report })));
-const Settings = lazy(() => import("@/pages/Settings").then((m) => ({ default: m.Settings })));
+const Subscription = lazy(() => import("@/pages/Subscription").then((m) => ({ default: m.Subscription })));
 const Welcome = lazy(() => import("@/pages/Welcome").then((m) => ({ default: m.Welcome })));
 
 function PageFallback() {
@@ -28,16 +28,16 @@ function PageFallback() {
   );
 }
 
-const PageTransition = ({ children }: PropsWithChildren) => (
-  <motion.div
-    initial={{ opacity: 0, y: 8, scale: 0.99 }}
-    animate={{ opacity: 1, y: 0, scale: 1 }}
-    exit={{ opacity: 0, y: -8, scale: 0.99 }}
-    transition={{ duration: 0.25, ease: [0.2, 0, 0, 1] }}
-  >
-    {children}
-  </motion.div>
-);
+const APP_ROUTES: readonly { path: string; element: ReactNode }[] = [
+  { path: "/", element: <Dashboard /> },
+  { path: "/admin", element: <Admin /> },
+  { path: "/report", element: <Report /> },
+  { path: "/debts", element: <Debts /> },
+  { path: "/settings", element: <Settings /> },
+  { path: "/settings/categories", element: <CategoriesSettings /> },
+  { path: "/subscription", element: <Subscription /> },
+  { path: "*", element: <NotFound /> },
+];
 
 function OfflineBanner() {
   const { t } = useTranslation();
@@ -65,15 +65,25 @@ function OfflineBanner() {
 }
 
 const ONBOARDING_PATHS = new Set(["/welcome", "/notifications-setup"]);
+const SUBSCRIPTION_LOCKED_PATHS = new Set(["/debts", "/settings/categories"]);
 
 function App() {
   const location = useLocation();
-  const { status } = useStatus();
+  const { status, statusQuery } = useStatus();
   const { hasPin, unlocked } = useLockStore();
 
   // Highest priority: locked → show only the lock screen, regardless of route.
   if (hasPin && !unlocked) {
     return <LockScreen />;
+  }
+
+  // If user status is loading, wait to prevent flashing / unauthorized routing.
+  if (statusQuery.isPending && !status) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-[var(--background)]">
+        <Spinner size="md" />
+      </div>
+    );
   }
 
   // Existing users with no notifications setup must complete it before reaching the app.
@@ -89,79 +99,27 @@ function App() {
     // Render setup pages without AppShell so they're truly full-screen.
     return (
       <Suspense fallback={<PageFallback />}>
-        <AnimatePresence>
-          <Routes key={location.pathname} location={location}>
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="/notifications-setup" element={<NotificationsSetup />} />
-          </Routes>
-        </AnimatePresence>
+        <Routes location={location}>
+          <Route path="/welcome" element={<Welcome />} />
+          <Route path="/notifications-setup" element={<NotificationsSetup />} />
+        </Routes>
       </Suspense>
     );
+  }
+
+  const hasSubscriptionAccess = !!status?.user.isAdmin || !!status?.user.subscription.active;
+  if (status && SUBSCRIPTION_LOCKED_PATHS.has(location.pathname) && !hasSubscriptionAccess) {
+    return <Navigate replace to="/subscription" />;
   }
 
   return (
     <AppShell>
       <Suspense fallback={<PageFallback />}>
-        <AnimatePresence>
-          <Routes location={location} key={location.pathname}>
-          <Route
-            path="/"
-            element={
-              <PageTransition>
-                <Dashboard />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/admin"
-            element={
-              <PageTransition>
-                <Admin />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/report"
-            element={
-              <PageTransition>
-                <Report />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/debts"
-            element={
-              <PageTransition>
-                <Debts />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/settings"
-            element={
-              <PageTransition>
-                <Settings />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="/settings/categories"
-            element={
-              <PageTransition>
-                <CategoriesSettings />
-              </PageTransition>
-            }
-          />
-          <Route
-            path="*"
-            element={
-              <PageTransition>
-                <NotFound />
-              </PageTransition>
-            }
-          />
+        <Routes location={location}>
+          {APP_ROUTES.map(({ path, element }) => (
+            <Route key={path} path={path} element={element} />
+          ))}
         </Routes>
-      </AnimatePresence>
       </Suspense>
       <OfflineBanner />
     </AppShell>

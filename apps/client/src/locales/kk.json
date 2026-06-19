@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "Басты бет",
       "report": "Есеп",
-      "settings": "Баптаулар"
+      "settings": "Баптаулар",
+      "debts": "Қарыздар"
     }
   },
   "dashboard": {
@@ -142,6 +143,8 @@
     "resetDataConfirm": "Деректерді тазалау",
     "restartTutorial": "Оқытуды қайта бастау",
     "restartTutorialDescription": "Қолданбаны басынан бастап қадамдық нұсқаулықтан өтіңіз.",
+    "support": "Техқолдау",
+    "supportDescription": "Telegram-да @saveup_support ашу.",
     "themeAuto": "Авто",
     "themeDark": "Қараңғы",
     "themeLight": "Жарық",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "Құпиялылық және хабарландырулар",
     "sectionContent": "Мазмұн",
     "sectionHelp": "Көмек",
-    "sectionAccount": "Аккаунт"
+    "sectionAccount": "Аккаунт",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "Админ панелі",
@@ -232,7 +237,19 @@
     "noPin": "PIN орнатылмаған",
     "resetPin": "PIN-кодты қайта орнату",
     "resetPinConfirm": "Бұл пайдаланушының PIN-кодын қайта орнатқыңыз келетініне сенімдісіз бе?",
-    "resetPinSuccess": "Пайдаланушының PIN-коды қайта орнатылды"
+    "resetPinDescription": "{{name}} келесі іске қосқанда жаңа PIN қоя алады.",
+    "resetPinSuccess": "Пайдаланушының PIN-коды қайта орнатылды",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "Санат",
@@ -273,8 +290,6 @@
     "placeholder": "Бос = лимит жоқ",
     "helperText": "Бұл санатқа лимит қажет болмаса, бос қалдырыңыз.",
     "save": "Лимиттерді сақтау",
-    "dayOfMonth": "Айдың күні",
-    "autoApply": "Автоматты қолдану",
     "warningTitle": "Бір немесе бірнеше санат лимиттен асып кетті"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "Ескертпе",
     "notePlaceholder": "Бұл операцияға ескертпе қосыңыз",
     "save": "Өзгерістерді сақтау",
-    "dayOfMonth": "Айдың күні",
-    "autoApply": "Автоматты қолдану",
     "archiveQuestion": "Бұл операцияны болдырмау керек пе?",
     "archiveDescription": "Операция кері қайтарылады, баланс пен қорытындылар қайта есептеледі.",
     "restoreQuestion": "Бұл операцияны қайта қосу керек пе?",
@@ -635,5 +648,67 @@
     "saveHolding": "Монетаны сақтау",
     "cryptoCreateHint": "Алдымен әмиян жасаңыз, содан кейін активтер өңдегішінде монеталарды (BTC, TON, USDT, NOTCOIN) қосыңыз.",
     "transferAutoPlaceholder": "Автоматты"
+  },
+  "debts": {
+    "title": "Қарыздар",
+    "empty": "Белсенді қарыздар жоқ",
+    "emptyHint": "Кімге қарыз берілген немесе кімнен қарыз алынғанын бақылау үшін қарыз қосыңыз.",
+    "owedToMe": "Маған қарыз",
+    "iOwe": "Мен қарызмын",
+    "name": "Атауы",
+    "amount": "Сома",
+    "direction": "Бағыт",
+    "dueDate": "Мерзімі",
+    "note": "Ескертпе (міндетті емес)",
+    "addDebt": "Қарыз қосу",
+    "settle": "Жабу",
+    "delete": "Жою",
+    "totalOwedToMe": "Жалпы маған қарыз",
+    "totalIOwe": "Жалпы мен қарызмын",
+    "net": "Таза",
+    "settleConfirm": "Бұл қарыз өтелді деп белгіленсін бе?",
+    "deleteConfirm": "Бұл қарыз жойылсын ба?",
+    "addSuccess": "Қарыз сәтті қосылды",
+    "settleSuccess": "Қарыз жабылды",
+    "deleteSuccess": "Қарыз жойылды"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

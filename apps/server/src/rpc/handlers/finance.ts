@@ -21,7 +21,7 @@ import {
   processVoice,
   transferBetweenAccounts,
 } from "../../services/finance/index.js";
-import { addDebt, getActiveDebts, settleDebt, deleteDebt } from "../../services/finance/debts.js";
+import { addDebt, deleteDebt, getActiveDebts, mapDebtRow, settleDebt } from "../../services/finance/debts.js";
 import {
   financeAddIncomeSchema,
   financeAddExpenseSchema,
@@ -181,27 +181,12 @@ export const transferBetweenAccountsHandler = defineAuthenticatedRpc(
     transferBetweenAccounts(telegramId, { fromAccountId, toAccountId, amount, toAmount }),
 );
 
-function mapDebt(d: { id: string; userId: string; name: string; amount: number; note: string | null; direction: string; dueDate: Date | null; settled: boolean; settledAt: Date | null; createdAt: Date }) {
-  return {
-    id: d.id,
-    userId: d.userId,
-    name: d.name,
-    amount: d.amount,
-    note: d.note,
-    direction: d.direction as "owed_to_me" | "i_owe",
-    dueDate: d.dueDate?.toISOString() ?? null,
-    settled: d.settled,
-    settledAt: d.settledAt?.toISOString() ?? null,
-    createdAt: d.createdAt.toISOString(),
-  };
-}
-
 export const addDebtHandler = defineAuthenticatedRpc(
   "finance.addDebt",
   financeAddDebtSchema,
   async ({ telegramId, name, amount, direction, note, dueDate }) => {
     const debt = await addDebt(telegramId, { name, amount, direction, note, dueDate });
-    return mapDebt(debt);
+    return mapDebtRow(debt);
   },
 );
 
@@ -210,7 +195,7 @@ export const getDebtsHandler = defineAuthenticatedRpc(
   financeGetDebtsSchema,
   async ({ telegramId }) => {
     const result = await getActiveDebts(telegramId);
-    return result.map(mapDebt);
+    return result.map(mapDebtRow);
   },
 );
 

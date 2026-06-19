@@ -51,6 +51,14 @@ export function ensureUser(telegramId: number, profile?: MockTelegramUser): User
     notificationsEnabled: true,
     notificationFrequency: { mode: "every_n_days", days: 3, time: "09:00" },
     notificationTimezoneOffset: 0,
+    subscription: {
+      active: false,
+      source: null,
+      planId: null,
+      expiresAt: null,
+      trialAvailable: true,
+      trialEndsAt: null,
+    },
     hasPinConfigured: false,
     createdAt: new Date().toISOString(),
     accounts: [

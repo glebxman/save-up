@@ -2,7 +2,23 @@ import { create } from "zustand";
 
 import { completeOnboarding } from "../api/methods";
 
-const STORAGE_KEY = "save-up:onboarding-completed";
+function getTelegramUserId(): number {
+  if (typeof window !== "undefined") {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user?.id) {
+      return tg.initDataUnsafe.user.id;
+    }
+  }
+  if (import.meta.env.VITE_USE_MOCK_API === "true") {
+    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
+  }
+  return 0;
+}
+
+function getStorageKey(): string {
+  const userId = getTelegramUserId();
+  return userId ? `save-up:${userId}:onboarding-completed` : "save-up:onboarding-completed";
+}
 
 export interface OnboardingStep {
   id: string;
@@ -14,6 +30,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "welcome", target: null, route: "/" },
   { id: "navigation", target: "bottom-nav", route: "/" },
   { id: "balance", target: "balance", route: "/" },
+  { id: "accounts", target: "balance", route: "/" },
   { id: "amount-input", target: "amount-input", route: "/" },
   { id: "voice-input", target: "voice-input", route: "/" },
   { id: "daily-limit", target: "daily-limit", route: "/" },
@@ -25,6 +42,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "report-details", target: "report-details", route: "/report" },
   { id: "report-heatmap", target: "report-heatmap", route: "/report" },
   { id: "report-export", target: "report-new-month", route: "/report" },
+  { id: "debts", target: "debts", route: "/debts" },
   { id: "settings-theme", target: "settings-theme", route: "/settings" },
   { id: "settings-language", target: "settings-language", route: "/settings" },
   { id: "settings-currency", target: "settings-currency", route: "/settings" },
@@ -38,7 +56,7 @@ export type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]["id"];
 
 function readCachedCompleted(): boolean {
   try {
-    return localStorage.getItem(STORAGE_KEY) === "1";
+    return localStorage.getItem(getStorageKey()) === "1";
   } catch {
     return false;
   }
@@ -46,7 +64,7 @@ function readCachedCompleted(): boolean {
 
 function writeCachedCompleted(): void {
   try {
-    localStorage.setItem(STORAGE_KEY, "1");
+    localStorage.setItem(getStorageKey(), "1");
   } catch {
     /* noop */
   }
@@ -112,7 +130,7 @@ export const useOnboardingStore = create<OnboardingState>((set, get) => ({
 
   restart: () => {
     // Clear localStorage so it won't be treated as completed on next reload
-    try { localStorage.removeItem(STORAGE_KEY); } catch { /* noop */ }
+    try { localStorage.removeItem(getStorageKey()); } catch { /* noop */ }
     set({ isCompleted: false, isActive: true, currentStep: 0, forceRestarted: true });
   },
 

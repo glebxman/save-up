@@ -18,7 +18,6 @@ import { useLockStore } from "@/stores/lock.store";
 import { useToastStore } from "@/stores/ui.store";
 import { hapticNotification } from "@/utils/haptic";
 import {
-  getStoredHash,
   hasStoredPin,
   isBiometricsEnabled,
   isPinValid,
@@ -27,6 +26,7 @@ import {
   setPin as savePin,
   setStoredBioToken,
   removePin,
+  verifyPin,
 } from "@/utils/pin";
 
 import { PinPad } from "./PinPad";
@@ -80,7 +80,7 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
 
   const handleVerify = async (value: string) => {
     try {
-      const ok = await import("@/utils/pin").then((m) => m.verifyPin(initData, value));
+      const ok = await verifyPin(initData, value);
       if (!ok) {
         hapticNotification("error");
         setShake(true);
@@ -123,6 +123,49 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
     setStep("confirm");
   };
 
+  const enableBiometrics = async (options: { notifyFailures?: boolean } = {}) => {
+    const notifyFailures = options.notifyFailures ?? true;
+
+    if (!biometric.isBiometricAvailable) {
+      if (notifyFailures) {
+        pushToast({ tone: "error", message: t("security.biometricUnavailable") });
+      }
+      return false;
+    }
+
+    try {
+      if (!biometric.isAccessGranted) {
+        const granted = await biometric.requestAccess(t("security.biometricReason"));
+        if (!granted) {
+          if (notifyFailures) {
+            pushToast({ tone: "error", message: t("security.biometricDenied") });
+          }
+          return false;
+        }
+      }
+
+      const token = `bio-${Date.now()}`;
+      const saved = await biometric.saveToken(token);
+      if (!saved) {
+        if (notifyFailures) {
+          pushToast({ tone: "error", message: t("feedback.genericError") });
+        }
+        return false;
+      }
+
+      setStoredBioToken(token);
+      setBiometricsEnabled(true);
+      refreshLock();
+      pushToast({ tone: "success", message: t("security.biometricEnabled") });
+      return true;
+    } catch {
+      if (notifyFailures) {
+        pushToast({ tone: "error", message: t("feedback.genericError") });
+      }
+      return false;
+    }
+  };
+
   const handleConfirm = async (value: string) => {
     if (value !== draftPin) {
       hapticNotification("error");
@@ -145,6 +188,11 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
       const token = `pin-${Date.now()}`;
       const saved = await biometric.saveToken(token);
       if (saved) setStoredBioToken(token);
+    } else if (!biometricsEnabled && biometric.isSupported && biometric.isBiometricAvailable) {
+      // Auto-prompt to enable biometrics if it is supported and not enabled yet
+      window.setTimeout(() => {
+        void enableBiometrics({ notifyFailures: false });
+      }, 300);
     }
 
     setStep("overview");
@@ -153,10 +201,6 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
   };
 
   const toggleBiometrics = async () => {
-    if (!biometric.isBiometricAvailable) {
-      pushToast({ tone: "error", message: t("security.biometricUnavailable") });
-      return;
-    }
     if (!hasPin) {
       pushToast({ tone: "error", message: t("security.setPinFirst") });
       return;
@@ -171,24 +215,7 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
       return;
     }
 
-    if (!biometric.isAccessGranted) {
-      const granted = await biometric.requestAccess(t("security.biometricReason"));
-      if (!granted) {
-        pushToast({ tone: "error", message: t("security.biometricDenied") });
-        return;
-      }
-    }
-
-    const token = `bio-${Date.now()}`;
-    const saved = await biometric.saveToken(token);
-    if (!saved) {
-      pushToast({ tone: "error", message: t("feedback.genericError") });
-      return;
-    }
-    setStoredBioToken(token);
-    setBiometricsEnabled(true);
-    refreshLock();
-    pushToast({ tone: "success", message: t("security.biometricEnabled") });
+    await enableBiometrics();
   };
 
   const renderBody = () => {

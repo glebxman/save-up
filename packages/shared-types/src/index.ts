@@ -24,7 +24,37 @@ export type CryptoCode = Extract<CurrencyCode, "BTC" | "ETH" | "TON" | "USDT" | 
 export const CRYPTO_CODES: CryptoCode[] = ["BTC", "TON", "USDT", "NOTCOIN", "ETH"];
 
 export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
-export const VOICE_CREDITS_DAILY_LIMIT = 5;
+export const AI_FREE_DAILY_LIMIT = 7;
+export const VOICE_CREDITS_DAILY_LIMIT = AI_FREE_DAILY_LIMIT;
+
+export const FREE_TRIAL_DAYS = 14;
+
+export const SUBSCRIPTION_PLANS = [
+  { id: "monthly", months: 1, priceUzs: 15_000, savingsPct: 0 },
+  { id: "quarterly", months: 3, priceUzs: 40_000, savingsPct: 11 },
+  { id: "half_year", months: 6, priceUzs: 80_000, savingsPct: 11 },
+  { id: "yearly", months: 12, priceUzs: 160_000, savingsPct: 11 },
+] as const;
+
+export type SubscriptionPlanId = (typeof SUBSCRIPTION_PLANS)[number]["id"];
+export type PaymentProvider = "click" | "payme";
+export type SubscriptionSource = "trial" | "paid";
+
+export interface SubscriptionState {
+  active: boolean;
+  source: SubscriptionSource | null;
+  planId: SubscriptionPlanId | null;
+  expiresAt: string | null;
+  trialAvailable: boolean;
+  trialEndsAt: string | null;
+}
+
+export interface SubscriptionPaymentLink {
+  provider: PaymentProvider;
+  planId: SubscriptionPlanId;
+  amountUzs: number;
+  url: string;
+}
 
 export type ExpenseCategory =
   | "food"
@@ -166,6 +196,7 @@ export interface User {
   notificationsEnabled: boolean;
   notificationFrequency: NotificationFrequency;
   notificationTimezoneOffset: number;
+  subscription: SubscriptionState;
   hasPinConfigured: boolean;
   createdAt: string;
   accounts: Account[];
@@ -216,6 +247,7 @@ export interface AdminUserListItem {
   telegramIdMasked: string;
   isAdmin: boolean;
   hasPinConfigured: boolean;
+  subscription: SubscriptionState;
   createdAt: string;
 }
 
@@ -487,6 +519,29 @@ export interface RpcMethodMap {
       userId: string;
     };
     result: AdminUserListItem;
+  };
+  "admin.setSubscription": {
+    params: {
+      initData: string;
+      userId: string;
+      planId: SubscriptionPlanId;
+      durationMonths: number;
+    };
+    result: AdminUserListItem;
+  };
+  "subscription.startTrial": {
+    params: {
+      initData: string;
+    };
+    result: Status;
+  };
+  "subscription.createPayment": {
+    params: {
+      initData: string;
+      provider: PaymentProvider;
+      planId: SubscriptionPlanId;
+    };
+    result: SubscriptionPaymentLink;
   };
   "finance.convertCurrency": {
     params: {

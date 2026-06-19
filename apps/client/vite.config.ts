@@ -70,11 +70,27 @@ export default defineConfig(({ mode }) => {
         output: {
           // Split large, rarely-changing vendor libraries into their own chunks
           // so the main app bundle stays small and caches well between deploys.
-          manualChunks: {
-            "react-vendor": ["react", "react-dom", "react-router-dom"],
-            "motion-vendor": ["framer-motion"],
-            "query-vendor": ["@tanstack/react-query"],
-            "i18n-vendor": ["i18next", "react-i18next"],
+          manualChunks(id) {
+            const normalizedId = id.replaceAll("\\", "/");
+
+            if (normalizedId.includes("/src/locales/")) return "locales";
+            if (normalizedId.includes("/node_modules/@heroicons/")) return "icons-vendor";
+            if (normalizedId.includes("/node_modules/@tanstack/react-query/")) return "query-vendor";
+            if (normalizedId.includes("/node_modules/framer-motion/")) return "motion-vendor";
+            if (
+              normalizedId.includes("/node_modules/i18next/") ||
+              normalizedId.includes("/node_modules/react-i18next/")
+            ) {
+              return "i18n-vendor";
+            }
+            if (
+              normalizedId.includes("/node_modules/react/") ||
+              normalizedId.includes("/node_modules/react-dom/") ||
+              normalizedId.includes("/node_modules/react-router-dom/")
+            ) {
+              return "react-vendor";
+            }
+            if (normalizedId.includes("/node_modules/xlsx/")) return "xlsx";
           },
         },
       },

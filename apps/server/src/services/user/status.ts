@@ -18,6 +18,7 @@ import { transactions, users, accounts, type UserRow, type AccountRow } from "..
 import { calculateDailyLimit, getMonthKey } from "../../utils/daily-limit.js";
 import { getCachedStatus, setCachedStatus } from "../cache.service.js";
 import { getExchangeRates } from "../currency.service.js";
+import { mapSubscriptionState } from "../subscription/state.js";
 import { isSuperAdmin, mapTelegramProfile, hasProfileChanges } from "./_internal.js";
 import { sanitizeHoldings, cryptoHoldingsTotalUsd } from "./crypto.js";
 
@@ -69,6 +70,7 @@ export function mapUserRow(row: UserRow, accountsList: AccountRow[] = []): User 
     notificationsEnabled: row.notificationsEnabled,
     notificationFrequency: (row.notificationFrequency ?? { mode: "every_n_days", days: 3, time: "09:00" }) as NotificationFrequency,
     notificationTimezoneOffset: row.notificationTimezoneOffset ?? 0,
+    subscription: mapSubscriptionState(row),
     hasPinConfigured: !!(row.pinHash && row.pinSalt),
     createdAt: row.createdAt.toISOString(),
     accounts: mappedAccounts,

@@ -1,9 +1,10 @@
-import { and, desc, eq, isNull, lte } from "drizzle-orm";
+import { and, desc, eq, lte } from "drizzle-orm";
+import type { Debt } from "@finance-twa/shared-types";
 
 import { db } from "../../config/database.js";
 import { debts, type DebtRow } from "../../db/schema/index.js";
+import { requireSubscriptionAccess } from "../subscription/state.js";
 import { ensureUser } from "../user/index.js";
-import { invalidateStatusCache } from "../cache.service.js";
 
 export interface DebtInput {
   name: string;
@@ -13,8 +14,24 @@ export interface DebtInput {
   dueDate?: string;
 }
 
+export function mapDebtRow(row: DebtRow): Debt {
+  return {
+    id: row.id,
+    userId: row.userId,
+    name: row.name,
+    amount: row.amount,
+    note: row.note,
+    direction: row.direction as Debt["direction"],
+    dueDate: row.dueDate?.toISOString() ?? null,
+    settled: row.settled,
+    settledAt: row.settledAt?.toISOString() ?? null,
+    createdAt: row.createdAt.toISOString(),
+  };
+}
+
 export async function addDebt(telegramId: number, input: DebtInput): Promise<DebtRow> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
 
   const [debt] = await db
     .insert(debts)
@@ -33,6 +50,7 @@ export async function addDebt(telegramId: number, input: DebtInput): Promise<Deb
 
 export async function settleDebt(telegramId: number, debtId: string): Promise<void> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
 
   await db
     .update(debts)
@@ -42,6 +60,7 @@ export async function settleDebt(telegramId: number, debtId: string): Promise<vo
 
 export async function getActiveDebts(telegramId: number): Promise<DebtRow[]> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
 
   return db
     .select()
@@ -52,6 +71,7 @@ export async function getActiveDebts(telegramId: number): Promise<DebtRow[]> {
 
 export async function getDueDebts(telegramId: number): Promise<DebtRow[]> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   tomorrow.setHours(23, 59, 59, 999);
@@ -71,6 +91,7 @@ export async function getDueDebts(telegramId: number): Promise<DebtRow[]> {
 
 export async function deleteDebt(telegramId: number, debtId: string): Promise<void> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
 
   await db
     .delete(debts)

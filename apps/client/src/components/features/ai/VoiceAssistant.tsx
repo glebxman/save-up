@@ -19,7 +19,7 @@ import {
 import { useFinance } from "@/hooks/useFinance";
 import { useToastStore } from "@/stores/ui.store";
 import { formatMoney } from "@/utils/format";
-import { VOICE_CREDITS_DAILY_LIMIT } from "@finance-twa/shared-types";
+import { AI_FREE_DAILY_LIMIT } from "@finance-twa/shared-types";
 
 interface VoiceAssistantProps {
   onResult: (result: { type: "expense" | "income"; amount: number; category: string; note?: string }) => void;
@@ -33,8 +33,9 @@ export function VoiceAssistant({ onResult }: VoiceAssistantProps) {
 
   const voiceDailyUsed = status?.user?.voiceDailyUsed ?? 0;
   const isAdmin = status?.user?.isAdmin ?? false;
-  const creditsLeft = Math.max(0, VOICE_CREDITS_DAILY_LIMIT - voiceDailyUsed);
-  const limitReached = !isAdmin && creditsLeft <= 0;
+  const hasSubscriptionAccess = isAdmin || !!status?.user?.subscription.active;
+  const creditsLeft = Math.max(0, AI_FREE_DAILY_LIMIT - voiceDailyUsed);
+  const limitReached = !hasSubscriptionAccess && creditsLeft <= 0;
 
   const [isRecording, setIsRecording] = useState(false);
   const [isProcessing, setIsProcessing] = useState(false);
@@ -155,7 +156,7 @@ export function VoiceAssistant({ onResult }: VoiceAssistantProps) {
             {t("ai.creditsExhausted")}
           </span>
         )}
-        {!isAdmin && !limitReached && !isRecording && (
+        {!hasSubscriptionAccess && !limitReached && !isRecording && (
           <span className="ml-2 text-xs font-medium text-[var(--muted)]">
             {t("ai.creditsRemaining", { count: creditsLeft })}
           </span>

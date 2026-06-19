@@ -38,6 +38,10 @@ export const users = pgTable(
       .default({ mode: "every_n_days", days: 3, time: "09:00" }),
     /** Minutes east of UTC. Matches `-new Date().getTimezoneOffset()`. */
     notificationTimezoneOffset: smallint("notification_timezone_offset").notNull().default(0),
+    subscriptionPlan: varchar("subscription_plan", { length: 24 }),
+    subscriptionExpiresAt: timestamp("subscription_expires_at", { withTimezone: true }),
+    trialStartedAt: timestamp("trial_started_at", { withTimezone: true }),
+    trialEndsAt: timestamp("trial_ends_at", { withTimezone: true }),
     /**
      * Last fully-delivered slot, encoded as `YYYY-MM-DD#HH:MM`.
      * Used to deduplicate scheduled batches without sending the same slot twice.

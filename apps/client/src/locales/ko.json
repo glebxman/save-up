@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "홈",
       "report": "리포트",
-      "settings": "설정"
+      "settings": "설정",
+      "debts": "부채"
     }
   },
   "dashboard": {
@@ -60,7 +61,7 @@
   },
   "dailyLimit": {
     "caption": "남은 사용 가능 금액",
-    "days": "{{count}}<\\X",
+    "days": "{{count}}일",
     "description": "월말까지 계획을 지키기 위한 하루 예산입니다.",
     "budgetCaption": "일일 예산"
   },
@@ -142,6 +143,8 @@
     "resetDataConfirm": "데이터 초기화",
     "restartTutorial": "튜토리얼 다시 시작",
     "restartTutorialDescription": "앱 가이드를 처음부터 다시 살펴보세요.",
+    "support": "기술 지원",
+    "supportDescription": "Telegram에서 @saveup_support 열기.",
     "themeAuto": "자동",
     "themeDark": "다크",
     "themeLight": "라이트",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "개인정보 및 알림",
     "sectionContent": "앱 내용",
     "sectionHelp": "도움말",
-    "sectionAccount": "계정"
+    "sectionAccount": "계정",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "관리자 패널",
@@ -232,13 +237,25 @@
     "noPin": "PIN 설정 안 됨",
     "resetPin": "PIN 초기화",
     "resetPinConfirm": "이 사용자의 PIN을 초기화하시겠습니까?",
-    "resetPinSuccess": "사용자 PIN이 초기화되었습니다"
+    "resetPinDescription": "{{name}} 님은 다음 실행 시 새 PIN을 설정할 수 있습니다.",
+    "resetPinSuccess": "사용자 PIN이 초기화되었습니다",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "카테고리",
     "question": "이 지출은 무엇인가요?",
     "food": "음식",
-    "taxi": "=S\\<9Z",
+    "taxi": "택시",
     "entertainment": "엔터테인먼트",
     "shopping": "쇼핑",
     "utilities": "공과금",
@@ -273,8 +290,6 @@
     "placeholder": "비어 있으면 제한 없음",
     "helperText": "이 카테고리에 한도를 두지 않으려면 비워 두세요.",
     "save": "한도 저장",
-    "dayOfMonth": "월의 일",
-    "autoApply": "자동 적용",
     "warningTitle": "하나 이상의 카테고리가 한도를 초과했습니다"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "메모",
     "notePlaceholder": "이 거래에 메모 추가",
     "save": "변경 사항 저장",
-    "dayOfMonth": "월의 일",
-    "autoApply": "자동 적용",
     "archiveQuestion": "이 거래를 취소할까요?",
     "archiveDescription": "거래가 되돌려지고 잔액과 합계가 다시 계산됩니다.",
     "restoreQuestion": "이 거래를 복원할까요?",
@@ -635,5 +648,67 @@
     "saveHolding": "코인 저장",
     "cryptoCreateHint": "먼저 지갑을 만든 후 보유 편집기에서 코인(BTC, TON, USDT, NOTCOIN)을 추가하세요.",
     "transferAutoPlaceholder": "자동"
+  },
+  "debts": {
+    "title": "부채",
+    "empty": "활성 부채가 없습니다",
+    "emptyHint": "누가 돈을 빌렸는지 또는 누구에게 빌렸는지 추적하려면 부채를 추가하세요.",
+    "owedToMe": "받을 돈",
+    "iOwe": "줄 돈",
+    "name": "이름",
+    "amount": "금액",
+    "direction": "방향",
+    "dueDate": "마감일",
+    "note": "메모 (선택사항)",
+    "addDebt": "부채 추가",
+    "settle": "정산",
+    "delete": "삭제",
+    "totalOwedToMe": "받을 돈 합계",
+    "totalIOwe": "줄 돈 합계",
+    "net": "순",
+    "settleConfirm": "이 부채를 정산 처리하시겠습니까?",
+    "deleteConfirm": "이 부채를 삭제하시겠습니까?",
+    "addSuccess": "부채가 추가되었습니다",
+    "settleSuccess": "부채가 정산되었습니다",
+    "deleteSuccess": "부채가 삭제되었습니다"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

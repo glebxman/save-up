@@ -3,22 +3,49 @@ import { useDeferredValue, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
-import { Avatar, Button, Card, CardContent, Input, Spinner } from "@/components/ui";
+import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
+import {
+  Avatar,
+  Button,
+  Card,
+  CardContent,
+  Input,
+  ModalBackdrop,
+  ModalBody,
+  ModalContainer,
+  ModalDialog,
+  ModalFooter,
+  ModalHeader,
+  ModalHeading,
+  Select,
+  Spinner,
+} from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
-import type { AdminUserListItem } from "@/types/finance";
-import { formatDateTime } from "@/utils/format";
+import { useToastStore } from "@/stores/ui.store";
+import { SUBSCRIPTION_PLANS, type AdminUserListItem, type SubscriptionPlanId } from "@/types/finance";
+import { formatDate, formatDateTime } from "@/utils/format";
 import * as api from "@/api/methods";
 
 const PAGE_SIZE = 12;
+const SUBSCRIPTION_DURATIONS = [
+  { months: 1, planId: "monthly" },
+  { months: 3, planId: "quarterly" },
+  { months: 6, planId: "half_year" },
+  { months: 12, planId: "yearly" },
+] as const satisfies readonly { months: number; planId: SubscriptionPlanId }[];
 
 export function Admin() {
   const { t } = useTranslation();
   const { initData } = useTelegram();
   const { status, statusQuery } = useFinance();
+  const pushToast = useToastStore((state) => state.pushToast);
   const queryClient = useQueryClient();
   const [page, setPage] = useState(1);
   const [search, setSearch] = useState("");
+  const [resetTarget, setResetTarget] = useState<AdminUserListItem | null>(null);
+  const [subscriptionTarget, setSubscriptionTarget] = useState<AdminUserListItem | null>(null);
+  const [subscriptionMonths, setSubscriptionMonths] = useState<number>(1);
   const deferredSearch = useDeferredValue(search.trim());
   const isAllowed = !!status?.user.isAdmin;
 
@@ -47,6 +74,39 @@ export function Admin() {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["adminUsers"] }).catch(() => undefined);
       queryClient.invalidateQueries({ queryKey: ["status"] }).catch(() => undefined);
+      pushToast({ tone: "success", message: t("admin.resetPinSuccess") });
+      setResetTarget(null);
+    },
+    onError: (error) => {
+      pushToast({
+        tone: "error",
+        message: error instanceof Error ? error.message : t("feedback.genericError"),
+      });
+    },
+  });
+
+  const setSubscriptionMutation = useMutation({
+    mutationFn: ({
+      userId,
+      planId,
+      durationMonths,
+    }: {
+      userId: string;
+      planId: SubscriptionPlanId;
+      durationMonths: number;
+    }) => api.setUserSubscription(initData, userId, planId, durationMonths),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["adminUsers"] }).catch(() => undefined);
+      queryClient.invalidateQueries({ queryKey: ["status"] }).catch(() => undefined);
+      pushToast({ tone: "success", message: t("admin.subscriptionSaved") });
+      setSubscriptionTarget(null);
+      setSubscriptionMonths(1);
+    },
+    onError: (error) => {
+      pushToast({
+        tone: "error",
+        message: error instanceof Error ? error.message : t("feedback.genericError"),
+      });
     },
   });
 
@@ -77,6 +137,10 @@ export function Admin() {
   }
 
   const stats = usersQuery.data?.stats;
+  const selectedDuration =
+    SUBSCRIPTION_DURATIONS.find((duration) => duration.months === subscriptionMonths) ??
+    SUBSCRIPTION_DURATIONS[0];
+  const selectedPlan = SUBSCRIPTION_PLANS.find((plan) => plan.id === selectedDuration.planId);
 
   return (
     <div className="space-y-4">
@@ -125,14 +189,15 @@ export function Admin() {
                     item={item}
                     isPending={setAdminMutation.isPending && setAdminMutation.variables?.userId === item.id}
                     isResetPending={resetPinMutation.isPending && resetPinMutation.variables === item.id}
+                    isSubscriptionPending={
+                      setSubscriptionMutation.isPending &&
+                      setSubscriptionMutation.variables?.userId === item.id
+                    }
                     onSetAdmin={(userId, isAdmin) => {
                       void setAdminMutation.mutateAsync({ userId, isAdmin });
                     }}
-                    onResetPin={(userId) => {
-                      if (window.confirm(t("admin.resetPinConfirm"))) {
-                        void resetPinMutation.mutateAsync(userId);
-                      }
-                    }}
+                    onResetPin={() => setResetTarget(item)}
+                    onSetSubscription={() => setSubscriptionTarget(item)}
                   />
                 ))}
               </div>
@@ -173,6 +238,120 @@ export function Admin() {
           </div>
         </CardContent>
       </Card>
+
+      <ConfirmActionModal
+        cancelLabel={t("common.cancel")}
+        confirmLabel={t("admin.resetPin")}
+        description={
+          resetTarget
+            ? t("admin.resetPinDescription", { name: resetTarget.displayName })
+            : undefined
+        }
+        isOpen={!!resetTarget}
+        isPending={resetPinMutation.isPending}
+        onClose={() => {
+          if (!resetPinMutation.isPending) setResetTarget(null);
+        }}
+        onConfirm={() => {
+          if (resetTarget) {
+            void resetPinMutation.mutateAsync(resetTarget.id);
+          }
+        }}
+        question={t("admin.resetPinConfirm")}
+        title={t("admin.resetPin")}
+      />
+
+      <ModalBackdrop
+        isOpen={!!subscriptionTarget}
+        onOpenChange={(open) => {
+          if (!open && !setSubscriptionMutation.isPending) {
+            setSubscriptionTarget(null);
+            setSubscriptionMonths(1);
+          }
+        }}
+        variant="blur"
+      >
+        <ModalContainer size="sm">
+          <ModalDialog>
+            <ModalHeader>
+              <ModalHeading>{t("admin.subscriptionModalTitle")}</ModalHeading>
+            </ModalHeader>
+            <ModalBody>
+              <div className="space-y-4">
+                <p className="m-0 text-sm text-[var(--muted)]">
+                  {subscriptionTarget
+                    ? t("admin.subscriptionModalDescription", {
+                        name: subscriptionTarget.displayName,
+                      })
+                    : null}
+                </p>
+
+                <label className="block space-y-1.5">
+                  <span className="text-sm font-medium text-[var(--foreground)]">
+                    {t("admin.subscriptionDuration")}
+                  </span>
+                  <Select
+                    fullWidth
+                    onChange={(event) => setSubscriptionMonths(Number(event.target.value))}
+                    value={String(subscriptionMonths)}
+                    variant="secondary"
+                  >
+                    {SUBSCRIPTION_DURATIONS.map((duration) => (
+                      <option key={duration.months} value={duration.months}>
+                        {t(`subscription.plans.${duration.planId}`)}
+                      </option>
+                    ))}
+                  </Select>
+                </label>
+
+                {subscriptionTarget?.subscription.expiresAt ? (
+                  <p className="m-0 text-xs text-[var(--muted)]">
+                    {t("admin.currentSubscriptionUntil", {
+                      date: formatDate(subscriptionTarget.subscription.expiresAt),
+                    })}
+                  </p>
+                ) : null}
+
+                {selectedPlan ? (
+                  <p className="m-0 text-xs text-[var(--muted)]">
+                    {t("admin.subscriptionPlanHint", {
+                      months: selectedPlan.months,
+                    })}
+                  </p>
+                ) : null}
+              </div>
+            </ModalBody>
+            <ModalFooter className="flex gap-2">
+              <Button
+                fullWidth
+                isDisabled={setSubscriptionMutation.isPending}
+                onPress={() => {
+                  setSubscriptionTarget(null);
+                  setSubscriptionMonths(1);
+                }}
+                variant="secondary"
+              >
+                {t("common.cancel")}
+              </Button>
+              <Button
+                fullWidth
+                isDisabled={setSubscriptionMutation.isPending || !subscriptionTarget}
+                onPress={() => {
+                  if (!subscriptionTarget) return;
+                  setSubscriptionMutation.mutate({
+                    userId: subscriptionTarget.id,
+                    planId: selectedDuration.planId,
+                    durationMonths: selectedDuration.months,
+                  });
+                }}
+                variant="primary"
+              >
+                {setSubscriptionMutation.isPending ? "..." : t("admin.subscriptionGrant")}
+              </Button>
+            </ModalFooter>
+          </ModalDialog>
+        </ModalContainer>
+      </ModalBackdrop>
     </div>
   );
 }
@@ -192,19 +371,24 @@ function AdminUserCard({
   item,
   isPending,
   isResetPending,
+  isSubscriptionPending,
   onSetAdmin,
   onResetPin,
+  onSetSubscription,
 }: {
   item: AdminUserListItem;
   isPending?: boolean;
   isResetPending?: boolean;
+  isSubscriptionPending?: boolean;
   onSetAdmin: (userId: string, isAdmin: boolean) => void;
-  onResetPin: (userId: string) => void;
+  onResetPin: () => void;
+  onSetSubscription: () => void;
 }) {
   const { t } = useTranslation();
   const avatarFallback = item.displayName.trim().charAt(0).toUpperCase() || "U";
   const usernameLine = item.username && item.displayName !== `@${item.username}` ? `@${item.username}` : null;
   const nextAdminState = !item.isAdmin;
+  const subscription = item.subscription;
 
   return (
     <div className="rounded-[24px] bg-[var(--surface-secondary)] p-4">
@@ -231,6 +415,15 @@ function AdminUserCard({
                   🔒 {t("admin.hasPin")}
                 </span>
               ) : null}
+              <span
+                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                  subscription.active
+                    ? "bg-[color-mix(in_srgb,var(--success)_18%,var(--surface))] text-[var(--success)]"
+                    : "bg-[var(--surface-tertiary)] text-[var(--muted)]"
+                }`}
+              >
+                {subscription.active ? t("admin.subscriptionActive") : t("admin.subscriptionInactive")}
+              </span>
             </div>
             {usernameLine ? (
               <p className="m-0 truncate text-xs text-[var(--foreground)] opacity-80">{usernameLine}</p>
@@ -241,14 +434,29 @@ function AdminUserCard({
                 createdAt: formatDateTime(item.createdAt),
               })}
             </p>
+            {subscription.expiresAt ? (
+              <p className="m-0 text-xs text-[var(--muted)]">
+                {t("admin.subscriptionUntil", {
+                  date: formatDate(subscription.expiresAt),
+                })}
+              </p>
+            ) : null}
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
+          <Button
+            isDisabled={isPending || isResetPending || isSubscriptionPending}
+            onPress={onSetSubscription}
+            size="sm"
+            variant="secondary"
+          >
+            {subscription.active ? t("admin.subscriptionExtend") : t("admin.subscriptionGrant")}
+          </Button>
           {item.hasPinConfigured ? (
             <Button
-              isDisabled={isPending || isResetPending}
-              onPress={() => onResetPin(item.id)}
+              isDisabled={isPending || isResetPending || isSubscriptionPending}
+              onPress={onResetPin}
               size="sm"
               variant="danger-soft"
             >
@@ -256,7 +464,7 @@ function AdminUserCard({
             </Button>
           ) : null}
           <Button
-            isDisabled={isPending || isResetPending}
+            isDisabled={isPending || isResetPending || isSubscriptionPending}
             onPress={() => onSetAdmin(item.id, nextAdminState)}
             size="sm"
             variant={item.isAdmin ? "danger-soft" : "primary"}

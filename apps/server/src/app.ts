@@ -7,6 +7,7 @@ import { redis } from "./config/redis.js";
 import { authPlugin } from "./plugins/auth.js";
 import { corsPlugin } from "./plugins/cors.js";
 import { helmetPlugin } from "./plugins/helmet.js";
+import { paymentsPlugin } from "./plugins/payments.js";
 import { rpcPlugin } from "./plugins/rpc.js";
 
 const isDev = env.NODE_ENV !== "production";
@@ -33,6 +34,7 @@ export async function buildApp() {
   await app.register(corsPlugin);
   await app.register(helmetPlugin);
   await app.register(authPlugin);
+  await app.register(paymentsPlugin);
   await app.register(rateLimit, {
     global: true,
     max: env.RATE_LIMIT_MAX,

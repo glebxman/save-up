@@ -1,4 +1,4 @@
-import { index, pgTable, text, timestamp, uuid, varchar, numeric } from "drizzle-orm/pg-core";
+import { boolean, index, numeric, pgTable, text, timestamp, uuid, varchar } from "drizzle-orm/pg-core";
 
 import { users } from "./users.js";
 
@@ -23,7 +23,5 @@ export const debts = pgTable(
     settledIdx: index("debts_settled_idx").on(table.settled),
   }),
 );
-
-import { boolean } from "drizzle-orm/pg-core";
 
 export type DebtRow = typeof debts.$inferSelect;

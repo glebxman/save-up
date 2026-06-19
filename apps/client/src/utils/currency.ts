@@ -36,12 +36,29 @@ export const SUPPORTED_CURRENCIES: CurrencyCode[] = [
   "UZS", "RUB", "USD", "EUR", "KZT", "TRY", "GBP", "CNY",
 ];
 
-const STORAGE_KEY = "save-up:currency";
+function getTelegramUserId(): number {
+  if (typeof window !== "undefined") {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user?.id) {
+      return tg.initDataUnsafe.user.id;
+    }
+  }
+  if (import.meta.env.VITE_USE_MOCK_API === "true") {
+    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
+  }
+  return 0;
+}
+
+function getStorageKey(): string {
+  const userId = getTelegramUserId();
+  return userId ? `save-up:${userId}:currency` : "save-up:currency";
+}
+
 const DEFAULT_CURRENCY: CurrencyCode = "UZS";
 
 export function getStoredCurrency(): CurrencyCode {
   try {
-    return (localStorage.getItem(STORAGE_KEY) as CurrencyCode) || DEFAULT_CURRENCY;
+    return (localStorage.getItem(getStorageKey()) as CurrencyCode) || DEFAULT_CURRENCY;
   } catch {
     return DEFAULT_CURRENCY;
   }
@@ -49,7 +66,7 @@ export function getStoredCurrency(): CurrencyCode {
 
 export function setStoredCurrency(currency: CurrencyCode): void {
   try {
-    localStorage.setItem(STORAGE_KEY, currency);
+    localStorage.setItem(getStorageKey(), currency);
   } catch {
     // noop
   }

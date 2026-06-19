@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "Bosh sahifa",
       "report": "Hisobot",
-      "settings": "Sozlamalar"
+      "settings": "Sozlamalar",
+      "debts": "Qarzlar"
     }
   },
   "dashboard": {
@@ -142,6 +143,8 @@
     "resetDataConfirm": "Ma'lumotlarni tozalash",
     "restartTutorial": "O'qitishni qaytadan boshlash",
     "restartTutorialDescription": "Ilovani boshidan boshlab bosqichma-bosqich o'rganing.",
+    "support": "Texnik yordam",
+    "supportDescription": "Telegramda @saveup_support ni ochish.",
     "themeAuto": "Avto",
     "themeDark": "To'q",
     "themeLight": "Yorug'",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "Maxfiylik va eslatmalar",
     "sectionContent": "Ilova mazmuni",
     "sectionHelp": "Yordam",
-    "sectionAccount": "Hisob"
+    "sectionAccount": "Hisob",
+    "subscription": "Obuna",
+    "subscriptionDescription": "Trial, tariflar va Click to'lovlari."
   },
   "admin": {
     "title": "Admin panel",
@@ -232,7 +237,19 @@
     "noPin": "PIN o'rnatilmagan",
     "resetPin": "PIN-kodni tiklash",
     "resetPinConfirm": "Haqiqatan ham ushbu foydalanuvchining PIN-kodini tiklamoqchimisiz?",
-    "resetPinSuccess": "Foydalanuvchining PIN-kodi tiklandi"
+    "resetPinDescription": "{{name}} keyingi ishga tushirishda yangi PIN o'rnata oladi.",
+    "resetPinSuccess": "Foydalanuvchining PIN-kodi tiklandi",
+    "subscriptionActive": "Obuna faol",
+    "subscriptionInactive": "Obuna yo'q",
+    "subscriptionUntil": "Obuna {{date}} gacha",
+    "subscriptionGrant": "Obuna berish",
+    "subscriptionExtend": "Obunani uzaytirish",
+    "subscriptionSaved": "Obuna yangilandi",
+    "subscriptionModalTitle": "Obuna berish",
+    "subscriptionModalDescription": "{{name}} uchun kirish muddatini tanlang.",
+    "subscriptionDuration": "Kirish muddati",
+    "currentSubscriptionUntil": "Joriy obuna: {{date}} gacha",
+    "subscriptionPlanHint": "{{months}} oy pullik kirish qo'shiladi."
   },
   "expenseCategory": {
     "title": "Kategoriya",
@@ -273,8 +290,6 @@
     "placeholder": "Bo'sh = limitsiz",
     "helperText": "Kategoriya uchun limit bo'lmasligini xohlasangiz, bo'sh qoldiring.",
     "save": "Limitlarni saqlash",
-    "dayOfMonth": "Oyning kuni",
-    "autoApply": "Avtomatik qo'llash",
     "warningTitle": "Bir yoki bir nechta turkum limitidan oshib ketdi"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "Izoh",
     "notePlaceholder": "Amal uchun izoh qo'shing",
     "save": "O'zgarishlarni saqlash",
-    "dayOfMonth": "Oyning kuni",
-    "autoApply": "Avtomatik qo'llash",
     "archiveQuestion": "Bu amal bekor qilinsinmi?",
     "archiveDescription": "Amal bekor qilinadi va balans hamda umumiy natijalar qayta hisoblanadi.",
     "restoreQuestion": "Bu amal qaytarilsinmi?",
@@ -635,5 +648,67 @@
     "saveHolding": "Tangani saqlash",
     "cryptoCreateHint": "Avval hamyon yarating, so'ng aktivlar muharririda tangalarni (BTC, TON, USDT, NOTCOIN) qo'shing.",
     "transferAutoPlaceholder": "Avtomatik"
+  },
+  "debts": {
+    "title": "Qarzlar",
+    "empty": "Faol qarzlar yo'q",
+    "emptyHint": "Kimga qarz berilgan yoki kimdan qarz olinganini kuzatish uchun qarz qo'shing.",
+    "owedToMe": "Menga qarzdor",
+    "iOwe": "Men qarzdorman",
+    "name": "Ismi",
+    "amount": "Summa",
+    "direction": "Yo'nalish",
+    "dueDate": "Muddati",
+    "note": "Eslatma (ixtiyoriy)",
+    "addDebt": "Qarz qo'shish",
+    "settle": "Yopish",
+    "delete": "O'chirish",
+    "totalOwedToMe": "Jami menga qarzdor",
+    "totalIOwe": "Jami men qarzdorman",
+    "net": "Sof",
+    "settleConfirm": "Bu qarz yopilgan deb belgilansinmi?",
+    "deleteConfirm": "Bu qarz o'chirilsinmi?",
+    "addSuccess": "Qarz muvaffaqiyatli qo'shildi",
+    "settleSuccess": "Qarz yopildi",
+    "deleteSuccess": "Qarz o'chirildi"
+  },
+  "subscription": {
+    "title": "Obuna",
+    "description": "Qarzlar, kategoriya sozlamalari va to'liq AI imkoniyatlarini oching.",
+    "statusActive": "Obuna faol",
+    "statusInactive": "Faol obuna yo'q",
+    "statusUntil": "{{date}} gacha faol",
+    "lockedNotice": "Obunasiz qarzlar va kategoriya sozlamalari yopiq.",
+    "unlocked": "Ochiq",
+    "locked": "Yopiq",
+    "trialTitle": "Bepul trial",
+    "trialDescription": "{{days}} kun bepul, har foydalanuvchi uchun bir marta.",
+    "startTrial": "Trialni boshlash",
+    "trialStarted": "Bepul trial yoqildi",
+    "plansTitle": "Tariflar",
+    "choosePlan": "Obuna muddati",
+    "selectedPlan": "Tanlangan tarif",
+    "planDuration": "{{count}} oy",
+    "perMonth": "{{amount}} / oy",
+    "savings": "{{pct}}% tejash",
+    "basePlan": "Asosiy narx",
+    "payButton": "{{provider}} orqali to'lash",
+    "benefitsTitle": "Obuna nimalarni beradi",
+    "benefitsDescription": "Obuna asosiy cheklovlarni olib tashlaydi va kengaytirilgan moliyaviy vositalarni ochadi.",
+    "benefits": {
+      "debts": "Qarzlar: kim sizga qarzdor yoki siz kimga qarzdor ekanini, summalar, eslatmalar, muddatlar va yopilish tarixini kuzating.",
+      "categories": "Kategoriya sozlamalari: nomlarni o'zgartirish, ikonka almashtirish, shaxsiy kategoriyalar va kategoriya limitlari.",
+      "ai": "Bepul limitsiz AI: ovozli xabarlar va chek rasmlarini tanish kuniga {{dailyLimit}} ta so'rov bilan cheklanmaydi.",
+      "trial": "Bepul trial: to'lov rejasini tanlashdan oldin har akkaunt uchun bir marta {{days}} kun to'liq kirish."
+    },
+    "plans": {
+      "monthly": "1 oy",
+      "quarterly": "3 oy",
+      "half_year": "6 oy",
+      "yearly": "12 oy"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

@@ -4,6 +4,7 @@ import {
   listAdminUsersHandler,
   setAdminAccessHandler,
   resetUserPinHandler,
+  setUserSubscriptionHandler,
 } from "./handlers/admin.js";
 import {
   addExpenseHandler,
@@ -52,6 +53,10 @@ import {
   updateAccountHandler,
   verifyPinHandler,
 } from "./handlers/user.js";
+import {
+  createPaymentHandler,
+  startTrialHandler,
+} from "./handlers/subscription.js";
 import { AppError } from "../utils/errors.js";
 import type { JsonRpcFailure, JsonRpcRequest, JsonRpcResponse, RpcContext, RpcHandler } from "./types.js";
 
@@ -76,6 +81,9 @@ const handlers: HandlerMap = {
   "admin.listUsers": listAdminUsersHandler,
   "admin.setAdmin": setAdminAccessHandler,
   "admin.resetPin": resetUserPinHandler,
+  "admin.setSubscription": setUserSubscriptionHandler,
+  "subscription.startTrial": startTrialHandler,
+  "subscription.createPayment": createPaymentHandler,
   "finance.addIncome": addIncomeHandler,
   "finance.addExpense": addExpenseHandler,
   "finance.transferSavings": transferSavingsHandler,

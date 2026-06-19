@@ -11,6 +11,7 @@ import { transactions, users, type UserRow } from "../../db/schema/index.js";
 import { escapeIlike } from "../../utils/sql.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
+import { addPlanMonths, getSubscriptionPlan, mapSubscriptionState } from "../subscription/index.js";
 import { isSuperAdmin, maskTelegramId, buildAdminLabel } from "./_internal.js";
 import { ensureUser } from "./status.js";
 
@@ -24,6 +25,7 @@ function toAdminListItem(row: UserRow): AdminUserListItem {
     telegramIdMasked: maskTelegramId(row.telegramId),
     isAdmin: row.isAdmin || isSuperAdmin(row.telegramId),
     hasPinConfigured: !!(row.pinHash && row.pinSalt),
+    subscription: mapSubscriptionState(row),
     createdAt: row.createdAt.toISOString(),
   };
 }
@@ -156,6 +158,52 @@ export async function resetUserPin(
   const updated = await db
     .update(users)
     .set({ pinHash: null, pinSalt: null })
+    .where(eq(users.id, target.id))
+    .returning();
+
+  await invalidateStatusCache(target.telegramId);
+
+  return toAdminListItem(updated[0] as UserRow);
+}
+
+export async function setUserSubscription(
+  telegramId: number,
+  userId: string,
+  planId: Parameters<typeof getSubscriptionPlan>[0],
+  durationMonths: number,
+): Promise<AdminUserListItem> {
+  await requireAdminUser(telegramId);
+
+  const plan = getSubscriptionPlan(planId);
+  if (!plan) {
+    throw new AppError(ErrorCode.VALIDATION, "Unknown subscription plan");
+  }
+
+  const months = Math.min(Math.max(Math.trunc(durationMonths), 1), 36);
+  const existing = await db
+    .select()
+    .from(users)
+    .where(eq(users.id, userId))
+    .limit(1);
+  const target = existing[0];
+
+  if (!target) {
+    throw new AppError(ErrorCode.NOT_FOUND, "User not found");
+  }
+
+  const now = new Date();
+  const baseDate =
+    target.subscriptionExpiresAt && target.subscriptionExpiresAt.getTime() > now.getTime()
+      ? target.subscriptionExpiresAt
+      : now;
+  const subscriptionExpiresAt = addPlanMonths(baseDate, months);
+
+  const updated = await db
+    .update(users)
+    .set({
+      subscriptionPlan: planId,
+      subscriptionExpiresAt,
+    })
     .where(eq(users.id, target.id))
     .returning();
 

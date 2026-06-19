@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "Accueil",
       "report": "Rapport",
-      "settings": "Paramètres"
+      "settings": "Paramètres",
+      "debts": "Dettes"
     }
   },
   "dashboard": {
@@ -142,6 +143,8 @@
     "resetDataConfirm": "Réinitialiser les données",
     "restartTutorial": "Recommencer le tutoriel",
     "restartTutorialDescription": "Parcourez a nouveau le guide de l'application depuis le debut.",
+    "support": "Support technique",
+    "supportDescription": "Ouvrir @saveup_support dans Telegram.",
     "themeAuto": "Auto",
     "themeDark": "Sombre",
     "themeLight": "Clair",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "Confidentialité et notifications",
     "sectionContent": "Contenu de l'app",
     "sectionHelp": "Aide",
-    "sectionAccount": "Compte"
+    "sectionAccount": "Compte",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "Panneau admin",
@@ -232,7 +237,19 @@
     "noPin": "Pas de PIN",
     "resetPin": "Réinitialiser le PIN",
     "resetPinConfirm": "Êtes-vous sûr de vouloir réinitialiser le PIN de cet utilisateur ?",
-    "resetPinSuccess": "Le PIN de l'utilisateur a été réinitialisé"
+    "resetPinDescription": "{{name}} pourra définir un nouveau PIN au prochain lancement.",
+    "resetPinSuccess": "Le PIN de l'utilisateur a été réinitialisé",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "Catégorie",
@@ -273,8 +290,6 @@
     "placeholder": "Vide = aucune limite",
     "helperText": "Laissez vide si vous ne voulez pas de limite pour cette catégorie.",
     "save": "Enregistrer les limites",
-    "dayOfMonth": "Jour du mois",
-    "autoApply": "Application automatique",
     "warningTitle": "Une ou plusieurs catégories ont dépassé leur limite"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "Note",
     "notePlaceholder": "Ajouter une note à cette transaction",
     "save": "Enregistrer les modifications",
-    "dayOfMonth": "Jour du mois",
-    "autoApply": "Application automatique",
     "archiveQuestion": "Annuler cette transaction ?",
     "archiveDescription": "La transaction sera annulée, et votre solde ainsi que les totaux seront recalculés.",
     "restoreQuestion": "Restaurer cette transaction ?",
@@ -635,5 +648,67 @@
     "saveHolding": "Enregistrer la Pièce",
     "cryptoCreateHint": "Créez d'abord le portefeuille, puis ajoutez des pièces (BTC, TON, USDT, NOTCOIN) depuis l'éditeur d'actifs.",
     "transferAutoPlaceholder": "Automatique"
+  },
+  "debts": {
+    "title": "Dettes",
+    "empty": "Aucune dette active",
+    "emptyHint": "Ajoutez une dette pour commencer à suivre qui vous doit ou à qui vous devez.",
+    "owedToMe": "On me doit",
+    "iOwe": "Je dois",
+    "name": "Nom",
+    "amount": "Montant",
+    "direction": "Direction",
+    "dueDate": "Date d'échéance",
+    "note": "Note (facultatif)",
+    "addDebt": "Ajouter une dette",
+    "settle": "Régler",
+    "delete": "Supprimer",
+    "totalOwedToMe": "Total qu'on me doit",
+    "totalIOwe": "Total que je dois",
+    "net": "Net",
+    "settleConfirm": "Marquer cette dette comme réglée ?",
+    "deleteConfirm": "Supprimer cette dette ?",
+    "addSuccess": "Dette ajoutée avec succès",
+    "settleSuccess": "Dette réglée",
+    "deleteSuccess": "Dette supprimée"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

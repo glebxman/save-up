@@ -1,5 +1,5 @@
 import { z } from "zod";
-import { EXPENSE_CATEGORIES, SUPPORTED_LANGUAGES, CRYPTO_CODES, type SupportedLanguage, type ExpenseCategory, type CryptoCode } from "@finance-twa/shared-types";
+import { EXPENSE_CATEGORIES, SUPPORTED_LANGUAGES, CRYPTO_CODES, SUBSCRIPTION_PLANS, type SupportedLanguage, type ExpenseCategory, type CryptoCode, type SubscriptionPlanId } from "@finance-twa/shared-types";
 
 export const initDataSchema = z.string();
 
@@ -229,6 +229,25 @@ export const adminSetAdminSchema = z.object({
 export const adminResetPinSchema = z.object({
   initData: initDataSchema,
   userId: z.string().min(1),
+});
+
+const subscriptionPlanIds = SUBSCRIPTION_PLANS.map((plan) => plan.id) as [SubscriptionPlanId, ...SubscriptionPlanId[]];
+
+export const adminSetSubscriptionSchema = z.object({
+  initData: initDataSchema,
+  userId: z.string().min(1),
+  planId: z.enum(subscriptionPlanIds),
+  durationMonths: z.number().int().min(1).max(36),
+});
+
+export const subscriptionStartTrialSchema = z.object({
+  initData: initDataSchema,
+});
+
+export const subscriptionCreatePaymentSchema = z.object({
+  initData: initDataSchema,
+  provider: z.literal("click"),
+  planId: z.enum(subscriptionPlanIds),
 });
 
 export const userCreateAccountSchema = z.object({

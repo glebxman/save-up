@@ -41,7 +41,19 @@ export async function buildStatus(user: User): Promise<Status> {
       : acc,
   );
 
-  const nextUser: User = { ...user, monthlyExp, accounts };
+  const now = Date.now();
+  const subscription = user.subscription ?? {
+    active: false,
+    source: null,
+    planId: null,
+    expiresAt: null,
+    trialAvailable: true,
+    trialEndsAt: null,
+  };
+  const nextSubscription = subscription.expiresAt && new Date(subscription.expiresAt).getTime() > now
+    ? subscription
+    : { ...subscription, active: false, source: null, expiresAt: null };
+  const nextUser: User = { ...user, monthlyExp, accounts, subscription: nextSubscription };
 
   return {
     user: nextUser,

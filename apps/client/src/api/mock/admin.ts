@@ -1,4 +1,5 @@
 import type { AdminUserListItem, AdminUsersPage, User } from "@finance-twa/shared-types";
+import { SUBSCRIPTION_PLANS } from "@finance-twa/shared-types";
 
 import { loadDatabase, saveDatabase } from "./_db";
 import { roundAmount } from "./_helpers";
@@ -19,6 +20,7 @@ export function mapAdminUser(user: User): AdminUserListItem {
     telegramIdMasked: maskTelegramId(user.telegramId),
     isAdmin: !!user.isAdmin,
     hasPinConfigured: !!user.hasPinConfigured,
+    subscription: user.subscription,
     createdAt: user.createdAt,
   };
 }
@@ -76,6 +78,31 @@ export const adminResetPin: MockHandler<"admin.resetPin"> = (params) => {
   const user = Object.values(database.users).find((item) => item.id === params.userId);
   if (!user) throw new Error("User not found");
   user.hasPinConfigured = false;
+  saveDatabase(database);
+  return mapAdminUser(user);
+};
+
+export const adminSetSubscription: MockHandler<"admin.setSubscription"> = (params) => {
+  const database = loadDatabase();
+  const user = Object.values(database.users).find((item) => item.id === params.userId);
+  if (!user) throw new Error("User not found");
+
+  const plan = SUBSCRIPTION_PLANS.find((item) => item.id === params.planId);
+  if (!plan) throw new Error("Unknown subscription plan");
+
+  const now = new Date();
+  const currentExpiresAt = user.subscription.expiresAt ? new Date(user.subscription.expiresAt) : null;
+  const baseDate = currentExpiresAt && currentExpiresAt.getTime() > now.getTime() ? currentExpiresAt : now;
+  const expiresAt = new Date(baseDate);
+  expiresAt.setMonth(expiresAt.getMonth() + params.durationMonths);
+
+  user.subscription = {
+    ...user.subscription,
+    active: true,
+    source: "paid",
+    planId: plan.id,
+    expiresAt: expiresAt.toISOString(),
+  };
   saveDatabase(database);
   return mapAdminUser(user);
 };

@@ -3,6 +3,11 @@
  *
  * The PIN hash is stored on the server (in `users.pin_hash` / `users.pin_salt`).
  * The client only knows whether a PIN is configured via `Status.user.hasPinConfigured`.
+/**
+ * PIN utilities — server-backed.
+ *
+ * The PIN hash is stored on the server (in `users.pin_hash` / `users.pin_salt`).
+ * The client only knows whether a PIN is configured via `Status.user.hasPinConfigured`.
  * Verification happens via RPC `user.verifyPin`.
  *
  * Biometrics flag remains in localStorage because it's a device-local preference
@@ -14,7 +19,27 @@ import * as api from "@/api/methods";
 export const PIN_MIN_LENGTH = 4;
 export const PIN_MAX_LENGTH = 6;
 
-const BIOMETRICS_KEY = "save-up:pin-biometrics";
+const BIOMETRICS_KEY = "pin-biometrics";
+const BIOMETRIC_TOKEN_KEY = "bio-token";
+const HAS_PIN_KEY = "has-pin";
+
+function getTelegramUserId(): number {
+  if (typeof window !== "undefined") {
+    const tg = (window as any).Telegram?.WebApp;
+    if (tg?.initDataUnsafe?.user?.id) {
+      return tg.initDataUnsafe.user.id;
+    }
+  }
+  if (import.meta.env.VITE_USE_MOCK_API === "true") {
+    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
+  }
+  return 0;
+}
+
+function getKey(baseKey: string): string {
+  const userId = getTelegramUserId();
+  return userId ? `save-up:${userId}:${baseKey}` : `save-up:${baseKey}`;
+}
 
 export function isPinValid(pin: string): boolean {
   return /^\d+$/.test(pin) && pin.length >= PIN_MIN_LENGTH && pin.length <= PIN_MAX_LENGTH;
@@ -26,15 +51,16 @@ export function isPinValid(pin: string): boolean {
  */
 export function hasStoredPin(): boolean {
   // We read from a simple localStorage flag that gets synced from Status.
-  return localStorage.getItem("save-up:has-pin") === "1";
+  return localStorage.getItem(getKey(HAS_PIN_KEY)) === "1";
 }
 
 /** Called by the status sync to keep the local flag in sync with server state. */
 export function syncHasPinFlag(hasPinConfigured: boolean): void {
+  const key = getKey(HAS_PIN_KEY);
   if (hasPinConfigured) {
-    localStorage.setItem("save-up:has-pin", "1");
+    localStorage.setItem(key, "1");
   } else {
-    localStorage.removeItem("save-up:has-pin");
+    localStorage.removeItem(key);
   }
 }
 
@@ -54,28 +80,36 @@ export async function removePin(initData: string, pin: string): Promise<void> {
   setBiometricsEnabled(false);
 }
 
-/** Used to compare the biometric token — we store the PIN itself (encrypted by Telegram). */
+/** Device-local marker used to compare Telegram's returned biometric token. */
 export function getStoredHash(): string | null {
-  // For biometric token we use a simple marker. The actual "token" stored in
-  // Telegram's BiometricManager is opaque — we just need it to match.
-  return localStorage.getItem("save-up:bio-token");
+  // The marker is not the PIN. Telegram stores and returns it through
+  // BiometricManager so we can reject stale or unrelated biometric prompts.
+  return localStorage.getItem(getKey(BIOMETRIC_TOKEN_KEY));
 }
 
 export function setStoredBioToken(token: string): void {
-  localStorage.setItem("save-up:bio-token", token);
+  localStorage.setItem(getKey(BIOMETRIC_TOKEN_KEY), token);
+}
+
+export function clearStoredBioToken(): void {
+  localStorage.removeItem(getKey(BIOMETRIC_TOKEN_KEY));
 }
 
 export function clearPin(): void {
-  localStorage.removeItem("save-up:has-pin");
-  localStorage.removeItem(BIOMETRICS_KEY);
-  localStorage.removeItem("save-up:bio-token");
+  localStorage.removeItem(getKey(HAS_PIN_KEY));
+  localStorage.removeItem(getKey(BIOMETRICS_KEY));
+  clearStoredBioToken();
 }
 
 export function isBiometricsEnabled(): boolean {
-  return localStorage.getItem(BIOMETRICS_KEY) === "1";
+  return localStorage.getItem(getKey(BIOMETRICS_KEY)) === "1";
 }
 
 export function setBiometricsEnabled(enabled: boolean): void {
-  if (enabled) localStorage.setItem(BIOMETRICS_KEY, "1");
-  else localStorage.removeItem(BIOMETRICS_KEY);
+  const key = getKey(BIOMETRICS_KEY);
+  if (enabled) localStorage.setItem(key, "1");
+  else {
+    localStorage.removeItem(key);
+    clearStoredBioToken();
+  }
 }

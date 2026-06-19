@@ -7,9 +7,12 @@ import type {
   ExpenseCategory,
   MonthReport,
   NotificationFrequency,
+  PaymentProvider,
   RecurringTransactionPayload,
   SavingsTransferDirection,
   Status,
+  SubscriptionPaymentLink,
+  SubscriptionPlanId,
   Transaction,
   TransactionFilters,
   TransactionUpdatePayload,
@@ -42,6 +45,27 @@ export function setAdminAccess(initData: string, userId: string, isAdmin: boolea
 
 export function resetUserPin(initData: string, userId: string): Promise<AdminUserListItem> {
   return rpcRequest("admin.resetPin", { initData, userId });
+}
+
+export function setUserSubscription(
+  initData: string,
+  userId: string,
+  planId: SubscriptionPlanId,
+  durationMonths: number,
+): Promise<AdminUserListItem> {
+  return rpcRequest("admin.setSubscription", { initData, userId, planId, durationMonths });
+}
+
+export function startSubscriptionTrial(initData: string): Promise<Status> {
+  return rpcRequest("subscription.startTrial", { initData });
+}
+
+export function createSubscriptionPayment(
+  initData: string,
+  provider: PaymentProvider,
+  planId: SubscriptionPlanId,
+): Promise<SubscriptionPaymentLink> {
+  return rpcRequest("subscription.createPayment", { initData, provider, planId });
 }
 
 export function addIncome(

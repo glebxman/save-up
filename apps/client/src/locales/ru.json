@@ -143,6 +143,8 @@
     "resetDataConfirm": "Сбросить данные",
     "restartTutorial": "Пройти обучение заново",
     "restartTutorialDescription": "Запустить пошаговое знакомство с приложением с самого начала.",
+    "support": "Техподдержка",
+    "supportDescription": "Открыть @saveup_support в Telegram.",
     "themeAuto": "Авто",
     "themeDark": "Тёмная",
     "themeLight": "Светлая",
@@ -203,7 +205,9 @@
     "sectionPrivacy": "Приватность и уведомления",
     "sectionContent": "Содержимое",
     "sectionHelp": "Помощь",
-    "sectionAccount": "Аккаунт"
+    "sectionAccount": "Аккаунт",
+    "subscription": "Подписка",
+    "subscriptionDescription": "Trial, тарифы, оплата через Click."
   },
   "admin": {
     "title": "Админ панель",
@@ -231,7 +235,19 @@
     "noPin": "PIN не задан",
     "resetPin": "Сбросить PIN",
     "resetPinConfirm": "Вы уверены, что хотите сбросить PIN-код этого пользователя?",
-    "resetPinSuccess": "PIN-код пользователя сброшен"
+    "resetPinDescription": "{{name}} сможет задать новый PIN при следующем запуске.",
+    "resetPinSuccess": "PIN-код пользователя сброшен",
+    "subscriptionActive": "Подписка активна",
+    "subscriptionInactive": "Нет подписки",
+    "subscriptionUntil": "Подписка до {{date}}",
+    "subscriptionGrant": "Выдать подписку",
+    "subscriptionExtend": "Продлить подписку",
+    "subscriptionSaved": "Подписка обновлена",
+    "subscriptionModalTitle": "Выдать подписку",
+    "subscriptionModalDescription": "Выберите, на какой срок выдать доступ для {{name}}.",
+    "subscriptionDuration": "Срок доступа",
+    "currentSubscriptionUntil": "Текущая подписка: до {{date}}",
+    "subscriptionPlanHint": "Будет добавлено {{months}} мес. платного доступа."
   },
   "expenseCategory": {
     "title": "Категория",
@@ -470,6 +486,14 @@
       "title": "Экспорт в Excel",
       "description": "Скачайте все операции за выбранный месяц в Excel-файл."
     },
+    "accounts": {
+      "title": "Несколько счетов и крипта",
+      "description": "Свайпайте карточку баланса влево или вправо, чтобы переключаться между наличными, картами и криптовалютой. Нажмите шестерёнку для управления ими."
+    },
+    "debts": {
+      "title": "Учёт долгов",
+      "description": "Записывайте, кто должен вам и кому должны вы. Указывайте сроки возврата и отмечайте долги как выполненные."
+    },
     "settings-categories": {
       "title": "Категории и лимиты",
       "description": "Переименуйте категории, добавьте свои и задайте лимиты трат."
@@ -659,5 +683,44 @@
     "addSuccess": "Долг успешно добавлен",
     "settleSuccess": "Долг погашен",
     "deleteSuccess": "Долг удален"
+  },
+  "subscription": {
+    "title": "Подписка",
+    "description": "Откройте долги, настройки категорий и полный доступ к ИИ.",
+    "statusActive": "Подписка активна",
+    "statusInactive": "Нет активной подписки",
+    "statusUntil": "Активна до {{date}}",
+    "lockedNotice": "Без подписки заблокированы долги и настройки категорий.",
+    "unlocked": "Открыто",
+    "locked": "Закрыто",
+    "trialTitle": "Бесплатный trial",
+    "trialDescription": "{{days}} дней бесплатно, один раз для пользователя.",
+    "startTrial": "Активировать trial",
+    "trialStarted": "Бесплатный trial активирован",
+    "plansTitle": "Тарифы",
+    "choosePlan": "Срок подписки",
+    "selectedPlan": "Выбранный тариф",
+    "planDuration": "{{count}} мес.",
+    "perMonth": "{{amount}} / мес.",
+    "savings": "Экономия {{pct}}%",
+    "basePlan": "Базовая цена",
+    "payButton": "Оплатить через {{provider}}",
+    "benefitsTitle": "Что дает подписка",
+    "benefitsDescription": "Подписка снимает основные ограничения и открывает расширенные инструменты учета.",
+    "benefits": {
+      "debts": "Долги: учет, кто должен вам и кому должны вы, суммы, заметки, сроки возврата и история закрытия.",
+      "categories": "Настройки категорий: переименование, смена иконок, свои категории и лимиты расходов по категориям.",
+      "ai": "ИИ без бесплатного лимита: голосовые сообщения и распознавание фото чеков не ограничиваются {{dailyLimit}} запросами в день.",
+      "trial": "Бесплатный trial: {{days}} дней полного доступа один раз на аккаунт перед оплатой."
+    },
+    "plans": {
+      "monthly": "1 месяц",
+      "quarterly": "3 месяца",
+      "half_year": "6 месяцев",
+      "yearly": "12 месяцев"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

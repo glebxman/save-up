@@ -1,104 +1,105 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import type { Debt } from "@finance-twa/shared-types";
 
-import { Button, Card, CardContent, Input, Select, Modal, ModalBackdrop, ModalContainer, ModalDialog, ModalCloseTrigger, ModalHeader, ModalHeading, ModalBody } from "@/components/ui";
-import { useTelegram } from "@/hooks/useTelegram";
-import { formatMoney } from "@/utils/format";
-import * as api from "@/api/methods";
-import { PlusIcon, TrashIcon } from "@/components/layout/icons";
+import {
+  Button,
+  Card,
+  CardContent,
+  Input,
+  Modal,
+  ModalBackdrop,
+  ModalBody,
+  ModalCloseTrigger,
+  ModalContainer,
+  ModalDialog,
+  ModalHeader,
+  ModalHeading,
+  Select,
+  Spinner,
+} from "@/components/ui";
+import { CheckIcon, PlusIcon, TrashIcon } from "@/components/layout/icons";
+import { useDebts } from "@/hooks/useFinance";
+import { formatDate, formatMoney } from "@/utils/format";
 
 export function Debts() {
   const { t } = useTranslation();
-  const { initData } = useTelegram();
-  const [debts, setDebts] = useState<Debt[]>([]);
-  const [loading, setLoading] = useState(true);
+  const {
+    debts,
+    debtsQuery,
+    owedToMe,
+    iOwe,
+    totalOwedToMe,
+    totalIOwe,
+    net,
+    addDebtMutation,
+    settleDebtMutation,
+    deleteDebtMutation,
+  } = useDebts();
   const [showAddModal, setShowAddModal] = useState(false);
   const [newName, setNewName] = useState("");
   const [newAmount, setNewAmount] = useState("");
   const [newDirection, setNewDirection] = useState<"owed_to_me" | "i_owe">("owed_to_me");
   const [newDueDate, setNewDueDate] = useState("");
   const [newNote, setNewNote] = useState("");
-  const [submitting, setSubmitting] = useState(false);
 
-  const loadDebts = useCallback(async () => {
-    if (!initData) return;
-    try {
-      const result = await api.getDebts(initData);
-      setDebts(result);
-    } catch (err) {
-      console.error("Failed to load debts:", err);
-    } finally {
-      setLoading(false);
-    }
-  }, [initData]);
+  const parsedAmount = Number(newAmount);
+  const canSubmit =
+    newName.trim().length > 0 &&
+    newAmount.trim().length > 0 &&
+    Number.isFinite(parsedAmount) &&
+    parsedAmount > 0;
 
-  useEffect(() => {
-    loadDebts();
-  }, [loadDebts]);
+  const resetForm = () => {
+    setNewName("");
+    setNewAmount("");
+    setNewDirection("owed_to_me");
+    setNewNote("");
+    setNewDueDate("");
+  };
 
   const handleAdd = async () => {
-    if (!initData || !newName.trim() || !newAmount || Number(newAmount) <= 0) return;
-    setSubmitting(true);
+    if (!canSubmit) return;
+
     try {
-      const debt = await api.addDebt(
-        initData,
-        newName.trim(),
-        Number(newAmount),
-        newDirection,
-        newNote.trim() || undefined,
-        newDueDate || undefined,
-      );
-      setDebts((prev) => [debt, ...prev]);
+      await addDebtMutation.mutateAsync({
+        name: newName.trim(),
+        amount: parsedAmount,
+        direction: newDirection,
+        note: newNote.trim() || undefined,
+        dueDate: newDueDate || undefined,
+      });
       setShowAddModal(false);
-      setNewName("");
-      setNewAmount("");
-      setNewNote("");
-      setNewDueDate("");
-    } catch (err) {
-      console.error("Failed to add debt:", err);
-    } finally {
-      setSubmitting(false);
+      resetForm();
+    } catch {
+      // The mutation hook already shows the user-facing error toast.
     }
   };
 
-  const handleSettle = async (debtId: string) => {
-    if (!initData) return;
-    try {
-      await api.settleDebt(initData, debtId);
-      setDebts((prev) => prev.filter((d) => d.id !== debtId));
-    } catch (err) {
-      console.error("Failed to settle debt:", err);
-    }
+  const closeAddModal = () => {
+    setShowAddModal(false);
+    resetForm();
   };
 
-  const handleDelete = async (debtId: string) => {
-    if (!initData) return;
-    try {
-      await api.deleteDebt(initData, debtId);
-      setDebts((prev) => prev.filter((d) => d.id !== debtId));
-    } catch (err) {
-      console.error("Failed to delete debt:", err);
-    }
-  };
-
-  const owedToMe = debts.filter((d) => d.direction === "owed_to_me");
-  const iOwe = debts.filter((d) => d.direction === "i_owe");
-  const totalOwedToMe = owedToMe.reduce((sum, d) => sum + d.amount, 0);
-  const totalIOwe = iOwe.reduce((sum, d) => sum + d.amount, 0);
-  const net = totalOwedToMe - totalIOwe;
+  const isLoading = debtsQuery.isLoading;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
+    <div className="space-y-6" data-onboarding="debts">
+      <div className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold">{t("debts.title")}</h2>
-        <Button onPress={() => setShowAddModal(true)} variant="primary" className="flex items-center gap-2">
+        <Button onPress={() => setShowAddModal(true)} variant="primary" className="shrink-0">
           <PlusIcon className="h-4 w-4" />
           {t("debts.addDebt")}
         </Button>
       </div>
 
-      {debts.length === 0 && !loading ? (
+      {isLoading ? (
+        <Card>
+          <CardContent className="flex min-h-40 items-center justify-center">
+            <Spinner size="md" />
+          </CardContent>
+        </Card>
+      ) : debts.length === 0 ? (
         <Card>
           <CardContent className="flex flex-col items-center py-12 text-center">
             <p className="text-lg font-medium text-[var(--muted)]">{t("debts.empty")}</p>
@@ -108,54 +109,41 @@ export function Debts() {
       ) : (
         <>
           <div className="grid grid-cols-3 gap-3">
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-[var(--muted)]">{t("debts.totalOwedToMe")}</p>
-                <p className="mt-1 text-lg font-semibold text-green-500">{formatMoney(totalOwedToMe)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-[var(--muted)]">{t("debts.totalIOwe")}</p>
-                <p className="mt-1 text-lg font-semibold text-red-500">{formatMoney(totalIOwe)}</p>
-              </CardContent>
-            </Card>
-            <Card>
-              <CardContent className="py-4 text-center">
-                <p className="text-xs text-[var(--muted)]">{t("debts.net")}</p>
-                <p className={`mt-1 text-lg font-semibold ${net >= 0 ? "text-green-500" : "text-red-500"}`}>
-                  {formatMoney(Math.abs(net))}
-                </p>
-              </CardContent>
-            </Card>
+            <DebtSummaryCard
+              label={t("debts.totalOwedToMe")}
+              value={formatMoney(totalOwedToMe)}
+              tone="positive"
+            />
+            <DebtSummaryCard
+              label={t("debts.totalIOwe")}
+              value={formatMoney(totalIOwe)}
+              tone="negative"
+            />
+            <DebtSummaryCard
+              label={t("debts.net")}
+              value={formatMoney(Math.abs(net))}
+              tone={net >= 0 ? "positive" : "negative"}
+            />
           </div>
 
-          {owedToMe.length > 0 && (
-            <div>
-              <h3 className="mb-3 text-sm font-medium text-[var(--muted)]">{t("debts.owedToMe")}</h3>
-              <div className="space-y-2">
-                {owedToMe.map((debt) => (
-                  <DebtCard key={debt.id} debt={debt} onSettle={handleSettle} onDelete={handleDelete} />
-                ))}
-              </div>
-            </div>
-          )}
+          <DebtSection
+            debts={owedToMe}
+            onDelete={(debtId) => deleteDebtMutation.mutate(debtId)}
+            onSettle={(debtId) => settleDebtMutation.mutate(debtId)}
+            title={t("debts.owedToMe")}
+          />
 
-          {iOwe.length > 0 && (
-            <div>
-              <h3 className="mb-3 text-sm font-medium text-[var(--muted)]">{t("debts.iOwe")}</h3>
-              <div className="space-y-2">
-                {iOwe.map((debt) => (
-                  <DebtCard key={debt.id} debt={debt} onSettle={handleSettle} onDelete={handleDelete} />
-                ))}
-              </div>
-            </div>
-          )}
+          <DebtSection
+            debts={iOwe}
+            onDelete={(debtId) => deleteDebtMutation.mutate(debtId)}
+            onSettle={(debtId) => settleDebtMutation.mutate(debtId)}
+            title={t("debts.iOwe")}
+          />
         </>
       )}
 
       <Modal>
-        <ModalBackdrop isOpen={showAddModal} onOpenChange={(open) => { if (!open) setShowAddModal(false); }} variant="blur">
+        <ModalBackdrop isOpen={showAddModal} onOpenChange={(open) => { if (!open) closeAddModal(); }} variant="blur">
           <ModalContainer>
             <ModalDialog>
               <ModalCloseTrigger />
@@ -181,6 +169,7 @@ export function Debts() {
                       onChange={(e) => setNewAmount(e.target.value)}
                       placeholder={t("debts.amount")}
                       min="0"
+                      step="0.01"
                       fullWidth
                     />
                   </div>
@@ -214,12 +203,12 @@ export function Debts() {
                     />
                   </div>
                   <Button
-                    onPress={handleAdd}
+                    onPress={() => void handleAdd()}
                     variant="primary"
                     className="w-full"
-                    isDisabled={submitting || !newName.trim() || !newAmount}
+                    isDisabled={addDebtMutation.isPending || !canSubmit}
                   >
-                    {submitting ? "..." : t("debts.addDebt")}
+                    {addDebtMutation.isPending ? "..." : t("debts.addDebt")}
                   </Button>
                 </div>
               </ModalBody>
@@ -227,6 +216,52 @@ export function Debts() {
           </ModalContainer>
         </ModalBackdrop>
       </Modal>
+    </div>
+  );
+}
+
+function DebtSummaryCard({
+  label,
+  value,
+  tone,
+}: {
+  label: string;
+  value: string;
+  tone: "positive" | "negative";
+}) {
+  return (
+    <Card>
+      <CardContent className="py-4 text-center">
+        <p className="text-xs text-[var(--muted)]">{label}</p>
+        <p className={`mt-1 text-lg font-semibold ${tone === "positive" ? "text-green-500" : "text-red-500"}`}>
+          {value}
+        </p>
+      </CardContent>
+    </Card>
+  );
+}
+
+function DebtSection({
+  debts,
+  onSettle,
+  onDelete,
+  title,
+}: {
+  debts: Debt[];
+  onSettle: (id: string) => void;
+  onDelete: (id: string) => void;
+  title: string;
+}) {
+  if (debts.length === 0) return null;
+
+  return (
+    <div>
+      <h3 className="mb-3 text-sm font-medium text-[var(--muted)]">{title}</h3>
+      <div className="space-y-2">
+        {debts.map((debt) => (
+          <DebtCard key={debt.id} debt={debt} onSettle={onSettle} onDelete={onDelete} />
+        ))}
+      </div>
     </div>
   );
 }
@@ -253,7 +288,7 @@ function DebtCard({
           </div>
           {debt.dueDate && (
             <p className="mt-1 text-xs text-[var(--muted)]">
-              {t("debts.dueDate")}: {new Date(debt.dueDate).toLocaleDateString()}
+              {t("debts.dueDate")}: {formatDate(debt.dueDate)}
             </p>
           )}
           {debt.note && (
@@ -271,7 +306,7 @@ function DebtCard({
               onPress={() => onSettle(debt.id)}
               aria-label={t("debts.settle")}
             >
-              ✓
+              <CheckIcon className="h-4 w-4" />
             </Button>
             <Button
               size="sm"

@@ -1,5 +1,5 @@
 import type { CustomCategory } from "@finance-twa/shared-types";
-import { VOICE_CREDITS_DAILY_LIMIT } from "@finance-twa/shared-types";
+import { AI_FREE_DAILY_LIMIT } from "@finance-twa/shared-types";
 
 import { eq } from "drizzle-orm";
 
@@ -8,19 +8,20 @@ import { users } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
 import { extractTransactionFromVoice } from "../ai.service.js";
-import { ensureUser, isSuperAdmin } from "../user/index.js";
+import { hasSubscriptionAccess } from "../subscription/state.js";
+import { ensureUser } from "../user/index.js";
 
 export async function processVoice(telegramId: number, base64Audio: string) {
   const user = await ensureUser(telegramId);
-  const isAdmin = user.isAdmin || isSuperAdmin(telegramId);
+  const hasAccess = hasSubscriptionAccess(user, telegramId);
   const today = new Date().toISOString().slice(0, 10);
 
-  if (!isAdmin) {
+  if (!hasAccess) {
     const isNewDay = user.voiceDailyDate !== today;
     const usedToday = isNewDay ? 0 : user.voiceDailyUsed;
 
-    if (usedToday >= VOICE_CREDITS_DAILY_LIMIT) {
-      throw new AppError(ErrorCode.LIMIT_REACHED, "Voice daily limit reached");
+    if (usedToday >= AI_FREE_DAILY_LIMIT) {
+      throw new AppError(ErrorCode.LIMIT_REACHED, "AI daily limit reached");
     }
   }
 
@@ -29,7 +30,7 @@ export async function processVoice(telegramId: number, base64Audio: string) {
     : [];
   const result = await extractTransactionFromVoice(base64Audio, customCategories, user.language ?? undefined);
 
-  if (result && !isAdmin) {
+  if (result && !hasAccess) {
     const isNewDay = user.voiceDailyDate !== today;
     const nextCount = isNewDay ? 1 : user.voiceDailyUsed + 1;
 

@@ -25,6 +25,7 @@ export function LockScreen() {
 
   const biometricAvailable =
     isBiometricsEnabled() &&
+    Boolean(getStoredHash()) &&
     biometric.isSupported &&
     biometric.isBiometricAvailable &&
     biometric.isAccessGranted &&
@@ -39,10 +40,14 @@ export function LockScreen() {
       if (!granted) return;
     }
 
+    const expectedToken = getStoredHash();
+    if (!expectedToken) return;
+
     const result = await biometric.authenticate(t("security.biometricReason"));
-    if (result.success && result.token && result.token === getStoredHash()) {
+    if (result.success && result.token === expectedToken) {
       hapticNotification("success");
       unlock();
+      return;
     }
   }, [biometric, t, unlock]);
 

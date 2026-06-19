@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "主页",
       "report": "报告",
-      "settings": "设置"
+      "settings": "设置",
+      "debts": "债务"
     }
   },
   "dashboard": {
@@ -142,6 +143,8 @@
     "resetDataConfirm": "重置数据",
     "restartTutorial": "重新开始教程",
     "restartTutorialDescription": "从头开始逐步了解应用程序。",
+    "support": "技术支持",
+    "supportDescription": "在 Telegram 中打开 @saveup_support。",
     "themeAuto": "自动",
     "themeDark": "深色",
     "themeLight": "浅色",
@@ -185,7 +188,7 @@
     "categorySaved": "类别已保存",
     "save": "保存",
     "dayOfMonth": "月中日期",
-    "autoApply": "ꨔ(",
+    "autoApply": "自动适用",
     "addCategory": "添加类别",
     "customCategories": "",
     "deleteCategory": "删除",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "隐私与提醒",
     "sectionContent": "应用内容",
     "sectionHelp": "帮助",
-    "sectionAccount": "账户"
+    "sectionAccount": "账户",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "管理面板",
@@ -232,7 +237,19 @@
     "noPin": "未设置 PIN",
     "resetPin": "重置 PIN",
     "resetPinConfirm": "您确定要重置此用户的 PIN 吗？",
-    "resetPinSuccess": "用户的 PIN 已重置"
+    "resetPinDescription": "{{name}} 下次启动时可以设置新的 PIN。",
+    "resetPinSuccess": "用户的 PIN 已重置",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "分类",
@@ -273,8 +290,6 @@
     "placeholder": "留空 = 不限额",
     "helperText": "如果不想为此分类设置限额，请留空。",
     "save": "保存限额",
-    "dayOfMonth": "月中日期",
-    "autoApply": "ꨔ(",
     "warningTitle": "一个或多个类别已超出限额"
   },
   "recurring": {
@@ -298,7 +313,7 @@
     "editTitle": "编辑重复操作",
     "save": "保存更改",
     "dayOfMonth": "月中日期",
-    "autoApply": "ꨔ(",
+    "autoApply": "自动适用",
     "create": "创建模板",
     "deleteQuestion": "删除这个重复模板？",
     "deleteDescription": "{{name}} 将从快捷列表中移除。"
@@ -337,8 +352,6 @@
     "note": "备注",
     "notePlaceholder": "为这笔交易添加备注",
     "save": "保存更改",
-    "dayOfMonth": "月中日期",
-    "autoApply": "ꨔ(",
     "archiveQuestion": "取消这笔交易？",
     "archiveDescription": "交易将被回滚，余额和合计会重新计算。",
     "restoreQuestion": "恢复这笔交易？",
@@ -635,5 +648,67 @@
     "saveHolding": "保存币种",
     "cryptoCreateHint": "先创建钱包，然后在资产编辑器中添加币种（BTC、TON、USDT、NOTCOIN）。",
     "transferAutoPlaceholder": "自动"
+  },
+  "debts": {
+    "title": "债务",
+    "empty": "没有活跃的债务",
+    "emptyHint": "添加债务以开始追踪谁欠你钱或你欠谁钱。",
+    "owedToMe": "别人欠我",
+    "iOwe": "我欠别人",
+    "name": "姓名",
+    "amount": "金额",
+    "direction": "方向",
+    "dueDate": "到期日",
+    "note": "备注（可选）",
+    "addDebt": "添加债务",
+    "settle": "结清",
+    "delete": "删除",
+    "totalOwedToMe": "别人欠我总计",
+    "totalIOwe": "我欠别人总计",
+    "net": "净额",
+    "settleConfirm": "将此债务标记为已结清？",
+    "deleteConfirm": "删除此债务？",
+    "addSuccess": "债务添加成功",
+    "settleSuccess": "债务已结清",
+    "deleteSuccess": "债务已删除"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

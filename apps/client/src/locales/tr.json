@@ -29,7 +29,8 @@
     "nav": {
       "dashboard": "Ana sayfa",
       "report": "Rapor",
-      "settings": "Ayarlar"
+      "settings": "Ayarlar",
+      "debts": "Borçlar"
     }
   },
   "dashboard": {
@@ -142,6 +143,8 @@
     "resetDataConfirm": "Verileri sıfırla",
     "restartTutorial": "Eğitimi yeniden başlat",
     "restartTutorialDescription": "Uygulama rehberini baştan takip edin.",
+    "support": "Teknik destek",
+    "supportDescription": "Telegram'da @saveup_support hesabını aç.",
     "themeAuto": "Otomatik",
     "themeDark": "Koyu",
     "themeLight": "Açık",
@@ -204,7 +207,9 @@
     "sectionPrivacy": "Gizlilik ve bildirimler",
     "sectionContent": "Uygulama içeriği",
     "sectionHelp": "Yardım",
-    "sectionAccount": "Hesap"
+    "sectionAccount": "Hesap",
+    "subscription": "Subscription",
+    "subscriptionDescription": "Trial, plans, and Click payments."
   },
   "admin": {
     "title": "Admin paneli",
@@ -232,7 +237,19 @@
     "noPin": "PIN ayarlanmadı",
     "resetPin": "PIN Sıfırla",
     "resetPinConfirm": "Bu kullanıcının PIN kodunu sıfırlamak istediğinizden emin misiniz?",
-    "resetPinSuccess": "Kullanıcının PIN kodu sıfırlandı"
+    "resetPinDescription": "{{name}} bir sonraki açılışta yeni PIN belirleyebilir.",
+    "resetPinSuccess": "Kullanıcının PIN kodu sıfırlandı",
+    "subscriptionActive": "Subscription active",
+    "subscriptionInactive": "No subscription",
+    "subscriptionUntil": "Subscription until {{date}}",
+    "subscriptionGrant": "Grant subscription",
+    "subscriptionExtend": "Extend subscription",
+    "subscriptionSaved": "Subscription updated",
+    "subscriptionModalTitle": "Grant subscription",
+    "subscriptionModalDescription": "Choose how long to grant access for {{name}}.",
+    "subscriptionDuration": "Access duration",
+    "currentSubscriptionUntil": "Current subscription: until {{date}}",
+    "subscriptionPlanHint": "This will add {{months}} month(s) of paid access."
   },
   "expenseCategory": {
     "title": "Kategori",
@@ -273,8 +290,6 @@
     "placeholder": "Boş = limitsiz",
     "helperText": "Bu kategori için limit istemiyorsanız boş bırakın.",
     "save": "Limitleri kaydet",
-    "dayOfMonth": "Ayın günü",
-    "autoApply": "Otomatik uygula",
     "warningTitle": "Bir veya daha fazla kategori limitini aştı"
   },
   "recurring": {
@@ -337,8 +352,6 @@
     "note": "Not",
     "notePlaceholder": "Bu işlem için not ekleyin",
     "save": "Değişiklikleri kaydet",
-    "dayOfMonth": "Ayın günü",
-    "autoApply": "Otomatik uygula",
     "archiveQuestion": "Bu işlem iptal edilsin mi?",
     "archiveDescription": "İşlem geri alınacak, bakiyeniz ve toplamlar yeniden hesaplanacak.",
     "restoreQuestion": "Bu işlem geri getirilsin mi?",
@@ -635,5 +648,67 @@
     "saveHolding": "Coini Kaydet",
     "cryptoCreateHint": "Önce cüzdanı oluşturun, ardından varlık düzenleyiciden coin (BTC, TON, USDT, NOTCOIN) ekleyin.",
     "transferAutoPlaceholder": "Otomatik"
+  },
+  "debts": {
+    "title": "Borçlar",
+    "empty": "Aktif borç yok",
+    "emptyHint": "Kimin size veya sizin kime borç verdiğinizi takip etmek için borç ekleyin.",
+    "owedToMe": "Bana borçlu",
+    "iOwe": "Ben borçluyum",
+    "name": "Ad",
+    "amount": "Tutar",
+    "direction": "Yön",
+    "dueDate": "Vade tarihi",
+    "note": "Not (isteğe bağlı)",
+    "addDebt": "Borç Ekle",
+    "settle": "Kapat",
+    "delete": "Sil",
+    "totalOwedToMe": "Toplam bana borçlu",
+    "totalIOwe": "Toplam borçlu olduğum",
+    "net": "Net",
+    "settleConfirm": "Bu borç kapatıldı olarak işaretlensin mi?",
+    "deleteConfirm": "Bu borç silinsin mi?",
+    "addSuccess": "Borç başarıyla eklendi",
+    "settleSuccess": "Borç kapatıldı",
+    "deleteSuccess": "Borç silindi"
+  },
+  "subscription": {
+    "title": "Subscription",
+    "description": "Unlock debts, category settings, and full AI usage.",
+    "statusActive": "Subscription is active",
+    "statusInactive": "No active subscription",
+    "statusUntil": "Active until {{date}}",
+    "lockedNotice": "Debts and category settings are locked without a subscription.",
+    "unlocked": "Unlocked",
+    "locked": "Locked",
+    "trialTitle": "Free trial",
+    "trialDescription": "{{days}} days free, available once per user.",
+    "startTrial": "Start free trial",
+    "trialStarted": "Free trial activated",
+    "plansTitle": "Plans",
+    "choosePlan": "Subscription period",
+    "selectedPlan": "Selected plan",
+    "planDuration": "{{count}} mo",
+    "perMonth": "{{amount}} / mo",
+    "savings": "Save {{pct}}%",
+    "basePlan": "Base price",
+    "payButton": "Pay with {{provider}}",
+    "benefitsTitle": "What the subscription includes",
+    "benefitsDescription": "Paid access removes the main limits and opens the advanced finance tools.",
+    "benefits": {
+      "debts": "Debts: track who owes you, who you owe, amounts, notes, due dates, and closing history.",
+      "categories": "Category settings: rename categories, change icons, add custom categories, and set category limits.",
+      "ai": "AI features without the free limit: voice messages and receipt photo recognition are not capped at {{dailyLimit}} requests per day.",
+      "trial": "Free trial: {{days}} days of full access once per account before choosing a paid plan."
+    },
+    "plans": {
+      "monthly": "1 month",
+      "quarterly": "3 months",
+      "half_year": "6 months",
+      "yearly": "12 months"
+    },
+    "pay": {
+      "click": "Click"
+    }
   }
 }

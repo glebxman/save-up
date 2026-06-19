@@ -15,9 +15,8 @@ interface LockState {
 }
 
 /**
- * Lock state lives entirely on the client; the server never sees the PIN.
- * `unlocked` resets on every full app load — opening Telegram WebApp anew is
- * effectively that, which is what we want.
+ * Lock state lives on the client; PIN hashing and verification are server-backed.
+ * `unlocked` resets on every full app load, which is what we want for Telegram WebApp.
  */
 export const useLockStore = create<LockState>((set) => ({
   hasPin: hasStoredPin(),

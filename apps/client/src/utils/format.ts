@@ -59,6 +59,17 @@ export function formatDateTime(value: string): string {
   }).format(new Date(value));
 }
 
+export function formatDate(value: string): string {
+  const language = (i18n.resolvedLanguage ?? "en").slice(0, 2) as keyof typeof localeMap;
+  const locale = localeMap[language] ?? localeMap.en;
+
+  return new Intl.DateTimeFormat(locale, {
+    day: "2-digit",
+    month: "short",
+    year: "numeric",
+  }).format(new Date(value));
+}
+
 export function toDateInputValue(value: string): string {
   const date = new Date(value);
   const year = date.getFullYear();

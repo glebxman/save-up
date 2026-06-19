@@ -72,6 +72,10 @@ export interface TelegramWebApp {
   disableVerticalSwipes?: () => void;
   /** Counterpart, included for completeness. */
   enableVerticalSwipes?: () => void;
+  /** Opens a Telegram-native link such as https://t.me/username. */
+  openTelegramLink?: (url: string) => void;
+  /** Opens an external URL inside Telegram's supported browser flow. */
+  openLink?: (url: string, options?: { try_instant_view?: boolean }) => void;
   ready?: () => void;
   expand?: () => void;
 }

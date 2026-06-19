@@ -24,6 +24,7 @@ export {
   listAdminUsers,
   setUserAdminAccess,
   resetUserPin,
+  setUserSubscription,
 } from "./admin.js";
 export {
   setCategoryCustomization,

@@ -14,6 +14,7 @@ import {
   adminListUsers,
   adminSetAdmin,
   adminResetPin,
+  adminSetSubscription,
 } from "./admin";
 import {
   financeConvertCurrency,
@@ -43,6 +44,10 @@ import {
   financeUpdateTransaction,
   financeTransferBetweenAccounts,
 } from "./transactions";
+import {
+  subscriptionCreatePayment,
+  subscriptionStartTrial,
+} from "./subscription";
 import {
   userAddCustomCategory,
   userCompleteOnboarding,
@@ -87,6 +92,9 @@ const handlers: MockHandlerMap = {
   "admin.listUsers": adminListUsers,
   "admin.setAdmin": adminSetAdmin,
   "admin.resetPin": adminResetPin,
+  "admin.setSubscription": adminSetSubscription,
+  "subscription.startTrial": subscriptionStartTrial,
+  "subscription.createPayment": subscriptionCreatePayment,
   "finance.addIncome": financeAddIncome,
   "finance.addExpense": financeAddExpense,
   "finance.transferSavings": financeTransferSavings,

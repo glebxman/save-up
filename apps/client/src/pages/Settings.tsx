@@ -15,6 +15,8 @@ import { SettingsRow } from "@/components/features/settings/SettingsRow";
 import { SettingsSection } from "@/components/features/settings/SettingsSection";
 import {
   BellIcon,
+  ChatBubbleLeftRightIcon,
+  CreditCardIcon,
   LanguageIcon,
   LockClosedIcon,
   TagIcon,
@@ -23,6 +25,7 @@ import {
 import { Button } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
 import { useCurrency } from "@/hooks/useCurrency";
+import { useTelegram } from "@/hooks/useTelegram";
 import { useLockStore } from "@/stores/lock.store";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import i18n, { SUPPORTED_LANGUAGES, type AppLanguage } from "@/i18n";
@@ -30,6 +33,7 @@ import { useTheme } from "@/providers/ThemeProvider";
 import { getCurrencySymbol } from "@/utils/format";
 
 type ActiveModal = "theme" | "language" | "currency" | "reset" | null;
+const SUPPORT_URL = "https://t.me/saveup_support";
 
 /**
  * The Settings landing page is intentionally light: it groups a handful of
@@ -40,6 +44,7 @@ type ActiveModal = "theme" | "language" | "currency" | "reset" | null;
 export function Settings() {
   const { t } = useTranslation();
   const navigate = useNavigate();
+  const { webApp } = useTelegram();
   const { theme, resolvedTheme } = useTheme();
   const {
     status,
@@ -73,6 +78,16 @@ export function Settings() {
   const languageLabel = t(
     `settings.language${currentLanguage.charAt(0).toUpperCase()}${currentLanguage.slice(1)}`,
   );
+  const hasSubscriptionAccess = !!status?.user.isAdmin || !!status?.user.subscription.active;
+
+  const openSupport = () => {
+    if (webApp?.openTelegramLink) {
+      webApp.openTelegramLink(SUPPORT_URL);
+      return;
+    }
+
+    window.open(SUPPORT_URL, "_blank", "noopener,noreferrer");
+  };
 
   return (
     <div className="space-y-6 pb-2">
@@ -148,12 +163,25 @@ export function Settings() {
       {/* Categories — full editor lives on a dedicated screen */}
       <SettingsSection title={t("settings.sectionContent")}>
         <SettingsRow
+          icon={CreditCardIcon}
+          iconBg="bg-emerald-500/85"
+          onPress={() => navigate("/subscription")}
+          title={t("settings.subscription")}
+          description={t("settings.subscriptionDescription")}
+          value={
+            status?.user.subscription.active
+              ? t("subscription.unlocked")
+              : t("subscription.locked")
+          }
+        />
+        <SettingsRow
           dataOnboarding="settings-categories"
-          icon={TagIcon}
+          icon={hasSubscriptionAccess ? TagIcon : LockClosedIcon}
           iconBg="bg-pink-500/85"
-          onPress={() => navigate("/settings/categories")}
+          onPress={() => navigate(hasSubscriptionAccess ? "/settings/categories" : "/subscription")}
           title={t("settings.categories")}
           description={t("settings.categoriesDescription")}
+          value={!hasSubscriptionAccess ? t("subscription.locked") : undefined}
         />
         <SettingsRow
           iconBg="bg-[var(--surface-tertiary)]"
@@ -199,6 +227,13 @@ export function Settings() {
 
       {/* Help & onboarding */}
       <SettingsSection title={t("settings.sectionHelp")}>
+        <SettingsRow
+          icon={ChatBubbleLeftRightIcon}
+          iconBg="bg-sky-500/85"
+          onPress={openSupport}
+          title={t("settings.support")}
+          description={t("settings.supportDescription")}
+        />
         <SettingsRow
           iconBg="bg-[var(--settings-blue)]"
           iconSlot={

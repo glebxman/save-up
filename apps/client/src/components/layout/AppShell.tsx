@@ -5,21 +5,24 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { ToastViewport } from "@/components/feedback/ToastViewport";
 import { OnboardingOverlay } from "@/components/features/onboarding/OnboardingOverlay";
 import { Avatar, Button } from "@/components/ui";
+import { useStatus } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
-import { DashboardIcon, ReportIcon, DebtsIcon, SettingsIcon } from "./icons";
+import { DashboardIcon, ReportIcon, DebtsIcon, SettingsIcon, LockClosedIcon } from "./icons";
 
 export function AppShell({ children }: PropsWithChildren) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const { user } = useTelegram();
+  const { status } = useStatus();
   const firstName = user?.first_name || user?.username || t("common.defaultUser");
   const AVATAR_URL = user?.photo_url || "https://api.dicebear.com/9.x/initials/svg?seed=Save%20Up";
+  const hasSubscriptionAccess = !!status?.user.isAdmin || !!status?.user.subscription.active;
   const navItems = [
-    { icon: DashboardIcon, label: t("shell.nav.dashboard"), href: "/" },
-    { icon: ReportIcon, label: t("shell.nav.report"), href: "/report" },
-    { icon: DebtsIcon, label: t("shell.nav.debts"), href: "/debts" },
-    { icon: SettingsIcon, label: t("shell.nav.settings"), href: "/settings" },
+    { icon: DashboardIcon, label: t("shell.nav.dashboard"), href: "/", locked: false },
+    { icon: ReportIcon, label: t("shell.nav.report"), href: "/report", locked: false },
+    { icon: DebtsIcon, label: t("shell.nav.debts"), href: "/debts", locked: status ? !hasSubscriptionAccess : false },
+    { icon: SettingsIcon, label: t("shell.nav.settings"), href: "/settings", locked: false },
   ] as const;
 
   return (
@@ -47,22 +50,23 @@ export function AppShell({ children }: PropsWithChildren) {
 
       <div className="finance-bottom-nav-wrap">
         <nav className="finance-bottom-nav flex items-center gap-2 rounded-full px-2.5 py-2.5" data-onboarding="bottom-nav">
-          {navItems.map(({ href, icon: Icon, label }) => {
+          {navItems.map(({ href, icon: Icon, label, locked }) => {
             const isActive =
               href === "/"
                 ? location.pathname === href
                 : location.pathname.startsWith(href);
+            const targetHref = locked ? "/subscription" : href;
 
             return (
               <Button
                 key={href}
-                aria-label={label}
+                aria-label={locked ? `${label}: ${t("subscription.locked")}` : label}
                 className="finance-nav-button flex h-14 w-14 flex-col items-center justify-center gap-1 rounded-full px-3 py-2"
                 data-active={isActive}
-                onPress={() => navigate(href)}
+                onPress={() => navigate(targetHref)}
                 variant={isActive ? "primary" : "secondary"}
               >
-                <Icon className="h-5 w-5" />
+                {locked ? <LockClosedIcon className="h-5 w-5" /> : <Icon className="h-5 w-5" />}
               </Button>
             );
           })}

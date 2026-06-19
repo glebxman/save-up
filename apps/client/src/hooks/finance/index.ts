@@ -16,15 +16,18 @@ import { useNotifications } from "./useNotifications";
 import { useRecurringMutations } from "./useRecurring";
 import { useReports } from "./useReports";
 import { useStatus } from "./useStatus";
+import { useSubscription } from "./useSubscription";
 import { useTransactionMutations } from "./useTransactions";
 import { useUserPreferences } from "./useUserPreferences";
 import { useVoice } from "./useVoice";
 
+export { useDebts } from "./useDebts";
 export { useAccountMutations } from "./useAccount";
 export { useNotifications } from "./useNotifications";
 export { useRecurringMutations } from "./useRecurring";
 export { useReports } from "./useReports";
 export { useStatus } from "./useStatus";
+export { useSubscription } from "./useSubscription";
 export { useTransactionMutations } from "./useTransactions";
 export { useUserPreferences } from "./useUserPreferences";
 export { useVoice } from "./useVoice";
@@ -49,6 +52,7 @@ export function useFinance(options: UseFinanceOptions = {}) {
   const prefs = useUserPreferences();
   const notifications = useNotifications();
   const voice = useVoice();
+  const subscription = useSubscription();
 
   return {
     telegramId,
@@ -66,5 +70,6 @@ export function useFinance(options: UseFinanceOptions = {}) {
     ...prefs,
     ...notifications,
     ...voice,
+    ...subscription,
   };
 }

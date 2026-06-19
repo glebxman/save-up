@@ -11,6 +11,7 @@ import { db } from "../../config/database.js";
 import { users, type UserRow } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
+import { requireSubscriptionAccess } from "../subscription/state.js";
 import { buildStatus, ensureUser } from "./status.js";
 
 export async function setCategoryCustomization(
@@ -20,6 +21,7 @@ export async function setCategoryCustomization(
   emoji: string,
 ): Promise<{ ok: true }> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
   const current = (user.categoryCustomizations ?? {}) as Record<string, { name?: string; emoji?: string }>;
   const trimmedName = name.trim();
   const trimmedEmoji = emoji.trim();
@@ -47,6 +49,7 @@ export async function addCustomCategory(
   emoji: string,
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
   const current = Array.isArray(user.customCategories) ? user.customCategories as CustomCategory[] : [];
 
   if (current.length >= MAX_CUSTOM_CATEGORIES) {
@@ -76,6 +79,7 @@ export async function deleteCustomCategory(
   id: string,
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
   const current = Array.isArray(user.customCategories) ? user.customCategories as CustomCategory[] : [];
   const updated = current.filter((c) => c.id !== id);
 
@@ -94,6 +98,7 @@ export async function setCategoryLimits(
   limits: Record<string, number>,
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  requireSubscriptionAccess(user, telegramId);
   const sanitized: Record<string, number> = {};
 
   for (const [key, raw] of Object.entries(limits)) {
