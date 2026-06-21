@@ -44,6 +44,7 @@
   "debt_list_empty": "No hay deudas activas. ¡Todo está claro!",
   "quick_buttons_add_expense": "💸 Agregar gasto",
   "quick_buttons_add_income": "💰 Agregar ingreso",
-  "quick_buttons_balance": "💳 Saldo",
-  "quick_buttons_budget": "📊 Presupuesto"
+  "quick_buttons_balance": "💳 Balance",
+  "quick_buttons_budget": "📊 Presupuesto",
+  "maintenance_mode": "⚠️ El bot está temporalmente cerrado por mantenimiento. Por favor, inténtelo de nuevo más tarde."
 }

@@ -35,8 +35,13 @@ import {
   userSetCryptoHoldingSchema,
   userSendExportToTelegramSchema,
 } from "../validation.js";
+import { db } from "../../config/database.js";
+import { users } from "../../db/schema/index.js";
+import { eq } from "drizzle-orm";
+import { AppError, ErrorCode } from "../../utils/errors.js";
 import type { RpcHandler } from "../types.js";
-import { defineAuthenticatedRpc } from "./shared.js";
+import { defineAuthenticatedRpc, isMaintenanceMode } from "./shared.js";
+import { getBotMessage } from "../../utils/i18n.js";
 
 async function authenticateAndGetStatus(
   initData: string,
@@ -47,6 +52,21 @@ async function authenticateAndGetStatus(
 
   if (!telegramId) {
     throw new Error("Telegram user ID is missing in initData");
+  }
+
+  if (isMaintenanceMode()) {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin, language: users.language })
+      .from(users)
+      .where(eq(users.telegramId, telegramId))
+      .limit(1);
+
+    const isAdmin = user?.isAdmin ?? false;
+    if (!isAdmin) {
+      const lang = user?.language ?? "en";
+      const msg = getBotMessage("maintenance_mode", lang) || "Бот находится на технических работах. Пожалуйста, попробуйте позже.";
+      throw new AppError(ErrorCode.FORBIDDEN, msg);
+    }
   }
 
   return getStatusByTelegramId(telegramId, telegramAuth.user);

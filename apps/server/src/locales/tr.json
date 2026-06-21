@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Gider ekle",
   "quick_buttons_add_income": "💰 Gelir ekle",
   "quick_buttons_balance": "💳 Bakiye",
-  "quick_buttons_budget": "📊 Bütçe"
+  "quick_buttons_budget": "📊 Bütçe",
+  "maintenance_mode": "⚠️ Bot geçici olarak bakım modundadır. Lütfen daha sonra tekrar deneyiniz."
 }

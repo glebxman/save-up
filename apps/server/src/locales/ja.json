@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 支出を追加",
   "quick_buttons_add_income": "💰 収入を追加",
   "quick_buttons_balance": "💳 残高",
-  "quick_buttons_budget": "📊 予算"
+  "quick_buttons_budget": "📊 予算",
+  "maintenance_mode": "⚠️ ボットは現在メンテナンス中です。しばらく時間をおいてから再度お試しください。"
 }

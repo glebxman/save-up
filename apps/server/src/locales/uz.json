@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Xarajat qo'shish",
   "quick_buttons_add_income": "💰 Daromad qo'shish",
   "quick_buttons_balance": "💳 Balans",
-  "quick_buttons_budget": "📊 Byudjet"
+  "quick_buttons_budget": "📊 Byudjet",
+  "maintenance_mode": "⚠️ Bot vaqtincha texnik ishlar uchun yopilgan. Iltimos, keyinroq qayta urinib ko'ring."
 }

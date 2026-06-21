@@ -20,6 +20,7 @@ interface UserRow {
   savingsGoal: number;
   savings: number;
   balance: number;
+  lastWeeklyReportSentAt: Date | null;
 }
 
 function getWeekRange(now: Date): { start: Date; end: Date; prevStart: Date; prevEnd: Date } {
@@ -106,6 +107,7 @@ async function sendWeeklyReports(): Promise<void> {
         savingsGoal: users.savingsGoal,
         savings: users.savings,
         balance: users.balance,
+        lastWeeklyReportSentAt: users.lastWeeklyReportSentAt,
       })
       .from(users);
   } catch (err) {
@@ -118,6 +120,13 @@ async function sendWeeklyReports(): Promise<void> {
   let sent = 0;
 
   for (const user of allUsers) {
+    if (user.lastWeeklyReportSentAt) {
+      const lastSent = new Date(user.lastWeeklyReportSentAt);
+      if (now.getTime() - lastSent.getTime() < 6 * 24 * 60 * 60 * 1000) {
+        continue;
+      }
+    }
+
     const lang = (user.language ?? "en") as SupportedLang;
 
     try {
@@ -177,6 +186,10 @@ async function sendWeeklyReports(): Promise<void> {
       const report = buildWeeklyReport(user, currentIncome, currentExpenses, prevExpenses, categories, lang);
 
       await sendTelegramMessage(user.telegramId, report);
+      await db
+        .update(users)
+        .set({ lastWeeklyReportSentAt: new Date() })
+        .where(eq(users.id, user.id));
       sent++;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";

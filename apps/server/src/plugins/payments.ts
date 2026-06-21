@@ -2,6 +2,7 @@ import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
 
+import type { FastifyReply, FastifyRequest } from "fastify";
 import fp from "fastify-plugin";
 
 import { env } from "../config/env.js";
@@ -19,8 +20,10 @@ import {
 } from "../services/subscription/index.js";
 import type { PaymeTransaction } from "../services/subscription/payments.js";
 
-const PAYME_TIMEOUT_MS = 7 * 24 * 60 * 60 * 1000;
-const PAYME_BASIC_LOGIN = "Paycom";
+const PAYME_TIMEOUT_MS = 12 * 60 * 60 * 1000;
+const PAYME_DEFAULT_LOGIN = "Paycom";
+const CLICK_CALLBACK_PATHS = ["/rpc/click/callback", "/api/click/callback", "/click/callback"] as const;
+const PAYME_CALLBACK_PATHS = ["/rpc/payme/callback", "/api/payme/callback", "/payme/callback"] as const;
 
 type PaymeRpcId = number | string | null;
 type PaymeLocalizedMessage = { ru: string; uz: string; en: string };
@@ -60,35 +63,71 @@ interface PasswordStore {
   set(next: string): void;
 }
 
+function findProjectRoot(): string {
+  let current = process.cwd();
+  for (let depth = 0; depth < 6; depth += 1) {
+    if (fs.existsSync(path.join(current, "pnpm-workspace.yaml"))) {
+      return current;
+    }
+
+    const parent = path.dirname(current);
+    if (parent === current) break;
+    current = parent;
+  }
+
+  return process.cwd();
+}
+
 function createPasswordStore(initialPassword: string): PasswordStore {
-  const filePath = path.resolve(process.cwd(), "data", "payme-password.json");
+  const filePath = path.resolve(findProjectRoot(), "data", "payme-password.json");
+  const legacyFilePath = path.resolve(process.cwd(), "data", "payme-password.json");
+  const readPaths = Array.from(new Set([filePath, legacyFilePath]));
 
   function readPersisted(): string | null {
-    try {
-      const data = JSON.parse(fs.readFileSync(filePath, "utf-8")) as { password?: string };
-      return typeof data.password === "string" && data.password.trim() ? data.password : null;
-    } catch {
-      return null;
+    let latest: { password: string; timestamp: number } | null = null;
+
+    for (const candidate of readPaths) {
+      try {
+        const raw = fs.readFileSync(candidate, "utf-8");
+        const data = JSON.parse(raw) as { password?: string; updatedAt?: string };
+        if (typeof data.password === "string" && data.password.trim()) {
+          const updatedAt = typeof data.updatedAt === "string" ? Date.parse(data.updatedAt) : NaN;
+          const timestamp = Number.isFinite(updatedAt) ? updatedAt : fs.statSync(candidate).mtimeMs;
+          if (!latest || timestamp > latest.timestamp) {
+            latest = { password: data.password.trim(), timestamp };
+          }
+        }
+      } catch {
+        // Try the next known storage path, then fall back to env.
+      }
     }
+
+    return latest?.password ?? null;
   }
 
   let current = readPersisted() ?? initialPassword;
 
   return {
-    get: () => current,
+    get() {
+      current = readPersisted() ?? current;
+      return current;
+    },
     set(next: string) {
       const password = next.trim();
       if (!password) return;
       current = password;
-      try {
-        fs.mkdirSync(path.dirname(filePath), { recursive: true });
-        fs.writeFileSync(
-          filePath,
-          JSON.stringify({ password, updatedAt: new Date().toISOString() }, null, 2),
-          { mode: 0o600 },
-        );
-      } catch (error) {
-        console.error("Failed to persist Payme password:", error);
+
+      for (const candidate of readPaths) {
+        try {
+          fs.mkdirSync(path.dirname(candidate), { recursive: true });
+          fs.writeFileSync(
+            candidate,
+            JSON.stringify({ password, updatedAt: new Date().toISOString() }, null, 2),
+            { mode: 0o600 },
+          );
+        } catch (error) {
+          console.error("Failed to persist Payme password:", error);
+        }
       }
     },
   };
@@ -129,8 +168,13 @@ function extractBasicCredentials(authHeader: string): { login: string; password:
   }
 }
 
-function isAuthorizedPaymeRequest(credentials: { login: string; password: string }, password: string): boolean {
-  return credentials.login === PAYME_BASIC_LOGIN && credentials.password === password;
+function isAuthorizedPaymeRequest(credentials: { login: string; password: string }, passwords: string[]): boolean {
+  const expectedLogin = (env.PAYME_LOGIN || env.PAYME_MERCHANT_USER_ID).trim();
+  const loginAllowed =
+    expectedLogin.length > 0
+      ? credentials.login === expectedLogin || credentials.login === PAYME_DEFAULT_LOGIN
+      : credentials.login.length > 0 || credentials.login === PAYME_DEFAULT_LOGIN;
+  return loginAllowed && passwords.some((password) => password && credentials.password === password);
 }
 
 function isExpired(tx: PaymeTransaction) {
@@ -140,7 +184,7 @@ function isExpired(tx: PaymeTransaction) {
 function getAccountUserId(account: unknown): { userId: string; accountField: string } | null {
   if (!account || typeof account !== "object") return null;
   const record = account as Record<string, unknown>;
-  const accountField = ["user_id", "userId", "UserID"].find((key) => record[key] !== undefined) ?? "user_id";
+  const accountField = ["user_id", "user-id", "userId", "UserID"].find((key) => record[key] !== undefined) ?? "user_id";
   const userId = String(record[accountField] ?? "").trim();
   return userId ? { userId, accountField } : null;
 }
@@ -177,6 +221,12 @@ async function validatePaymeAccountAndAmount(
     return null;
   }
 
+  const user = await findUserById(accountData.userId);
+  if (!user) {
+    send(rpcError(rpcId, PAYME_ERRORS.USER_NOT_FOUND, accountField));
+    return null;
+  }
+
   if (!Number.isInteger(amountTiyin) || amountTiyin <= 0 || amountTiyin % 100 !== 0) {
     send(rpcError(rpcId, PAYME_ERRORS.INVALID_AMOUNT));
     return null;
@@ -186,12 +236,6 @@ async function validatePaymeAccountAndAmount(
   const plan = getSubscriptionPlanByAmount(amountUzs);
   if (!plan) {
     send(rpcError(rpcId, PAYME_ERRORS.INVALID_AMOUNT));
-    return null;
-  }
-
-  const user = await findUserById(accountData.userId);
-  if (!user) {
-    send(rpcError(rpcId, PAYME_ERRORS.USER_NOT_FOUND, accountField));
     return null;
   }
 
@@ -226,7 +270,7 @@ function verifyClickSignature(body: Record<string, unknown>): boolean {
 }
 
 export const paymentsPlugin = fp(async (app) => {
-  const paymePasswordStore = createPasswordStore(env.PAYME_SECRET_KEY);
+  const paymePasswordStore = createPasswordStore(env.PAYME_TEST_KEY || env.PAYME_SECRET_KEY);
 
   app.addContentTypeParser(
     "application/x-www-form-urlencoded",
@@ -240,7 +284,7 @@ export const paymentsPlugin = fp(async (app) => {
     },
   );
 
-  app.post<{ Body: Record<string, unknown> }>("/api/click/callback", async (request) => {
+  const handleClickCallback = async (request: FastifyRequest<{ Body: Record<string, unknown> }>) => {
     const body = request.body ?? {};
 
     try {
@@ -305,9 +349,9 @@ export const paymentsPlugin = fp(async (app) => {
       request.log.error({ err: error }, "Click callback error");
       return clickResponse({ error: -8, error_note: "Internal error" });
     }
-  });
+  };
 
-  app.all("/api/payme/callback", async (request, reply) => {
+  const handlePaymeCallback = async (request: FastifyRequest, reply: FastifyReply) => {
     const send = (payload: unknown) => {
       reply.header("content-type", "application/json; charset=UTF-8").send(JSON.stringify(payload));
     };
@@ -321,8 +365,14 @@ export const paymentsPlugin = fp(async (app) => {
         return;
       }
 
+      const requestMethod =
+        body && typeof body === "object" && "method" in body ? String((body as { method?: unknown }).method ?? "") : "";
+      const acceptedPasswords =
+        requestMethod === "ChangePassword"
+          ? [paymePasswordStore.get()]
+          : [paymePasswordStore.get(), env.PAYME_TEST_KEY, env.PAYME_SECRET_KEY].filter(Boolean);
       const credentials = extractBasicCredentials(String(request.headers.authorization ?? ""));
-      if (!credentials || !isAuthorizedPaymeRequest(credentials, paymePasswordStore.get())) {
+      if (!credentials || !isAuthorizedPaymeRequest(credentials, acceptedPasswords)) {
         send(rpcError(rpcId, PAYME_ERRORS.AUTH_ERROR));
         return;
       }
@@ -347,7 +397,13 @@ export const paymentsPlugin = fp(async (app) => {
         }
 
         case "CheckPerformTransaction": {
-          const validation = await validatePaymeAccountAndAmount(rpcId, send, params.account, Number(params.amount));
+          const amountTiyin = Number(params.amount);
+          if (!Number.isInteger(amountTiyin) || amountTiyin <= 0) {
+            send(rpcError(rpcId, PAYME_ERRORS.INVALID_AMOUNT));
+            return;
+          }
+
+          const validation = await validatePaymeAccountAndAmount(rpcId, send, params.account, amountTiyin);
           if (!validation) return;
 
           const pending = await findPendingPaymeTransactionByUser(validation.user.id);
@@ -360,7 +416,7 @@ export const paymentsPlugin = fp(async (app) => {
             }
           }
 
-          send(rpcResult(rpcId, { allow: true, detail: buildPaymeDetail(validation.plan.id, Number(params.amount)) }));
+          send(rpcResult(rpcId, { allow: true, detail: buildPaymeDetail(validation.plan.id, amountTiyin) }));
           return;
         }
 
@@ -368,6 +424,11 @@ export const paymentsPlugin = fp(async (app) => {
           const txId = String(params.id || "");
           const amountTiyin = Number(params.amount);
           const time = Number(params.time);
+
+          if (!Number.isInteger(amountTiyin) || amountTiyin <= 0) {
+            send(rpcError(rpcId, PAYME_ERRORS.INVALID_AMOUNT));
+            return;
+          }
 
           const validation = await validatePaymeAccountAndAmount(rpcId, send, params.account, amountTiyin);
           if (!validation) return;
@@ -534,5 +595,13 @@ export const paymentsPlugin = fp(async (app) => {
       request.log.error({ err: error }, "Payme callback error");
       send(rpcError(rpcId, PAYME_ERRORS.INTERNAL_ERROR));
     }
-  });
+  };
+
+  for (const callbackPath of CLICK_CALLBACK_PATHS) {
+    app.post<{ Body: Record<string, unknown> }>(callbackPath, handleClickCallback);
+  }
+
+  for (const callbackPath of PAYME_CALLBACK_PATHS) {
+    app.all(callbackPath, handlePaymeCallback);
+  }
 });

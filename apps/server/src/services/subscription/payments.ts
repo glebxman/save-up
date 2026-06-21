@@ -14,6 +14,8 @@ import { invalidateStatusCache } from "../cache.service.js";
 import { buildStatus, ensureUser } from "../user/status.js";
 import { addPlanMonths, getSubscriptionPlan, isSubscriptionPlanId } from "./plans.js";
 
+const UUID_RE = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
 export interface PaymeTransaction {
   id: string;
   paymentId: string;
@@ -52,7 +54,7 @@ function requireProviderConfigured(provider: PaymentProvider): void {
     return;
   }
 
-  if (!env.PAYME_MERCHANT_ID || !env.PAYME_SECRET_KEY) {
+  if (!env.PAYME_MERCHANT_ID || (!env.PAYME_SECRET_KEY && !env.PAYME_TEST_KEY)) {
     throw new AppError(ErrorCode.VALIDATION, "Payme is not configured");
   }
 }
@@ -127,8 +129,24 @@ export async function startFreeTrial(telegramId: number) {
 }
 
 export async function findUserById(userId: string): Promise<UserRow | null> {
-  const rows = await db.select().from(users).where(eq(users.id, userId)).limit(1);
-  return rows[0] ?? null;
+  const normalized = userId.trim();
+
+  if (UUID_RE.test(normalized)) {
+    const rows = await db.select().from(users).where(eq(users.id, normalized)).limit(1);
+    return rows[0] ?? null;
+  }
+
+  if (/^\d+$/.test(normalized)) {
+    const telegramId = Number(normalized);
+    if (!Number.isSafeInteger(telegramId)) {
+      return null;
+    }
+
+    const rows = await db.select().from(users).where(eq(users.telegramId, telegramId)).limit(1);
+    return rows[0] ?? null;
+  }
+
+  return null;
 }
 
 export async function findPaymeTransaction(txId: string): Promise<PaymeTransaction | null> {
@@ -337,4 +355,3 @@ export async function getPaymeTransactionsForPeriod(from: number, to: number): P
     .map((row) => paymentRowToPaymeTransaction(row))
     .filter((tx): tx is PaymeTransaction => !!tx);
 }
-

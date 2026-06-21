@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Ausgabe hinzufügen",
   "quick_buttons_add_income": "💰 Einnahme hinzufügen",
   "quick_buttons_balance": "💳 Kontostand",
-  "quick_buttons_budget": "📊 Budget"
+  "quick_buttons_budget": "📊 Budget",
+  "maintenance_mode": "⚠️ Der Bot ist vorübergehend wegen Wartungsarbeiten geschlossen. Bitte versuchen Sie es später noch einmal."
 }

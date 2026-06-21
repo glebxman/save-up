@@ -20,6 +20,11 @@ html,
 body,
 #root {
   min-height: 100%;
+  overscroll-behavior: none;
+}
+
+html {
+  background: var(--app-body-background);
 }
 
 body {

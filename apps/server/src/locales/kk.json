@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Шығыс қосу",
   "quick_buttons_add_income": "💰 Кіріс қосу",
   "quick_buttons_balance": "💳 Баланс",
-  "quick_buttons_budget": "📊 Бюджет"
+  "quick_buttons_budget": "📊 Бюджет",
+  "maintenance_mode": "⚠️ Бот уақытша техникалық жұмыстарға жабық. Кейінірек қайта кіріңіз."
 }

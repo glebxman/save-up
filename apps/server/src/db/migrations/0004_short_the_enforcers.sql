@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "last_weekly_report_sent_at" timestamp with time zone;

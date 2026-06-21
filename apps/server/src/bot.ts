@@ -46,6 +46,7 @@ interface TelegramMessage {
     width: number;
     height: number;
   }>;
+  reply_to_message?: TelegramMessage;
 }
 
 interface CallbackQuery {
@@ -72,6 +73,27 @@ type BotCommand = {
 
 const webAppUrl = env.WEBAPP_URL?.trim();
 const botLockPath = path.join(os.tmpdir(), "finance-twa-bot.lock.json");
+const maintenancePath = path.join(os.tmpdir(), "finance-twa-maintenance.json");
+
+function isMaintenanceMode(): boolean {
+  return fs.existsSync(maintenancePath);
+}
+
+function setMaintenanceMode(enabled: boolean): void {
+  if (enabled) {
+    fs.writeFileSync(
+      maintenancePath,
+      JSON.stringify({ enabled: true, since: new Date().toISOString() }),
+      "utf8",
+    );
+  } else {
+    try {
+      fs.unlinkSync(maintenancePath);
+    } catch {
+      // Ignore
+    }
+  }
+}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -162,6 +184,26 @@ function buildLanguageKeyboard(): { inline_keyboard: { text: string; callback_da
   }
 
   return { inline_keyboard: rows };
+}
+
+function buildAdminKeyboard(): { inline_keyboard: { text: string; callback_data: string }[][] } {
+  const maintStatus = isMaintenanceMode() ? "🔴 Включены (ON)" : "🟢 Выключены (OFF)";
+  return {
+    inline_keyboard: [
+      [
+        {
+          text: `🔧 Тех. работы: ${maintStatus}`,
+          callback_data: "admin_toggle_maint",
+        },
+      ],
+      [
+        {
+          text: "📢 Рассылка (инструкция)",
+          callback_data: "admin_broadcast_info",
+        },
+      ],
+    ],
+  };
 }
 
 function buildOpenAppKeyboard(lang: SupportedLang): Record<string, unknown> | undefined {
@@ -557,7 +599,231 @@ async function handleSettleDebt(message: TelegramMessage, debtIdPrefix: string):
   }
 }
 
+async function handleMaintenanceCommand(message: TelegramMessage, args: string): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+
+  try {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin })
+      .from(users)
+      .where(eq(users.telegramId, telegramId))
+      .limit(1);
+
+    if (!user?.isAdmin) {
+      return;
+    }
+
+    const commandArg = args.trim().toLowerCase();
+    if (commandArg === "on") {
+      setMaintenanceMode(true);
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "✅ Режим технических работ активирован. Обычные пользователи не смогут пользоваться ботом.",
+      });
+    } else if (commandArg === "off") {
+      setMaintenanceMode(false);
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "✅ Режим технических работ деактивирован. Бот снова доступен для всех.",
+      });
+    } else {
+      const status = isMaintenanceMode() ? "включен (ON)" : "выключен (OFF)";
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: `ℹ️ Текущий статус тех. работ: ${status}.\nИспользование:\n/maintenance on - включить тех. работы\n/maintenance off - выключить тех. работы`,
+      });
+    }
+  } catch (err) {
+    logger.error({ err }, "Error handling maintenance command");
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: "❌ Произошла ошибка при выполнении команды.",
+    });
+  }
+}
+
+async function handleBroadcastCommand(message: TelegramMessage, args: string): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+
+  try {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin })
+      .from(users)
+      .where(eq(users.telegramId, telegramId))
+      .limit(1);
+
+    if (!user?.isAdmin) {
+      return;
+    }
+
+    const replyTo = message.reply_to_message;
+    const textArg = args.trim();
+
+    if (!replyTo && !textArg) {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "⚠️ Пожалуйста, ответьте на сообщение, которое хотите переслать, командой `/broadcast` (или `/sendall`), либо напишите `/broadcast <текст>`.",
+      });
+      return;
+    }
+
+    const allUsers = await db.select({ telegramId: users.telegramId }).from(users);
+
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: `📢 Начинаю рассылку для ${allUsers.length} пользователей...`,
+    });
+
+    let success = 0;
+    let failed = 0;
+
+    for (const targetUser of allUsers) {
+      try {
+        if (replyTo) {
+          await telegramRequest("copyMessage", {
+            chat_id: targetUser.telegramId,
+            from_chat_id: chatId,
+            message_id: replyTo.message_id,
+          });
+        } else {
+          await telegramRequest("sendMessage", {
+            chat_id: targetUser.telegramId,
+            text: textArg,
+          });
+        }
+        success++;
+      } catch (err) {
+        failed++;
+      }
+      await new Promise((resolve) => setTimeout(resolve, 50));
+    }
+
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: `🏁 Рассылка завершена!\n✅ Успешно отправлено: ${success}\n❌ Не удалось отправить (заблокирован/ошибка): ${failed}`,
+    });
+
+  } catch (err) {
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: "❌ Произошла ошибка при выполнении рассылки.",
+    });
+  }
+}
+
+async function handleAdminCommand(message: TelegramMessage): Promise<void> {
+  const telegramId = message.from?.id;
+  if (!telegramId) return;
+
+  const chatId = message.chat.id;
+
+  try {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin })
+      .from(users)
+      .where(eq(users.telegramId, telegramId))
+      .limit(1);
+
+    if (!user?.isAdmin) {
+      return;
+    }
+
+    const maintStatus = isMaintenanceMode() ? "активирован (ON)" : "деактивирован (OFF)";
+    await telegramRequest("sendMessage", {
+      chat_id: chatId,
+      text: `Панель администратора\nРежим тех. работ: ${maintStatus}`,
+      reply_markup: buildAdminKeyboard(),
+    });
+  } catch (err) {
+    logger.error({ err }, "Error handling admin command");
+  }
+}
+
+async function handleAdminCallback(callbackQuery: CallbackQuery): Promise<void> {
+  const telegramId = callbackQuery.from.id;
+  const chatId = callbackQuery.message?.chat.id;
+  const messageId = callbackQuery.message?.message_id;
+
+  if (!chatId || !messageId) return;
+
+  try {
+    const [user] = await db
+      .select({ isAdmin: users.isAdmin })
+      .from(users)
+      .where(eq(users.telegramId, telegramId))
+      .limit(1);
+
+    if (!user?.isAdmin) {
+      return;
+    }
+
+    if (callbackQuery.data === "admin_toggle_maint") {
+      const newStatus = !isMaintenanceMode();
+      setMaintenanceMode(newStatus);
+      const maintStatus = newStatus ? "активирован (ON)" : "деактивирован (OFF)";
+      
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: messageId,
+        text: `Панель администратора\nРежим тех. работ: ${maintStatus}`,
+        reply_markup: buildAdminKeyboard(),
+      });
+
+      await telegramRequest("answerCallbackQuery", {
+        callback_query_id: callbackQuery.id,
+        text: `Режим тех. работ ${newStatus ? "включен" : "выключен"}`,
+      });
+    } else if (callbackQuery.data === "admin_broadcast_info") {
+      await telegramRequest("sendMessage", {
+        chat_id: chatId,
+        text: "ℹ️ *Как сделать рассылку:*\n\n" +
+              "1. Напишите текст напрямую:\n" +
+              "`/broadcast Всем привет!`\n\n" +
+              "2. Или отправьте в бот любую картинку, файл или отформатированный пост, а затем ответьте на него командой `/broadcast` (или `/sendall`).",
+        parse_mode: "Markdown",
+      });
+
+      await telegramRequest("answerCallbackQuery", {
+        callback_query_id: callbackQuery.id,
+      });
+    }
+  } catch (err) {
+    logger.error({ err }, "Error handling admin callback");
+  }
+}
+
 async function handleUpdate(update: TelegramUpdate): Promise<void> {
+  if (isMaintenanceMode()) {
+    const telegramId = update.message?.from?.id || update.callback_query?.from?.id;
+    if (telegramId) {
+      const [user] = await db
+        .select({ isAdmin: users.isAdmin, language: users.language })
+        .from(users)
+        .where(eq(users.telegramId, telegramId))
+        .limit(1);
+
+      const isAdmin = user?.isAdmin ?? false;
+      if (!isAdmin) {
+        const chatId = update.message?.chat.id || update.callback_query?.message?.chat.id;
+        if (chatId) {
+          const lang = (user?.language ?? "en") as SupportedLang;
+          const text = getBotMessage("maintenance_mode", lang) || "⚠️ Бот временно закрыт на технические работы. Пожалуйста, зайдите позже.";
+          await telegramRequest("sendMessage", {
+            chat_id: chatId,
+            text,
+          });
+        }
+        return;
+      }
+    }
+  }
+
   if (update.message && isStartCommand(update.message.text)) {
     await handleStartCommand(update.message);
     return;
@@ -580,6 +846,26 @@ async function handleUpdate(update: TelegramUpdate): Promise<void> {
       await handleSettleDebt(update.message, text.slice(8));
       return;
     }
+
+    if (text.startsWith("/maintenance")) {
+      await handleMaintenanceCommand(update.message, text.slice(12));
+      return;
+    }
+
+    if (text.startsWith("/broadcast")) {
+      await handleBroadcastCommand(update.message, text.slice(10));
+      return;
+    }
+
+    if (text.startsWith("/sendall")) {
+      await handleBroadcastCommand(update.message, text.slice(8));
+      return;
+    }
+
+    if (text === "/admin") {
+      await handleAdminCommand(update.message);
+      return;
+    }
   }
 
   if (update.message?.voice) {
@@ -594,6 +880,13 @@ async function handleUpdate(update: TelegramUpdate): Promise<void> {
 
   if (update.callback_query?.data?.startsWith("lang:")) {
     await handleLanguageCallback(update.callback_query);
+  }
+
+  if (
+    update.callback_query?.data === "admin_toggle_maint" ||
+    update.callback_query?.data === "admin_broadcast_info"
+  ) {
+    await handleAdminCallback(update.callback_query);
   }
 }
 

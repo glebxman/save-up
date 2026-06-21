@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Добавить расход",
   "quick_buttons_add_income": "💰 Добавить доход",
   "quick_buttons_balance": "💳 Баланс",
-  "quick_buttons_budget": "📊 Бюджет"
+  "quick_buttons_budget": "📊 Бюджет",
+  "maintenance_mode": "⚠️ Бот временно закрыт на технические работы. Пожалуйста, зайдите позже."
 }

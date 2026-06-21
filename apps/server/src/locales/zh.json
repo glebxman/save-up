@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 添加支出",
   "quick_buttons_add_income": "💰 添加收入",
   "quick_buttons_balance": "💳 余额",
-  "quick_buttons_budget": "📊 预算"
+  "quick_buttons_budget": "📊 预算",
+  "maintenance_mode": "⚠️ 机器人目前正在进行技术维护，请稍后再试。"
 }

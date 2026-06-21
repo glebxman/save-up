@@ -45,5 +45,6 @@
   "quick_buttons_add_expense": "💸 Add Expense",
   "quick_buttons_add_income": "💰 Add Income",
   "quick_buttons_balance": "💳 Balance",
-  "quick_buttons_budget": "📊 Budget"
+  "quick_buttons_budget": "📊 Budget",
+  "maintenance_mode": "⚠️ The bot is temporarily closed for maintenance. Please check back later."
 }
