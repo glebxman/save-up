@@ -4,7 +4,6 @@ import { useNavigate } from "react-router-dom";
 
 import { ConfirmActionModal } from "@/components/features/shared/ConfirmActionModal";
 import { SecurityModal } from "@/components/features/security/SecurityModal";
-import { LANGUAGE_FLAG_URLS, LANGUAGE_FLAGS } from "@/components/features/settings/languageMeta";
 import { CurrencyModal } from "@/components/features/settings/modals/CurrencyModal";
 import {
   LanguageFlag,

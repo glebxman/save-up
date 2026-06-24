@@ -6,6 +6,17 @@ import type {
   TransactionType,
   User,
 } from "@finance-twa/shared-types";
+import {
+  roundAmount,
+  getMonthKey,
+  calculateDailyLimit,
+  normalizeNote,
+  normalizeSavingsAmount,
+  normalizeGoal,
+  normalizeBalance,
+  assertPositiveAmount,
+  normalizeString,
+} from "@finance-twa/shared-utils";
 
 export interface MockTelegramUser {
   id?: number;
@@ -28,41 +39,12 @@ export function createId(): string {
   return `${Date.now()}-${Math.random().toString(16).slice(2)}`;
 }
 
-export function getMonthKey(date = new Date()): string {
-  const year = date.getFullYear();
-  const month = `${date.getMonth() + 1}`.padStart(2, "0");
-  return `${year}-${month}`;
-}
-
-export function calculateDailyLimit(balance: number) {
-  const now = new Date();
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const daysRemaining = Math.max(lastDay - now.getDate() + 1, 1);
-  return {
-    daysRemaining,
-    dailyLimit: Number((balance / daysRemaining).toFixed(2)),
-  };
-}
-
-export function roundAmount(value: number): number {
-  return Number(value.toFixed(2));
-}
-
-export function assertPositiveAmount(amount: number): void {
-  if (!Number.isFinite(amount) || amount <= 0) {
-    throw new Error("Amount must be a positive number");
-  }
-}
+export { roundAmount, getMonthKey, calculateDailyLimit, normalizeNote, normalizeSavingsAmount, normalizeGoal, normalizeBalance, assertPositiveAmount };
 
 export function ensureAmountWithinLimit(amount: number): void {
   if (amount > MAX_FINANCE_AMOUNT) {
     throw new Error(`Amount is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
   }
-}
-
-export function normalizeNote(note?: string | null): string | null {
-  const trimmed = note?.trim();
-  return trimmed ? trimmed.slice(0, 240) : null;
 }
 
 export function parseOccurredAt(value?: string): string {
@@ -76,32 +58,8 @@ export function parseOccurredAt(value?: string): string {
   return parsed.toISOString();
 }
 
-export function normalizeSavingsAmount(amount: number, savingsAmt?: number | null): number {
-  if (savingsAmt === undefined || savingsAmt === null) return 0;
-  if (!Number.isFinite(savingsAmt) || savingsAmt < 0) {
-    throw new Error("Savings amount must be zero or a positive number");
-  }
-  if (savingsAmt > amount) {
-    throw new Error("Savings amount cannot exceed income amount");
-  }
-  return roundAmount(savingsAmt);
-}
-
-export function normalizeGoal(goal: number): number {
-  if (!Number.isFinite(goal) || goal < 0) throw new Error("Savings goal must be zero or a positive number");
-  if (goal > MAX_FINANCE_AMOUNT) throw new Error(`Savings goal is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
-  return roundAmount(goal);
-}
-
-export function normalizeBalance(balance: number): number {
-  if (!Number.isFinite(balance) || balance < 0) throw new Error("Balance must be zero or a positive number");
-  if (balance > MAX_FINANCE_AMOUNT) throw new Error(`Balance is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
-  return roundAmount(balance);
-}
-
 export function normalizeProfileValue(value: string | undefined, maxLength: number): string | null {
-  const normalized = value?.trim();
-  return normalized ? normalized.slice(0, maxLength) : null;
+  return normalizeString(value, maxLength);
 }
 
 export function applyTelegramProfile(user: User, profile?: MockTelegramUser): User {

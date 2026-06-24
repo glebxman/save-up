@@ -104,8 +104,6 @@ function App() {
     );
   }
 
-  // Existing users with no notifications setup must complete it before reaching the app.
-  // The guard is one-shot per session: once configured, status updates won't kick them back.
   const needsSetup = status ? !status.user.notificationsConfigured : false;
   const isOnSetupPath = ONBOARDING_PATHS.has(location.pathname);
 
@@ -114,7 +112,6 @@ function App() {
   }
 
   if (isOnSetupPath) {
-    // Render setup pages without AppShell so they're truly full-screen.
     return (
       <Suspense fallback={<PageFallback />}>
         <Routes location={location}>

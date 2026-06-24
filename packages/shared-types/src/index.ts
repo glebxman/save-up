@@ -25,7 +25,6 @@ export const CRYPTO_CODES: CryptoCode[] = ["BTC", "TON", "USDT", "NOTCOIN", "ETH
 
 export const MAX_FINANCE_AMOUNT = 9_999_999_999_999.99;
 export const AI_FREE_DAILY_LIMIT = 7;
-export const VOICE_CREDITS_DAILY_LIMIT = AI_FREE_DAILY_LIMIT;
 
 export const FREE_TRIAL_DAYS = 14;
 

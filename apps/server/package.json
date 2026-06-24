@@ -9,7 +9,7 @@
     "dev:bot": "tsx watch src/bot.ts",
     "start": "pnpm exec drizzle-kit migrate && node dist/src/server.js",
     "start:bot": "node dist/src/bot.js",
-    "build": "pnpm exec tsc -p tsconfig.json",
+    "build": "pnpm exec tsc -p tsconfig.build.json",
     "typecheck": "pnpm exec tsc -p tsconfig.json --noEmit",
     "db:generate": "pnpm exec drizzle-kit generate",
     "db:migrate": "pnpm exec drizzle-kit migrate"
@@ -19,6 +19,7 @@
     "@fastify/helmet": "^11.1.1",
     "@fastify/rate-limit": "^9.1.0",
     "@finance-twa/shared-types": "workspace:*",
+    "@finance-twa/shared-utils": "workspace:*",
     "dotenv": "^16.4.5",
     "drizzle-orm": "latest",
     "fastify": "^4.28.1",

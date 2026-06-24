@@ -1,5 +1,4 @@
 export type {
-  AdminStats,
   AdminUserListItem,
   AdminUsersPage,
   CategoryBreakdown,
@@ -12,7 +11,6 @@ export type {
   ExpenseCategory,
   MonthReport,
   NotificationFrequency,
-  NotificationSettings,
   PaymentProvider,
   RecurringTransaction,
   RecurringTransactionPayload,

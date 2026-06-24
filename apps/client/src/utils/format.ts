@@ -1,6 +1,7 @@
 import i18n from "@/i18n";
 
 import type { CurrencyCode } from "@finance-twa/shared-types";
+import { getMonthKey } from "@finance-twa/shared-utils";
 import { CURRENCY_SYMBOLS, CURRENCY_LOCALES, getStoredCurrency } from "./currency";
 
 const localeMap = {
@@ -94,9 +95,7 @@ export function parseFormattedInput(value: string): number {
   return digitsOnly ? parseInt(digitsOnly, 10) : 0;
 }
 
-export function getMonthKey(date = new Date()): string {
-  return `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, "0")}`;
-}
+export { getMonthKey } from "@finance-twa/shared-utils";
 
 export function parseAmount(value: string): number {
   const digits = value.replace(/[^\d.,]/g, "").replace(",", ".");

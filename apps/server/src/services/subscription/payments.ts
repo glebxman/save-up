@@ -39,9 +39,9 @@ export function paymentRowToPaymeTransaction(row: SubscriptionPaymentRow | null 
     planId: row.planId,
     amount: Number(row.amount),
     state: row.paymeState ?? 1,
-    create_time: row.paymeCreateTime ?? 0,
-    perform_time: row.paymePerformTime ?? 0,
-    cancel_time: row.paymeCancelTime ?? 0,
+    create_time: Number(row.paymeCreateTime ?? 0),
+    perform_time: Number(row.paymePerformTime ?? 0),
+    cancel_time: Number(row.paymeCancelTime ?? 0),
     reason: row.paymeReason ?? null,
   };
 }
@@ -323,19 +323,40 @@ export async function cancelPaymeTransaction(txId: string, reason: number): Prom
 
   const cancelTime = Date.now();
   const nextState = tx.state === 2 ? -2 : -1;
-  const rows = await db
-    .update(subscriptionPayments)
-    .set({
-      status: "cancelled",
-      paymeState: nextState,
-      paymeCancelTime: cancelTime,
-      paymeReason: reason,
-      cancelledAt: new Date(cancelTime),
-    })
-    .where(eq(subscriptionPayments.id, tx.paymentId))
-    .returning();
 
-  return paymentRowToPaymeTransaction(rows[0]);
+  const result = await db.transaction(async (dbTx) => {
+    const rows = await dbTx
+      .update(subscriptionPayments)
+      .set({
+        status: "cancelled",
+        paymeState: nextState,
+        paymeCancelTime: cancelTime,
+        paymeReason: reason,
+        cancelledAt: new Date(cancelTime),
+      })
+      .where(eq(subscriptionPayments.id, tx.paymentId))
+      .returning();
+
+    if (tx.state === 2) {
+      await dbTx
+        .update(users)
+        .set({
+          subscriptionPlan: null,
+          subscriptionExpiresAt: null,
+        })
+        .where(eq(users.id, tx.userId));
+
+      const userRows = await dbTx.select().from(users).where(eq(users.id, tx.userId)).limit(1);
+      const user = userRows[0];
+      if (user) {
+        await invalidateStatusCache(user.telegramId);
+      }
+    }
+
+    return paymentRowToPaymeTransaction(rows[0]);
+  });
+
+  return result;
 }
 
 export async function getPaymeTransactionsForPeriod(from: number, to: number): Promise<PaymeTransaction[]> {

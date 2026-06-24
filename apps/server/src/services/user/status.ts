@@ -97,7 +97,7 @@ export async function buildStatus(row: UserRow): Promise<Status> {
 
   return {
     user,
-    dailyLimit: calculateDailyLimit({ balance: user.balance }),
+    dailyLimit: calculateDailyLimit(user.balance),
     rates,
     ratesUpdatedAt: new Date(updatedAt).toISOString(),
   };

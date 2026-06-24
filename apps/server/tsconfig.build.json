@@ -1,0 +1,10 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "baseUrl": "../..",
+    "paths": {
+      "@finance-twa/shared-types": ["packages/shared-types/dist/src/index.d.ts"],
+      "@finance-twa/shared-utils": ["packages/shared-utils/dist/src/index.d.ts"]
+    }
+  }
+}

@@ -53,6 +53,8 @@ export default defineConfig(({ mode }) => {
     resolve: {
       alias: {
         "@": path.resolve(__dirname, "./src"),
+        "@finance-twa/shared-types": path.resolve(__dirname, "../../packages/shared-types/src/index.ts"),
+        "@finance-twa/shared-utils": path.resolve(__dirname, "../../packages/shared-utils/src/index.ts"),
       },
     },
     server: {
@@ -68,8 +70,6 @@ export default defineConfig(({ mode }) => {
     build: {
       rollupOptions: {
         output: {
-          // Split large, rarely-changing vendor libraries into their own chunks
-          // so the main app bundle stays small and caches well between deploys.
           manualChunks(id) {
             const normalizedId = id.replaceAll("\\", "/");
 

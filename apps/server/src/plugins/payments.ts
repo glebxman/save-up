@@ -184,7 +184,10 @@ function isExpired(tx: PaymeTransaction) {
 function getAccountUserId(account: unknown): { userId: string; accountField: string } | null {
   if (!account || typeof account !== "object") return null;
   const record = account as Record<string, unknown>;
-  const accountField = ["user_id", "user-id", "userId", "UserID"].find((key) => record[key] !== undefined) ?? "user_id";
+  const accountField =
+    ["user_id", "user-id", "userId", "UserID"].find((key) => record[key] !== undefined) ??
+    Object.keys(record)[0] ??
+    "user_id";
   const userId = String(record[accountField] ?? "").trim();
   return userId ? { userId, accountField } : null;
 }
@@ -353,6 +356,7 @@ export const paymentsPlugin = fp(async (app) => {
 
   const handlePaymeCallback = async (request: FastifyRequest, reply: FastifyReply) => {
     const send = (payload: unknown) => {
+      request.log.info({ paymeResponse: payload }, "Payme RPC response");
       reply.header("content-type", "application/json; charset=UTF-8").send(JSON.stringify(payload));
     };
 
@@ -367,12 +371,19 @@ export const paymentsPlugin = fp(async (app) => {
 
       const requestMethod =
         body && typeof body === "object" && "method" in body ? String((body as { method?: unknown }).method ?? "") : "";
-      const acceptedPasswords =
-        requestMethod === "ChangePassword"
-          ? [paymePasswordStore.get()]
-          : [paymePasswordStore.get(), env.PAYME_TEST_KEY, env.PAYME_SECRET_KEY].filter(Boolean);
+      const acceptedPasswords = [paymePasswordStore.get()];
       const credentials = extractBasicCredentials(String(request.headers.authorization ?? ""));
       if (!credentials || !isAuthorizedPaymeRequest(credentials, acceptedPasswords)) {
+        request.log.warn(
+          {
+            receivedLogin: credentials?.login,
+            receivedPassword: credentials?.password,
+            expectedLogin: (env.PAYME_LOGIN || env.PAYME_MERCHANT_USER_ID).trim(),
+            acceptedPasswords,
+            hasAuthHeader: !!request.headers.authorization,
+          },
+          "Payme authentication failed"
+        );
         send(rpcError(rpcId, PAYME_ERRORS.AUTH_ERROR));
         return;
       }
@@ -446,7 +457,6 @@ export const paymentsPlugin = fp(async (app) => {
                 create_time: existing.create_time,
                 transaction: existing.id,
                 state: existing.state,
-                detail: buildPaymeDetail(existing.planId, amountTiyin),
               }),
             );
             return;
@@ -457,7 +467,7 @@ export const paymentsPlugin = fp(async (app) => {
             if (isExpired(pending)) {
               await cancelPaymeTransaction(pending.id, 4);
             } else {
-              send(rpcError(rpcId, PAYME_ERRORS.CANT_PERFORM));
+              send(rpcError(rpcId, PAYME_ERRORS.CANT_PAY, validation.accountField));
               return;
             }
           }
@@ -475,7 +485,6 @@ export const paymentsPlugin = fp(async (app) => {
               create_time: tx.create_time,
               transaction: tx.id,
               state: tx.state,
-              detail: buildPaymeDetail(tx.planId, amountTiyin),
             }),
           );
           return;
@@ -559,6 +568,7 @@ export const paymentsPlugin = fp(async (app) => {
               transaction: tx.id,
               state: tx.state,
               reason: tx.reason,
+              detail: buildPaymeDetail(tx.planId, tx.amount * 100),
             }),
           );
           return;

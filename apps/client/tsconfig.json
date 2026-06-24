@@ -10,6 +10,9 @@
       ],
       "@finance-twa/shared-types": [
         "../../packages/shared-types/src/index.ts"
+      ],
+      "@finance-twa/shared-utils": [
+        "../../packages/shared-utils/src/index.ts"
       ]
     },
     "types": [

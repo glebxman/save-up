@@ -3,12 +3,19 @@ import type { CryptoCode, CryptoHolding, Status } from "@finance-twa/shared-type
 import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
-import { transactions, accounts } from "../../db/schema/index.js";
+import { transactions, accounts, type AccountRow } from "../../db/schema/index.js";
 import { getMonthKey } from "../../utils/daily-limit.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
 import { ensureUser, getStatusByTelegramId } from "./status.js";
 import { sanitizeHoldings } from "./crypto.js";
+
+async function getActiveAccountsForUser(userId: string): Promise<AccountRow[]> {
+  return db
+    .select()
+    .from(accounts)
+    .where(and(eq(accounts.userId, userId), isNull(accounts.deletedAt)));
+}
 
 export async function createAccount(
   telegramId: number,
@@ -21,10 +28,7 @@ export async function createAccount(
   await db.transaction(async (tx) => {
     // Check if this is the user's first account being created.
     // If so, any existing transactions without account_id belong to this account.
-    const existingAccounts = await tx
-      .select({ id: accounts.id })
-      .from(accounts)
-      .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
+    const existingAccounts = await getActiveAccountsForUser(user.id);
 
     const isFirstAccount = existingAccounts.length === 0;
 
@@ -127,10 +131,7 @@ export async function deleteAccount(
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
 
-  const activeAccounts = await db
-    .select()
-    .from(accounts)
-    .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
+  const activeAccounts = await getActiveAccountsForUser(user.id);
 
   if (activeAccounts.length <= 1) {
     throw new AppError(ErrorCode.VALIDATION, "Cannot delete the last remaining account");

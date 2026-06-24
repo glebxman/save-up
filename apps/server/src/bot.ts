@@ -28,6 +28,37 @@ import { addExpense, addIncome, processVoice } from "./services/finance/index.js
 import { processReceipt } from "./services/finance/receipt.js";
 import { addDebt, getActiveDebts, settleDebt } from "./services/finance/debts.js";
 
+const maintenancePath = path.join(os.tmpdir(), "finance-twa-maintenance.json");
+
+function isMaintenanceMode(): boolean {
+  return fs.existsSync(maintenancePath);
+}
+
+function setMaintenanceMode(enabled: boolean): void {
+  if (enabled) {
+    fs.writeFileSync(
+      maintenancePath,
+      JSON.stringify({ enabled: true, since: new Date().toISOString() }),
+      "utf8",
+    );
+  } else {
+    try {
+      fs.unlinkSync(maintenancePath);
+    } catch {
+      // Ignore
+    }
+  }
+}
+
+async function isBotAdmin(telegramId: number): Promise<boolean> {
+  const [user] = await db
+    .select({ isAdmin: users.isAdmin })
+    .from(users)
+    .where(eq(users.telegramId, telegramId))
+    .limit(1);
+  return user?.isAdmin ?? false;
+}
+
 interface TelegramChat {
   id: number;
 }
@@ -73,27 +104,6 @@ type BotCommand = {
 
 const webAppUrl = env.WEBAPP_URL?.trim();
 const botLockPath = path.join(os.tmpdir(), "finance-twa-bot.lock.json");
-const maintenancePath = path.join(os.tmpdir(), "finance-twa-maintenance.json");
-
-function isMaintenanceMode(): boolean {
-  return fs.existsSync(maintenancePath);
-}
-
-function setMaintenanceMode(enabled: boolean): void {
-  if (enabled) {
-    fs.writeFileSync(
-      maintenancePath,
-      JSON.stringify({ enabled: true, since: new Date().toISOString() }),
-      "utf8",
-    );
-  } else {
-    try {
-      fs.unlinkSync(maintenancePath);
-    } catch {
-      // Ignore
-    }
-  }
-}
 
 function sleep(ms: number): Promise<void> {
   return new Promise((resolve) => {
@@ -606,13 +616,7 @@ async function handleMaintenanceCommand(message: TelegramMessage, args: string):
   const chatId = message.chat.id;
 
   try {
-    const [user] = await db
-      .select({ isAdmin: users.isAdmin })
-      .from(users)
-      .where(eq(users.telegramId, telegramId))
-      .limit(1);
-
-    if (!user?.isAdmin) {
+    if (!await isBotAdmin(telegramId)) {
       return;
     }
 
@@ -652,13 +656,7 @@ async function handleBroadcastCommand(message: TelegramMessage, args: string): P
   const chatId = message.chat.id;
 
   try {
-    const [user] = await db
-      .select({ isAdmin: users.isAdmin })
-      .from(users)
-      .where(eq(users.telegramId, telegramId))
-      .limit(1);
-
-    if (!user?.isAdmin) {
+    if (!await isBotAdmin(telegramId)) {
       return;
     }
 
@@ -724,13 +722,7 @@ async function handleAdminCommand(message: TelegramMessage): Promise<void> {
   const chatId = message.chat.id;
 
   try {
-    const [user] = await db
-      .select({ isAdmin: users.isAdmin })
-      .from(users)
-      .where(eq(users.telegramId, telegramId))
-      .limit(1);
-
-    if (!user?.isAdmin) {
+    if (!await isBotAdmin(telegramId)) {
       return;
     }
 
@@ -753,13 +745,7 @@ async function handleAdminCallback(callbackQuery: CallbackQuery): Promise<void> 
   if (!chatId || !messageId) return;
 
   try {
-    const [user] = await db
-      .select({ isAdmin: users.isAdmin })
-      .from(users)
-      .where(eq(users.telegramId, telegramId))
-      .limit(1);
-
-    if (!user?.isAdmin) {
+    if (!await isBotAdmin(telegramId)) {
       return;
     }
 
@@ -802,16 +788,15 @@ async function handleUpdate(update: TelegramUpdate): Promise<void> {
   if (isMaintenanceMode()) {
     const telegramId = update.message?.from?.id || update.callback_query?.from?.id;
     if (telegramId) {
-      const [user] = await db
-        .select({ isAdmin: users.isAdmin, language: users.language })
-        .from(users)
-        .where(eq(users.telegramId, telegramId))
-        .limit(1);
-
-      const isAdmin = user?.isAdmin ?? false;
+      const isAdmin = await isBotAdmin(telegramId);
       if (!isAdmin) {
         const chatId = update.message?.chat.id || update.callback_query?.message?.chat.id;
         if (chatId) {
+          const [user] = await db
+            .select({ language: users.language })
+            .from(users)
+            .where(eq(users.telegramId, telegramId))
+            .limit(1);
           const lang = (user?.language ?? "en") as SupportedLang;
           const text = getBotMessage("maintenance_mode", lang) || "⚠️ Бот временно закрыт на технические работы. Пожалуйста, зайдите позже.";
           await telegramRequest("sendMessage", {

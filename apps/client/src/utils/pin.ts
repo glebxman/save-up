@@ -15,6 +15,7 @@
  */
 
 import * as api from "@/api/methods";
+import { getTelegramUserId } from "@finance-twa/shared-utils";
 
 export const PIN_MIN_LENGTH = 4;
 export const PIN_MAX_LENGTH = 6;
@@ -22,19 +23,6 @@ export const PIN_MAX_LENGTH = 6;
 const BIOMETRICS_KEY = "pin-biometrics";
 const BIOMETRIC_TOKEN_KEY = "bio-token";
 const HAS_PIN_KEY = "has-pin";
-
-function getTelegramUserId(): number {
-  if (typeof window !== "undefined") {
-    const tg = (window as any).Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user?.id) {
-      return tg.initDataUnsafe.user.id;
-    }
-  }
-  if (import.meta.env.VITE_USE_MOCK_API === "true") {
-    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
-  }
-  return 0;
-}
 
 function getKey(baseKey: string): string {
   const userId = getTelegramUserId();

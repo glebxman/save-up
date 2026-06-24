@@ -35,12 +35,12 @@ import {
   userSetCryptoHoldingSchema,
   userSendExportToTelegramSchema,
 } from "../validation.js";
+import type { RpcHandler } from "../types.js";
+import { defineAuthenticatedRpc, isMaintenanceMode } from "./shared.js";
 import { db } from "../../config/database.js";
 import { users } from "../../db/schema/index.js";
 import { eq } from "drizzle-orm";
 import { AppError, ErrorCode } from "../../utils/errors.js";
-import type { RpcHandler } from "../types.js";
-import { defineAuthenticatedRpc, isMaintenanceMode } from "./shared.js";
 import { getBotMessage } from "../../utils/i18n.js";
 
 async function authenticateAndGetStatus(
@@ -51,7 +51,7 @@ async function authenticateAndGetStatus(
   const telegramId = telegramAuth.user?.id;
 
   if (!telegramId) {
-    throw new Error("Telegram user ID is missing in initData");
+    throw new AppError(ErrorCode.UNAUTHORIZED, "Telegram user ID is missing in initData");
   }
 
   if (isMaintenanceMode()) {

@@ -13,6 +13,14 @@ import type {
   TransactionType,
   CurrencyCode,
 } from "@finance-twa/shared-types";
+import {
+  roundAmount as baseRoundAmount,
+  normalizeNote as baseNormalizeNote,
+  normalizeSavingsAmount as baseNormalizeSavingsAmount,
+  normalizeGoal as baseNormalizeGoal,
+  normalizeBalance as baseNormalizeBalance,
+  getMonthKey,
+} from "@finance-twa/shared-utils";
 
 import { randomUUID } from "node:crypto";
 import { and, eq, isNull } from "drizzle-orm";
@@ -20,7 +28,6 @@ import { and, eq, isNull } from "drizzle-orm";
 import { db } from "../../config/database.js";
 import { transactions, users, accounts, type TransactionRow, type UserRow } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
-import { getMonthKey } from "../../utils/daily-limit.js";
 import { setCachedStatus } from "../cache.service.js";
 import { buildStatus } from "../user/index.js";
 
@@ -44,7 +51,7 @@ export interface UserSnapshot {
 export const expenseCategories = new Set<ExpenseCategory>(EXPENSE_CATEGORIES);
 
 export function roundAmount(value: number): number {
-  return Number(value.toFixed(2));
+  return baseRoundAmount(value);
 }
 
 export function getPreviousMonthKey(date = new Date()): string {
@@ -67,8 +74,7 @@ export function assertPositiveAmount(amount: number): void {
 }
 
 export function normalizeNote(note?: string | null): string | null {
-  const trimmed = note?.trim();
-  return trimmed ? trimmed.slice(0, 240) : null;
+  return baseNormalizeNote(note);
 }
 
 export function parseOccurredAt(value?: string): Date {
@@ -86,19 +92,11 @@ export function parseOccurredAt(value?: string): Date {
 }
 
 export function normalizeSavingsAmount(amount: number, savingsAmt?: number | null): number {
-  if (savingsAmt === undefined || savingsAmt === null) {
-    return 0;
+  try {
+    return baseNormalizeSavingsAmount(amount, savingsAmt);
+  } catch (e) {
+    throw new AppError(ErrorCode.VALIDATION, (e as Error).message);
   }
-
-  if (!Number.isFinite(savingsAmt) || savingsAmt < 0) {
-    throw new AppError(ErrorCode.VALIDATION, "Savings amount must be zero or a positive number");
-  }
-
-  if (savingsAmt > amount) {
-    throw new AppError(ErrorCode.VALIDATION, "Savings amount cannot exceed income amount");
-  }
-
-  return roundAmount(savingsAmt);
 }
 
 function normalizeNonNegativeAmount(value: number, fieldName: string): number {
@@ -110,7 +108,7 @@ function normalizeNonNegativeAmount(value: number, fieldName: string): number {
     throw new AppError(ErrorCode.VALIDATION, `${fieldName} is too large. Maximum allowed is ${MAX_FINANCE_AMOUNT.toFixed(2)}`);
   }
 
-  return roundAmount(value);
+  return baseRoundAmount(value);
 }
 
 export function normalizeGoal(goal: number): number {

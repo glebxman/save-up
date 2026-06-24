@@ -1,6 +1,7 @@
 import { startTransition } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
+import { roundAmount, calculateDailyLimit } from "@finance-twa/shared-utils";
 
 import type { Status } from "@/types/finance";
 import { setGlobalRates } from "@/utils/exchange-rates";
@@ -118,16 +119,7 @@ export function useFinanceContext(): FinanceContext {
  * Kept here (single source of truth) so domain hooks don't redefine it.
  */
 export function computeDailyLimit(balance: number): Status["dailyLimit"] {
-  const now = new Date();
-  const lastDay = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate();
-  const daysRemaining = Math.max(lastDay - now.getDate() + 1, 1);
-
-  return {
-    daysRemaining,
-    dailyLimit: Number((balance / daysRemaining).toFixed(2)),
-  };
+  return calculateDailyLimit(balance);
 }
 
-export function roundAmount(value: number): number {
-  return Number(value.toFixed(2));
-}
+export { roundAmount } from "@finance-twa/shared-utils";

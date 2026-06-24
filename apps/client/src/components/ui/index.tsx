@@ -22,7 +22,6 @@ export { Spinner } from "./Spinner";
 export { ProgressBar } from "./ProgressBar";
 export {
   Modal,
-  ModalRoot,
   ModalBackdrop,
   ModalContainer,
   ModalDialog,

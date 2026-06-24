@@ -1,4 +1,5 @@
 import type { CurrencyCode } from "@finance-twa/shared-types";
+import { getTelegramUserId } from "@finance-twa/shared-utils";
 
 export const CURRENCY_SYMBOLS: Record<CurrencyCode, string> = {
   UZS: "so'm",
@@ -35,19 +36,6 @@ export const CURRENCY_LOCALES: Record<CurrencyCode, string> = {
 export const SUPPORTED_CURRENCIES: CurrencyCode[] = [
   "UZS", "RUB", "USD", "EUR", "KZT", "TRY", "GBP", "CNY",
 ];
-
-function getTelegramUserId(): number {
-  if (typeof window !== "undefined") {
-    const tg = (window as any).Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user?.id) {
-      return tg.initDataUnsafe.user.id;
-    }
-  }
-  if (import.meta.env.VITE_USE_MOCK_API === "true") {
-    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
-  }
-  return 0;
-}
 
 function getStorageKey(): string {
   const userId = getTelegramUserId();

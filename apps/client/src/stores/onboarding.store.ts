@@ -1,19 +1,7 @@
 import { create } from "zustand";
+import { getTelegramUserId } from "@finance-twa/shared-utils";
 
 import { completeOnboarding } from "../api/methods";
-
-function getTelegramUserId(): number {
-  if (typeof window !== "undefined") {
-    const tg = (window as any).Telegram?.WebApp;
-    if (tg?.initDataUnsafe?.user?.id) {
-      return tg.initDataUnsafe.user.id;
-    }
-  }
-  if (import.meta.env.VITE_USE_MOCK_API === "true") {
-    return Number(import.meta.env.VITE_DEMO_TELEGRAM_ID ?? 1);
-  }
-  return 0;
-}
 
 function getStorageKey(): string {
   const userId = getTelegramUserId();
@@ -52,7 +40,7 @@ export const ONBOARDING_STEPS: readonly OnboardingStep[] = [
   { id: "done", target: null, route: "/" },
 ];
 
-export type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]["id"];
+type OnboardingStepId = (typeof ONBOARDING_STEPS)[number]["id"];
 
 function readCachedCompleted(): boolean {
   try {

@@ -15,8 +15,8 @@
     "dev:bot": "npm run dev:bot --workspace=@finance-twa/server",
     "start:server": "npm run start --workspace=@finance-twa/server",
     "start:bot": "npm run start:bot --workspace=@finance-twa/server",
-    "build": "npm run build --workspace=@finance-twa/shared-types && npm run build --workspace=@finance-twa/server && npm run build --workspace=@finance-twa/client",
-    "typecheck": "npm run typecheck --workspace=@finance-twa/shared-types && npm run typecheck --workspace=@finance-twa/server && npm run typecheck --workspace=@finance-twa/client",
+    "build": "npm run build --workspace=@finance-twa/shared-types && npm run build --workspace=@finance-twa/shared-utils && npm run build --workspace=@finance-twa/server && npm run build --workspace=@finance-twa/client",
+    "typecheck": "npm run typecheck --workspace=@finance-twa/shared-types && npm run typecheck --workspace=@finance-twa/shared-utils && npm run typecheck --workspace=@finance-twa/server && npm run typecheck --workspace=@finance-twa/client",
     "db:generate": "npm run db:generate --workspace=@finance-twa/server",
     "db:migrate": "npm run db:migrate --workspace=@finance-twa/server"
   }
