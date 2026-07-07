@@ -1,7 +1,7 @@
 /**
  * Backwards-compatible re-export.
  *
- * The implementation moved to `./finance/*` — see `./finance/index.ts` for the
+ * The implementation moved to `./finance/*` - see `./finance/index.ts` for the
  * public API and the rationale behind the split.
  */
 export {

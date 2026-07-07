@@ -1,0 +1,1 @@
+ALTER TABLE "users" ADD COLUMN "monthly_exp_reset_at" timestamp with time zone;

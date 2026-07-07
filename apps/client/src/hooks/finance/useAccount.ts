@@ -2,7 +2,7 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useTranslation } from "react-i18next";
 
 import * as api from "@/api/methods";
-import type { CryptoCode, CryptoHolding } from "@finance-twa/shared-types";
+import type { CryptoCode, CryptoHolding, CurrencyCode } from "@finance-twa/shared-types";
 import type { Status } from "@/types/finance";
 
 import { computeDailyLimit, roundAmount, useFinanceContext } from "./_internal";
@@ -68,7 +68,8 @@ export function useAccountMutations() {
   });
 
   const convertCurrencyMutation = useMutation({
-    mutationFn: ({ rate }: { rate: number }) => api.convertCurrency(initData, rate),
+    mutationFn: ({ rate, currency }: { rate: number; currency: CurrencyCode }) =>
+      api.convertCurrency(initData, rate, currency),
     onSuccess: (status) => {
       syncStatus(status);
       invalidateRelated();

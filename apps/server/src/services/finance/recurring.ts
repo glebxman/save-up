@@ -5,10 +5,10 @@ import type {
 } from "@finance-twa/shared-types";
 
 import { randomUUID } from "node:crypto";
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
-import { users, type UserRow } from "../../db/schema/index.js";
+import { accounts, users, type UserRow } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { invalidateStatusCache } from "../cache.service.js";
 import { ensureUser } from "../user/index.js";
@@ -26,6 +26,20 @@ export async function saveRecurringTransaction(
   const user = await ensureUser(telegramId);
   const parsed = parseRecurringPayload(payload);
   const templates = mapRecurringTemplates(user);
+  const accountId = typeof payload.accountId === "string" ? payload.accountId : null;
+
+  if (accountId) {
+    const [account] = await db
+      .select({ id: accounts.id })
+      .from(accounts)
+      .where(and(eq(accounts.id, accountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+      .limit(1);
+
+    if (!account) {
+      throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
+    }
+  }
+
   const nextTemplate: RecurringTransaction = {
     id: payload.id ?? randomUUID(),
     ...parsed,
@@ -34,7 +48,7 @@ export async function saveRecurringTransaction(
         ? payload.dayOfMonth
         : null,
     autoApply: payload.autoApply === true,
-    accountId: typeof payload.accountId === "string" ? payload.accountId : null,
+    accountId,
   };
   const index = templates.findIndex((item) => item.id === nextTemplate.id);
 

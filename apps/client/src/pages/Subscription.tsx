@@ -14,13 +14,13 @@ import {
 } from "@/types/finance";
 import { formatDate, formatMoney } from "@/utils/format";
 
-const paymentProvider: PaymentProvider = "click";
 const benefitKeys = ["debts", "categories", "ai"] as const;
 
 export function Subscription() {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const [selectedPlanId, setSelectedPlanId] = useState<SubscriptionPlanId>("monthly");
+  const [paymentProvider, setPaymentProvider] = useState<PaymentProvider>("click");
   const { status, statusQuery } = useStatus();
   const { startTrialMutation, createPaymentMutation } = useSubscription();
   const subscription = status?.user.subscription;
@@ -126,6 +126,27 @@ export function Subscription() {
                     <option key={plan.id} value={plan.id}>
                       {t(`subscription.plans.${plan.id}`)} - {formatMoney(plan.priceUzs, "UZS")}
                       {plan.savingsPct > 0 ? `, ${t("subscription.savings", { pct: plan.savingsPct })}` : ""}
+                    </option>
+                  ))}
+                </Select>
+                <ChevronRightIcon className="pointer-events-none absolute right-4 top-1/2 h-4 w-4 -translate-y-1/2 rotate-90 text-[var(--muted)]" />
+              </span>
+            </label>
+
+            <label className="block space-y-1.5">
+              <span className="text-sm font-medium text-[var(--foreground)]">
+                {t("subscription.paymentProvider", { defaultValue: "Payment provider" })}
+              </span>
+              <span className="relative block">
+                <Select
+                  fullWidth
+                  onChange={(event) => setPaymentProvider(event.target.value as PaymentProvider)}
+                  value={paymentProvider}
+                  variant="secondary"
+                >
+                  {(["click", "payme"] as const).map((provider) => (
+                    <option key={provider} value={provider}>
+                      {t(`subscription.pay.${provider}`)}
                     </option>
                   ))}
                 </Select>

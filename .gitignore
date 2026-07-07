@@ -8,5 +8,6 @@ build
 coverage
 .env
 .env.local
+data/
 apps/server/src/db/migrations/meta
 *.timestamp-*

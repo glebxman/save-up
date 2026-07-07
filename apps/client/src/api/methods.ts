@@ -153,8 +153,8 @@ export function newMonth(initData: string): Promise<Status> {
   return rpcRequest("finance.newMonth", { initData });
 }
 
-export function convertCurrency(initData: string, rate: number): Promise<Status> {
-  return rpcRequest("finance.convertCurrency", { initData, rate });
+export function convertCurrency(initData: string, rate: number, currency?: CurrencyCode): Promise<Status> {
+  return rpcRequest("finance.convertCurrency", { initData, rate, currency });
 }
 
 export function refreshRates(initData: string): Promise<Status> {

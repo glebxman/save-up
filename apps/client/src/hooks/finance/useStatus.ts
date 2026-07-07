@@ -5,6 +5,7 @@ import * as api from "@/api/methods";
 import { syncLanguageFromServer } from "@/i18n";
 import { useOnboardingStore } from "@/stores/onboarding.store";
 import { setGlobalRates } from "@/utils/exchange-rates";
+import { setStoredCurrency } from "@/utils/currency";
 import { syncHasPinFlag } from "@/utils/pin";
 
 import { useFinanceContext } from "./_internal";
@@ -40,6 +41,7 @@ export function useStatus() {
         statusQuery.data.user.notificationsConfigured,
       );
       syncLanguageFromServer(statusQuery.data.user.language);
+      setStoredCurrency(statusQuery.data.user.currency);
       setGlobalRates(statusQuery.data.rates);
       syncHasPinFlag(statusQuery.data.user.hasPinConfigured);
     }

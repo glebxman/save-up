@@ -1,4 +1,5 @@
 import type { RpcMethod } from "@finance-twa/shared-types";
+import { ZodError } from "zod";
 
 import {
   listAdminUsersHandler,
@@ -152,6 +153,16 @@ export async function dispatchRpc(
   } catch (error) {
     if (error instanceof AppError) {
       return makeError(request.id, error.rpcCode, error.message, { code: error.code });
+    }
+
+    if (error instanceof ZodError) {
+      return makeError(request.id, -32602, "Invalid params", {
+        code: "VALIDATION",
+        issues: error.issues.map((issue) => ({
+          path: issue.path.join("."),
+          message: issue.message,
+        })),
+      });
     }
 
     context.log.error({ err: error }, "unhandled rpc error");

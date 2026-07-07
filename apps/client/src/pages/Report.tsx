@@ -8,7 +8,7 @@ import { TransactionHistoryView } from "@/components/features/report/Transaction
 import { getCategoryDisplay, isBuiltinCategory } from "@/components/features/shared/categoryMeta";
 import { Button, Card, CardContent, CardDescription, CardHeader, CardTitle, Chip, ProgressBar, Skeleton } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
-import type { TransactionFilters } from "@/types/finance";
+import type { Transaction, TransactionFilters } from "@/types/finance";
 import { exportTransactionsToExcel } from "@/utils/export";
 import { formatMoney, getMonthKey } from "@/utils/format";
 import * as api from "@/api/methods";
@@ -211,11 +211,22 @@ export function Report() {
     if (!initData) return;
     setIsExporting(true);
     try {
-      const items = await api.getTransactions(initData, {
-        monthKey: selectedMonthKey,
-        includeDeleted: false,
-        limit: 200,
-      });
+      const pageSize = 200;
+      const items: Transaction[] = [];
+
+      for (let offset = 0; ; offset += pageSize) {
+        const page = await api.getTransactions(initData, {
+          monthKey: selectedMonthKey,
+          includeDeleted: false,
+          limit: pageSize,
+          offset,
+        });
+
+        items.push(...page);
+
+        if (page.length < pageSize) break;
+      }
+
       if (items.length === 0) {
         pushToast({ tone: "info", message: t("export.empty", { defaultValue: "No transactions to export" }) });
         return;

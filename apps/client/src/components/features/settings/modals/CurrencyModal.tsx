@@ -49,8 +49,11 @@ export function CurrencyModal({ isOpen, onClose }: CurrencyModalProps) {
                     onPress={() => {
                       if (curr !== currency) {
                         const rate = getConversionRate(currency, curr);
-                        convertCurrencyMutation.mutate({ rate });
-                        setCurrency(curr);
+                        void convertCurrencyMutation.mutateAsync({ rate, currency: curr }).then(() => {
+                          setCurrency(curr);
+                          onClose();
+                        });
+                        return;
                       }
                       onClose();
                     }}

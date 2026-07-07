@@ -687,6 +687,7 @@
     "trialStarted": "Free trial activated",
     "plansTitle": "Plans",
     "choosePlan": "Subscription period",
+    "paymentProvider": "Payment provider",
     "selectedPlan": "Selected plan",
     "planDuration": "{{count}} mo",
     "perMonth": "{{amount}} / mo",
@@ -708,7 +709,8 @@
       "yearly": "12 months"
     },
     "pay": {
-      "click": "Click"
+      "click": "Click",
+      "payme": "Payme"
     }
   }
 }

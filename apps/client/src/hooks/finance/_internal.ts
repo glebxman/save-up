@@ -4,6 +4,7 @@ import { useTranslation } from "react-i18next";
 import { roundAmount, calculateDailyLimit } from "@finance-twa/shared-utils";
 
 import type { Status } from "@/types/finance";
+import { RpcRequestError } from "@/api/client";
 import { setGlobalRates } from "@/utils/exchange-rates";
 import { useFinanceStore } from "@/stores/finance.store";
 import { useToastStore } from "@/stores/ui.store";
@@ -38,6 +39,10 @@ const errorTranslationKeys = {
   "Insufficient savings for transfer": "feedback.errors.insufficientSavings",
 } as const;
 
+const errorCodeTranslationKeys = {
+  INSUFFICIENT_FUNDS: "feedback.errors.insufficientBalance",
+} as const;
+
 function getErrorTranslationKey(message: string): string | undefined {
   return errorTranslationKeys[message as keyof typeof errorTranslationKeys];
 }
@@ -70,7 +75,11 @@ export function useFinanceContext(): FinanceContext {
   }
 
   function notifyError(error: unknown): void {
-    const translationKey = error instanceof Error ? getErrorTranslationKey(error.message) : undefined;
+    const translationKey = error instanceof RpcRequestError && error.appCode
+      ? errorCodeTranslationKeys[error.appCode as keyof typeof errorCodeTranslationKeys]
+      : error instanceof Error
+        ? getErrorTranslationKey(error.message)
+        : undefined;
     const message = translationKey ? t(translationKey) : t("feedback.genericError");
 
     pushToast({ tone: "error", message });

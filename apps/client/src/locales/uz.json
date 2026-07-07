@@ -687,6 +687,7 @@
     "trialStarted": "Bepul trial yoqildi",
     "plansTitle": "Tariflar",
     "choosePlan": "Obuna muddati",
+    "paymentProvider": "To'lov provayderi",
     "selectedPlan": "Tanlangan tarif",
     "planDuration": "{{count}} oy",
     "perMonth": "{{amount}} / oy",
@@ -708,7 +709,8 @@
       "yearly": "12 oy"
     },
     "pay": {
-      "click": "Click"
+      "click": "Click",
+      "payme": "Payme"
     }
   }
 }

@@ -9,6 +9,7 @@ import { LockScreen } from "@/pages/LockScreen";
 import { Report } from "@/pages/Report";
 import { Settings } from "@/pages/Settings";
 import { useStatus } from "@/hooks/useFinance";
+import { useTelegram } from "@/hooks/useTelegram";
 import { useLockStore } from "@/stores/lock.store";
 import { Spinner } from "@/components/ui";
 
@@ -69,8 +70,27 @@ const SUBSCRIPTION_LOCKED_PATHS = new Set(["/debts", "/settings/categories"]);
 
 function App() {
   const location = useLocation();
+  const { t } = useTranslation();
+  const { initData } = useTelegram();
   const { status, statusQuery } = useStatus();
   const { hasPin, unlocked } = useLockStore();
+
+  if (!initData) {
+    return (
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--background)] px-6 text-center text-[var(--foreground)]">
+        <div className="max-w-md space-y-3">
+          <h1 className="m-0 text-2xl font-semibold tracking-normal">
+            {t("dashboard.errorTitle")}
+          </h1>
+          <p className="m-0 text-sm leading-relaxed text-[var(--muted)]">
+            {t("dashboard.openInTelegram", {
+              defaultValue: "Open this mini app inside Telegram so it can pass Telegram initData.",
+            })}
+          </p>
+        </div>
+      </div>
+    );
+  }
 
   // Highest priority: locked → show only the lock screen, regardless of route.
   if (hasPin && !unlocked) {

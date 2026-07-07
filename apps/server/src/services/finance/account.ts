@@ -1,25 +1,22 @@
-import type { Status } from "@finance-twa/shared-types";
+import type { CurrencyCode, Status } from "@finance-twa/shared-types";
 
-import { eq, sql } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
-import { transactions, users, type UserRow } from "../../db/schema/index.js";
+import { accounts, transactions, users, type AccountRow, type UserRow } from "../../db/schema/index.js";
 import { getMonthKey } from "../../utils/daily-limit.js";
 import { invalidateStatusCache } from "../cache.service.js";
+import { getExchangeRates } from "../currency.service.js";
 import { ensureUser } from "../user/index.js";
+import { AppError, ErrorCode } from "../../utils/errors.js";
 import {
   assertPositiveAmount,
-  buildSnapshot,
-  getActiveTransactionsForUser,
-  getPreviousMonthKey,
-  mapRecurringTemplates,
   normalizeBalance,
   normalizeGoal,
   persistStatus,
   roundAmount,
   syncUserSnapshot,
 } from "./_shared.js";
-import { and, eq as eqOp, isNull } from "drizzle-orm";
 
 export async function updateSavingsGoal(telegramId: number, goal: number): Promise<Status> {
   const user = await ensureUser(telegramId);
@@ -38,12 +35,43 @@ export async function updateBalance(telegramId: number, balance: number): Promis
   const user = await ensureUser(telegramId);
   const targetBalance = normalizeBalance(balance);
   const updatedUser = await db.transaction(async (tx) => {
-    const rows = await getActiveTransactionsForUser(tx, user.id);
-    const snapshot = buildSnapshot(rows);
-    const delta = roundAmount(targetBalance - snapshot.balance);
+    const syncedUser = await syncUserSnapshot(tx, user);
+    const delta = roundAmount(targetBalance - Number(syncedUser.balance));
 
     if (delta !== 0) {
-      const amount = Math.abs(delta);
+      const existingAccounts = await tx
+        .select()
+        .from(accounts)
+        .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+        .orderBy(accounts.createdAt)
+        .limit(1);
+      let targetAccount = existingAccounts[0] as AccountRow | undefined;
+
+      if (!targetAccount) {
+        const createdAccounts = await tx
+          .insert(accounts)
+          .values({
+            userId: user.id,
+            name: "Main",
+            type: "cash",
+            currency: user.currency || "UZS",
+            balance: 0,
+          })
+          .returning();
+        targetAccount = createdAccounts[0] as AccountRow | undefined;
+      }
+
+      if (!targetAccount) {
+        throw new AppError(ErrorCode.INTERNAL, "Failed to create account");
+      }
+
+      const { rates } = await getExchangeRates();
+      const fromRate = rates[user.currency as CurrencyCode] || 1;
+      const toRate = rates[targetAccount.currency as CurrencyCode] || 1;
+      const amountInAccountCurrency = Math.abs(delta) * (toRate / fromRate);
+      const amount = targetAccount.type === "crypto"
+        ? Number(amountInAccountCurrency.toFixed(8))
+        : roundAmount(amountInAccountCurrency);
 
       assertPositiveAmount(amount);
 
@@ -56,6 +84,7 @@ export async function updateBalance(telegramId: number, balance: number): Promis
         note: null,
         monthKey: getMonthKey(),
         occurredAt: new Date(),
+        accountId: targetAccount.id,
       });
     }
 
@@ -78,6 +107,7 @@ export async function resetAccountData(telegramId: number): Promise<Status> {
         balance: 0,
         savings: 0,
         monthlyExp: 0,
+        monthlyExpResetAt: null,
         savingsGoal: 0,
         recurringTemplates: [],
       })
@@ -94,25 +124,14 @@ export async function resetAccountData(telegramId: number): Promise<Status> {
 
 export async function newMonth(telegramId: number): Promise<Status> {
   const user = await ensureUser(telegramId);
-  const currentMonthKey = getMonthKey();
-  const previousMonthKey = getPreviousMonthKey();
-
   const updatedUser = await db.transaction(async (tx) => {
-    await tx
-      .update(transactions)
-      .set({
-        monthKey: previousMonthKey,
-      })
-      .where(
-        and(
-          eqOp(transactions.userId, user.id),
-          eqOp(transactions.type, "expense"),
-          eqOp(transactions.monthKey, currentMonthKey),
-          isNull(transactions.deletedAt),
-        ),
-      );
+    const [updated] = await tx
+      .update(users)
+      .set({ monthlyExpResetAt: new Date() })
+      .where(eq(users.id, user.id))
+      .returning();
 
-    return syncUserSnapshot(tx, user);
+    return syncUserSnapshot(tx, updated as UserRow);
   });
 
   await invalidateStatusCache(telegramId);
@@ -120,41 +139,30 @@ export async function newMonth(telegramId: number): Promise<Status> {
   return persistStatus(updatedUser);
 }
 
-export async function convertCurrency(telegramId: number, rate: number): Promise<Status> {
-  if (rate <= 0) {
-    throw new Error("Conversion rate must be positive");
+export async function convertCurrency(telegramId: number, rate: number, currency?: CurrencyCode): Promise<Status> {
+  if (!Number.isFinite(rate) || rate <= 0) {
+    throw new AppError(ErrorCode.VALIDATION, "Conversion rate must be positive");
   }
 
   const user = await ensureUser(telegramId);
   const updatedUser = await db.transaction(async (tx) => {
-    const templates = mapRecurringTemplates(user);
-    const convertedTemplates = templates.map((t) => ({
-      ...t,
-      amount: roundAmount(t.amount * rate),
-      savingsAmt: t.savingsAmt ? roundAmount(t.savingsAmt * rate) : null,
-    }));
+    const convertedCategoryLimits = Object.fromEntries(
+      Object.entries((user.categoryLimits ?? {}) as Record<string, number>)
+        .map(([key, value]) => [key, roundAmount(Number(value) * rate)])
+        .filter(([, value]) => Number.isFinite(value as number) && (value as number) > 0),
+    );
 
     const updated = await tx
       .update(users)
       .set({
-        balance: roundAmount(user.balance * rate),
-        savings: roundAmount(user.savings * rate),
+        currency: currency ?? user.currency,
         savingsGoal: roundAmount(user.savingsGoal * rate),
-        monthlyExp: roundAmount(user.monthlyExp * rate),
-        recurringTemplates: convertedTemplates,
+        categoryLimits: convertedCategoryLimits,
       })
       .where(eq(users.id, user.id))
       .returning();
 
-    await tx
-      .update(transactions)
-      .set({
-        amount: sql`ROUND((${transactions.amount} * ${rate})::numeric, 2)::float8`,
-        savingsAmt: sql`CASE WHEN ${transactions.savingsAmt} IS NOT NULL THEN ROUND((${transactions.savingsAmt} * ${rate})::numeric, 2)::float8 ELSE NULL END`,
-      })
-      .where(eq(transactions.userId, user.id));
-
-    return updated[0] as UserRow;
+    return syncUserSnapshot(tx, updated[0] as UserRow);
   });
 
   await invalidateStatusCache(telegramId);

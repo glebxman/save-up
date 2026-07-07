@@ -377,9 +377,8 @@ export const paymentsPlugin = fp(async (app) => {
         request.log.warn(
           {
             receivedLogin: credentials?.login,
-            receivedPassword: credentials?.password,
             expectedLogin: (env.PAYME_LOGIN || env.PAYME_MERCHANT_USER_ID).trim(),
-            acceptedPasswords,
+            acceptedPasswordCount: acceptedPasswords.filter(Boolean).length,
             hasAuthHeader: !!request.headers.authorization,
           },
           "Payme authentication failed"

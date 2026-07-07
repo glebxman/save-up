@@ -1,10 +1,5 @@
 /**
- * PIN utilities — server-backed.
- *
- * The PIN hash is stored on the server (in `users.pin_hash` / `users.pin_salt`).
- * The client only knows whether a PIN is configured via `Status.user.hasPinConfigured`.
-/**
- * PIN utilities — server-backed.
+ * PIN utilities - server-backed.
  *
  * The PIN hash is stored on the server (in `users.pin_hash` / `users.pin_salt`).
  * The client only knows whether a PIN is configured via `Status.user.hasPinConfigured`.

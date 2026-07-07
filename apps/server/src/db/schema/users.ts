@@ -19,6 +19,7 @@ export const users = pgTable(
     recurringTemplates: jsonb("recurring_templates").$type<RecurringTransaction[]>().notNull().default([]),
     categoryLimits: jsonb("category_limits").notNull().default({}),
     monthlyExp: numeric("monthly_exp", { precision: 15, scale: 2, mode: "number" }).notNull().default(0),
+    monthlyExpResetAt: timestamp("monthly_exp_reset_at", { withTimezone: true }),
     onboardingCompleted: boolean("onboarding_completed").notNull().default(false),
     language: varchar("language", { length: 5 }),
     voiceDailyUsed: smallint("voice_daily_used").notNull().default(0),

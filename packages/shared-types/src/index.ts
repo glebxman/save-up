@@ -546,6 +546,7 @@ export interface RpcMethodMap {
     params: {
       initData: string;
       rate: number;
+      currency?: CurrencyCode;
     };
     result: Status;
   };

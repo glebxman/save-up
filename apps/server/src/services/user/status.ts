@@ -159,19 +159,23 @@ export async function ensureUser(telegramId: number, profile?: TelegramUser): Pr
 
 async function syncCurrentMonthExpense(row: UserRow): Promise<UserRow> {
   const monthKey = getMonthKey();
+  const conditions = [
+    eq(transactions.userId, row.id),
+    eq(transactions.type, "expense"),
+    eq(transactions.monthKey, monthKey),
+    isNull(transactions.deletedAt),
+  ];
+
+  if (row.monthlyExpResetAt) {
+    conditions.push(sql`${transactions.occurredAt} > ${row.monthlyExpResetAt}`);
+  }
+
   const totals = await db
     .select({
       total: sql<number>`COALESCE(SUM(${transactions.amount}), 0)::numeric(15,2)`,
     })
     .from(transactions)
-    .where(
-      and(
-        eq(transactions.userId, row.id),
-        eq(transactions.type, "expense"),
-        eq(transactions.monthKey, monthKey),
-        isNull(transactions.deletedAt),
-      ),
-    )
+    .where(and(...conditions))
     .limit(1);
   const nextMonthlyExp = Number(totals[0]?.total ?? 0);
 

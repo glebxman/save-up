@@ -699,6 +699,7 @@
     "trialStarted": "Бесплатный trial активирован",
     "plansTitle": "Тарифы",
     "choosePlan": "Срок подписки",
+    "paymentProvider": "Платёжная система",
     "selectedPlan": "Выбранный тариф",
     "planDuration": "{{count}} мес.",
     "perMonth": "{{amount}} / мес.",
@@ -720,7 +721,8 @@
       "yearly": "12 месяцев"
     },
     "pay": {
-      "click": "Click"
+      "click": "Click",
+      "payme": "Payme"
     }
   }
 }

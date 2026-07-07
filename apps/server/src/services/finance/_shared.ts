@@ -26,7 +26,7 @@ import { randomUUID } from "node:crypto";
 import { and, eq, isNull } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
-import { transactions, users, accounts, type TransactionRow, type UserRow } from "../../db/schema/index.js";
+import { transactions, users, accounts, type AccountRow, type TransactionRow, type UserRow } from "../../db/schema/index.js";
 import { AppError, ErrorCode } from "../../utils/errors.js";
 import { setCachedStatus } from "../cache.service.js";
 import { buildStatus } from "../user/index.js";
@@ -274,10 +274,11 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
   const activeAccounts = await tx
     .select()
     .from(accounts)
-    .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
+    .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+    .orderBy(accounts.createdAt);
 
   if (activeAccounts.length === 0) {
-    // No accounts at all — reset totals to zero
+    // No accounts at all - reset totals to zero
     const updated = await tx
       .update(users)
       .set({
@@ -310,6 +311,7 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
   let totalSavings = 0;
   let monthlyExp = 0;
   const currentMonthKey = getMonthKey();
+  const monthlyExpResetAt = user.monthlyExpResetAt;
 
   const rows = await getActiveTransactionsForUser(tx, user.id);
 
@@ -346,7 +348,7 @@ export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promis
 
     else if (row.type === "expense") {
       accountBalances[accId] = roundAcc(currentBalance - row.amount);
-      if (row.monthKey === currentMonthKey) {
+      if (row.monthKey === currentMonthKey && (!monthlyExpResetAt || row.occurredAt > monthlyExpResetAt)) {
         monthlyExp = roundAmount(monthlyExp + convertCurrency(row.amount, accCurrency, baseCurrency));
       }
     }
@@ -456,7 +458,7 @@ export function parseRecurringPayload(payload: RecurringTransactionPayload): Par
   const title = payload.title.trim().slice(0, 60);
 
   if (!title) {
-    throw new Error("Recurring transaction needs a title");
+    throw new AppError(ErrorCode.VALIDATION, "Recurring transaction needs a title");
   }
 
   assertPositiveAmount(payload.amount);
@@ -474,7 +476,7 @@ export function parseRecurringPayload(payload: RecurringTransactionPayload): Par
 
   if (payload.type === "expense") {
     if (!payload.category) {
-      throw new Error("Expense category is required");
+      throw new AppError(ErrorCode.VALIDATION, "Expense category is required");
     }
 
     return {
@@ -514,6 +516,7 @@ export async function createTransaction(
   const occurredAt = parseOccurredAt(input.occurredAt);
 
   let targetAccountId = input.accountId;
+  let targetAccount: AccountRow | null = null;
   if (!targetAccountId) {
     const active = await tx
       .select()
@@ -523,9 +526,10 @@ export async function createTransaction(
       .limit(1);
 
     if (active.length > 0) {
-      targetAccountId = active[0]!.id;
+      targetAccount = active[0]!;
+      targetAccountId = targetAccount.id;
     } else {
-      // No accounts exist yet — create a default "Main" account on the fly
+      // No accounts exist yet - create a default "Main" account on the fly
       const accountName = user.language === "ru" ? "Основной" : "Main";
       const [newAcc] = await tx
         .insert(accounts)
@@ -537,23 +541,43 @@ export async function createTransaction(
           balance: 0,
         })
         .returning();
-      targetAccountId = newAcc!.id;
+      targetAccount = newAcc!;
+      targetAccountId = targetAccount.id;
+    }
+  }
+
+  if (targetAccountId && !targetAccount) {
+    const [account] = await tx
+      .select()
+      .from(accounts)
+      .where(and(eq(accounts.id, targetAccountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+      .limit(1);
+
+    if (!account) {
+      throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
+    }
+
+    targetAccount = account;
+  }
+
+  if (input.toAccountId) {
+    const [toAccount] = await tx
+      .select()
+      .from(accounts)
+      .where(and(eq(accounts.id, input.toAccountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+      .limit(1);
+
+    if (!toAccount) {
+      throw new AppError(ErrorCode.NOT_FOUND, "Destination account not found");
     }
   }
 
   let amountStr = String(roundAmount(input.amount));
   let savingsAmtStr = input.savingsAmt && input.savingsAmt > 0 ? String(roundAmount(input.savingsAmt)) : null;
 
-  if (targetAccountId) {
-    const accRows = await tx
-      .select()
-      .from(accounts)
-      .where(eq(accounts.id, targetAccountId))
-      .limit(1);
-    if (accRows[0] && accRows[0].type === "crypto") {
-      amountStr = String(Number(input.amount.toFixed(8)));
-      savingsAmtStr = input.savingsAmt && input.savingsAmt > 0 ? String(Number(input.savingsAmt.toFixed(8))) : null;
-    }
+  if (targetAccount?.type === "crypto") {
+    amountStr = String(Number(input.amount.toFixed(8)));
+    savingsAmtStr = input.savingsAmt && input.savingsAmt > 0 ? String(Number(input.savingsAmt.toFixed(8))) : null;
   }
 
   await tx.insert(transactions).values({

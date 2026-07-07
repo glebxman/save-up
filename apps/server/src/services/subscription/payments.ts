@@ -4,7 +4,7 @@ import {
   type SubscriptionPaymentLink,
   type SubscriptionPlanId,
 } from "@finance-twa/shared-types";
-import { and, desc, eq, gte, lte } from "drizzle-orm";
+import { and, desc, eq, gte, lte, ne } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
 import { env } from "../../config/env.js";
@@ -337,26 +337,69 @@ export async function cancelPaymeTransaction(txId: string, reason: number): Prom
       .where(eq(subscriptionPayments.id, tx.paymentId))
       .returning();
 
-    if (tx.state === 2) {
-      await dbTx
-        .update(users)
-        .set({
-          subscriptionPlan: null,
-          subscriptionExpiresAt: null,
-        })
-        .where(eq(users.id, tx.userId));
+    let telegramId: number | null = null;
 
+    if (tx.state === 2) {
       const userRows = await dbTx.select().from(users).where(eq(users.id, tx.userId)).limit(1);
       const user = userRows[0];
       if (user) {
-        await invalidateStatusCache(user.telegramId);
+        telegramId = user.telegramId;
+
+        const latestPaidRows = await dbTx
+          .select()
+          .from(subscriptionPayments)
+          .where(
+            and(
+              eq(subscriptionPayments.userId, tx.userId),
+              eq(subscriptionPayments.status, "paid"),
+              ne(subscriptionPayments.id, tx.paymentId),
+            ),
+          )
+          .orderBy(desc(subscriptionPayments.activatedUntil), desc(subscriptionPayments.paidAt), desc(subscriptionPayments.createdAt))
+          .limit(1);
+        const latestPaid = latestPaidRows[0];
+
+        if (latestPaid && isSubscriptionPlanId(latestPaid.planId)) {
+          await dbTx
+            .update(users)
+            .set({
+              subscriptionPlan: latestPaid.planId,
+              subscriptionExpiresAt: latestPaid.activatedUntil,
+            })
+            .where(eq(users.id, tx.userId));
+        } else {
+          const cancelledPayment = rows[0] as SubscriptionPaymentRow | undefined;
+          const currentExpiresAt = user.subscriptionExpiresAt?.getTime() ?? null;
+          const cancelledExpiresAt = cancelledPayment?.activatedUntil?.getTime() ?? null;
+          const cancelledPaymentIsCurrent =
+            user.subscriptionPlan === tx.planId &&
+            currentExpiresAt !== null &&
+            currentExpiresAt === cancelledExpiresAt;
+
+          if (cancelledPaymentIsCurrent) {
+            await dbTx
+              .update(users)
+              .set({
+                subscriptionPlan: null,
+                subscriptionExpiresAt: null,
+              })
+              .where(eq(users.id, tx.userId));
+          }
+        }
       }
     }
 
-    return paymentRowToPaymeTransaction(rows[0]);
+    return {
+      transaction: paymentRowToPaymeTransaction(rows[0]),
+      telegramId,
+    };
   });
 
-  return result;
+  if (result.telegramId !== null) {
+    await invalidateStatusCache(result.telegramId);
+  }
+
+  return result.transaction;
 }
 
 export async function getPaymeTransactionsForPeriod(from: number, to: number): Promise<PaymeTransaction[]> {

@@ -46,7 +46,7 @@ async function assertAccountOwnership(dbOrTx: typeof db | DbTransaction, account
   const [acc] = await dbOrTx
     .select()
     .from(accounts)
-    .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId)))
+    .where(and(eq(accounts.id, accountId), eq(accounts.userId, userId), isNull(accounts.deletedAt)))
     .limit(1);
   if (!acc) {
     throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
@@ -276,7 +276,7 @@ export async function updateTransaction(
       nextCategory = payload.category ?? current.category;
 
       if (!nextCategory) {
-        throw new Error("Expense category is required");
+        throw new AppError(ErrorCode.VALIDATION, "Expense category is required");
       }
     }
 
@@ -363,7 +363,7 @@ export async function transferBetweenAccounts(
     const [fromAcc] = await tx
       .select()
       .from(accounts)
-      .where(and(eq(accounts.id, params.fromAccountId), eq(accounts.userId, user.id)))
+      .where(and(eq(accounts.id, params.fromAccountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
       .limit(1);
 
     if (!fromAcc) {
@@ -373,7 +373,7 @@ export async function transferBetweenAccounts(
     const [toAcc] = await tx
       .select()
       .from(accounts)
-      .where(and(eq(accounts.id, params.toAccountId), eq(accounts.userId, user.id)))
+      .where(and(eq(accounts.id, params.toAccountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
       .limit(1);
 
     if (!toAcc) {

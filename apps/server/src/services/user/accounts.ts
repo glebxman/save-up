@@ -22,13 +22,22 @@ export async function createAccount(
   params: { name: string; type: "cash" | "card" | "crypto"; currency: string; initialBalance: number; holdings?: CryptoHolding[] }
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  const name = params.name.trim();
+
+  if (!name) {
+    throw new AppError(ErrorCode.VALIDATION, "Account name is required");
+  }
+
   const isCrypto = params.type === "crypto";
   const holdings = isCrypto ? sanitizeHoldings(params.holdings) : [];
 
   await db.transaction(async (tx) => {
     // Check if this is the user's first account being created.
     // If so, any existing transactions without account_id belong to this account.
-    const existingAccounts = await getActiveAccountsForUser(user.id);
+    const existingAccounts = await tx
+      .select()
+      .from(accounts)
+      .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)));
 
     const isFirstAccount = existingAccounts.length === 0;
 
@@ -36,7 +45,7 @@ export async function createAccount(
       .insert(accounts)
       .values({
         userId: user.id,
-        name: params.name.trim(),
+        name,
         type: params.type,
         currency: isCrypto ? "USD" : params.currency,
         balance: 0,
@@ -115,11 +124,21 @@ export async function updateAccount(
   params: { accountId: string; name: string }
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
+  const name = params.name.trim();
 
-  await db
+  if (!name) {
+    throw new AppError(ErrorCode.VALIDATION, "Account name is required");
+  }
+
+  const rows = await db
     .update(accounts)
-    .set({ name: params.name.trim() })
-    .where(and(eq(accounts.id, params.accountId), eq(accounts.userId, user.id)));
+    .set({ name })
+    .where(and(eq(accounts.id, params.accountId), eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
+    .returning({ id: accounts.id });
+
+  if (!rows[0]) {
+    throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
+  }
 
   await invalidateStatusCache(telegramId);
   return getStatusByTelegramId(telegramId);
@@ -135,6 +154,10 @@ export async function deleteAccount(
 
   if (activeAccounts.length <= 1) {
     throw new AppError(ErrorCode.VALIDATION, "Cannot delete the last remaining account");
+  }
+
+  if (!activeAccounts.some((account) => account.id === accountIdVal)) {
+    throw new AppError(ErrorCode.NOT_FOUND, "Account not found");
   }
 
   await db.transaction(async (tx) => {

@@ -159,7 +159,7 @@ export const newMonthHandler = defineAuthenticatedRpc(
 export const convertCurrencyHandler = defineAuthenticatedRpc(
   "finance.convertCurrency",
   financeConvertCurrencySchema,
-  ({ telegramId, rate }) => convertCurrency(telegramId, rate),
+  ({ telegramId, rate, currency }) => convertCurrency(telegramId, rate, currency),
 );
 
 export const refreshRatesHandler = defineAuthenticatedRpc(

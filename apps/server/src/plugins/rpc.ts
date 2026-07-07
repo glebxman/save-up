@@ -26,5 +26,8 @@ function redactParams(params: unknown): unknown {
   const copy = { ...(params as Record<string, unknown>) };
   if ("initData" in copy) copy["initData"] = "[redacted]";
   if ("base64Audio" in copy) copy["base64Audio"] = "[redacted]";
+  if ("base64Data" in copy) copy["base64Data"] = "[redacted]";
+  if ("base64Photo" in copy) copy["base64Photo"] = "[redacted]";
+  if ("pin" in copy) copy["pin"] = "[redacted]";
   return copy;
 }

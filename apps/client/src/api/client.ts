@@ -25,6 +25,26 @@ interface RpcFailure {
 
 type RpcResponse<T> = RpcSuccess<T> | RpcFailure;
 
+export class RpcRequestError extends Error {
+  readonly rpcCode: number;
+  readonly appCode?: string;
+  readonly data?: unknown;
+
+  constructor(error: RpcFailure["error"]) {
+    super(error.message);
+    this.name = "RpcRequestError";
+    this.rpcCode = error.code;
+    this.data = error.data;
+
+    if (error.data && typeof error.data === "object" && "code" in error.data) {
+      const code = (error.data as { code?: unknown }).code;
+      if (typeof code === "string") {
+        this.appCode = code;
+      }
+    }
+  }
+}
+
 export async function rpcRequest<Method extends RpcMethod>(
   method: Method,
   params: RpcMethodMap[Method]["params"],
@@ -67,7 +87,7 @@ export async function rpcRequest<Method extends RpcMethod>(
   }
 
   if ("error" in payload) {
-    throw new Error(payload.error.message);
+    throw new RpcRequestError(payload.error);
   }
 
   return payload.result;
