@@ -63,8 +63,6 @@ input[type="number"]::-webkit-outer-spin-button {
   --overlay-foreground: var(--foreground);
 
   --muted: rgba(25, 25, 25, 0.58);
-  --default: rgba(255, 255, 255, 0.5);
-  --default-foreground: var(--foreground);
 
   --accent: #eff29a;
   --accent-foreground: #1b1b1b;
@@ -84,14 +82,9 @@ input[type="number"]::-webkit-outer-spin-button {
   --danger: #ef8d90;
   --danger-foreground: #1b1b1b;
 
-  --segment: rgba(255, 255, 255, 0.4);
-  --segment-foreground: var(--foreground);
-
   --border: transparent;
   --separator: rgba(25, 25, 25, 0.08);
   --focus: var(--accent);
-  --link: var(--foreground);
-  --backdrop: rgba(219, 224, 212, 0.58);
   --card-glow:
     radial-gradient(circle at top right, rgba(239, 242, 154, 0.72), transparent 36%),
     radial-gradient(circle at bottom left, rgba(217, 232, 255, 0.78), transparent 42%);
@@ -134,6 +127,22 @@ input[type="number"]::-webkit-outer-spin-button {
   --settings-blue: #6084ff;
   --settings-orange: #fa791d;
   --settings-red: #e92554;
+
+  /* Card gradient tokens */
+  --card-wallet-start: #1f2023;
+  --card-wallet-end: #0d0e10;
+  --card-fallback-start: #1c1d24;
+  --card-fallback-end: #0c0d10;
+  --card-card-start: #161822;
+  --card-card-end: #07080d;
+  --card-crypto-start: #20172a;
+  --card-crypto-end: #08050e;
+  --card-cash-start: #111e1a;
+  --card-cash-end: #050a08;
+
+  /* Payment brand colors */
+  --mastercard-red: #EB001B;
+  --mastercard-orange: #F79E1B;
 }
 
 .dark,
@@ -152,8 +161,6 @@ input[type="number"]::-webkit-outer-spin-button {
   --overlay-foreground: var(--foreground);
 
   --muted: rgba(243, 241, 236, 0.58);
-  --default: rgba(255, 255, 255, 0.08);
-  --default-foreground: var(--foreground);
 
   --accent: #eef09e;
   --accent-foreground: #141414;
@@ -173,14 +180,9 @@ input[type="number"]::-webkit-outer-spin-button {
   --danger: #ef8e92;
   --danger-foreground: #141414;
 
-  --segment: rgba(255, 255, 255, 0.08);
-  --segment-foreground: var(--foreground);
-
   --border: transparent;
   --separator: rgba(255, 255, 255, 0.08);
   --focus: var(--accent);
-  --link: var(--foreground);
-  --backdrop: rgba(7, 7, 8, 0.72);
   --card-glow:
     radial-gradient(circle at top right, rgba(238, 240, 158, 0.82), transparent 36%),
     radial-gradient(circle at bottom left, rgba(216, 222, 248, 0.72), transparent 42%);
@@ -223,6 +225,22 @@ input[type="number"]::-webkit-outer-spin-button {
   --settings-blue: #4663db;
   --settings-orange: #d65a14;
   --settings-red: #bf1f46;
+
+  /* Card gradient tokens (dark variants) */
+  --card-wallet-start: #1f2023;
+  --card-wallet-end: #0d0e10;
+  --card-fallback-start: #1c1d24;
+  --card-fallback-end: #0c0d10;
+  --card-card-start: #161822;
+  --card-card-end: #07080d;
+  --card-crypto-start: #20172a;
+  --card-crypto-end: #08050e;
+  --card-cash-start: #111e1a;
+  --card-cash-end: #050a08;
+
+  /* Payment brand colors */
+  --mastercard-red: #EB001B;
+  --mastercard-orange: #F79E1B;
 }
 
 .finance-app-shell {

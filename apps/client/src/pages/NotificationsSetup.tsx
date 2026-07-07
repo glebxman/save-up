@@ -109,7 +109,7 @@ export function NotificationsSetup() {
           initial={{ y: 12, opacity: 0 }}
           transition={{ delay: 0.05, duration: 0.35 }}
         >
-          <p className="m-0 text-sm uppercase tracking-[0.2em] text-[var(--muted)]">
+          <p className="m-0 text-sm uppercase tracking-[0.16em] text-[var(--muted)]">
             {t("notifications.eyebrow")}
           </p>
           <h1 className="m-0 mt-2 text-[1.75rem] font-semibold tracking-[-0.03em]">
@@ -167,7 +167,7 @@ export function NotificationsSetup() {
               initial={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.25 }}
             >
-              <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 {t("notifications.howManyTimes")}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -190,7 +190,7 @@ export function NotificationsSetup() {
                 })}
               </div>
 
-              <p className="m-0 mt-3 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p className="m-0 mt-3 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 {t("notifications.times")}
               </p>
               <div className="grid gap-2">
@@ -221,7 +221,7 @@ export function NotificationsSetup() {
               initial={{ opacity: 0, y: 8 }}
               transition={{ duration: 0.25 }}
             >
-              <p className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 {t("notifications.everyN")}
               </p>
               <div className="flex flex-wrap gap-2">
@@ -244,7 +244,7 @@ export function NotificationsSetup() {
                 })}
               </div>
 
-              <label className="mt-2 grid gap-1 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+              <label className="mt-2 grid gap-1 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                 {t("notifications.atTime")}
                 <Input
                   fullWidth

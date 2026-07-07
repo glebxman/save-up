@@ -116,12 +116,12 @@ export function DailyTrendChart({ trend }: DailyTrendChartProps) {
 
   return (
     <Card variant="default">
-      <CardContent className="!p-4">
+      <CardContent compact>
         <div className="mb-3 flex items-center justify-between gap-3">
           <p className="m-0 text-sm font-semibold text-[var(--foreground)]">
             {t("trend.title")}
           </p>
-          <div className="flex items-center gap-3 text-[11px]">
+          <div className="flex items-center gap-3 text-[0.6875rem]">
             <span className="flex items-center gap-1 text-[var(--danger)]">
               <span className="inline-block h-2 w-2 rounded-sm bg-[var(--danger)]" />
               {formatMoney(totalExpense)}
@@ -221,7 +221,7 @@ export function DailyTrendChart({ trend }: DailyTrendChartProps) {
                 </div>
                 <div className="mt-2 grid grid-cols-2 gap-3">
                   <div>
-                    <p className="m-0 text-[11px] text-[var(--muted)]">
+                    <p className="m-0 text-[0.6875rem] text-[var(--muted)]">
                       {t("trend.expense")}
                     </p>
                     <p className="m-0 mt-0.5 text-sm font-semibold text-[var(--danger)]">
@@ -229,7 +229,7 @@ export function DailyTrendChart({ trend }: DailyTrendChartProps) {
                     </p>
                   </div>
                   <div>
-                    <p className="m-0 text-[11px] text-[var(--muted)]">
+                    <p className="m-0 text-[0.6875rem] text-[var(--muted)]">
                       {t("trend.income")}
                     </p>
                     <p className="m-0 mt-0.5 text-sm font-semibold text-[var(--accent-text)]">

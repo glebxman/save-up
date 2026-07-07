@@ -36,9 +36,9 @@ export function CardHeader({ children, className, ...props }: HTMLAttributes<HTM
   );
 }
 
-export function CardContent({ children, className, ...props }: HTMLAttributes<HTMLDivElement>) {
+export function CardContent({ children, className, compact, ...props }: HTMLAttributes<HTMLDivElement> & { compact?: boolean }) {
   return (
-    <div {...props} className={cn("p-5 sm:p-6", className)}>
+    <div {...props} className={cn(compact ? "p-4" : "p-5 sm:p-6", className)}>
       {children}
     </div>
   );

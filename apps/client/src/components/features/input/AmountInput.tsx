@@ -81,7 +81,7 @@ export function AmountInput({
 
   return (
     <Card className="overflow-hidden" data-onboarding="amount-input" variant="default">
-      <CardContent className="!p-4">
+      <CardContent compact>
         <div className="mb-3 flex items-center justify-between gap-3">
           <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
             {t("amountInput.caption")}
@@ -99,8 +99,7 @@ export function AmountInput({
 
         <div className="relative">
           <Input
-            className="rounded-[20px] text-2xl font-semibold tracking-[-0.04em]"
-            style={{ paddingRight: "5.5rem" }}
+            className="rounded-[20px] text-2xl font-semibold tracking-[-0.04em] pr-[5.5rem]"
             fullWidth
             max={String(MAX_FINANCE_AMOUNT)}
             min="0"
@@ -125,7 +124,7 @@ export function AmountInput({
             <button
               onClick={() => setShowCurrencyModal(true)}
               type="button"
-              className="flex items-center gap-1 px-2.5 py-1 bg-[var(--surface-tertiary)] rounded-full text-xs font-bold text-[var(--foreground)] transition active:opacity-80"
+              className="flex items-center gap-1 px-2.5 py-1 bg-[var(--surface-tertiary)] rounded-full text-xs font-semibold text-[var(--foreground)] transition active:opacity-80"
             >
               {currency}
             </button>
@@ -144,7 +143,7 @@ export function AmountInput({
                     onCurrencyChange(acc.currency);
                   }}
                   type="button"
-                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-semibold transition-all border outline-none cursor-pointer ${
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[0.6875rem] font-semibold transition-all border outline-none cursor-pointer ${
                     isActive
                       ? "bg-[var(--focus)] border-[var(--focus)] text-[var(--accent-foreground)] shadow-sm"
                       : "bg-[var(--surface-secondary)] border-[var(--field-border)] text-[var(--foreground)] hover:bg-[var(--surface-hover)]"

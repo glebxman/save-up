@@ -35,7 +35,7 @@ export function RecurringStrip({
     return (
       <section data-onboarding="templates">
         <div className="mb-2 flex items-center justify-between px-1">
-          <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+          <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
             {t("recurring.title")}
           </p>
           <button
@@ -56,7 +56,7 @@ export function RecurringStrip({
   return (
     <section data-onboarding="templates">
       <div className="mb-2 flex items-center justify-between px-1">
-        <p className="m-0 text-[11px] font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+        <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
           {t("recurring.title")}
         </p>
       </div>

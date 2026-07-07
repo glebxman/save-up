@@ -473,12 +473,12 @@ export function AccountsModal({
                         >
                           <div className="flex flex-col">
                             <span className="text-xs font-semibold text-[var(--foreground)]">{code}</span>
-                            <span className="text-[11px] text-[var(--muted)]">{CRYPTO_LABELS[code]}</span>
+                            <span className="text-[0.6875rem] text-[var(--muted)]">{CRYPTO_LABELS[code]}</span>
                           </div>
                           <div className="flex flex-col items-end">
                             <span className="text-xs font-medium text-[var(--foreground)]">{amount > 0 ? amount : "—"}</span>
                             {amount > 0 && (
-                              <span className="text-[11px] text-[var(--muted)]">
+                              <span className="text-[0.6875rem] text-[var(--muted)]">
                                 {formatMoney(cryptoHoldingValueUsd(code, amount, rates), "USD")}
                               </span>
                             )}

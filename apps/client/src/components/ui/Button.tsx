@@ -4,7 +4,7 @@ import { hapticImpact } from "@/utils/haptic";
 import { cn } from "./cn";
 
 type ButtonVariant = "primary" | "secondary" | "danger-soft";
-type ButtonSize = "sm" | "md";
+type ButtonSize = "xs" | "sm" | "md";
 
 interface ButtonProps extends Omit<ButtonHTMLAttributes<HTMLButtonElement>, "disabled"> {
   variant?: ButtonVariant;
@@ -24,6 +24,7 @@ const buttonVariantClasses: Record<ButtonVariant, string> = {
 };
 
 const buttonSizeClasses: Record<ButtonSize, string> = {
+  xs: "min-h-8 rounded-[12px] px-2.5 text-xs font-semibold",
   sm: "min-h-10 rounded-[18px] px-3 text-sm",
   md: "min-h-12 rounded-[22px] px-4 text-sm",
 };

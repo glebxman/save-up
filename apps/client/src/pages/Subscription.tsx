@@ -105,7 +105,7 @@ export function Subscription() {
       ) : null}
 
       <section className="space-y-3">
-        <h2 className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]">
+        <h2 className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
           {t("subscription.plansTitle")}
         </h2>
 
@@ -157,7 +157,7 @@ export function Subscription() {
             <div className="rounded-[20px] bg-[var(--surface-secondary)] p-4">
               <div className="flex items-start justify-between gap-3">
                 <div className="min-w-0">
-                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.14em] text-[var(--muted)]">
+                  <p className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]">
                     {t("subscription.selectedPlan")}
                   </p>
                   <h3 className="m-0 mt-1 text-lg font-semibold">

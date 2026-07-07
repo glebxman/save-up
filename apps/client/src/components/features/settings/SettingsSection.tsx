@@ -22,8 +22,7 @@ export function SettingsSection({ title, description, children }: SettingsSectio
       {title ? (
         <header>
           <h2
-            className="m-0 text-xs font-semibold uppercase tracking-[0.18em] text-[var(--muted)]"
-            style={{ fontFamily: "sf_pro, 'SF Pro', -apple-system, sans-serif" }}
+            className="m-0 text-xs font-semibold uppercase tracking-[0.16em] text-[var(--muted)]"
           >
             {title}
           </h2>

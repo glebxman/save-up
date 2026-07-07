@@ -406,17 +406,17 @@ function AdminUserCard({
             <div className="flex flex-wrap items-center gap-2">
               <p className="m-0 truncate text-sm font-semibold text-[var(--foreground)]">{item.displayName}</p>
               {item.isAdmin ? (
-                <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_22%,var(--surface))] px-2.5 py-1 text-[11px] font-semibold text-[var(--accent-foreground)]">
+                <span className="rounded-full bg-[color-mix(in_srgb,var(--accent)_22%,var(--surface))] px-2.5 py-1 text-[0.6875rem] font-semibold text-[var(--accent-foreground)]">
                   {t("admin.adminBadge")}
                 </span>
               ) : null}
               {item.hasPinConfigured ? (
-                <span className="rounded-full bg-[color-mix(in_srgb,var(--danger)_16%,var(--surface))] px-2.5 py-1 text-[11px] font-semibold text-[var(--danger)]">
+                <span className="rounded-full bg-[color-mix(in_srgb,var(--danger)_16%,var(--surface))] px-2.5 py-1 text-[0.6875rem] font-semibold text-[var(--danger)]">
                   🔒 {t("admin.hasPin")}
                 </span>
               ) : null}
               <span
-                className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                className={`rounded-full px-2.5 py-1 text-[0.6875rem] font-semibold ${
                   subscription.active
                     ? "bg-[color-mix(in_srgb,var(--success)_18%,var(--surface))] text-[var(--success)]"
                     : "bg-[var(--surface-tertiary)] text-[var(--muted)]"

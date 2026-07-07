@@ -293,21 +293,17 @@ export function BalanceCard({
   // Returns custom gradients for different cards/account types
   function getCardBg(pageIndex: number, acc: Account | null): string {
     if (pageIndex === 0) {
-      // Main Wallet card: deep gold & dark metallic shine
-      return "radial-gradient(circle at 80% 20%, rgba(239, 240, 158, 0.15), transparent 50%), linear-gradient(135deg, #1f2023 0%, #0d0e10 100%)";
+      return `radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--accent) 15%, transparent), transparent 50%), linear-gradient(135deg, var(--card-wallet-start) 0%, var(--card-wallet-end) 100%)`;
     }
-    if (!acc) return "linear-gradient(135deg, #1c1d24 0%, #0c0d10 100%)";
+    if (!acc) return `linear-gradient(135deg, var(--card-fallback-start) 0%, var(--card-fallback-end) 100%)`;
 
     switch (acc.type) {
       case "card":
-        // Card type: midnight blue credit card look
-        return "radial-gradient(circle at 80% 20%, rgba(96, 132, 255, 0.12), transparent 50%), linear-gradient(135deg, #161822 0%, #07080d 100%)";
+        return `radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--settings-blue) 12%, transparent), transparent 50%), linear-gradient(135deg, var(--card-card-start) 0%, var(--card-card-end) 100%)`;
       case "crypto":
-        // Crypto type: premium dark purple gradient
-        return "radial-gradient(circle at 80% 20%, rgba(231, 197, 222, 0.12), transparent 50%), linear-gradient(135deg, #20172a 0%, #08050e 100%)";
+        return `radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--accent-tertiary) 12%, transparent), transparent 50%), linear-gradient(135deg, var(--card-crypto-start) 0%, var(--card-crypto-end) 100%)`;
       default:
-        // Cash type: deep forest green gradient
-        return "radial-gradient(circle at 80% 20%, rgba(60, 173, 139, 0.12), transparent 50%), linear-gradient(135deg, #111e1a 0%, #050a08 100%)";
+        return `radial-gradient(circle at 80% 20%, color-mix(in srgb, var(--settings-green) 12%, transparent), transparent 50%), linear-gradient(135deg, var(--card-cash-start) 0%, var(--card-cash-end) 100%)`;
     }
   }
 
@@ -316,8 +312,8 @@ export function BalanceCard({
     if (pageIndex === 0 || (acc && acc.type === "card")) {
       return (
         <div className="flex items-center -space-x-1.5 opacity-90 select-none">
-          <div className="h-5 w-5 rounded-full bg-[#EB001B]" />
-          <div className="h-5 w-5 rounded-full bg-[#F79E1B]" />
+          <div className="h-5 w-5 rounded-full bg-[var(--mastercard-red)]" />
+          <div className="h-5 w-5 rounded-full bg-[var(--mastercard-orange)]" />
         </div>
       );
     }
@@ -349,19 +345,15 @@ export function BalanceCard({
     return (
       <div
         key={pageIndex}
-        className="w-full shrink-0"
-        style={{ height: "12rem" }}
+        className="w-full shrink-0 h-48"
       >
         <div
-          className={`relative h-full w-full p-6 flex flex-col justify-between select-none ${
+          className={`relative h-full w-full p-6 flex flex-col justify-between select-none rounded-[24px] ${
             isAdd
               ? "bg-[var(--surface-secondary)] border-2 border-dashed border-[var(--separator)] text-[var(--foreground)]"
               : "text-white border border-white/5"
           }`}
-          style={{
-            borderRadius: "24px",
-            ...(isAdd ? {} : { background: getCardBg(pageIndex, acc) })
-          }}
+          style={isAdd ? undefined : { background: getCardBg(pageIndex, acc) }}
         >
           {isAdd ? (
             <div
@@ -383,7 +375,7 @@ export function BalanceCard({
               {/* Header row: Label & Add/Manage Icon */}
               <div className="flex justify-between items-start">
                 <div>
-                  <span className="text-[10px] uppercase tracking-[0.2em] text-white/50 font-bold font-sans">
+                  <span className="text-[10px] uppercase tracking-[0.16em] text-white/50 font-bold font-sans">
                     {pageIndex === 0 ? t("balance.walletLabel", { defaultValue: "Wallet" }) : t(`accounts.type.${acc?.type || 'card'}`)}
                   </span>
                   <h3 className="text-base font-semibold text-white/90 mt-0.5 tracking-tight truncate max-w-[200px]">
@@ -483,15 +475,13 @@ export function BalanceCard({
         {/* Swipeable credit-card carousel container */}
         <div
           ref={containerRef}
-          className="relative overflow-hidden rounded-[24px]"
-          style={{ height: "12rem" }}
+          className="relative overflow-hidden rounded-[24px] h-48"
         >
           {/* Sliding track: all cards laid out side by side */}
           <div
             ref={trackRef}
-            className="flex h-full"
+            className="flex h-full w-full"
             style={{
-              width: "100%",
               transform: `translateX(-${page * 100}%)`,
               willChange: "transform",
             }}
@@ -521,14 +511,14 @@ export function BalanceCard({
         {/* Secondary metrics (Spendable now & monthly budget) */}
         <div className="grid grid-cols-2 gap-2">
           <Card variant="default">
-            <CardContent className="!p-4">
-              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] truncate">{t("balance.spendableNow")}</p>
+            <CardContent compact>
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)] truncate">{t("balance.spendableNow")}</p>
               <p className="m-0 mt-2 text-[1.5rem] font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)]">{formatMoney(spendableNow)}</p>
             </CardContent>
           </Card>
           <Card variant="default">
-            <CardContent className="!p-4">
-              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.14em] text-[var(--muted)] truncate">{t("balance.monthlyBudget")}</p>
+            <CardContent compact>
+              <p className="m-0 text-[10px] font-semibold uppercase tracking-[0.16em] text-[var(--muted)] truncate">{t("balance.monthlyBudget")}</p>
               <p className="m-0 mt-2 text-[1.5rem] font-semibold leading-tight tracking-[-0.04em] text-[var(--foreground)]">{formatMoney(monthlyExp)}</p>
             </CardContent>
           </Card>

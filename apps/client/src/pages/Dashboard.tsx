@@ -109,7 +109,7 @@ export function Dashboard() {
     return (
       <div className="space-y-3">
         <Card variant="default">
-          <CardContent className="!p-4 space-y-3">
+          <CardContent compact className="space-y-3">
             <Skeleton className="h-3 w-20" />
             <Skeleton className="h-9 w-44" />
             <div className="grid grid-cols-2 gap-2">
@@ -119,7 +119,7 @@ export function Dashboard() {
           </CardContent>
         </Card>
         <Card variant="default">
-          <CardContent className="!p-4 space-y-3">
+          <CardContent compact className="space-y-3">
             <Skeleton className="h-12 w-full rounded-[20px]" />
             <div className="grid grid-cols-2 gap-2">
               <Skeleton className="h-10 rounded-[18px]" />

@@ -110,13 +110,13 @@ function App() {
   if (statusQuery.isError) {
     const errorMsg = statusQuery.error?.message || "Технические работы. Пожалуйста, зайдите позже.";
     return (
-      <div className="flex min-h-screen flex-col items-center justify-center bg-[#0d0d0d] px-6 text-center text-white font-sans">
+      <div className="flex min-h-screen flex-col items-center justify-center bg-[var(--app-body-background)] px-6 text-center text-[var(--foreground)] font-sans">
         <div className="max-w-md space-y-4">
           <div className="text-6xl animate-pulse">🔧</div>
-          <h1 className="text-2xl font-bold tracking-tight text-white">
+          <h1 className="text-2xl font-bold tracking-tight text-[var(--foreground)]">
             Технические работы
           </h1>
-          <p className="text-gray-400 text-sm leading-relaxed">
+          <p className="text-[var(--muted)] text-sm leading-relaxed">
             {errorMsg}
           </p>
         </div>

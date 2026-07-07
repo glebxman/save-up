@@ -23,10 +23,10 @@ export function DailyLimitTile({ daysRemaining, dailyLimit }: DailyLimitTileProp
 
   return (
     <Card className="h-full" data-onboarding="daily-limit" variant="default">
-      <CardContent className="!p-4">
+      <CardContent compact>
         <div className="flex items-center gap-1.5 text-[var(--muted)]">
           <ClockIcon className="h-3 w-3 shrink-0" />
-          <span className="truncate text-[10px] font-semibold uppercase tracking-[0.14em]">
+          <span className="truncate text-[10px] font-semibold uppercase tracking-[0.16em]">
             {t("dailyLimit.budgetCaption")}
           </span>
         </div>
@@ -48,7 +48,7 @@ export function DailyLimitTile({ daysRemaining, dailyLimit }: DailyLimitTileProp
           </ProgressBar>
         </div>
 
-        <p className="m-0 mt-1.5 text-[11px] text-[var(--muted)]">
+        <p className="m-0 mt-1.5 text-[0.6875rem] text-[var(--muted)]">
           {t("dailyLimit.days", { count: daysRemaining })}
         </p>
       </CardContent>

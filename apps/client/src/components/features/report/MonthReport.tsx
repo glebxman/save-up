@@ -23,7 +23,7 @@ export function MonthReport({ report }: MonthReportProps) {
   return (
     <Card variant="default">
       <CardContent>
-        <div className="grid gap-3 sm:grid-cols-2">
+        <div className="grid gap-2 sm:grid-cols-2">
           {stats.map((stat) => (
             <div key={stat.label} className="rounded-[24px] bg-[var(--surface-secondary)] px-4 py-4">
               <span className="text-sm text-[var(--muted)]">{stat.label}</span>
