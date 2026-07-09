@@ -12,8 +12,13 @@ function resolveAllowedOrigins(): true | string[] {
 }
 
 export const corsPlugin = fp(async (app) => {
+  const origin = resolveAllowedOrigins();
+
   await app.register(fastifyCors, {
-    origin: resolveAllowedOrigins(),
-    credentials: true,
+    origin,
+    // Reflecting any origin ("*") together with credentials is the classic "any
+    // site, with credentials" CORS misconfiguration — only send credentials when
+    // the allow-list is actually restricted to specific origins.
+    credentials: origin !== true,
   });
 });

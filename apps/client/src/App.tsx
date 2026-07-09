@@ -4,10 +4,7 @@ import { useTranslation } from "react-i18next";
 
 import { AppShell } from "@/components/layout/AppShell";
 import { Dashboard } from "@/pages/Dashboard";
-import { Debts } from "@/pages/Debts";
 import { LockScreen } from "@/pages/LockScreen";
-import { Report } from "@/pages/Report";
-import { Settings } from "@/pages/Settings";
 import { useStatus } from "@/hooks/useFinance";
 import { useTelegram } from "@/hooks/useTelegram";
 import { useLockStore } from "@/stores/lock.store";
@@ -16,8 +13,11 @@ import { Spinner } from "@/components/ui";
 // Lazy-loaded pages — not needed on initial render.
 const Admin = lazy(() => import("@/pages/Admin").then((m) => ({ default: m.Admin })));
 const CategoriesSettings = lazy(() => import("@/pages/CategoriesSettings").then((m) => ({ default: m.CategoriesSettings })));
+const Debts = lazy(() => import("@/pages/Debts").then((m) => ({ default: m.Debts })));
 const NotFound = lazy(() => import("@/pages/NotFound").then((m) => ({ default: m.NotFound })));
 const NotificationsSetup = lazy(() => import("@/pages/NotificationsSetup").then((m) => ({ default: m.NotificationsSetup })));
+const Report = lazy(() => import("@/pages/Report").then((m) => ({ default: m.Report })));
+const Settings = lazy(() => import("@/pages/Settings").then((m) => ({ default: m.Settings })));
 const Subscription = lazy(() => import("@/pages/Subscription").then((m) => ({ default: m.Subscription })));
 const Welcome = lazy(() => import("@/pages/Welcome").then((m) => ({ default: m.Welcome })));
 

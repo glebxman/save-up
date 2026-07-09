@@ -77,7 +77,7 @@ export function Welcome() {
             >
               <span
                 aria-hidden="true"
-                className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl ${iconBg} ${iconColor}`}
+                className={`mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] ${iconBg} ${iconColor}`}
               >
                 <Icon className="h-5 w-5" />
               </span>

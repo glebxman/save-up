@@ -195,7 +195,7 @@ export function DailyTrendChart({ trend }: DailyTrendChartProps) {
                 {LEVEL_COLORS.map((color, i) => (
                   <span
                     key={i}
-                    className="inline-block h-3 w-3 rounded-[3px]"
+                    className="inline-block h-3 w-3 rounded-sm"
                     style={{ backgroundColor: color }}
                   />
                 ))}

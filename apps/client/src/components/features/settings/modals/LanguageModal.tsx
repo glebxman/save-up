@@ -82,7 +82,7 @@ export function LanguageModal({ isOpen, onClose, currentLanguage }: LanguageModa
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
         <ModalContainer size={showOther ? "md" : "sm"}>
           <ModalDialog>
             <ModalCloseTrigger />

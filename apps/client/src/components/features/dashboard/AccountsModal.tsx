@@ -207,7 +207,6 @@ export function AccountsModal({
             onClose();
           }
         }}
-        variant="blur"
       >
         <ModalContainer size="md">
           <ModalDialog>
@@ -228,7 +227,7 @@ export function AccountsModal({
                     {accounts.map((acc) => (
                       <div
                         key={acc.id}
-                        className="p-3 rounded-[16px] bg-[var(--surface-secondary)]"
+                        className="p-3 rounded-[18px] bg-[var(--surface-secondary)]"
                       >
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-3">

@@ -350,12 +350,14 @@ async function handlePhotoMessage(message: TelegramMessage): Promise<void> {
   const chatId = message.chat.id;
   const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
 
-  const processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
-    chat_id: chatId,
-    text: getBotMessage("photo_receipt_processing", lang) || "📸 Processing receipt photo...",
-  });
+  let processingMsg: TelegramMessage | null = null;
 
   try {
+    processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
+      chat_id: chatId,
+      text: getBotMessage("photo_receipt_processing", lang) || "📸 Processing receipt photo...",
+    });
+
     const largestPhoto = message.photo[message.photo.length - 1];
     if (!largestPhoto) {
       throw new Error("No photo found");
@@ -399,11 +401,19 @@ async function handlePhotoMessage(message: TelegramMessage): Promise<void> {
     });
   } catch (err) {
     logger.error({ err }, "Photo processing error");
-    await telegramRequest("editMessageText", {
-      chat_id: chatId,
-      message_id: processingMsg.message_id,
-      text: getBotMessage("photo_receipt_error", lang) || "❌ Could not process the receipt photo.",
-    });
+    const errorText = getBotMessage("photo_receipt_error", lang) || "❌ Could not process the receipt photo.";
+    // If we never got a "processing..." message to edit (e.g. that very sendMessage
+    // call is what failed), fall back to a fresh message so the user still hears
+    // *something* instead of silence.
+    if (processingMsg) {
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: errorText,
+      }).catch(() => undefined);
+    } else {
+      await telegramRequest("sendMessage", { chat_id: chatId, text: errorText }).catch(() => undefined);
+    }
   }
 }
 
@@ -414,12 +424,14 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
   const chatId = message.chat.id;
   const lang = (await getOrCreateBotUserAndReturnLanguage(telegramId, message.from?.first_name)) as SupportedLang || "en";
 
-  const processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
-    chat_id: chatId,
-    text: getBotMessage("processing_voice", lang) || "🎙 Обрабатываю голосовое сообщение..."
-  });
+  let processingMsg: TelegramMessage | null = null;
 
   try {
+    processingMsg = await telegramRequest<TelegramMessage>("sendMessage", {
+      chat_id: chatId,
+      text: getBotMessage("processing_voice", lang) || "🎙 Обрабатываю голосовое сообщение..."
+    });
+
     const file = await telegramRequest<{ file_path: string }>("getFile", { file_id: message.voice.file_id });
 
     if (!file.file_path || !/^[a-zA-Z0-9/_.-]+$/.test(file.file_path)) {
@@ -473,13 +485,21 @@ async function handleVoiceMessage(message: TelegramMessage): Promise<void> {
   } catch (err) {
     const isLimitError = err instanceof Error && err.message === "Voice daily limit reached";
     logger.error({ err }, "Voice processing error");
-    await telegramRequest("editMessageText", {
-      chat_id: chatId,
-      message_id: processingMsg.message_id,
-      text: isLimitError
-        ? (getBotMessage("voice_limit_reached", lang) || "⚠️ Дневной лимит голосовых запросов исчерпан. Попробуйте завтра.")
-        : (getBotMessage("voice_error", lang) || "❌ Произошла ошибка при обработке."),
-    });
+    const errorText = isLimitError
+      ? (getBotMessage("voice_limit_reached", lang) || "⚠️ Дневной лимит голосовых запросов исчерпан. Попробуйте завтра.")
+      : (getBotMessage("voice_error", lang) || "❌ Произошла ошибка при обработке.");
+    // If we never got a "processing..." message to edit (e.g. that very sendMessage
+    // call is what failed), fall back to a fresh message so the user still hears
+    // *something* instead of silence.
+    if (processingMsg) {
+      await telegramRequest("editMessageText", {
+        chat_id: chatId,
+        message_id: processingMsg.message_id,
+        text: errorText,
+      }).catch(() => undefined);
+    } else {
+      await telegramRequest("sendMessage", { chat_id: chatId, text: errorText }).catch(() => undefined);
+    }
   }
 }
 

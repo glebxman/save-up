@@ -70,7 +70,7 @@ export function RecurringTemplateModal({
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
         <ModalContainer size="md">
           <ModalDialog>
             <ModalCloseTrigger />
@@ -192,7 +192,7 @@ export function RecurringTemplateModal({
                     />
                   </label>
                   <div className="flex flex-col justify-end">
-                    <label className={`flex cursor-pointer items-center justify-between gap-2 rounded-[22px] bg-[var(--surface-secondary)] px-4 py-3 min-h-12 transition-all ${
+                    <label className={`flex cursor-pointer items-center justify-between gap-2 rounded-[18px] bg-[var(--surface-secondary)] px-4 py-3 min-h-12 transition-all ${
                       !dayOfMonth ? "opacity-40 cursor-not-allowed" : "active:scale-[0.98]"
                     }`}>
                       <span className="text-xs font-semibold text-[var(--foreground)]">

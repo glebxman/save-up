@@ -143,7 +143,7 @@ export function Debts() {
       )}
 
       <Modal>
-        <ModalBackdrop isOpen={showAddModal} onOpenChange={(open) => { if (!open) closeAddModal(); }} variant="blur">
+        <ModalBackdrop isOpen={showAddModal} onOpenChange={(open) => { if (!open) closeAddModal(); }}>
           <ModalContainer>
             <ModalDialog>
               <ModalCloseTrigger />
@@ -233,7 +233,7 @@ function DebtSummaryCard({
     <Card>
       <CardContent className="py-4 text-center">
         <p className="text-xs text-[var(--muted)]">{label}</p>
-        <p className={`mt-1 text-lg font-semibold ${tone === "positive" ? "text-green-500" : "text-red-500"}`}>
+        <p className={`mt-1 text-lg font-semibold ${tone === "positive" ? "text-[var(--success)]" : "text-[var(--danger)]"}`}>
           {value}
         </p>
       </CardContent>
@@ -296,7 +296,7 @@ function DebtCard({
           )}
         </div>
         <div className="flex items-center gap-3">
-          <span className={`text-lg font-semibold ${isOwedToMe ? "text-green-500" : "text-red-500"}`}>
+          <span className={`text-lg font-semibold ${isOwedToMe ? "text-[var(--success)]" : "text-[var(--danger)]"}`}>
             {formatMoney(debt.amount)}
           </span>
           <div className="flex gap-1">

@@ -7,7 +7,7 @@ import { Card, CardContent } from "@/components/ui";
 import { useCountUp } from "@/hooks/useCountUp";
 import { useTelegram } from "@/hooks/useTelegram";
 import { hapticImpact, hapticNotification } from "@/utils/haptic";
-import { formatMoney, parseAmount } from "@/utils/format";
+import { formatGroupedNumber, formatMoney, parseAmount } from "@/utils/format";
 import { cryptoHoldingsTotalUsd } from "@/utils/exchange-rates";
 import { MAX_FINANCE_AMOUNT } from "@finance-twa/shared-types";
 
@@ -23,7 +23,7 @@ interface BalanceCardProps {
 }
 
 function formatWithSpaces(value: number): string {
-  return Math.floor(value).toLocaleString("en-US");
+  return formatGroupedNumber(String(Math.floor(value)));
 }
 
 /** Minimum horizontal distance (px) before we commit to a page change. */
@@ -285,7 +285,7 @@ export function BalanceCard({
 
   function accountValue(acc: Account): { value: number; currency: Account["currency"] } {
     if (acc.type === "crypto") {
-      return { value: cryptoHoldingsTotalUsd((acc as any).holdings), currency: "USD" };
+      return { value: cryptoHoldingsTotalUsd(acc.holdings), currency: "USD" };
     }
     return { value: acc.balance, currency: acc.currency };
   }
@@ -341,6 +341,7 @@ export function BalanceCard({
   function renderCard(pageIndex: number) {
     const isAdd = pageIndex === pageCount - 1;
     const acc = (pageIndex > 0 && pageIndex < pageCount - 1) ? (accounts[pageIndex - 1] ?? null) : null;
+    const accValue = acc ? accountValue(acc) : null;
 
     return (
       <div
@@ -404,7 +405,7 @@ export function BalanceCard({
                       <input
                         ref={inputRef}
                         aria-label={t("balance.caption")}
-                        className="m-0 block w-full min-w-0 rounded-[10px] border border-white/20 bg-black/40 px-2 py-0.5 text-[1.8rem] font-bold leading-none text-white outline-none focus:border-white/40"
+                        className="m-0 block w-full min-w-0 rounded-[22px] border border-white/20 bg-black/40 px-2 py-0.5 text-[1.8rem] font-bold leading-none text-white outline-none focus:border-white/40"
                         disabled={isBalanceSaving}
                         inputMode="numeric"
                         max={String(MAX_FINANCE_AMOUNT)}
@@ -444,9 +445,9 @@ export function BalanceCard({
                         {formatMoney(animatedBalance)}
                       </button>
                     )
-                  ) : acc ? (
+                  ) : accValue ? (
                     <div className="text-[1.95rem] font-bold tracking-tight leading-none text-white truncate">
-                      {formatMoney(accountValue(acc).value, accountValue(acc).currency)}
+                      {formatMoney(accValue.value, accValue.currency)}
                     </div>
                   ) : null}
 

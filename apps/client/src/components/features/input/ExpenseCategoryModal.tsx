@@ -43,7 +43,7 @@ export function ExpenseCategoryModal({
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
         <ModalContainer size="sm">
           <ModalDialog>
             <ModalCloseTrigger />

@@ -269,7 +269,6 @@ export function Admin() {
             setSubscriptionMonths(1);
           }
         }}
-        variant="blur"
       >
         <ModalContainer size="sm">
           <ModalDialog>

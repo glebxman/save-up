@@ -1,4 +1,6 @@
-/** Join truthy class name fragments into a single className string. */
+import { twMerge } from "tailwind-merge";
+
+/** Join truthy class name fragments into a single className string, resolving conflicting Tailwind utilities (last one wins). */
 export function cn(...values: Array<string | false | null | undefined>) {
-  return values.filter(Boolean).join(" ");
+  return twMerge(values.filter(Boolean).join(" "));
 }

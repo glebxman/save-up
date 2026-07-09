@@ -127,7 +127,7 @@ export function NotificationsSetup() {
           {(["off", "per_day", "every_n_days"] as Mode[]).map((option) => (
             <button
               key={option}
-              className={`flex items-center justify-between gap-3 rounded-[20px] border-2 px-4 py-3 text-left transition-all duration-200 ${
+              className={`flex items-center justify-between gap-3 rounded-[18px] border-2 px-4 py-3 text-left transition-all duration-200 ${
                 mode === option
                   ? "border-[var(--accent)] bg-[color-mix(in_srgb,var(--accent)_12%,var(--surface-secondary))]"
                   : "border-transparent bg-[var(--surface-secondary)]"
@@ -176,7 +176,7 @@ export function NotificationsSetup() {
                   return (
                     <button
                       key={n}
-                      className={`min-w-12 rounded-[14px] px-3 py-2 text-sm font-semibold transition-colors ${
+                      className={`min-w-12 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
                         active
                           ? "bg-[var(--accent)] text-[var(--accent-foreground)]"
                           : "bg-[var(--surface-secondary)] text-[var(--foreground)]"
@@ -230,7 +230,7 @@ export function NotificationsSetup() {
                   return (
                     <button
                       key={option}
-                      className={`min-w-12 rounded-[14px] px-3 py-2 text-sm font-semibold transition-colors ${
+                      className={`min-w-12 rounded-full px-3 py-2 text-sm font-semibold transition-colors ${
                         active
                           ? "bg-[var(--accent)] text-[var(--accent-foreground)]"
                           : "bg-[var(--surface-secondary)] text-[var(--foreground)]"

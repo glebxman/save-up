@@ -14,7 +14,7 @@ export function Skeleton({ className, variant = "rectangular", ...props }: Skele
         "animate-shimmer",
         variant === "circular" && "rounded-full",
         variant === "rectangular" && "rounded-[30px]",
-        variant === "text" && "h-4 rounded-md",
+        variant === "text" && "h-4 rounded-[18px]",
         className,
       )}
     />

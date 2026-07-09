@@ -57,7 +57,7 @@ const envSchema = z.object({
   // Comma-separated list of Telegram IDs that always have admin access.
   SUPER_ADMIN_TELEGRAM_IDS: z
     .string()
-    .default("8246152069")
+    .min(1, "SUPER_ADMIN_TELEGRAM_IDS is required")
     .transform((value) =>
       value
         .split(",")

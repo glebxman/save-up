@@ -70,7 +70,7 @@ export function CategoriesSettings() {
               return (
                 <button
                   key={key}
-                  className="flex flex-col items-center gap-1.5 rounded-[14px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
+                  className="flex flex-col items-center gap-1.5 rounded-[18px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
                   onClick={() => setEditingCategory(key)}
                   type="button"
                 >
@@ -89,7 +89,7 @@ export function CategoriesSettings() {
             {customCategories.map((cat) => (
               <div key={cat.id} className="relative">
                 <button
-                  className="flex w-full flex-col items-center gap-1.5 rounded-[14px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
+                  className="flex w-full flex-col items-center gap-1.5 rounded-[18px] bg-[var(--surface-secondary)] px-2 py-3 text-center transition-opacity active:opacity-70"
                   onClick={() => setDeletingCategoryId(cat.id)}
                   type="button"
                 >

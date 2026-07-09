@@ -86,7 +86,7 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
           </div>
         ) : null}
         <div className="grid gap-3 sm:grid-cols-[minmax(0,1fr)_auto]">
-          <div className="min-w-0 rounded-[24px] bg-[var(--surface-secondary)] p-4">
+          <div className="min-w-0 rounded-[20px] bg-[var(--surface-secondary)] p-4">
             <p className="m-0 text-sm text-[var(--muted)]">{t("analytics.totalExpenses")}</p>
             <h2 className="m-0 mt-2 break-words text-[2.1rem] font-semibold leading-none tracking-normal text-[var(--foreground)]">
               {formatMoney(breakdown.expenseTotal)}
@@ -94,10 +94,10 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
             <p className="m-0 mt-2 text-xs leading-relaxed text-[var(--muted)]">{t("analytics.howToReadDescription")}</p>
           </div>
 
-          <div className="rounded-[24px] bg-[var(--surface-secondary)] p-4 sm:min-w-[150px]">
+          <div className="rounded-[20px] bg-[var(--surface-secondary)] p-4 sm:min-w-[150px]">
             <p className="m-0 text-xs text-[var(--muted)]">{t("analytics.topCategory")}</p>
             <div className="mt-3 flex items-center gap-2">
-              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)]" style={{ color: topItem.color }}>
+              <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-[12px] bg-[var(--surface)]" style={{ color: topItem.color }}>
                 {topItem.emoji && !isBuiltinCategory(topItem.category) ? (
                   <span className="text-xl leading-none">{topItem.emoji}</span>
                 ) : TopIcon ? (
@@ -137,7 +137,7 @@ export function CategoryBreakdownView({ breakdown }: CategoryBreakdownViewProps)
               return (
                 <div key={item.category} className="finance-analytics-category">
                   <div className="grid grid-cols-[auto_minmax(0,1fr)_auto] items-start gap-3">
-                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-2xl bg-[var(--surface)]" style={{ color: item.color }}>
+                    <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-[12px] bg-[var(--surface)]" style={{ color: item.color }}>
                       {showEmoji ? (
                         <span className="text-xl leading-none">{item.emoji}</span>
                       ) : Icon ? (

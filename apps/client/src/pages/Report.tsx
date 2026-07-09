@@ -344,7 +344,7 @@ export function Report() {
           >
             <span>{t("report.monthSelector")}</span>
             <input
-              className="min-h-10 rounded-[16px] border border-[var(--field-border)] bg-[var(--field-background)] px-3 text-sm font-semibold text-[var(--field-foreground)] outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
+              className="min-h-10 rounded-[22px] border border-[var(--field-border)] bg-[var(--field-background)] px-3 text-sm font-semibold text-[var(--field-foreground)] outline-none focus:ring-2 focus:ring-[color-mix(in_srgb,var(--focus)_18%,transparent)]"
               max={getMonthKey()}
               onChange={(event) => {
                 if (event.target.value) {

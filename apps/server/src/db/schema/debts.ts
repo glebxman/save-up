@@ -16,6 +16,7 @@ export const debts = pgTable(
     dueDate: timestamp("due_date", { withTimezone: true }),
     settled: boolean("settled").notNull().default(false),
     settledAt: timestamp("settled_at", { withTimezone: true }),
+    lastReminderSentAt: timestamp("last_reminder_sent_at", { withTimezone: true }),
     createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
   },
   (table) => ({

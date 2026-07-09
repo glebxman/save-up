@@ -164,7 +164,6 @@ export function AmountInput({
           <ModalBackdrop
             isOpen={showCurrencyModal}
             onOpenChange={setShowCurrencyModal}
-            variant="blur"
           >
             <ModalContainer size="sm">
               <ModalDialog>

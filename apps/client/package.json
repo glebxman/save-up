@@ -21,6 +21,7 @@
     "react-dom": "^19.0.0",
     "react-i18next": "^15.5.3",
     "react-router-dom": "^6.28.0",
+    "tailwind-merge": "^3.6.0",
     "xlsx": "0.18.5",
     "zustand": "^4.5.5"
   },

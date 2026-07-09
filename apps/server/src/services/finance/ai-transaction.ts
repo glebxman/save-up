@@ -1,7 +1,7 @@
 import type { CustomCategory } from "@finance-twa/shared-types";
 import { AI_FREE_DAILY_LIMIT } from "@finance-twa/shared-types";
 
-import { eq } from "drizzle-orm";
+import { and, eq, lt, ne, or, sql } from "drizzle-orm";
 
 import { db } from "../../config/database.js";
 import { users } from "../../db/schema/index.js";
@@ -40,13 +40,27 @@ export async function processAiTransaction(
   const result = await extractFn(rawData, customCategories, user.language ?? undefined);
 
   if (result && !hasAccess) {
-    const isNewDay = user.voiceDailyDate !== today;
-    const nextCount = isNewDay ? 1 : user.voiceDailyUsed + 1;
-
-    await db
+    // Atomic conditional increment: the CASE/WHERE are evaluated against the row's
+    // current state by Postgres itself, not the `user` snapshot read at the top of
+    // this function — so concurrent requests can't all read the same stale count and
+    // each write back the same "+1", silently bypassing the daily cap.
+    const [updated] = await db
       .update(users)
-      .set({ voiceDailyUsed: nextCount, voiceDailyDate: today })
-      .where(eq(users.id, user.id));
+      .set({
+        voiceDailyUsed: sql`case when ${users.voiceDailyDate} = ${today} then ${users.voiceDailyUsed} + 1 else 1 end`,
+        voiceDailyDate: today,
+      })
+      .where(
+        and(
+          eq(users.id, user.id),
+          or(ne(users.voiceDailyDate, today), lt(users.voiceDailyUsed, AI_FREE_DAILY_LIMIT)),
+        ),
+      )
+      .returning({ id: users.id });
+
+    if (!updated) {
+      throw new AppError(ErrorCode.LIMIT_REACHED, "AI daily limit reached");
+    }
 
     await invalidateStatusCache(telegramId);
   }

@@ -121,7 +121,7 @@ export function Settings() {
         />
         <SettingsRow
           dataOnboarding="settings-currency"
-          iconBg="bg-rose-500/85"
+          iconBg="bg-[var(--settings-red)]"
           iconSlot={<span className="text-sm font-bold">{getCurrencySymbol(currency)}</span>}
           onPress={() => setActiveModal("currency")}
           title={t("settings.currency")}
@@ -134,7 +134,7 @@ export function Settings() {
         <SettingsRow
           dataOnboarding="settings-notifications"
           icon={BellIcon}
-          iconBg="bg-amber-500/85"
+          iconBg="bg-[var(--settings-orange)]"
           onPress={() => navigate("/notifications-setup")}
           title={t("settings.notifications")}
           value={
@@ -146,7 +146,7 @@ export function Settings() {
         <SettingsRow
           dataOnboarding="settings-security"
           icon={LockClosedIcon}
-          iconBg="bg-indigo-500/85"
+          iconBg="bg-[var(--settings-blue)]"
           onPress={() => setShowSecurityModal(true)}
           title={t("settings.security")}
           value={
@@ -163,7 +163,7 @@ export function Settings() {
       <SettingsSection title={t("settings.sectionContent")}>
         <SettingsRow
           icon={CreditCardIcon}
-          iconBg="bg-emerald-500/85"
+          iconBg="bg-[var(--settings-green)]"
           onPress={() => navigate("/subscription")}
           title={t("settings.subscription")}
           description={t("settings.subscriptionDescription")}
@@ -176,7 +176,7 @@ export function Settings() {
         <SettingsRow
           dataOnboarding="settings-categories"
           icon={hasSubscriptionAccess ? TagIcon : LockClosedIcon}
-          iconBg="bg-pink-500/85"
+          iconBg="bg-[var(--settings-red)]"
           onPress={() => navigate(hasSubscriptionAccess ? "/settings/categories" : "/subscription")}
           title={t("settings.categories")}
           description={t("settings.categoriesDescription")}
@@ -228,7 +228,7 @@ export function Settings() {
       <SettingsSection title={t("settings.sectionHelp")}>
         <SettingsRow
           icon={ChatBubbleLeftRightIcon}
-          iconBg="bg-sky-500/85"
+          iconBg="bg-[var(--settings-green)]"
           onPress={openSupport}
           title={t("settings.support")}
           description={t("settings.supportDescription")}

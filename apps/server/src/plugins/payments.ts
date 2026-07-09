@@ -20,6 +20,12 @@ import {
 } from "../services/subscription/index.js";
 import type { PaymeTransaction } from "../services/subscription/payments.js";
 
+function timingSafeStringEqual(a: string, b: string): boolean {
+  const bufA = Buffer.from(a);
+  const bufB = Buffer.from(b);
+  return bufA.length === bufB.length && crypto.timingSafeEqual(bufA, bufB);
+}
+
 const PAYME_TIMEOUT_MS = 12 * 60 * 60 * 1000;
 const PAYME_DEFAULT_LOGIN = "Paycom";
 const CLICK_CALLBACK_PATHS = ["/rpc/click/callback", "/api/click/callback", "/click/callback"] as const;
@@ -174,7 +180,7 @@ function isAuthorizedPaymeRequest(credentials: { login: string; password: string
     expectedLogin.length > 0
       ? credentials.login === expectedLogin || credentials.login === PAYME_DEFAULT_LOGIN
       : credentials.login.length > 0 || credentials.login === PAYME_DEFAULT_LOGIN;
-  return loginAllowed && passwords.some((password) => password && credentials.password === password);
+  return loginAllowed && passwords.some((password) => password && timingSafeStringEqual(credentials.password, password));
 }
 
 function isExpired(tx: PaymeTransaction) {
@@ -250,6 +256,11 @@ function clickResponse(payload: Record<string, unknown>) {
 }
 
 function verifyClickSignature(body: Record<string, unknown>): boolean {
+  // Fail closed if the secret isn't configured — otherwise the signed string's secret
+  // component is empty, Click's signing formula is public, and any caller can compute
+  // a matching signature and forge a valid "payment complete" callback.
+  if (!env.CLICK_SECRET_KEY) return false;
+
   const clickTransId = String(body["click_trans_id"] ?? "");
   const serviceId = String(body["service_id"] ?? "");
   const merchantTransId = String(body["merchant_trans_id"] ?? "");
@@ -266,10 +277,7 @@ function verifyClickSignature(body: Record<string, unknown>): boolean {
       : `${clickTransId}${serviceId}${env.CLICK_SECRET_KEY}${merchantTransId}${merchantPrepareId}${amount}${action}${signTime}`;
 
   const expected = crypto.createHash("md5").update(signSource).digest("hex").toLowerCase();
-  return (
-    expected.length === signString.length &&
-    crypto.timingSafeEqual(Buffer.from(expected), Buffer.from(signString))
-  );
+  return timingSafeStringEqual(expected, signString);
 }
 
 export const paymentsPlugin = fp(async (app) => {

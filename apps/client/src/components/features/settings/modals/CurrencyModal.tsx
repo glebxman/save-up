@@ -12,7 +12,8 @@ import {
   ModalHeading,
 } from "@/components/ui";
 import { useFinance } from "@/hooks/useFinance";
-import { SUPPORTED_CURRENCIES, useCurrency } from "@/hooks/useCurrency";
+import { useCurrency } from "@/hooks/useCurrency";
+import { SUPPORTED_CURRENCIES } from "@/utils/currency";
 import { getConversionRate } from "@/utils/exchange-rates";
 
 interface CurrencyModalProps {
@@ -27,7 +28,7 @@ export function CurrencyModal({ isOpen, onClose }: CurrencyModalProps) {
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
         <ModalContainer size="sm">
           <ModalDialog>
             <ModalCloseTrigger />

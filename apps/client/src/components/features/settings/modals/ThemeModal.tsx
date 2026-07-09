@@ -30,7 +30,7 @@ export function ThemeModal({ isOpen, onClose }: ThemeModalProps) {
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
         <ModalContainer size="sm">
           <ModalDialog>
             <ModalCloseTrigger />

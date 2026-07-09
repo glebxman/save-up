@@ -64,7 +64,7 @@ export function CategoryLimitsModal({
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(o) => !o && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(o) => !o && onClose()}>
         <ModalContainer size="md">
           <ModalDialog>
             <ModalCloseTrigger />

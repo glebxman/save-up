@@ -26,6 +26,8 @@ const REMINDER_KEYS = [
 const CHECK_INTERVAL_MS = 5 * 60 * 1000; // 5 minutes
 /** A scheduled slot is "current" if we're within this many minutes after it. */
 const SLOT_TOLERANCE_MIN = 6;
+/** Minimum gap between debt reminders for the same debt, so the 5-minute poll doesn't spam. */
+const DEBT_REMINDER_COOLDOWN_MS = 20 * 60 * 60 * 1000; // ~once per day while due/overdue
 
 interface UserRow {
   telegramId: number;
@@ -177,7 +179,7 @@ async function checkDebtReminders(): Promise<void> {
 
   log.debug("Checking debt reminders");
 
-  let dueDebts: { id: string; name: string; amount: number; direction: string; userId: string; dueDate: Date | null }[];
+  let dueDebts: { id: string; name: string; amount: number; direction: string; userId: string; dueDate: Date | null; lastReminderSentAt: Date | null }[];
   try {
     dueDebts = await db
       .select({
@@ -187,6 +189,7 @@ async function checkDebtReminders(): Promise<void> {
         direction: debts.direction,
         userId: debts.userId,
         dueDate: debts.dueDate,
+        lastReminderSentAt: debts.lastReminderSentAt,
       })
       .from(debts)
       .where(
@@ -204,6 +207,12 @@ async function checkDebtReminders(): Promise<void> {
 
   for (const debt of dueDebts) {
     if (!debt.dueDate) continue;
+
+    // A debt stays "due" for days/weeks until settled, but this loop polls every 5
+    // minutes — without this check the same debt gets reminded every 5 minutes forever.
+    if (debt.lastReminderSentAt && now.getTime() - debt.lastReminderSentAt.getTime() < DEBT_REMINDER_COOLDOWN_MS) {
+      continue;
+    }
 
     // Get user info for this debt
     const [user] = await db
@@ -223,6 +232,10 @@ async function checkDebtReminders(): Promise<void> {
         .replace("{date}", new Date(debt.dueDate).toLocaleDateString());
 
       await sendTelegramMessage(user.telegramId, msg);
+      await db
+        .update(debts)
+        .set({ lastReminderSentAt: now })
+        .where(eq(debts.id, debt.id));
       sent++;
     } catch (err) {
       const msg = err instanceof Error ? err.message : "";

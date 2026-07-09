@@ -163,7 +163,7 @@ export function VoiceAssistant({ onResult }: VoiceAssistantProps) {
         )}
       </div>
 
-      <ModalBackdrop isOpen={showResultModal} onOpenChange={setShowResultModal} variant="blur">
+      <ModalBackdrop isOpen={showResultModal} onOpenChange={setShowResultModal}>
         <ModalContainer size="sm">
           <ModalDialog>
             <ModalHeader>

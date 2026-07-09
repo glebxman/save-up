@@ -347,7 +347,7 @@ export function SecurityModal({ isOpen, onClose }: SecurityModalProps) {
 
   return (
     <Modal>
-      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()} variant="blur">
+      <ModalBackdrop isOpen={isOpen} onOpenChange={(open) => !open && onClose()}>
         <ModalContainer size="md">
           <ModalDialog>
             <ModalCloseTrigger />

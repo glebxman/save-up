@@ -41,7 +41,6 @@ async function checkMilestones(): Promise<void> {
     return;
   }
 
-  const now = new Date();
   let sent = 0;
 
   for (const user of allUsers) {
@@ -66,16 +65,11 @@ async function checkMilestones(): Promise<void> {
 
     if (!milestoneKey || !messageKey) continue;
 
-    const lastMilestone = user.lastMilestoneSent;
-    const nowMs = now.getTime();
-
-    // Only send if this milestone hasn't been sent before
-    // or if we've moved to a higher milestone
-    if (lastMilestone !== null) {
-      const lastPercentage = lastMilestone;
-      if (percentage < lastPercentage) continue;
-      if (percentage === lastPercentage) continue;
-    }
+    // Compare against the last *tier* reached (50/75/100), not the raw percentage —
+    // otherwise any percentage increase within the same tier (e.g. 52% -> 58%, both
+    // "50%") re-triggers the same milestone message.
+    const milestoneValue = Number(milestoneKey);
+    if (user.lastMilestoneSent !== null && milestoneValue <= user.lastMilestoneSent) continue;
 
     try {
       const text = getBotMessage(messageKey, lang)
@@ -87,7 +81,7 @@ async function checkMilestones(): Promise<void> {
 
       await db
         .update(users)
-        .set({ lastMilestoneSent: percentage })
+        .set({ lastMilestoneSent: milestoneValue })
         .where(eq(users.id, user.id));
 
       sent++;

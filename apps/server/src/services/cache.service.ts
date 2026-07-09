@@ -13,7 +13,9 @@ interface MemoryCacheEntry {
 
 const memoryCache = new Map<number, MemoryCacheEntry>();
 const MEMORY_CACHE_MAX = 500;
-let redisDisabled = false;
+/** How long to stay on the in-memory fallback after a Redis connectivity error before trying Redis again. */
+const REDIS_RETRY_COOLDOWN_MS = 30_000;
+let redisDisabledUntil = 0;
 let redisWarningShown = false;
 
 function getStatusKey(telegramId: number): string {
@@ -51,19 +53,34 @@ function invalidateMemoryStatus(telegramId: number): void {
   memoryCache.delete(telegramId);
 }
 
+/** Disable Redis for a cooldown window after a *connectivity* failure — never called for a bad cached value. */
 function disableRedis(error: unknown): void {
-  redisDisabled = true;
+  redisDisabledUntil = Date.now() + REDIS_RETRY_COOLDOWN_MS;
 
   if (redisWarningShown) {
     return;
   }
 
   redisWarningShown = true;
-    log.warn({ err: error }, "Redis is unavailable. Falling back to in-memory cache.");
+  log.warn({ err: error }, "Redis is unavailable. Falling back to in-memory cache.");
+}
+
+/** Called after any Redis operation succeeds, so a transient outage doesn't disable caching for the rest of the process's life. */
+function reenableRedis(): void {
+  if (redisDisabledUntil === 0) {
+    return;
+  }
+
+  redisDisabledUntil = 0;
+
+  if (redisWarningShown) {
+    redisWarningShown = false;
+    log.info("Redis connection recovered — resuming Redis-backed cache.");
+  }
 }
 
 async function ensureRedisConnection(): Promise<boolean> {
-  if (redisDisabled) {
+  if (redisDisabledUntil !== 0 && Date.now() < redisDisabledUntil) {
     return false;
   }
 
@@ -86,13 +103,24 @@ export async function getCachedStatus(telegramId: number): Promise<Status | null
     return getMemoryStatus(telegramId);
   }
 
+  let raw: string | null;
   try {
-    const raw = await redis.get(getStatusKey(telegramId));
-    if (!raw) return null;
-    return JSON.parse(raw) as Status;
+    raw = await redis.get(getStatusKey(telegramId));
+    reenableRedis();
   } catch (error) {
     disableRedis(error);
     return getMemoryStatus(telegramId);
+  }
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw) as Status;
+  } catch (error) {
+    // A malformed cached value is a data problem for this one key, not a Redis
+    // outage — don't disable Redis for every other user over it.
+    log.warn({ err: error, telegramId }, "Discarding corrupt cached status");
+    return null;
   }
 }
 
@@ -106,6 +134,7 @@ export async function setCachedStatus(telegramId: number, status: Status): Promi
 
   try {
     await redis.set(getStatusKey(telegramId), JSON.stringify(status), "EX", env.CACHE_TTL_SECONDS);
+    reenableRedis();
   } catch (error) {
     disableRedis(error);
     setMemoryStatus(telegramId, status);
@@ -122,6 +151,7 @@ export async function invalidateStatusCache(telegramId: number): Promise<void> {
 
   try {
     await redis.del(getStatusKey(telegramId));
+    reenableRedis();
   } catch (error) {
     disableRedis(error);
     invalidateMemoryStatus(telegramId);

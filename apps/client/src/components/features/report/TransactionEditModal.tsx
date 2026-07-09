@@ -54,7 +54,7 @@ export function TransactionEditModal({
 
   return (
     <Modal>
-      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()} variant="blur">
+      <Modal.Backdrop isOpen={isOpen} onOpenChange={(nextOpen) => !nextOpen && onClose()}>
         <Modal.Container size="md">
           <Modal.Dialog>
             <Modal.CloseTrigger />

@@ -6,6 +6,7 @@ import type {
 
 import { randomUUID } from "node:crypto";
 import { and, eq, isNull } from "drizzle-orm";
+import { getMonthKey } from "@finance-twa/shared-utils";
 
 import { db } from "../../config/database.js";
 import { accounts, users, type UserRow } from "../../db/schema/index.js";
@@ -40,6 +41,9 @@ export async function saveRecurringTransaction(
     }
   }
 
+  const index = templates.findIndex((item) => item.id === payload.id);
+  const existing = index >= 0 ? templates[index] : undefined;
+
   const nextTemplate: RecurringTransaction = {
     id: payload.id ?? randomUUID(),
     ...parsed,
@@ -49,8 +53,10 @@ export async function saveRecurringTransaction(
         : null,
     autoApply: payload.autoApply === true,
     accountId,
+    // Preserve "already applied this month" tracking across edits so changing
+    // an unrelated field (note, amount, etc.) can't re-open the door to a duplicate apply.
+    lastAppliedMonthKey: existing?.lastAppliedMonthKey ?? null,
   };
-  const index = templates.findIndex((item) => item.id === nextTemplate.id);
 
   if (index >= 0) {
     templates[index] = nextTemplate;
@@ -91,22 +97,35 @@ export async function applyRecurringTransaction(
   templateId: string,
 ): Promise<Status> {
   const user = await ensureUser(telegramId);
-  const template = mapRecurringTemplates(user).find((item) => item.id === templateId);
+  const templates = mapRecurringTemplates(user);
+  const templateIndex = templates.findIndex((item) => item.id === templateId);
+  const template = templateIndex >= 0 ? templates[templateIndex] : undefined;
 
   if (!template) {
     throw new AppError(ErrorCode.NOT_FOUND, "Recurring transaction not found");
   }
 
-  const updatedUser = await db.transaction(async (tx) =>
-    createTransaction(tx, user, {
+  // Record that this template has now been applied this month. The hourly auto-apply
+  // scheduler (see recurring.ts) checks this before re-selecting a template, so this is
+  // what stops the same due-today template from being inserted again on every later tick.
+  const nextTemplates = [...templates];
+  nextTemplates[templateIndex] = { ...template, lastAppliedMonthKey: getMonthKey() };
+
+  const updatedUser = await db.transaction(async (tx) => {
+    await tx
+      .update(users)
+      .set({ recurringTemplates: nextTemplates })
+      .where(eq(users.id, user.id));
+
+    return createTransaction(tx, user, {
       type: template.type,
       amount: template.amount,
       category: template.category,
       savingsAmt: template.type === "income" ? template.savingsAmt : undefined,
       note: template.note ?? template.title,
       accountId: template.accountId,
-    }),
-  );
+    });
+  });
 
   await invalidateStatusCache(telegramId);
 

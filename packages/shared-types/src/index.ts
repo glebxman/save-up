@@ -158,6 +158,8 @@ export interface RecurringTransaction {
   dayOfMonth?: number | null;
   autoApply?: boolean;
   accountId: string | null;
+  /** Month key ("YYYY-MM") this template was last auto/manually applied in, used to avoid re-applying it more than once per month. */
+  lastAppliedMonthKey?: string | null;
 }
 
 export type NotificationFrequency =

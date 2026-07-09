@@ -24,12 +24,11 @@ export function ModalRoot({ children }: PropsWithChildren) {
 interface ModalBackdropProps extends PropsWithChildren {
   isOpen: boolean;
   onOpenChange?: (open: boolean) => void;
-  variant?: "blur";
 }
 
 const MODAL_ANIMATION_MS = 220;
 
-export function ModalBackdrop({ children, isOpen, onOpenChange, variant: _variant }: ModalBackdropProps) {
+export function ModalBackdrop({ children, isOpen, onOpenChange }: ModalBackdropProps) {
   const [shouldRender, setShouldRender] = useState(isOpen);
 
   useEffect(() => {

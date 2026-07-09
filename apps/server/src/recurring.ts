@@ -1,4 +1,5 @@
 import { eq } from "drizzle-orm";
+import { getMonthKey } from "@finance-twa/shared-utils";
 import { db } from "./config/database.js";
 import { users } from "./db/schema/index.js";
 import { logger } from "./utils/logger.js";
@@ -15,6 +16,7 @@ const CHECK_INTERVAL_MS = 60 * 60 * 1000; // every hour
 async function runRecurringBatch(): Promise<void> {
   const now = new Date();
   const dayOfMonth = now.getDate();
+  const currentMonthKey = getMonthKey(now);
   const tomorrow = new Date(now);
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowDay = tomorrow.getDate();
@@ -43,9 +45,15 @@ async function runRecurringBatch(): Promise<void> {
       ? (user.recurringTemplates as RecurringTransaction[])
       : [];
 
-    // Auto-apply due transactions
+    // Auto-apply due transactions. Skip ones already applied this month so the
+    // hourly tick doesn't re-insert the same transaction all day long (this loop
+    // runs every hour, and "due today" stays true for the whole day).
     const dueToday = templates.filter(
-      (t) => t.autoApply && typeof t.dayOfMonth === "number" && t.dayOfMonth === dayOfMonth,
+      (t) =>
+        t.autoApply &&
+        typeof t.dayOfMonth === "number" &&
+        t.dayOfMonth === dayOfMonth &&
+        t.lastAppliedMonthKey !== currentMonthKey,
     );
 
     for (const template of dueToday) {

@@ -143,6 +143,7 @@ export function mapRecurringTemplates(row: UserRow): RecurringTransaction[] {
       category: item.category ?? null,
       note: typeof item.note === "string" ? item.note : null,
       accountId: typeof item.accountId === "string" ? item.accountId : null,
+      lastAppliedMonthKey: typeof item.lastAppliedMonthKey === "string" ? item.lastAppliedMonthKey : null,
     }))
     .filter((item) => Number.isFinite(item.amount) && item.amount > 0);
 }
@@ -271,11 +272,16 @@ export async function getActiveTransactionsForUser(
 }
 
 export async function syncUserSnapshot(tx: DbTransaction, user: UserRow): Promise<UserRow> {
+  // Lock this user's account rows for the duration of the transaction so concurrent
+  // mutations (two requests recomputing/writing balances at once) serialize instead of
+  // racing — without this, both can read the same pre-mutation state and the second
+  // writer silently overwrites the first's update (lost-update / balance corruption).
   const activeAccounts = await tx
     .select()
     .from(accounts)
     .where(and(eq(accounts.userId, user.id), isNull(accounts.deletedAt)))
-    .orderBy(accounts.createdAt);
+    .orderBy(accounts.createdAt)
+    .for("update");
 
   if (activeAccounts.length === 0) {
     // No accounts at all - reset totals to zero
